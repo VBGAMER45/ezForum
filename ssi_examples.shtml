@@ -1,11 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-		<title> &lt;&lt; :: SMF SSI.php 2.0 RC4 :: &gt;&gt; </title>
+		<title> &lt;&lt; :: ezForum SSI.php :: &gt;&gt; </title>
 	</head>
 	<body style="font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt;">
-			<h1>SMF SSI.php Functions</h1>
-			Current Version 2.0 RC4<br />
+			<h1>ezForum SSI.php Functions</h1>
 			<br />
 			This file is used to demonstrate the capabilities of SSI.php using SHTML include functions.<br />
 			The examples the include tag, then the results of it. Examples are separated by horizontal rules.<br />
@@ -150,7 +149,7 @@
 		<br />
 		<br />
 		<span style="font-size: smaller;">
-			<a href="http://www.simplemachines.org/" title="Free Forum Software" target="_blank">SMF &copy; 2006&ndash;2010, Simple Machines LLC</a>
+			<a href="http://www.ezforum.com" title="Free Forum Software" target="_blank">ezForum</a>
 		</span>
 		<br />
 		<br />

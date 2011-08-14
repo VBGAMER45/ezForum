@@ -182,7 +182,7 @@ function template_body_above()
 	echo '
 			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />';
 	echo '
-			', empty($settings['site_slogan']) ? '<img id="smflogo" src="' . $settings['images_url'] . '/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum" />' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
+			', empty($settings['site_slogan']) ? '' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
 		</div>
 		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
 			<div class="user">';
@@ -332,12 +332,11 @@ function template_body_below()
 		</div>
 	</div></div>';
 
-	// Show the "Powered by" and "Valid" logos, as well as the copyright. Remember, the copyright must be somewhere!
+	// Show the "Powered by"
 	echo '
 	<div id="footer_section"><div class="frame">
 		<ul class="reset">
 			<li class="copyright">', theme_copyright(), '</li>
-			<li><a id="button_xhtml" href="http://validator.w3.org/check?uri=referer" target="_blank" class="new_win" title="', $txt['valid_xhtml'], '"><span>', $txt['xhtml'], '</span></a></li>
 			', !empty($modSettings['xmlnews_enable']) && (!empty($modSettings['allow_guestAccess']) || $context['user']['is_logged']) ? '<li><a id="button_rss" href="' . $scripturl . '?action=.xml;type=rss" class="new_win"><span>' . $txt['rss'] . '</span></a></li>' : '', '
 			<li class="last"><a id="button_wap2" href="', $scripturl , '?wap2" class="new_win"><span>', $txt['wap2'], '</span></a></li>
 		</ul>';

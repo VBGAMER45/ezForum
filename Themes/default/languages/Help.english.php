@@ -93,7 +93,7 @@ $helptxt['view_members'] = '
 	</ul>';
 
 $helptxt['ban_members'] = '<strong>Ban Members</strong><br />
-	SMF provides the ability to &quot;ban&quot; users, to prevent people who have violated the trust of the board
+	ezForum provides the ability to &quot;ban&quot; users, to prevent people who have violated the trust of the board
 	by spamming, trolling, etc. This allows you to those users who are detrimental to your forum. As an admin,
 	when you view messages, you can see each user\'s IP address used to post at that time. In the ban list,
 	you simply type that IP address in, save, and they can no longer post from that location.<br />You can also
@@ -158,7 +158,7 @@ $helptxt['registrations'] = '<strong>Registration Management</strong><br />
 		<li>
 			<strong>Edit Registration Agreement</strong><br />
 			This allows you to set the text for the registration agreement displayed when members sign up for your forum.
-			You can add or remove anything from the default registration agreement, which is included in SMF.<br /><br />
+			You can add or remove anything from the default registration agreement, which is included in ezForum.<br /><br />
 		</li>
 		<li>
 			<strong>Set Reserved Names</strong><br />
@@ -227,7 +227,7 @@ $helptxt['manage_files'] = '
 	<ul class="normallist">
 		<li>
 			<strong>Browse Files</strong><br />
-			Browse through all the attachments, avatars and thumbnails stored by SMF.<br /><br />
+			Browse through all the attachments, avatars and thumbnails stored by ezForum.<br /><br />
 		</li><li>
 			<strong>Attachment Settings</strong><br />
 			Configure where attachments are stored and set restrictions on the types of attachments.<br /><br />
@@ -286,7 +286,7 @@ $helptxt['disallow_sendBody'] = 'This option removes the option to receive the t
 $helptxt['compactTopicPagesEnable'] = 'This will just show a selection of the number of pages.<br /><em>Example:</em>
 		&quot;3&quot; to display: 1 ... 4 [5] 6 ... 9 <br />
 		&quot;5&quot; to display: 1 ... 3 4 [5] 6 7 ... 9';
-$helptxt['timeLoadPageEnable'] = 'This will show the time in seconds SMF took to create that page at the bottom of the board.';
+$helptxt['timeLoadPageEnable'] = 'This will show the time in seconds ezForum took to create that page at the bottom of the board.';
 $helptxt['removeNestedQuotes'] = 'This will strip nested quotes from a post when citing the post in question via a quote link.';
 $helptxt['simpleSearch'] = 'This will show a simple search form and a link to a more advanced form.';
 $helptxt['max_image_width'] = 'This allows you to set a maximum size for posted pictures. Pictures smaller than the maximum will not be affected.';
@@ -302,9 +302,9 @@ $helptxt['attachment_manager_settings'] = 'Attachments are files that members ca
 		<strong>Display attachment as picture in posts</strong>:<br /> If the uploaded file is a picture, this will show it underneath the post.<br />
 		<strong>Resize images when showing under posts</strong>:<br /> If the above option is selected, this will save a separate (smaller) attachment for the thumbnail to decrease bandwidth.<br />
 		<strong>Maximum width and height of thumbnails</strong>:<br /> Only used with the &quot;Resize images when showing under posts&quot; option, the maximum width and height to resize attachments down from.  They will be resized proportionally.';
-$helptxt['attachment_image_paranoid'] = 'Selecting this option will enable very strict security checks on image attachments. Warning! These extensive checks can fail on valid images too. It is strongly recommended to only use this option together with image re-encoding, in order to have SMF try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if image re-encoding is not enabled, all attachments failing checks will be rejected.';
+$helptxt['attachment_image_paranoid'] = 'Selecting this option will enable very strict security checks on image attachments. Warning! These extensive checks can fail on valid images too. It is strongly recommended to only use this option together with image re-encoding, in order to have ezForum try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if image re-encoding is not enabled, all attachments failing checks will be rejected.';
 $helptxt['attachment_image_reencode'] = 'Selecting this option will enable trying to re-encode the uploaded image attachments. Image re-encoding offers better security. Note however that image re-encoding also renders all animated images static. <br /> This feature is only possible if the GD module is installed on your server.';
-$helptxt['avatar_paranoid'] = 'Selecting this option will enable very strict security checks on avatars. Warning! These extensive checks can fail on valid images too. It is strongly recommended to only use this option together with avatars re-encoding, in order to have SMF try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if re-encoding of avatars is not enabled, all avatars failing checks will be rejected.';
+$helptxt['avatar_paranoid'] = 'Selecting this option will enable very strict security checks on avatars. Warning! These extensive checks can fail on valid images too. It is strongly recommended to only use this option together with avatars re-encoding, in order to have ezForum try to resample the images which fail the security checks: if successful, they will be sanitized and uploaded. Otherwise, if re-encoding of avatars is not enabled, all avatars failing checks will be rejected.';
 $helptxt['avatar_reencode'] = 'Selecting this option will enable trying to re-encode the uploaded avatars. Image re-encoding offers better security. Note however that image re-encoding also renders all animated images static. <br /> This feature is only possible if the GD module is installed on your server.';
 $helptxt['karmaMode'] = 'Karma is a feature that shows the popularity of a member. Members, if allowed, can
 		\'applaud\' or \'smite\' other members, which is how their popularity is calculated. You can change the
@@ -324,7 +324,7 @@ $helptxt['cal_enabled'] = 'The calendar can be used for showing birthdays, or fo
 		<strong>Allow events to span multiple days</strong>:<br />Check to allow events to span multiple days.<br />
 		<strong>Max number of days an event can span</strong>:<br />Select the maximum days that an event can span.<br /><br />
 		Remember that usage of the calendar (posting events, viewing events, etc.) is controlled by permissions set on the permissions screen.';
-$helptxt['localCookies'] = 'SMF uses cookies to store login information on the client computer.
+$helptxt['localCookies'] = 'ezForum uses cookies to store login information on the client computer.
 	Cookies can be stored globally (myserver.com) or locally (myserver.com/path/to/forum).<br />
 	Check this option if you\'re experiencing problems with users getting logged out automatically.<hr />
 	Globally stored cookies are less secure when used on a shared webserver (like Tripod).<hr />
@@ -478,7 +478,7 @@ $helptxt['latest_support'] = 'This panel shows you some of the most common probl
 $helptxt['latest_packages'] = 'Here you can see some of the most popular and some random packages or mods, with quick and easy installations.<br /><br />If this section doesn\'t show up, your computer probably cannot connect to <a href="http://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>.';
 $helptxt['latest_themes'] = 'This area shows a few of the latest and most popular themes from <a href="http://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>.  It may not show up properly if your computer can\'t find <a href="http://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>, though.';
 
-$helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the SMF software will never tell you, or anyone else, what they are.';
+$helptxt['secret_why_blank'] = 'For your security, your password and the answer to your secret question are encrypted so that the ezForum software will never tell you, or anyone else, what they are.';
 $helptxt['moderator_why_missing'] = 'Since moderation is done on a board-by-board basis, you have to make members moderators from the <a href="javascript:window.open(\'%1$s?action=admin;area=manageboards\'); self.close();">board management interface</a>.';
 
 $helptxt['permissions'] = 'Permissions are how you either allow groups to, or deny groups from, doing specific things.<br /><br />You can modify multiple boards at once with the checkboxes, or look at the permissions for a specific group by clicking \'Modify.\'';
@@ -490,7 +490,7 @@ $helptxt['membergroup_guests'] = 'The Guests membergroup are all users that are 
 $helptxt['membergroup_regular_members'] = 'The Regular Members are all members that are logged in, but that have no primary membergroup assigned.';
 $helptxt['membergroup_administrator'] = 'The administrator can, per definition, do anything and see any board. There are no permission settings for the administrator.';
 $helptxt['membergroup_moderator'] = 'The Moderator membergroup is a special membergroup. Permissions and settings assigned to this group apply to moderators but only <em>on the boards they moderate</em>. Outside these boards they\'re just like any other member.';
-$helptxt['membergroups'] = 'In SMF there are two types of groups that your members can be part of. These are:
+$helptxt['membergroups'] = 'In ezForum there are two types of groups that your members can be part of. These are:
 	<ul class="normallist">
 		<li><strong>Regular Groups:</strong> A regular group is a group to which members are not automatically put into. To assign a member to be in a group simply go to their profile and click &quot;Account Settings&quot;. From here you can assign them any number of regular groups to which they will be part.</li>
 		<li><strong>Post Groups:</strong> Unlike regular groups post based groups cannot be assigned. Instead, members are automatically assigned to a post based group when they reach the minimum number of posts required to be in that group.</li>
@@ -502,7 +502,7 @@ $helptxt['maintenance_backup'] = 'This area allows you to save a copy of all the
 $helptxt['maintenance_rot'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove old topics.  It is recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br /><br />Use this option with care.';
 $helptxt['maintenance_members'] = 'This allows you to <strong>completely</strong> and <strong>irrevocably</strong> remove member accounts from your forum.  It is <strong>highly</strong> recommended that you try to make a backup first, just in case you remove something you didn\'t mean to.<br /><br />Use this option with care.';
 
-$helptxt['avatar_server_stored'] = 'This allows your members to pick from avatars stored on your server itself.  They are, generally, in the same place as SMF under the avatars folder.<br />As a tip, if you create directories in that folder, you can make &quot;categories&quot; of avatars.';
+$helptxt['avatar_server_stored'] = 'This allows your members to pick from avatars stored on your server itself.  They are, generally, in the same place as ezForum under the avatars folder.<br />As a tip, if you create directories in that folder, you can make &quot;categories&quot; of avatars.';
 $helptxt['avatar_external'] = 'With this enabled, your members can type in a URL to their own avatar.  The downside of this is that, in some cases, they may use avatars that are overly large or portray images you don\'t want on your forum.';
 $helptxt['avatar_download_external'] = 'With this option enabled, the URL given by the user is accessed to download the avatar at that location. On success, the avatar will be treated as uploadable avatar.';
 $helptxt['avatar_upload'] = 'This option is much like &quot;Allow members to select an external avatar&quot;, except that you have better control over the avatars, a better time resizing them, and your members do not have to have somewhere to put avatars.<br /><br />However, the downside is that it can take a lot of space on your server.';
@@ -521,7 +521,7 @@ $helptxt['search_why_use_index'] = 'A search index can greatly improve the perfo
 
 $helptxt['see_admin_ip'] = 'IP addresses are shown to administrators and moderators to facilitate moderation and to make it easier to track people up to no good.  Remember that IP addresses may not always be identifying, and most people\'s IP addresses change periodically.<br /><br />Members are also allowed to see their own IPs.';
 $helptxt['see_member_ip'] = 'Your IP address is shown only to you and moderators.  Remember that this information is not identifying, and that most IPs change periodically.<br /><br />You cannot see other members\' IP addresses, and they cannot see yours.';
-$helptxt['whytwoip'] = 'SMF uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case SMF logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
+$helptxt['whytwoip'] = 'ezForum uses various methods to detect user IP addresses. Usually these two methods result in the same address but in some cases more than one address may be detected. In this case ezForum logs both addresses, and uses them both for ban checks (etc). You can click on either address to track that IP and ban if necessary.';
 
 $helptxt['ban_cannot_post'] = 'The \'cannot post\' restriction turns the forum into read-only mode for the banned user. The user cannot create new topics, or reply to existing ones, send personal messages or vote in polls. The banned user can however still read personal messages and topics.<br /><br />A warning message is shown to the users that are banned this way.';
 

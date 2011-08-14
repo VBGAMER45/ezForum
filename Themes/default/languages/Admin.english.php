@@ -27,7 +27,7 @@ $txt['admin_title'] = 'Forum Title';
 $txt['admin_url'] = 'Forum URL';
 $txt['cookie_name'] = 'Cookie Name';
 $txt['admin_webmaster_email'] = 'Webmaster Email Address';
-$txt['boarddir'] = 'SMF Directory';
+$txt['boarddir'] = 'ezForum Directory';
 $txt['sourcesdir'] = 'Sources Directory';
 $txt['cachedir'] = 'Cache Directory';
 $txt['admin_news'] = 'Enable News';
@@ -36,8 +36,8 @@ $txt['admin_manage_members'] = 'Members';
 $txt['admin_main'] = 'Main';
 $txt['admin_config'] = 'Configuration';
 $txt['admin_version_check'] = 'Detailed Version Check';
-$txt['admin_smffile'] = 'SMF File';
-$txt['admin_smfpackage'] = 'SMF Package';
+$txt['admin_smffile'] = 'ezForum File';
+$txt['admin_smfpackage'] = 'ezForum Package';
 $txt['admin_maintenance'] = 'Maintenance';
 $txt['admin_image_text'] = 'Show buttons as images instead of text';
 $txt['admin_credits'] = 'Credits';
@@ -47,7 +47,7 @@ $txt['admin_agreement_select_language'] = 'Language to edit';
 $txt['admin_agreement_select_language_change'] = 'Change';
 $txt['admin_delete_members'] = 'Delete Selected Members';
 $txt['admin_repair'] = 'Repair All Boards and Topics';
-$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;.  From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<div style="margin-top: 1ex;">If you have any trouble, please look at the &quot;Support &amp; Credits&quot; page.  If the information there doesn\'t help you, feel free to <a href="http://www.simplemachines.org/community/index.php" target="_blank" class="new_win">look to us for help</a> with the problem.</div>You may also find answers to your questions or problems by clicking the <img src="' . $settings['images_url'] . '/helptopics.gif" alt="%2$s" title="%3$s" /> symbols for more information on the related functions.';
+$txt['admin_main_welcome'] = 'This is your &quot;%1$s&quot;.  From here, you can edit settings, maintain your forum, view logs, install packages, manage themes, and many other things.<div style="margin-top: 1ex;">If you have any trouble, please look at the &quot;Support &amp; Credits&quot; page.  If the information there doesn\'t help you, feel free to <a href="http://www.ezforum.com/forums/index.php" target="_blank" class="new_win">look to us for help</a> with the problem.</div>You may also find answers to your questions or problems by clicking the <img src="' . $settings['images_url'] . '/helptopics.gif" alt="%2$s" title="%3$s" /> symbols for more information on the related functions.';
 $txt['admin_news_desc'] = 'Please place one news item per box. BBC tags, such as <span title="Are you bold?">[b]</span>, <span title="I tall icks!!">[i]</span> and <span title="Brackets are great, no?">[u]</span> are allowed in your news, as well as smileys. Clear a news item\'s text box to remove it.';
 $txt['administrators'] = 'Forum Administrators';
 $txt['admin_reserved_desc'] = 'Reserved names will keep members from registering certain usernames or using these words in their displayed names. Choose the options you wish to use from the bottom before submitting.';
@@ -98,15 +98,15 @@ $txt['attachment_name'] = 'Attachment Name';
 $txt['attachment_file_size'] = 'File Size';
 $txt['attachmentdir_size_not_set'] = 'No maximum directory size is currently set';
 $txt['attachment_delete_admin'] = '[attachment deleted by admin]';
-$txt['live'] = 'Live from Simple Machines...';
+$txt['live'] = 'Live from ezForum...';
 $txt['remove_all'] = 'Remove All';
 $txt['approve_new_members'] = 'Admin must approve all new members';
 $txt['agreement_not_writable'] = 'Warning - agreement.txt is not writable, any changes you make will NOT be saved.';
 
-$txt['version_check_desc'] = 'This shows you the versions of your installation\'s files versus those of the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="http://www.simplemachines.org/" target="_blank" class="new_win">www.simplemachines.org</a>.';
+$txt['version_check_desc'] = 'This shows you the versions of your installation\'s files versus those of the latest version. If any of these files are out of date, you should download and upgrade to the latest version at <a href="http://www.ezforum.com/" target="_blank" class="new_win">www.ezforum.com</a>.';
 $txt['version_check_more'] = '(more detailed)';
 
-$txt['lfyi'] = 'You are unable to connect to simplemachines.org\'s latest news file.';
+$txt['lfyi'] = 'You are unable to connect to ezforum.com\'s latest news file.';
 
 $txt['manage_calendar'] = 'Calendar';
 $txt['manage_search'] = 'Search';
@@ -223,7 +223,7 @@ $txt['maintain_done'] = 'The maintenance task \'%1$s\' was executed successfully
 $txt['maintain_no_errors'] = 'Congratulations, no errors found!  Thanks for checking.';
 
 $txt['maintain_tasks'] = 'Scheduled Tasks';
-$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by SMF.';
+$txt['maintain_tasks_desc'] = 'Manage all the tasks scheduled by ezForum.';
 
 $txt['scheduled_log'] = 'Task Log';
 $txt['scheduled_log_desc'] = 'Lists logs of the tasks that have be ran.';
@@ -288,7 +288,7 @@ $txt['confirm_delete_members'] = 'Are you sure you want to delete the selected m
 $txt['support_credits_title'] = 'Support and Credits';
 $txt['support_credits_info'] = 'Get support on common issues and version information to give if you have problems.';
 $txt['support_title'] = 'Support Information';
-$txt['support_versions_current'] = 'Current SMF version';
+$txt['support_versions_current'] = 'Current ezForum version';
 $txt['support_versions_forum'] = 'Forum version';
 $txt['support_versions_php'] = 'PHP version';
 $txt['support_versions_db'] = '%1$s version';
@@ -296,8 +296,8 @@ $txt['support_versions_server'] = 'Server version';
 $txt['support_versions_gd'] = 'GD version';
 $txt['support_versions'] = 'Version Information';
 $txt['support_resources'] = 'Support Resources';
-$txt['support_resources_p1'] = 'Our <a href="%1$s">Online Manual</a> provides the main documentation for SMF. The SMF Online Manual has many documents to help answer support questions and explain <a href="%2$s">Features</a>, <a href="%3$s">Settings</a>, <a href="%4$s">Themes</a>, <a href="%5$s">Packages</a>, etc. The Online Manual documents each area of SMF thoroughly and should answer most questions quickly.';
-$txt['support_resources_p2'] = 'If you can\'t find the answers to your questions in the Online Manual, you may want to search our <a href="%1$s">Support Community</a> or ask for assistance in either our <a href="%2$s">English</a> or one of our many <a href="%3$s">international support boards</a>. The SMF Support Community can be used for <a href="%4$s">support</a>, <a href="%5$s">customization</a>, and many other things such as discussing SMF, finding a host, and discussing administrative issues with other forum administrators.';
+$txt['support_resources_p1'] = 'Our <a href="%1$s">Online Manual</a> provides the main documentation for ezForum. The ezForum Online Manual has many documents to help answer support questions and explain <a href="%2$s">Features</a>, <a href="%3$s">Settings</a>, <a href="%4$s">Themes</a>, <a href="%5$s">Packages</a>, etc. The Online Manual documents each area of ezForum thoroughly and should answer most questions quickly.';
+$txt['support_resources_p2'] = 'If you can\'t find the answers to your questions in the Online Manual, you may want to search our <a href="%1$s">Support Community</a> or ask for assistance in either our <a href="%2$s">English</a> or one of our many <a href="%3$s">international support boards</a>. The ezForum Support Community can be used for <a href="%4$s">support</a>, <a href="%5$s">customization</a>, and many other things such as discussing ezForum, finding a host, and discussing administrative issues with other forum administrators.';
 
 $txt['support_latest'] = 'Common Support &amp; Issues';
 $txt['support_latest_fetch'] = 'Retrieving support information...';
@@ -450,7 +450,7 @@ $txt['logs'] = 'Logs';
 $txt['generate_reports'] = 'Reports';
 
 $txt['update_available'] = 'Update Available!';
-$txt['update_message'] = 'You\'re using an outdated version of SMF, which contains some bugs which have since been fixed.
+$txt['update_message'] = 'You\'re using an outdated version of ezForum, which contains some bugs which have since been fixed.
 	It is recommended that you <a href="#" id="update-link">update your forum</a> to the latest version as soon as possible. It only takes a minute!';
 
 $txt['manageposts'] = 'Posts and Topics';
@@ -526,7 +526,7 @@ $txt['caching_settings'] = 'Caching';
 $txt['load_balancing_settings'] = 'Load Balancing';
 
 $txt['language_configuration'] = 'Languages';
-$txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the Simple Machines website. You may also edit language-related settings here.';
+$txt['language_description'] = 'This section allows you to edit languages installed on your forum, download new ones from the ezForum website. You may also edit language-related settings here.';
 $txt['language_edit'] = 'Edit Languages';
 $txt['language_add'] = 'Add Language';
 $txt['language_settings'] = 'Settings';
