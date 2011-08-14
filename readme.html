@@ -181,8 +181,8 @@
 									<li>the <a href="http://www.php.net/manual/en/info.configuration.php#ini.max-input-time" target="_blank">max_input_time</a> directive is set to a value of at least 30.</li>
 									<li>the <a href="http://www.php.net/manual/en/ini.core.php#ini.post-max-size" target="_blank">post_max_size</a> and <a href="http://www.php.net/configuration.directives#ini.upload-max-filesize" target="_blank">upload_max_filesize</a> directives set to the size of the largest attachments you wish to be able to upload.</li>
 									<li>the <a href="http://www.php.net/session#ini.session.use-trans-sid" target="_blank">session.use_trans_sid</a> directive set to Off.</li>
-									<li>the <a href="http://www.php.net/manual/en/ini.core.php#ini.memory-limit" target="_blank">memory_limit</a> directive is set to at least 8M.</li>
-									<li>the <a href="http://www.php.net/manual/en/info.configuration.php#ini.max-execution-time" target="_blank">max_execution_time</a> directive is set to at least 15.</li>
+									<li>the <a href="http://www.php.net/manual/en/ini.core.php#ini.memory-limit" target="_blank">memory_limit</a> directive is set to at least 32M.</li>
+									<li>the <a href="http://www.php.net/manual/en/info.configuration.php#ini.max-execution-time" target="_blank">max_execution_time</a> directive is set to at least 30.</li>
 									<li>the <a href="http://www.php.net/manual/en/ini.core.php#ini.register-globals" target="_blank">register_globals</a> directive is set to Off.</li>
 									<li>the <a href="http://www.php.net/manual/en/features.safe-mode.php" target="_blank">safe mode</a> disabled or <a href="http://httpd.apache.org/docs/2.0/suexec.html" target="_blank">suEXEC</a> ensabled.</li>
 									<li>the <a href="http://www.php.net/manual/en/book.bc.php" target="_blank">BCMath</a> library enabled for using the <a href="/smf/Registration#Settings" title="Registration">OpenID</a> registration method.</li>
@@ -241,14 +241,14 @@
 					<div class="panel">
 						<h2 id="Run_the_installer">Run the installer</h2>
 						<p>The final step in installing ezForum is running the installer. The information from the previous steps will be used in the installation process.</p>
-						<p>The first page you see may request your FTP information.  If you see this screen, it is because the installer found some files or folders with inadequate permissions for SMF to run properly.  If you enter your FTP information here, the installer can automatically fix these permissions for you.  Please note that the path should be the same path you see in your FTP client.  For example, it might be &quot;public_html/forum&quot;.  And remember, the installer will not save your FTP password anywhere.</p>
+						<p>The first page you see may request your FTP information.  If you see this screen, it is because the installer found some files or folders with inadequate permissions for ezForum to run properly.  If you enter your FTP information here, the installer can automatically fix these permissions for you.  Please note that the path should be the same path you see in your FTP client.  For example, it might be &quot;public_html/forum&quot;.  And remember, the installer will not save your FTP password anywhere.</p>
 						<p>Navigating to the directory where ezForum is located, should redirect you to the install.php file, and prompt the installer to run. For example: www.yourdomain.com/forum/install.php</p>
 						<h3>Basic forum settings</h3>
 						<dl>
 							<dt>Forum Name</dt>
 							<dd>The name for the forum being installed should go here. By default this is set to &quot;My Community&quot;. This can be changed later via the server settings section of the administration center if needed.</dd>
 							<dt>Forum URL</dt>
-							<dd>The URL the forum can be found at, without the trailing slash. The SMF installer will most likely have this correct, so it is safe to leave this field alone.</dd>
+							<dd>The URL the forum can be found at, without the trailing slash. The ezForum installer will most likely have this correct, so it is safe to leave this field alone.</dd>
 							<dt>Gzip Output</dt>
 							<dd>If Gzip output tests pass, this can be used to save bandwidth and make pages load faster.</dd>
 							<dt>Database Sessions</dt>
@@ -261,7 +261,7 @@
 						<h3>Database server settings</h3>
 						<dl>
 							<dt>Database type</dt>
-							<dd>The database schema can be selected here from a list of database schemas supported by the server being used. Newer schemas (for SMF 2.0) such as PostgreSQL and SQLite may be listed here if available. MySQL and PostgreSQL are recommended.</dd>
+							<dd>The database schema can be selected here from a list of database schemas supported by the server being used.</dd>
 							<dt>Server name</dt>
 							<dd>The location of the database is specified here. 99% of the time this will be localhost.</dd>
 							<dt>Username</dt>
@@ -271,14 +271,14 @@
 							<dt>Database name</dt>
 							<dd>The name used for the database should be placed here. If help is required for this, the hosting service provider should be contacted.</dd>
 							<dt>Database prefix</dt>
-							<dd>The prefix for all tables associated with this install is specified here. Prefixing tables with unique prefixes enables more than one application, or SMF install, to use the same database safely.</dd>
+							<dd>The prefix for all tables associated with this install is specified here. Prefixing tables with unique prefixes enables more than one application, or ezForum install, to use the same database safely.</dd>
 						</dl>
 						<h3>Creating an administrator account</h3>
 						<p>The ezForum installer will ask for information to create the forum's administrator account. This information includes username, password, and e-mail address, just like a regular account. Once created, this account can be used to visit the Administration Center to manage and configure the forum.</p>
 					</div>
 					<div class="panel">
 						<h2 id="finishing">Finishing everything up</h2>
-						<p>Once all steps of the installation process have been completed, check the box to remove the install files from the server. If this does not work, they will need to be deleted via FTP. All installer files should be removed from the server once the installation process is complete, as they are a major security risk if left on a server unattended. Once SMF is installed they are no longer needed.</p>
+						<p>Once all steps of the installation process have been completed, check the box to remove the install files from the server. If this does not work, they will need to be deleted via FTP. All installer files should be removed from the server once the installation process is complete, as they are a major security risk if left on a server unattended. Once ezForum is installed they are no longer needed.</p>
 						<p>Good luck!<br />
 						ezForum</p>
 					</div>
