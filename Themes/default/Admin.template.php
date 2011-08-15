@@ -389,7 +389,7 @@ function template_view_versions()
 				</thead>
 				<tbody>';
 
-	// The current version of the core SMF package.
+	// The current version of the core ezForum package.
 	echo '
 					<tr>
 						<td class="windowbg">

@@ -70,7 +70,7 @@ function smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 	if (empty($db_options['dont_select_db']) && !@mysql_select_db($db_name, $connection) && empty($db_options['non_fatal']))
 		db_fatal_error();
 
-	// This makes it possible to have SMF automatically change the sql_mode and autocommit if needed.
+	// This makes it possible to have ezForum automatically change the sql_mode and autocommit if needed.
 	if (isset($mysql_set_mode) && $mysql_set_mode === true)
 		$smcFunc['db_query']('', 'SET sql_mode = \'\', AUTOCOMMIT = 1',
 		array(),

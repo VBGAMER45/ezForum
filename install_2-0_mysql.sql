@@ -1332,7 +1332,7 @@ CREATE TABLE {$db_prefix}messages (
 
 INSERT INTO {$db_prefix}messages
 	(id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, poster_ip, modified_name, body, icon)
-VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'Simple Machines', 'info@simplemachines.org', '127.0.0.1', '', '{$default_topic_message}', 'xx');
+VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'ezForum', 'noreply@test.com', '127.0.0.1', '', '{$default_topic_message}', 'xx');
 # --------------------------------------------------------
 
 #
@@ -1377,7 +1377,7 @@ CREATE TABLE {$db_prefix}package_servers (
 
 INSERT INTO {$db_prefix}package_servers
 	(name, url)
-VALUES ('ezForum Modification Site', 'http://mods.simplemachines.org/files/mods');
+VALUES ('ezForum Modification Site', 'http://mods.ezforum.com/files/mods');
 # --------------------------------------------------------
 
 #
@@ -1617,7 +1617,7 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('attachmentNumPerPostLimit', '4'),
 	('attachmentDirSizeLimit', '10240'),
 	('attachmentUploadDir', '{$boarddir}/attachments'),
-	('attachmentExtensions', 'doc,gif,jpg,mpg,pdf,png,txt,zip'),
+	('attachmentExtensions', 'doc,gif,jpg,mpg,pdf,png,txt,zip,docx,xls,rar,odt'),
 	('attachmentCheckExtensions', '0'),
 	('attachmentShowImages', '1'),
 	('attachmentEnable', '1'),

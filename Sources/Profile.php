@@ -66,7 +66,7 @@ function ModifyProfile($post_errors = array())
 	$context['user']['is_owner'] = $memID == $user_info['id'];
 
 	/* Define all the sections within the profile area!
-		We start by defining the permission required - then SMF takes this and turns it into the relevant context ;)
+		We start by defining the permission required - then ezForum takes this and turns it into the relevant context ;)
 		Possible fields:
 			For Section:
 				string $title:		Section title.

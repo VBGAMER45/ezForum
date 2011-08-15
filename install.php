@@ -468,7 +468,7 @@ function Welcome()
 	if (isset($error))
 		$incontext['error'] = $txt[$error];
 
-	// Mod_security blocks everything that smells funny. Let SMF handle security.
+	// Mod_security blocks everything that smells funny. Let ezForum handle security.
 	if (!fixModSecurity() && !isset($_GET['overmodsecurity']))
 		$incontext['error'] = $txt['error_mod_security'] . '<br /><br /><a href="' . $installurl . '?overmodsecurity=true">' . $txt['error_message_click'] . '</a> ' . $txt['error_message_bad_try_again'];
 
@@ -771,7 +771,7 @@ function DatabaseSettings()
 			'db_server' => $_POST['db_server'],
 			'db_prefix' => $db_prefix,
 			// The cookiename is special; we want it to be the same if it ever needs to be reinstalled with the same info.
-			'cookiename' => 'SMFCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
+			'cookiename' => 'ezfCookie' . abs(crc32($_POST['db_name'] . preg_replace('~[^A-Za-z0-9_$]~', '', $_POST['db_prefix'])) % 1000),
 		);
 
 		// God I hope it saved!
@@ -1966,12 +1966,12 @@ function updateSettingsFile($vars)
 	return true;
 }
 
-// Create an .htaccess file to prevent mod_security. SMF has filtering built-in.
+// Create an .htaccess file to prevent mod_security. ezForum has filtering built-in.
 function fixModSecurity()
 {
 	$htaccess_addition = '
 <IfModule mod_security.c>
-	# Turn off mod_security filtering.  SMF is a big boy, it doesn\'t need its hands held.
+	# Turn off mod_security filtering.  ezForum is a big boy, it doesn\'t need its hands held.
 	SecFilterEngine Off
 
 	# The below probably isn\'t needed, but better safe than sorry.
@@ -2034,7 +2034,6 @@ function template_install_above()
 	<div id="header"><div class="frame">
 		<div id="top_section">
 			<h1 class="forumtitle">', $txt['smf_installer'], '</h1>
-			<img id="smflogo" src="Themes/default/images/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum" />
 		</div>
 		<div id="upper_section" class="middletext flow_hidden">
 			<div class="user"></div>

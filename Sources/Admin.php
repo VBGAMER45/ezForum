@@ -41,7 +41,7 @@ if (!defined('SMF'))
 		- pass through to manage members.
 
 	void DisplayAdminFile()
-		- get one of the admin information files from Simple Machines.
+		- get one of the admin information files from ezForum.
 
 */
 
@@ -618,7 +618,7 @@ function AdminHome()
 	);
 }
 
-// Get one of the admin information files from Simple Machines.
+// Get one of the admin information files from ezForums.
 function DisplayAdminFile()
 {
 	global $context, $modSettings, $smcFunc;

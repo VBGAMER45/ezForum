@@ -28,18 +28,7 @@ $databases = array(
 		'utf8_version_check' => 'return mysql_get_server_info();',
 		'alter_support' => true,
 	),
-	'postgresql' => array(
-		'name' => 'PostgreSQL',
-		'version' => '8.0',
-		'version_check' => '$version = pg_version(); return $version[\'client\'];',
-		'always_has_db' => true,
-	),
-	'sqlite' => array(
-		'name' => 'SQLite',
-		'version' => '1',
-		'version_check' => 'return 1;',
-		'always_has_db' => true,
-	),
+
 );
 
 // General options for the script.
@@ -182,7 +171,7 @@ if (!function_exists('clean_cache'))
 		if (!is_dir($cachedir))
 			return;
 
-		// Remove the files in SMF's own disk cache, if any
+		// Remove the files in ezForum's own disk cache, if any
 		$dh = opendir($cachedir);
 		while ($file = readdir($dh))
 		{
@@ -629,7 +618,7 @@ if (!isset($settings['default_theme_dir']))
 
 $upcontext['is_large_forum'] = (empty($modSettings['smfVersion']) || $modSettings['smfVersion'] <= '1.1 RC1') && !empty($modSettings['totalMessages']) && $modSettings['totalMessages'] > 75000;
 // Default title...
-$upcontext['page_title'] = isset($modSettings['smfVersion']) ? 'Updating Your SMF Install!' : 'Upgrading from YaBB SE!';
+$upcontext['page_title'] = isset($modSettings['smfVersion']) ? 'Updating Your ezForum Install!' : 'Upgrading from SMF!';
 
 $upcontext['right_to_left'] = isset($txt['lang_rtl']) ? $txt['lang_rtl'] : false;
 
@@ -702,7 +691,7 @@ function upgradeExit($fallThrough = false)
 			if (function_exists('debug_print_backtrace'))
 				debug_print_backtrace();
 
-			echo "\n" . 'Error: Unexpected call to use the ' . (isset($upcontext['sub_template']) ? $upcontext['sub_template'] : '') . ' template. Please copy and paste all the text above and visit the SMF support forum to tell the Developers that they\'ve made a boo boo; they\'ll get you up and running again.';
+			echo "\n" . 'Error: Unexpected call to use the ' . (isset($upcontext['sub_template']) ? $upcontext['sub_template'] : '') . ' template. Please copy and paste all the text above and visit the ezForum support forum to tell the Developers that they\'ve made a boo boo; they\'ll get you up and running again.';
 			flush();
 			die();
 		}
@@ -906,7 +895,7 @@ function initialize_inputs()
 	if (!isset($_GET['xml']))
 	{
 		$upcontext['remote_files_available'] = false;
-		$test = @fsockopen('www.simplemachines.org', 80, $errno, $errstr, 1);
+		$test = @fsockopen('www.ezforum.com', 80, $errno, $errstr, 1);
 		if ($test)
 			$upcontext['remote_files_available'] = true;
 		@fclose($test);
@@ -952,10 +941,10 @@ function WelcomeLogin()
 
 	// Do they meet the install requirements?
 	if (!php_version_check())
-		return throw_error('Warning!  You do not appear to have a version of PHP installed on your webserver that meets SMF\'s minimum installations requirements.<br /><br />Please ask your host to upgrade.');
+		return throw_error('Warning!  You do not appear to have a version of PHP installed on your webserver that meets ezForum\'s minimum installations requirements.<br /><br />Please ask your host to upgrade.');
 
 	if (!db_version_check())
-		return throw_error('Your ' . $databases[$db_type]['name'] . ' version does not meet the minimum requirements of SMF.<br /><br />Please ask your host to upgrade.');
+		return throw_error('Your ' . $databases[$db_type]['name'] . ' version does not meet the minimum requirements of ezForum.<br /><br />Please ask your host to upgrade.');
 
 	// Do they have ALTER privileges?
 	if (!empty($databases[$db_type]['alter_support']) && $smcFunc['db_query']('alter_boards', 'ALTER TABLE {db_prefix}boards ORDER BY id_board', array()) === false)
@@ -981,7 +970,7 @@ function WelcomeLogin()
 		return throw_error('The cache directory could not be found.<br /><br />Please make sure you have a directory called &quot;cache&quot; in your forum directory before continuing.');
 
 	if (!file_exists($boarddir . '/Themes/default/languages/index.' . $upcontext['language'] . '.php') && !isset($modSettings['smfVersion']) && !isset($_GET['lang']))
-		return throw_error('The upgrader was unable to find language files for the language specified in Settings.php.<br />SMF will not work without the primary language files installed.<br /><br />Please either install them, or <a href="' . $upgradeurl . '?step=0;lang=english">use english instead</a>.');
+		return throw_error('The upgrader was unable to find language files for the language specified in Settings.php.<br />ezForum will not work without the primary language files installed.<br /><br />Please either install them, or <a href="' . $upgradeurl . '?step=0;lang=english">use english instead</a>.');
 	elseif (!isset($_GET['skiplang']))
 	{
 		$temp = substr(@implode('', @file($boarddir . '/Themes/default/languages/index.' . $upcontext['language'] . '.php')), 0, 4096);
@@ -3449,7 +3438,6 @@ function template_upgrade_above()
 	<div id="header"><div class="frame">
 		<div id="top_section">
 			<h1 class="forumtitle">', $txt['upgrade_upgrade_utility'], '</h1>
-			<img id="smflogo" src="Themes/default/images/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum" />
 		</div>
 		<div id="upper_section" class="middletext flow_hidden">
 			<div class="user"></div>
@@ -3550,7 +3538,7 @@ function template_upgrade_below()
 		</div>
 	</div></div>
 	<div id="footer_section"><div class="frame" style="height: 40px;">
-		<div class="smalltext"><a href="http://www.simplemachines.org/" title="Simple Machines Forum" target="_blank" class="new_win">SMF &copy;2011, Simple Machines</a></div>
+		<div class="smalltext"><a href="http://www.ezforum.com" title="Free Forum Software" target="_blank" class="new_win">ezForum &copy;2011</a></div>
 	</div></div>
 	</body>
 </html>';
@@ -3620,7 +3608,7 @@ function template_welcome_message()
 	global $upcontext, $modSettings, $upgradeurl, $disable_security, $settings, $txt;
 
 	echo '
-		<script type="text/javascript" src="http://www.simplemachines.org/smf/current-version.js?version=' . SMF_VERSION . '"></script>
+		<script type="text/javascript" src="http://www.ezforum.com/ezc/current-version.js?version=' . SMF_VERSION . '"></script>
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 			<h3>', sprintf($txt['upgrade_ready_proceed'], SMF_VERSION), '</h3>
 	<form action="', $upcontext['form_url'], '" method="post" name="upform" id="upform" ', empty($upcontext['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $upcontext['rid'] . '\');"' : '', '>
@@ -3860,8 +3848,8 @@ function template_upgrade_options()
 						</td>
 						<td width="100%">
 							<label for="stats">
-								Allow Simple Machines to Collect Basic Stats Monthly.<br />
-								<span class="smalltext">If enabled, this will allow Simple Machines to visit your site once a month to collect basic statistics. This will help us make decisions as to which configurations to optimise the software for. For more information please visit our <a href="http://www.simplemachines.org/about/stats.php" target="_blank">info page</a>.</span>
+								Allow ezForum to Collect Basic Stats Monthly.<br />
+								<span class="smalltext">If enabled, this will allow ezForum to visit your site to collect basic statistics. This will help us make decisions as to which configurations to optimise the software for.</span>
 							</label>
 						</td>
 					</tr>
@@ -4295,7 +4283,7 @@ function template_clean_mods()
 	$upcontext['chmod_in_form'] = true;
 
 	echo '
-	<h3>SMF has detected some packages which were installed but not fully removed prior to upgrade. We recommend you remove the following mods and reinstall upon completion of the upgrade.</h3>
+	<h3>ezForum has detected some packages which were installed but not fully removed prior to upgrade. We recommend you remove the following mods and reinstall upon completion of the upgrade.</h3>
 	<form action="', $upcontext['form_url'], '&amp;ssi=1" name="upform" id="upform" method="post">';
 
 	// In case it's required.
@@ -4345,7 +4333,7 @@ function template_cleanup_done()
 	global $upcontext, $modSettings, $upgradeurl, $disable_security, $settings, $boarddir, $db_prefix, $boardurl;
 
 	echo '
-	<h3>SMF has attempted to fix and reinstall mods as required. We recommend you visit the package manager upon completing upgrade to check the status of your modifications.</h3>
+	<h3>ezForum has attempted to fix and reinstall mods as required. We recommend you visit the package manager upon completing upgrade to check the status of your modifications.</h3>
 	<form action="', $upcontext['form_url'], '&amp;ssi=1" name="upform" id="upform" method="post">
 		<table width="90%" align="center" cellspacing="1" cellpadding="2" style="background-color: black;">
 			<tr style="background-color: #eeeeee;">
@@ -4384,7 +4372,7 @@ function template_upgrade_templates()
 	if ($upcontext['temp_progress'] == 0 && !$upcontext['is_test'] && (!empty($upcontext['languages']) || !empty($upcontext['themes'])))
 	{
 		echo '
-		The following template files will be updated to ensure they are compatible with this version of SMF. Note that this can only fix a limited number of compatibility issues and in general you should seek out the latest version of these themes/language files.
+		The following template files will be updated to ensure they are compatible with this version of ezForum. Note that this can only fix a limited number of compatibility issues and in general you should seek out the latest version of these themes/language files.
 		<table width="90%" align="center" cellspacing="1" cellpadding="2" style="background-color: black;">
 			<tr style="background-color: #eeeeee;">
 				<td width="80%"><strong>Area</strong></td>
@@ -4476,7 +4464,7 @@ function template_upgrade_complete()
 	global $upcontext, $modSettings, $upgradeurl, $disable_security, $settings, $boarddir, $db_prefix, $boardurl;
 
 	echo '
-	<h3>That wasn\'t so hard, was it?  Now you are ready to use <a href="', $boardurl, '/index.php">your installation of SMF</a>.  Hope you like it!</h3>
+	<h3>That wasn\'t so hard, was it?  Now you are ready to use <a href="', $boardurl, '/index.php">your installation of ezForum</a>.  Hope you like it!</h3>
 	<form action="', $boardurl, '/index.php">';
 
 	if (!empty($upcontext['can_delete_script']))
@@ -4494,10 +4482,10 @@ function template_upgrade_complete()
 			<img src="', $boardurl, '/Themes/default/images/blank.gif" alt="" id="delete_upgrader" /><br />';
 
 	echo '<br />
-			If you had any problems with this upgrade, or have any problems using SMF, please don\'t hesitate to <a href="http://www.simplemachines.org/community/index.php">look to us for assistance</a>.<br />
+			If you had any problems with this upgrade, or have any problems using ezForum, please don\'t hesitate to <a href="http://www.ezforum.com/forums/index.php">look to us for assistance</a>.<br />
 			<br />
 			Best of luck,<br />
-			Simple Machines';
+			ezForum';
 }
 
 ?>

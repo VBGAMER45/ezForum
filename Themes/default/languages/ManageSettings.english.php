@@ -88,7 +88,7 @@ $txt['karmaApplaudLabel'] = 'Karma applaud label';
 $txt['karmaSmiteLabel'] = 'Karma smite label';
 
 $txt['caching_information'] = '<div class="aligncenter underline"><strong>Important! Read this first before enabling these features.</strong></div><br />
-	SMF supports caching through the use of accelerators. The currently supported accelerators include:<br />
+	ezForum supports caching through the use of accelerators. The currently supported accelerators include:<br />
 	<ul class="normallist">
 		<li>APC</li>
 		<li>eAccelerator</li>
@@ -98,24 +98,24 @@ $txt['caching_information'] = '<div class="aligncenter underline"><strong>Import
 		<li>XCache</li>
 	</ul>
 	Caching will work best if you have PHP compiled with one of the above optimizers, or have memcache
-	available. If you do not have any optimizer installed SMF will do file based caching.<br /><br />
-	SMF performs caching at a variety of levels. The higher the level of caching enabled the more CPU time will be spent
+	available. If you do not have any optimizer installed ezForum will do file based caching.<br /><br />
+	ezForum performs caching at a variety of levels. The higher the level of caching enabled the more CPU time will be spent
 	retrieving cached information. If caching is available on your machine it is recommended that you try caching at level 1 first.
 	<br /><br />
 	Note that if you use memcached you need to provide the server details in the setting below. This should be entered as a comma separated list
 	as shown in the example below:<br />
 	&quot;server1,server2,server3:port,server4&quot;<br /><br />
-	Note that if no port is specified SMF will use port 11211. SMF will attempt to perform rough/random load balancing across the servers.
+	Note that if no port is specified ezForum will use port 11211. ezForum will attempt to perform rough/random load balancing across the servers.
 	<br /><br />
 	%1$s';
 
-$txt['detected_no_caching'] = '<strong class="alert">SMF has not been able to detect a compatible accelerator on your server.</strong>';
-$txt['detected_APC'] = '<strong style="color: green">SMF has detected that your server has APC installed.</strong>';
-$txt['detected_eAccelerator'] = '<strong style="color: green">SMF has detected that your server has eAccelerator installed.</strong>';
-$txt['detected_MMCache'] = '<strong style="color: green">SMF has detected that your server has MMCache installed.</strong>';
-$txt['detected_Zend'] = '<strong style="color: green">SMF has detected that your server has Zend installed.</strong>';
-$txt['detected_Memcached'] = '<strong style="color: green">SMF has detected that your server has Memcached installed.</strong>';
-$txt['detected_XCache'] = '<strong style="color: green">SMF has detected that your server has XCache installed.</strong>';
+$txt['detected_no_caching'] = '<strong class="alert">ezForum has not been able to detect a compatible accelerator on your server.</strong>';
+$txt['detected_APC'] = '<strong style="color: green">ezForum has detected that your server has APC installed.</strong>';
+$txt['detected_eAccelerator'] = '<strong style="color: green">ezForum has detected that your server has eAccelerator installed.</strong>';
+$txt['detected_MMCache'] = '<strong style="color: green">ezForum has detected that your server has MMCache installed.</strong>';
+$txt['detected_Zend'] = '<strong style="color: green">ezForum has detected that your server has Zend installed.</strong>';
+$txt['detected_Memcached'] = '<strong style="color: green">ezForum has detected that your server has Memcached installed.</strong>';
+$txt['detected_XCache'] = '<strong style="color: green">ezForum has detected that your server has XCache installed.</strong>';
 
 $txt['cache_enable'] = 'Caching Level';
 $txt['cache_off'] = 'No caching';
@@ -183,7 +183,7 @@ $txt['setting_warning_show_user'] = 'Moderators and Warned Users';
 $txt['setting_warning_show_all'] = 'All Users';
 
 $txt['signature_settings'] = 'Signature Settings';
-$txt['signature_settings_desc'] = 'Use the settings on this page to decide how member signatures should be treated in SMF.';
+$txt['signature_settings_desc'] = 'Use the settings on this page to decide how member signatures should be treated in ezForum.';
 $txt['signature_settings_warning'] = 'Note that settings are not applied to existing signatures by default. Click <a href="' . $scripturl . '?action=admin;area=featuresettings;sa=sig;apply;%2$s=%1$s">here</a> to apply rules to all existing signatures.';
 $txt['signature_enable'] = 'Enable signatures';
 $txt['signature_max_length'] = 'Maximum allowed characters<div class="smalltext">(0 for no max.)</div>';
@@ -273,7 +273,7 @@ $txt['standard_profile_title'] = 'Standard Profile Fields';
 $txt['standard_profile_field'] = 'Field';
 
 $txt['core_settings_welcome_msg'] = 'Welcome to Your New Forum';
-$txt['core_settings_welcome_msg_desc'] = 'To get you started we suggest you select which of SMF\'s core features you want to enable. We\'d recommend only enabling with those features you need!';
+$txt['core_settings_welcome_msg_desc'] = 'To get you started we suggest you select which of ezForum\'s core features you want to enable. We\'d recommend only enabling with those features you need!';
 $txt['core_settings_item_cd'] = 'Calendar';
 $txt['core_settings_item_cd_desc'] = 'Enabling this feature will open up a selection of options to enable your users to view the calendar, add and review events, see users birthdates on a calendar and much, much more.';
 $txt['core_settings_item_cp'] = 'Advanced Profile Fields';
@@ -309,11 +309,11 @@ $txt['lang_entries_not_writable'] = '<strong>Warning:</strong> The language file
 $txt['languages_ltr'] = 'Right to Left';
 
 $txt['add_language'] = 'Add Language';
-$txt['add_language_smf'] = 'Download from Simple Machines';
+$txt['add_language_smf'] = 'Download from ezForum';
 $txt['add_language_smf_browse'] = 'Type name of language to search for or leave blank to search for all.';
 $txt['add_language_smf_install'] = 'Install';
 $txt['add_language_smf_found'] = 'The following languages were found. Click the install link next to the language you wish to install, you will then be taken to the package manager to install.';
-$txt['add_language_error_no_response'] = 'The Simple Machines site is not responding. Please try again later.';
+$txt['add_language_error_no_response'] = 'The ezForum site is not responding. Please try again later.';
 $txt['add_language_error_no_files'] = 'No files could be found.';
 $txt['add_language_smf_desc'] = 'Description';
 $txt['add_language_smf_utf8'] = 'UTF-8';
@@ -334,8 +334,8 @@ $txt['languages_download'] = 'Download Language Pack';
 $txt['languages_download_note'] = 'This page lists all the files that are contained within the language pack and some useful information about each one. All files that have their associated check box marked will be copied.';
 $txt['languages_download_info'] = '<strong>Note:</strong>
 	<ul class="normallist">
-		<li>Files which have the status &quot;Not Writable&quot; means SMF will not be able to copy this file to the directory at the present and you must make the destination writable either using an FTP client or by filling in your details at the bottom of the page.</li>
-		<li>The Version information for a file displays the last SMF version which it was updated for. If it is indicated in green then this is a newer version than you have at current. If amber this indicates it\'s the same version number as at current, red indicates you have a newer version installed than contained in the pack.</li>
+		<li>Files which have the status &quot;Not Writable&quot; means ezForum will not be able to copy this file to the directory at the present and you must make the destination writable either using an FTP client or by filling in your details at the bottom of the page.</li>
+		<li>The Version information for a file displays the last ezForum version which it was updated for. If it is indicated in green then this is a newer version than you have at current. If amber this indicates it\'s the same version number as at current, red indicates you have a newer version installed than contained in the pack.</li>
 		<li>Where a file already exists on your forum the &quot;Already Exists&quot; column will have one of two values. &quot;Identical&quot; indicates that the file already exists in an identical form and need not be overwritten. &quot;Different&quot; means that the contents vary in some way and overwriting is probably the optimum solution.</li>
 	</ul>';
 
@@ -351,7 +351,7 @@ $txt['languages_download_exists_same'] = 'Identical';
 $txt['languages_download_exists_different'] = 'Different';
 $txt['languages_download_copy'] = 'Copy';
 $txt['languages_download_not_chmod'] = 'You cannot proceed with the installation until all files selected to be copied are writable.';
-$txt['languages_download_illegal_paths'] = 'Package contains illegal paths - please contact Simple Machines';
+$txt['languages_download_illegal_paths'] = 'Package contains illegal paths - please contact ezForum';
 $txt['languages_download_complete'] = 'Installation Complete';
 $txt['languages_download_complete_desc'] = 'Language pack installed successfully. Please click <a href="%1$s">here</a> to return to the languages page';
 $txt['languages_delete_confirm'] = 'Are you sure you want to delete this language?';

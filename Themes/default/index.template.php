@@ -52,7 +52,7 @@ function template_init()
 	$settings['doctype'] = 'xhtml';
 
 	/* The version this template/theme is for.
-		This should probably be the version of SMF it was created for. */
+		This should probably be the version of ezForum it was created for. */
 	$settings['theme_version'] = '2.0';
 
 	/* Set a setting that tells the theme that it can render the tabs. */

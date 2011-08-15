@@ -33,8 +33,7 @@ if (isset($_GET['view']) && $_GET['view'] == 'home1')
 template_ssi_above();
 ?>
 
-			<h2>SMF SSI.php Functions</h2>
-			<p><strong>Current Version:</strong> 2.0</p>
+			<h2>ezForum SSI.php Functions</h2>
 			<p>This file is used to demonstrate the capabilities of SSI.php using PHP include functions. The examples show the include tag, then the results of it.</p>
 
 			<h2>Include Code</h2>
@@ -417,7 +416,7 @@ function template_ssi_above()
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>SMF 2.0 SSI.php Examples</title>
+		<title>ezForum SSI.php Examples</title>
 		<link rel="stylesheet" type="text/css" href="', $settings['default_theme_url'], '/css/index.css?fin20" />
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/script.js"></script>
 		<style type="text/css">
@@ -521,8 +520,7 @@ function template_ssi_above()
 		<div id="wrapper">
 			<div id="header"><div class="frame">
 				<div id="top_section">
-					<h1 class="forumtitle">SMF 2.0 SSI.php Examples</h1>
-					<img id="smflogo" src="Themes/default/images/smflogo.png" alt="Simple Machines Forum" title="Simple Machines Forum" />
+					<h1 class="forumtitle">ezForum SSI.php Examples</h1>
 				</div>
 				<div id="upper_section" class="middletext" style="overflow: hidden;">
 					<div class="user"></div>
@@ -547,7 +545,7 @@ function template_ssi_below()
 				</div>
 			</div></div>
 			<div id="footer_section"><div class="frame">
-				<div class="smalltext"><a href="http://www.simplemachines.org">Simple Machines Forum</a></div>
+				<div class="smalltext"><a href="http://www.ezforum.com" title="Forum Software">ezForum</a></div>
 			</div></div>
 		</div>
 	</body>
@@ -661,7 +659,7 @@ $topics = ssi_recentTopics(8, null, null, \'array\');
 
 foreach ($topics as $topic)
 {
-	// Uncomment the following code to get a listing of array elements that SMF provides for this function.
+	// Uncomment the following code to get a listing of array elements that ezForum provides for this function.
 	// echo \'<pre>\', print_r($topic), \'</pre>\';
 
 	echo \'

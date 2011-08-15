@@ -230,7 +230,7 @@ function smf_openID_return()
 	if ($_GET['openid_mode'] != 'id_res')
 		fatal_lang_error('openid_not_resolved');
 
-	// SMF has this annoying habit of removing the + from the base64 encoding.  So lets put them back.
+	// ezForum has this annoying habit of removing the + from the base64 encoding.  So lets put them back.
 	foreach (array('openid_assoc_handle', 'openid_invalidate_handle', 'openid_sig', 'sf') as $key)
 		if (isset($_GET[$key]))
 			$_GET[$key] = str_replace(' ', '+', $_GET[$key]);

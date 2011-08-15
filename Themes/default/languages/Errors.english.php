@@ -371,7 +371,7 @@ $txt['custom_option_not_unique'] = 'Field name is not unique!';
 $txt['warning_no_reason'] = 'You must enter a reason for altering the warning state of a member';
 $txt['warning_notify_blank'] = 'You selected to notify the user but did not fill in the subject/message fields';
 
-$txt['cannot_connect_doc_site'] = 'Could not connect to the Simple Machines Online Manual. Please check that your server configuration allows external internet connections and try again later.';
+$txt['cannot_connect_doc_site'] = 'Could not connect to the ezForum Online Manual. Please check that your server configuration allows external internet connections and try again later.';
 
 $txt['movetopic_no_reason'] = 'You must enter a reason for moving the topic, or uncheck the option to \'post a redirection topic\'.';
 
