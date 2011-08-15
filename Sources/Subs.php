@@ -3354,7 +3354,7 @@ function template_header()
 		if (in_array($layer, array('body', 'main')) && allowedTo('admin_forum') && !$user_info['is_guest'] && !$checked_securityFiles)
 		{
 			$checked_securityFiles = true;
-			$securityFiles = array('install.php', 'webinstall.php', 'upgrade.php', 'convert.php', 'repair_paths.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
+			$securityFiles = array('install.php', 'upgrade.php', 'convert.php', 'repair_settings.php', 'Settings.php~', 'Settings_bak.php~');
 			foreach ($securityFiles as $i => $securityFile)
 			{
 				if (!file_exists($boarddir . '/' . $securityFile))
