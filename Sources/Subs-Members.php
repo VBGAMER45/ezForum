@@ -521,8 +521,6 @@ function registerMember(&$regOptions, $return_errors = false)
 
 	if (!empty($regOptions['check_reserved_name']) && isReservedName($regOptions['username'], 0, false))
 	{
-		if ($regOptions['password'] == 'chocolate cake')
-			$reg_errors[] = array('done', 'Sorry, I don\'t take bribes... you\'ll need to come up with a different name.');
 		$reg_errors[] = array('done', '(' . htmlspecialchars($regOptions['username']) . ') ' . $txt['name_in_use']);
 	}
 
