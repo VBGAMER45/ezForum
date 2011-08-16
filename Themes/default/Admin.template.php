@@ -55,7 +55,7 @@ function template_admin()
 	echo '
 		<div id="admin_main_section">';
 
-	// Display the "live news" from simplemachines.org.
+	// Display the "live news" from ezforum.com.
 	echo '
 			<div id="live_news" class="floatleft">
 				<div class="cat_bar">
@@ -131,7 +131,7 @@ function template_admin()
 	</div>
 	<br class="clear" />';
 
-	// The below functions include all the scripts needed from the simplemachines.org site. The language and format are passed for internationalization.
+	// The below functions include all the scripts needed from the ezforum.com site. The language and format are passed for internationalization.
 	if (empty($modSettings['disable_smf_js']))
 		echo '
 		<script type="text/javascript" src="', $scripturl, '?action=viewsmfile;filename=current-version.js"></script>
@@ -242,7 +242,7 @@ function template_credits()
 			<span class="botslice"><span></span></span>
 		</div>';
 
-	// Display latest support questions from simplemachines.org.
+	// Display latest support questions from ezforum.com.
 	echo '
 		<div class="cat_bar">
 			<h3 class="catbg">
@@ -567,7 +567,7 @@ function template_view_versions()
 	<br class="clear" />';
 
 	/* Below is the hefty javascript for this. Upon opening the page it checks the current file versions with ones
-	   held at simplemachines.org and works out if they are up to date.  If they aren't it colors that files number
+	   held at ezforum.com and works out if they are up to date.  If they aren't it colors that files number
 	   red.  It also contains the function, swapOption, that toggles showing the detailed information for each of the
 	   file categories. (sources, languages, and templates.) */
 	echo '

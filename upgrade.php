@@ -1215,11 +1215,11 @@ function UpgradeOptions()
 	if (!empty($_POST['stats']) && substr($boardurl, 0, 16) != 'http://localhost' && empty($modSettings['allow_sm_stats']))
 	{
 		// Attempt to register the site etc.
-		$fp = @fsockopen('www.simplemachines.org', 80, $errno, $errstr);
+		$fp = @fsockopen('www.ezforum.com', 80, $errno, $errstr);
 		if ($fp)
 		{
-			$out = 'GET /smf/stats/register_stats.php?site=' . base64_encode($boardurl) . ' HTTP/1.1' . "\r\n";
-			$out .= 'Host: www.simplemachines.org' . "\r\n";
+			$out = 'GET /ezc/stats/register_stats.php?site=' . base64_encode($boardurl) . ' HTTP/1.1' . "\r\n";
+			$out .= 'Host: www.ezforum.com' . "\r\n";
 			$out .= 'Connection: Close' . "\r\n\r\n";
 			fwrite($fp, $out);
 

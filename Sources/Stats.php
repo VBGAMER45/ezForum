@@ -28,7 +28,6 @@ if (!defined('SMF'))
 		- loads the statistics on a daily basis in $context.
 
 	void SMStats()
-		- called by simplemachines.org.
 		- only returns anything if stats was enabled during installation.
 		- can also be accessed by the admin, to show what stats sm.org collects.
 		- does not return any data directly to sm.org, instead starts a new request for security.
@@ -665,7 +664,6 @@ function getDailyStats($condition_string, $condition_parameters = array())
 }
 
 // This is the function which returns stats to simplemachines.org IF enabled!
-// See http://www.simplemachines.org/about/stats.php for more info.
 function SMStats()
 {
 	global $modSettings, $user_info, $forum_version, $sourcedir;
@@ -718,13 +716,13 @@ function SMStats()
 	else
 	{
 		// Connect to the collection script.
-		$fp = @fsockopen('www.simplemachines.org', 80, $errno, $errstr);
+		$fp = @fsockopen('www.ezforum.com', 80, $errno, $errstr);
 		if ($fp)
 		{
 			$length = strlen($stats_to_send);
 
-			$out = 'POST /smf/stats/collect_stats.php HTTP/1.1' . "\r\n";
-			$out .= 'Host: www.simplemachines.org' . "\r\n";
+			$out = 'POST /ezc/stats/collect_stats.php HTTP/1.1' . "\r\n";
+			$out .= 'Host: www.ezforum.com' . "\r\n";
 			$out .= 'Content-Type: application/x-www-form-urlencoded' . "\r\n";
 			$out .= 'Content-Length: ' . $length . "\r\n\r\n";
 			$out .= $stats_to_send . "\r\n";

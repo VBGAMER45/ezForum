@@ -17,7 +17,7 @@ $txt['smf_installer'] = 'ezForum Installer';
 $txt['installer_language'] = 'Language';
 $txt['installer_language_set'] = 'Set';
 $txt['congratulations'] = 'Congratulations, the installation process is complete!';
-$txt['congratulations_help'] = 'If at any time you need support, or ezForum fails to work properly, please remember that <a href="http://www.simplemachines.org/community/index.php" target="_blank">help is available</a> if you need it.';
+$txt['congratulations_help'] = 'If at any time you need support, or ezForum fails to work properly, please remember that <a href="http://www.ezforum.com/forums/index.php" target="_blank">help is available</a> if you need it.';
 $txt['still_writable'] = 'Your installation directory is still writable.  It\'s a good idea to chmod it so that it is not writable for security reasons.';
 $txt['delete_installer'] = 'Click here to delete this install.php file now.';
 $txt['delete_installer_maybe'] = '<em>(doesn\'t work on all servers.)</em>';

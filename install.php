@@ -294,7 +294,7 @@ function load_lang_file()
 		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>SMF Installer: Error!</title>
+		<title>ezForum Installer: Error!</title>
 	</head>
 	<body style="font-family: sans-serif;"><div style="width: 600px;">
 		<h1 style="font-size: 14pt;">A critical error has occurred.</h1>
@@ -306,7 +306,7 @@ function load_lang_file()
 		<p>In some cases, FTP clients do not properly upload files with this many folders.  Please double check to make sure you <span style="font-weight: 600;">have uploaded all the files in the distribution</span>.</p>
 		<p>If that doesn\'t help, please make sure this install.php file is in the same place as the Themes folder.</p>
 
-		<p>If you continue to get this error message, feel free to <a href="http://support.simplemachines.org/">look to us for support</a>.</p>
+		<p>If you continue to get this error message, feel free to <a href="http://www.ezforum.com/forums/index.php">look to us for support</a>.</p>
 	</div></body>
 </html>';
 		die;
