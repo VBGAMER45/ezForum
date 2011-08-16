@@ -722,7 +722,7 @@ if (!isset($modSettings['cal_maxyear']) || $modSettings['cal_maxyear'] == '2010'
 		REPLACE INTO {$db_prefix}settings
 			(variable, value)
 		VALUES
-			('cal_maxyear', '2020')");
+			('cal_maxyear', '2030')");
 }
 ---}
 ---#
