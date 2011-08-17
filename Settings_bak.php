@@ -36,6 +36,8 @@ $db_prefix = 'ezf_';
 $db_persist = 0;
 $db_error_send = 1;
 
+$db_show_debug = false; // Show debugging information useful for modification/theme development
+
 ########## Directories/Files ##########
 # Note: These directories do not have to be changed unless you move things.
 $boarddir = dirname(__FILE__);		# The absolute path to the forum's folder. (not just '.'!)

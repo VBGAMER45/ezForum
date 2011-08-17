@@ -1695,6 +1695,9 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('avatar_max_width_upload', '65'),
 	('avatar_resize_upload', '1'),
 	('avatar_download_png', '1'),
+	('custom_avatar_enabled', '1'),
+	('custom_avatar_directory', '{$boarddir}/useravatars'),
+	('custom_avatar_url', '{$boardurl}/useravatars'),
 	('failed_login_threshold', '3'),
 	('oldTopicDays', '120'),
 	('edit_wait_time', '90'),
@@ -1728,7 +1731,7 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('requireAgreement', '1'),
 	('unapprovedMembers', '0'),
 	('default_personal_text', ''),
-	('package_make_backups', '1'),
+	('package_make_backups', '0'),
 	('databaseSession_enable', '{$databaseSession_enable}'),
 	('databaseSession_loose', '1'),
 	('databaseSession_lifetime', '2880'),
@@ -1765,6 +1768,8 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('attachment_image_reencode', '1'),
 	('attachment_image_paranoid', '0'),
 	('attachment_thumb_png', '1'),
+	('disableTemplateEval', '1'),
+	('disableHostnameLookup', '1'),
 	('avatar_reencode', '1'),
 	('avatar_paranoid', '0');
 # --------------------------------------------------------
@@ -1929,8 +1934,12 @@ VALUES (1, 'name', '{$default_theme_name}'),
 	(1, 'enable_news', '1'),
 	(1, 'forum_width', '90%');
 
-INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'display_quick_reply', '1');
+INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'display_quick_reply', '2');
 INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'posts_apply_ignore_list', '1');
+INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'copy_to_outbox', '1');
+INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'use_sidebar_menu', '1');
+INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'return_to_post', '1');
+INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'display_quick_mod', '1');
 # --------------------------------------------------------
 
 #
