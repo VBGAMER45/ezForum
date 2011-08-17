@@ -282,11 +282,11 @@ function template_info_center()
 	<div class="roundframe"><div class="innerframe">
 		<div class="cat_bar">
 			<h3 class="catbg">
-				<img class="icon" id="upshrink_ic" src="', $settings['images_url'], '/collapse.gif" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />
+				
 				', sprintf($txt['info_center_title'], $context['forum_name_html_safe']), '
 			</h3>
 		</div>
-		<div id="upshrinkHeaderIC"', empty($options['collapse_header_ic']) ? '' : ' style="display: none;"', '>';
+		<div id="upshrinkHeaderIC">';
 
 	// This is the "Recent Posts" bar.
 	if (!empty($settings['number_recent_posts']) && (!empty($context['latest_posts']) || !empty($context['latest_post'])))
@@ -474,35 +474,5 @@ function template_info_center()
 	</div></div>
 	<span class="lowerframe"><span></span></span>';
 
-	// Info center collapse object.
-	echo '
-	<script type="text/javascript"><!-- // --><![CDATA[
-		var oInfoCenterToggle = new smc_Toggle({
-			bToggleEnabled: true,
-			bCurrentlyCollapsed: ', empty($options['collapse_header_ic']) ? 'false' : 'true', ',
-			aSwappableContainers: [
-				\'upshrinkHeaderIC\'
-			],
-			aSwapImages: [
-				{
-					sId: \'upshrink_ic\',
-					srcExpanded: smf_images_url + \'/collapse.gif\',
-					altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-					srcCollapsed: smf_images_url + \'/expand.gif\',
-					altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
-				}
-			],
-			oThemeOptions: {
-				bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-				sOptionName: \'collapse_header_ic\',
-				sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-				sSessionId: ', JavaScriptEscape($context['session_id']), '
-			},
-			oCookieOptions: {
-				bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-				sCookieName: \'upshrinkIC\'
-			}
-		});
-	// ]]></script>';
 }
 ?>

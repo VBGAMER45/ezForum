@@ -177,14 +177,11 @@ function template_body_above()
 			<h1 class="forumtitle">
 				<a href="', $scripturl, '">', empty($context['header_logo_url_html_safe']) ? $context['forum_name'] : '<img src="' . $context['header_logo_url_html_safe'] . '" alt="' . $context['forum_name'] . '" />', '</a>
 			</h1>';
-
-	// the upshrink image, right-floated
-	echo '
-			<img id="upshrink" src="', $settings['images_url'], '/upshrink.png" alt="*" title="', $txt['upshrink_description'], '" style="display: none;" />';
+	
 	echo '
 			', empty($settings['site_slogan']) ? '' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
 		</div>
-		<div id="upper_section" class="middletext"', empty($options['collapse_header']) ? '' : ' style="display: none;"', '>
+		<div id="upper_section" class="middletext">
 			<div class="user">';
 
 	// If the user is logged in, display stuff like their name, new messages, etc.
@@ -274,37 +271,6 @@ function template_body_above()
 			</div>
 		</div>
 		<br class="clear" />';
-
-	// Define the upper_section toggle in JavaScript.
-	echo '
-		<script type="text/javascript"><!-- // --><![CDATA[
-			var oMainHeaderToggle = new smc_Toggle({
-				bToggleEnabled: true,
-				bCurrentlyCollapsed: ', empty($options['collapse_header']) ? 'false' : 'true', ',
-				aSwappableContainers: [
-					\'upper_section\'
-				],
-				aSwapImages: [
-					{
-						sId: \'upshrink\',
-						srcExpanded: smf_images_url + \'/upshrink.png\',
-						altExpanded: ', JavaScriptEscape($txt['upshrink_description']), ',
-						srcCollapsed: smf_images_url + \'/upshrink2.png\',
-						altCollapsed: ', JavaScriptEscape($txt['upshrink_description']), '
-					}
-				],
-				oThemeOptions: {
-					bUseThemeSettings: ', $context['user']['is_guest'] ? 'false' : 'true', ',
-					sOptionName: \'collapse_header\',
-					sSessionVar: ', JavaScriptEscape($context['session_var']), ',
-					sSessionId: ', JavaScriptEscape($context['session_id']), '
-				},
-				oCookieOptions: {
-					bUseCookie: ', $context['user']['is_guest'] ? 'true' : 'false', ',
-					sCookieName: \'upshrink\'
-				}
-			});
-		// ]]></script>';
 
 	// Show the menu here, according to the menu sub template.
 	template_menu();
