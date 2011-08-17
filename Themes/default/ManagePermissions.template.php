@@ -844,7 +844,6 @@ function template_modify_group_simple($type)
 		// ]]></script>';
 }
 
-// The SMF 1.x way of looking at permissions.
 function template_modify_group_classic($type)
 {
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;

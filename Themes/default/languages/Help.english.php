@@ -359,7 +359,7 @@ $helptxt['hotTopicPosts'] = 'Change the number of posts for a topic to reach the
 $helptxt['globalCookies'] = 'Makes log in cookies available across subdomains.  For example, if...<br />
 	Your site is at http://www.ezforum.com/,<br />
 	And your forum is at http://forum.ezforum.com/,<br />
-	Using this option will allow you to access the forum\'s cookie on your site.  Do not enable this if there are other subdomains (like hacker.simplemachines.org) not controlled by you.';
+	Using this option will allow you to access the forum\'s cookie on your site.  Do not enable this if there are other subdomains (like hacker.ezforum.com) not controlled by you.';
 $helptxt['secureCookies'] = 'Enabling this option will force the cookies created for users on your forum to be marked as secure. Only enable this option if you are using HTTPS throughout your site as it will break cookie handling otherwise!';
 $helptxt['securityDisable'] = 'This <em>disables</em> the additional password check for the administration section. This is not recommended!';
 $helptxt['securityDisable_why'] = 'This is your current password. (the same one you use to login.)<br /><br />Having to type this helps ensure that you want to do whatever administration you are doing, and that it is <strong>you</strong> doing it.';

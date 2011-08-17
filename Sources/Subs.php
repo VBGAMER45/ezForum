@@ -3799,7 +3799,7 @@ function clean_cache($type = '')
 	if (!is_dir($cachedir))
 		return;
 
-	// Remove the files in SMF's own disk cache, if any
+	// Remove the files in ezForum's own disk cache, if any
 	$dh = opendir($cachedir);
 	while ($file = readdir($dh))
 	{

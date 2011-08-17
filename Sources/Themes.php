@@ -1448,8 +1448,8 @@ function ThemeInstall()
 			$extracted = read_tgz_file($_FILES['theme_gz']['tmp_name'], $boarddir . '/Themes/' . $theme_name, false, true);
 		elseif (isset($_REQUEST['theme_gz']))
 		{
-			// Check that the theme is from simplemachines.org, for now... maybe add mirroring later.
-			if (preg_match('~^http://[\w_\-]+\.simplemachines\.org/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
+			// Check that the theme is from ezforum.com, for now... maybe add mirroring later.
+			if (preg_match('~^http://[\w_\-]+\.ezforum\.com/~', $_REQUEST['theme_gz']) == 0 || strpos($_REQUEST['theme_gz'], 'dlattach') !== false)
 				fatal_lang_error('not_on_simplemachines');
 
 			$extracted = read_tgz_file($_REQUEST['theme_gz'], $boarddir . '/Themes/' . $theme_name, false, true);

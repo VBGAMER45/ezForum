@@ -518,7 +518,7 @@ function html_to_bbc($text)
 		// Keep track of the number of nested list levels.
 		$listDepth = 0;
 
-		// Map what we can expect from the HTML to what is supported by SMF.
+		// Map what we can expect from the HTML to what is supported by ezForum.
 		$listTypeMapping = array(
 			'1' => 'decimal',
 			'A' => 'upper-alpha',

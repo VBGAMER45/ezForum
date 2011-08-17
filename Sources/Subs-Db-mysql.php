@@ -182,7 +182,7 @@ function smf_db_replacement__callback($matches)
 		break;
 
 		case 'identifier':
-			// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for SMF.
+			// Backticks inside identifiers are supported as of MySQL 4.1. We don't need them for ezForum.
 			return '`' . strtr($replacement, array('`' => '', '.' => '')) . '`';
 		break;
 
@@ -328,7 +328,7 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 		$clean .= substr($db_string, $old_pos);
 		$clean = trim(strtolower(preg_replace($allowed_comments_from, $allowed_comments_to, $clean)));
 
-		// We don't use UNION in SMF, at least so far.  But it's useful for injections.
+		// We don't use UNION in ezForum, at least so far.  But it's useful for injections.
 		if (strpos($clean, 'union') !== false && preg_match('~(^|[^a-z])union($|[^[a-z])~s', $clean) != 0)
 			$fail = true;
 		// Comments?  We don't use comments in our queries, we leave 'em outside!

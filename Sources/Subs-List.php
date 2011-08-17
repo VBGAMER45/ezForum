@@ -14,7 +14,7 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file contains a standard way of displaying lists for SMF.
+/*	This file contains a standard way of displaying lists for ezForum.
 */
 
 function createList($listOptions)

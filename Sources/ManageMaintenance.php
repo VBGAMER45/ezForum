@@ -363,7 +363,7 @@ function ConvertUtf8()
 	// Show me your badge!
 	isAllowedTo('admin_forum');
 
-	// The character sets used in SMF's language files with their db equivalent.
+	// The character sets used in ezForum's language files with their db equivalent.
 	$charsets = array(
 		// Chinese-traditional.
 		'big5' => 'big5',

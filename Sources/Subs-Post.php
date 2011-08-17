@@ -149,7 +149,7 @@ if (!defined('SMF'))
 		- uses the Login language file.
 		- the language set by each member is being used (if available).
 
-	Sending emails from SMF:
+	Sending emails from ezForum:
 	---------------------------------------------------------------------------
 		// !!!
 */
@@ -2088,7 +2088,7 @@ function createAttachment(&$attachmentOptions)
 		return false;
 	}
 
-	// These are the only valid image types for SMF.
+	// These are the only valid image types for ezForum.
 	$validImageTypes = array(
 		1 => 'gif',
 		2 => 'jpeg',

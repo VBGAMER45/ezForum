@@ -2693,7 +2693,7 @@ function cache_get_data($key, $ttl = 120)
 		$value = output_cache_get($key, $ttl);
 	elseif (function_exists('xcache_get') && ini_get('xcache.var_size') > 0)
 		$value = xcache_get($key);
-	// Otherwise it's SMF data!
+	// Otherwise it's ezForum data!
 	elseif (file_exists($cachedir . '/data_' . $key . '.php') && filesize($cachedir . '/data_' . $key . '.php') > 10)
 	{
 		require($cachedir . '/data_' . $key . '.php');

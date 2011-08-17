@@ -1352,7 +1352,7 @@ function PackageBrowse()
 			// This package is currently NOT installed.  Check if it can be.
 			if (!$packageInfo['is_installed'] && $packageInfo['xml']->exists('install'))
 			{
-				// Check if there's an install for *THIS* version of SMF.
+				// Check if there's an install for *THIS* version of ezForum.
 				$installs = $packageInfo['xml']->set('install');
 				foreach ($installs as $install)
 				{
@@ -1369,10 +1369,10 @@ function PackageBrowse()
 			{
 				$upgrades = $packageInfo['xml']->set('upgrade');
 
-				// First go through, and check against the current version of SMF.
+				// First go through, and check against the current version of ezForum.
 				foreach ($upgrades as $upgrade)
 				{
-					// Even if it is for this SMF, is it for the installed version of the mod?
+					// Even if it is for this ezForum, is it for the installed version of the mod?
 					if (!$upgrade->exists('@for') || matchPackageVersion($the_version, $upgrade->fetch('@for')))
 						if (!$upgrade->exists('@from') || matchPackageVersion($installed_mods[$packageInfo['id']]['version'], $upgrade->fetch('@from')))
 						{
@@ -1386,7 +1386,7 @@ function PackageBrowse()
 			{
 				$uninstalls = $packageInfo['xml']->set('uninstall');
 
-				// Can we find any uninstallation methods that work for this SMF version?
+				// Can we find any uninstallation methods that work for this ezForum version?
 				foreach ($uninstalls as $uninstall)
 					if (!$uninstall->exists('@for') || matchPackageVersion($the_version, $uninstall->fetch('@for')))
 					{

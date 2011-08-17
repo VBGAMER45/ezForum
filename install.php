@@ -2123,7 +2123,7 @@ function template_install_below()
 </html>';
 }
 
-// Welcome them to the wonderful world of SMF!
+// Welcome them to the wonderful world of ezForum!
 function template_welcome_message()
 {
 	global $incontext, $installurl, $txt;

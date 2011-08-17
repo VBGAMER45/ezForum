@@ -233,7 +233,7 @@ function ModerationHome()
 	}
 }
 
-// Just prepares the time stuff for the simple machines latest news.
+// Just prepares the time stuff for the ezforum.com latest news.
 function ModBlockLatestNews()
 {
 	global $context, $user_info;

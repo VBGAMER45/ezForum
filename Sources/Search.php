@@ -43,7 +43,7 @@ if (!defined('SMF'))
 		- passes sorting duty to the current API.
 */
 
-// This defines two version types for checking the API's are compatible with this version of SMF.
+// This defines two version types for checking the API's are compatible with this version of ezForum.
 $GLOBALS['search_versions'] = array(
 	// This is the forum version but is repeated due to some people rewriting $forum_version.
 	'forum_version' => 'SMF 2.0',
@@ -323,7 +323,7 @@ function PlushSearch2()
 		fatal_lang_error('search_api_missing');
 	loadClassFile('SearchAPI-' . ucwords($modSettings['search_index']) . '.php');
 
-	// Create an instance of the search API and check it is valid for this version of SMF.
+	// Create an instance of the search API and check it is valid for this version of ezForum.
 	$search_class_name = $modSettings['search_index'] . '_search';
 	$searchAPI = new $search_class_name();
 	if (!$searchAPI || ($searchAPI->supportsMethod('isValid') && !$searchAPI->isValid()) || !matchPackageVersion($search_versions['forum_version'], $searchAPI->min_smf_version . '-' . $searchAPI->version_compatible))

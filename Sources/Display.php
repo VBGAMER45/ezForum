@@ -15,7 +15,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /*	This is perhaps the most important and probably most accessed files in all
-	of SMF.  This file controls topic, message, and attachment display.  It
+	of ezForum.  This file controls topic, message, and attachment display.  It
 	does so with the following functions:
 
 	void Display()
@@ -1511,7 +1511,7 @@ function loadAttachmentContext($id_msg)
 						list ($attachment['thumb_width'], $attachment['thumb_height']) = $size;
 						$thumb_size = filesize($filename . '_thumb');
 
-						// These are the only valid image types for SMF.
+						// These are the only valid image types for ezForum.
 						$validImageTypes = array(1 => 'gif', 2 => 'jpeg', 3 => 'png', 5 => 'psd', 6 => 'bmp', 7 => 'tiff', 8 => 'tiff', 9 => 'jpeg', 14 => 'iff');
 
 						// What about the extension?

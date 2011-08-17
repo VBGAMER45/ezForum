@@ -1366,8 +1366,8 @@ function InstallSmileySet()
 		$extracted = read_tgz_file($_FILES['set_gz']['tmp_name'], $boarddir . '/Smileys/' . $name);
 	elseif (isset($_REQUEST['set_gz']))
 	{
-		// Check that the smiley is from simplemachines.org, for now... maybe add mirroring later.
-		if (preg_match('~^http://[\w_\-]+\.simplemachines\.org/~', $_REQUEST['set_gz']) == 0 || strpos($_REQUEST['set_gz'], 'dlattach') !== false)
+		// Check that the smiley is from ezforum.com, for now... maybe add mirroring later.
+		if (preg_match('~^http://[\w_\-]+\.ezforum\.com/~', $_REQUEST['set_gz']) == 0 || strpos($_REQUEST['set_gz'], 'dlattach') !== false)
 			fatal_lang_error('not_on_simplemachines');
 
 		$extracted = read_tgz_file($_REQUEST['set_gz'], $boarddir . '/Smileys/' . $name);
