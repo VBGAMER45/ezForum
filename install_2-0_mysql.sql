@@ -487,6 +487,7 @@ CREATE TABLE {$db_prefix}boards (
   unapproved_posts smallint(5) NOT NULL default '0',
   unapproved_topics smallint(5) NOT NULL default '0',
   redirect varchar(255) NOT NULL default '',
+  show_rssicon tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY (id_board),
   UNIQUE categories (id_cat, id_board),
   KEY id_parent (id_parent),
@@ -1210,6 +1211,9 @@ CREATE TABLE {$db_prefix}members (
   aim varchar(255) NOT NULL default '',
   yim varchar(32) NOT NULL default '',
   msn varchar(255) NOT NULL default '',
+  fb varchar(255) NOT NULL default '',
+  twitter varchar(255) NOT NULL default '',
+  googleplus varchar(255) NOT NULL default '',
   hide_email tinyint(4) NOT NULL default '0',
   show_online tinyint(4) NOT NULL default '1',
   time_format varchar(80) NOT NULL default '',
@@ -1241,6 +1245,8 @@ CREATE TABLE {$db_prefix}members (
   warning tinyint(4) NOT NULL default '0',
   passwd_flood varchar(12) NOT NULL default '',
   pm_receive_from tinyint(4) unsigned NOT NULL default '1',
+  passwd_expiredate int(10) unsigned NOT NULL default '0',
+  email_bounced (1) NOT NULL default '0',
   PRIMARY KEY (id_member),
   KEY member_name (member_name),
   KEY real_name (real_name),
@@ -1867,7 +1873,8 @@ VALUES (1, 'Google', 'googlebot', ''),
 	(16, 'InternetArchive', 'ia_archiver-web.archive.org', ''),
 	(17, 'Alexa', 'ia_archiver', ''),
 	(18, 'Omgili', 'omgilibot', ''),
-	(19, 'EntireWeb', 'Speedy Spider', '');
+	(19, 'EntireWeb', 'Speedy Spider', ''),
+	(20, 'Bing', 'bingbot', '');
 
 #
 # Table structure for table `subscriptions`
