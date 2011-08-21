@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * ezForum http://www.ezforum.com
+ * Copyright 2011 ezForum
+ * License: BSD
+ *
+ * Based on:
  * Simple Machines Forum (SMF)
  *
  * @package SMF

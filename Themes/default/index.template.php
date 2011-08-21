@@ -1,5 +1,10 @@
 <?php
 /**
+ * ezForum http://www.ezforum.com
+ * Copyright 2011 ezForum
+ * License: BSD
+ *
+ * Based on:
  * Simple Machines Forum (SMF)
  *
  * @package SMF
@@ -177,7 +182,7 @@ function template_body_above()
 			<h1 class="forumtitle">
 				<a href="', $scripturl, '">', empty($context['header_logo_url_html_safe']) ? $context['forum_name'] : '<img src="' . $context['header_logo_url_html_safe'] . '" alt="' . $context['forum_name'] . '" />', '</a>
 			</h1>';
-	
+
 	echo '
 			', empty($settings['site_slogan']) ? '' : '<div id="siteslogan" class="floatright">' . $settings['site_slogan'] . '</div>', '
 		</div>

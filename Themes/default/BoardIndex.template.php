@@ -1,5 +1,10 @@
 <?php
 /**
+ * ezForum http://www.ezforum.com
+ * Copyright 2011 ezForum
+ * License: BSD
+ *
+ * Based on:
  * Simple Machines Forum (SMF)
  *
  * @package SMF
@@ -282,7 +287,7 @@ function template_info_center()
 	<div class="roundframe"><div class="innerframe">
 		<div class="cat_bar">
 			<h3 class="catbg">
-				
+
 				', sprintf($txt['info_center_title'], $context['forum_name_html_safe']), '
 			</h3>
 		</div>

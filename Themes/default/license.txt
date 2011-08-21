@@ -1,4 +1,4 @@
-Copyright © 2011 Simple Machines.  All rights reserved.
+Copyright 2011 Simple Machines.  All rights reserved.
 
 Developed by: Simple Machines Forum Project
               Simple Machines
