@@ -143,7 +143,6 @@ function template_html_above()
 
 	// Show all the relative links, such as help, search, contents, and the like.
 	echo '
-	<link rel="help" href="', $scripturl, '?action=help" />
 	<link rel="search" href="', $scripturl, '?action=search" />
 	<link rel="contents" href="', $scripturl, '" />';
 
@@ -222,8 +221,11 @@ function template_body_above()
 	// Otherwise they're a guest - this time ask them to either register or login - lazy bums...
 	elseif (!empty($context['show_login_bar']))
 	{
+		if (empty($context['disable_login_hashing']))
 		echo '
-				<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
+				<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>';
+		
+		echo '
 				<form id="guest_form" action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '" ', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 					<div class="info">', sprintf($txt['welcome_guest'], $txt['guest_title']), '</div>
 					<input type="text" name="user" size="10" class="input_text" />
