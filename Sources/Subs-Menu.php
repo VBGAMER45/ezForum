@@ -105,10 +105,6 @@ function createMenu($menuData, $menuOptions = array())
 		foreach ($menuOptions['extra_url_parameters'] as $key => $value)
 			$menu_context['extra_parameters'] .= ';' . $key . '=' . $value;
 
-	// Only include the session ID in the URL if it's strictly necessary.
-	if (empty($menuOptions['disable_url_session_check']))
-		$menu_context['extra_parameters'] .= ';' . $context['session_var'] . '=' . $context['session_id'];
-
 	$include_data = array();
 
 	// Now setup the context correctly.
