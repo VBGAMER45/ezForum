@@ -350,7 +350,7 @@ function ViewSubscriptions()
 			array(
 				'position' => 'below_table_data',
 				'value' => '
-					<input type="submit" name="add" value="' . $txt['paid_add_subscription'] . '" class="button_submit" />
+					<input type="submit" name="add" value="' . $txt['add_subscriber'] . '" class="button_submit" />
 				',
 				'style' => 'text-align: right;',
 			),

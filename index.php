@@ -42,7 +42,7 @@ ob_start();
 // Do some cleaning, just in case.
 foreach (array('db_character_set', 'cachedir') as $variable)
 	if (isset($GLOBALS[$variable]))
-		unset($GLOBALS[$variable]);
+		unset($GLOBALS[$variable], $GLOBALS[$variable]);
 
 // Load the settings...
 require_once(dirname(__FILE__) . '/Settings.php');
