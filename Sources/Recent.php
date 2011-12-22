@@ -745,7 +745,7 @@ function UnreadTopics()
 
 	// !!! Add modified_time in for log_time check?
 
-	if ($modSettings['totalMessages'] > 100000 && $context['showing_all_topics'])
+	if ($modSettings['totalMessages'] > 1000000 && $context['showing_all_topics'])
 	{
 		$smcFunc['db_query']('', '
 			DROP TABLE IF EXISTS {db_prefix}log_topics_unread',
