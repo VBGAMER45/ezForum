@@ -56,7 +56,7 @@ load_lang_file();
 // This is what we are.
 $installurl = $_SERVER['PHP_SELF'];
 // This is where SMF is.
-$smfsite = 'http://www.ezforum.com';
+$smfsite = 'http://www.ezforum.com/forums';
 
 // All the steps in detail.
 // Number,Name,Function,Progress Weight.
@@ -449,12 +449,6 @@ function CheckFilesWritable()
 		'Settings.php',
 		'Settings_bak.php'
 	);
-	$extra_files = array(
-		'Themes/classic/index.template.php',
-		'Themes/classic/style.css'
-	);
-	foreach ($incontext['detected_languages'] as $lang => $temp)
-		$extra_files[] = 'Themes/default/languages/' . $lang;
 
 	// With mod_security installed, we could attempt to fix it with .htaccess.
 	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
@@ -476,8 +470,7 @@ function CheckFilesWritable()
 					$failed_files[] = $file;
 			}
 		}
-		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
+
 	}
 	// Windows is trickier.  Let's try opening for r+...
 	else
@@ -501,8 +494,7 @@ function CheckFilesWritable()
 
 			@fclose($fp);
 		}
-		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
+
 	}
 
 	$failure = count($failed_files) >= 1;
