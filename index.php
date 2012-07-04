@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2012 ezForum
  * License: BSD
  *
  * Based on:
@@ -42,7 +42,7 @@ ob_start();
 // Do some cleaning, just in case.
 foreach (array('db_character_set', 'cachedir') as $variable)
 	if (isset($GLOBALS[$variable]))
-		unset($GLOBALS[$variable]);
+		unset($GLOBALS[$variable], $GLOBALS[$variable]);
 
 // Load the settings...
 require_once(dirname(__FILE__) . '/Settings.php');

@@ -46,57 +46,7 @@ $databases = array(
 			return true;
 		'),
 	),
-	'postgresql' => array(
-		'name' => 'PostgreSQL',
-		'version' => '8.0',
-		'function_check' => 'pg_connect',
-		'version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
-		'supported' => function_exists('pg_connect'),
-		'always_has_db' => true,
-		'utf8_default' => true,
-		'utf8_required' => true,
-		'utf8_support' => true,
-		'utf8_version' => '8.0',
-		'utf8_version_check' => '$request = pg_query(\'SELECT version()\'); list ($version) = pg_fetch_row($request); list($pgl, $version) = explode(" ", $version); return $version;',
-		'validate_prefix' => create_function('&$value', '
-			$value = preg_replace(\'~[^A-Za-z0-9_\$]~\', \'\', $value);
 
-			// Is it reserved?
-			if ($value == \'pg_\')
-				return $txt[\'error_db_prefix_reserved\'];
-
-			// Is the prefix numeric?
-			if (preg_match(\'~^\d~\', $value))
-				return $txt[\'error_db_prefix_numeric\'];
-
-			return true;
-		'),
-	),
-	'sqlite' => array(
-		'name' => 'SQLite',
-		'version' => '1',
-		'function_check' => 'sqlite_open',
-		'version_check' => 'return 1;',
-		'supported' => function_exists('sqlite_open'),
-		'always_has_db' => true,
-		'utf8_default' => true,
-		'utf8_required' => true,
-		'validate_prefix' => create_function('&$value', '
-			global $incontext, $txt;
-
-			$value = preg_replace(\'~[^A-Za-z0-9_\$]~\', \'\', $value);
-
-			// Is it reserved?
-			if ($value == \'sqlite_\')
-				return $txt[\'error_db_prefix_reserved\'];
-
-			// Is the prefix numeric?
-			if (preg_match(\'~^\d~\', $value))
-				return $txt[\'error_db_prefix_numeric\'];
-
-			return true;
-		'),
-	),
 );
 
 // Initialize everything and load the language files.
@@ -106,7 +56,7 @@ load_lang_file();
 // This is what we are.
 $installurl = $_SERVER['PHP_SELF'];
 // This is where SMF is.
-$smfsite = 'http://www.simplemachines.org/smf';
+$smfsite = 'http://www.ezforum.com/forums';
 
 // All the steps in detail.
 // Number,Name,Function,Progress Weight.
@@ -499,12 +449,6 @@ function CheckFilesWritable()
 		'Settings.php',
 		'Settings_bak.php'
 	);
-	$extra_files = array(
-		'Themes/classic/index.template.php',
-		'Themes/classic/style.css'
-	);
-	foreach ($incontext['detected_languages'] as $lang => $temp)
-		$extra_files[] = 'Themes/default/languages/' . $lang;
 
 	// With mod_security installed, we could attempt to fix it with .htaccess.
 	if (function_exists('apache_get_modules') && in_array('mod_security', apache_get_modules()))
@@ -526,8 +470,7 @@ function CheckFilesWritable()
 					$failed_files[] = $file;
 			}
 		}
-		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
+
 	}
 	// Windows is trickier.  Let's try opening for r+...
 	else
@@ -551,8 +494,7 @@ function CheckFilesWritable()
 
 			@fclose($fp);
 		}
-		foreach ($extra_files as $file)
-			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
+
 	}
 
 	$failure = count($failed_files) >= 1;
