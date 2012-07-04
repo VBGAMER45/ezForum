@@ -672,7 +672,7 @@ function DatabaseSettings()
 		$incontext['db']['prefix'] = $_POST['db_prefix'];
 	}
 	else
-		$incontext['db']['prefix'] = 'smf_';
+		$incontext['db']['prefix'] = 'ezf_';
 
 	// Should we use a non standard port?
 	if (!empty($db_port))

@@ -29,12 +29,12 @@
 			<li>
 				Start with the include to point to SSI.php in your root ezForum directory.<br />
 
-				<em>e.g. &lt;?php include('<a href="http://www.simplemachines.org/community/SSI.php">http://www.simplemachines.org/community/SSI.php</a>'); ?&gt;</em>
+				<em>e.g. &lt;?php include('<a href="http://www.yourfourm.com/SSI.php">http://www.yourfourm.com/SSI.php</a>'); ?&gt;</em>
 			</li>
 			<li>
 				Add ?ssi_function=boardNews;board=<em>n</em> to the end of the URL above.  Make sure you replace the <em>n</em> with the number of the board you want news to appear from.<br />
 
-				<em>e.g. &lt;?php echo file_get_contents('<a href="http://www.simplemachines.org/community/SSI.php?ssi_function=boardNews;board=9">http://www.simplemachines.org/community/SSI.php?ssi_function=boardNews;board=9</a>'); ?&gt;</em>
+				<em>e.g. &lt;?php echo file_get_contents('<a href="http://www.yourfourm.com/SSI.php?ssi_function=boardNews;board=9">http://www.yourfourm.com/SSI.php?ssi_function=boardNews;board=9</a>'); ?&gt;</em>
 			</li>
 		</ol>
 
@@ -51,10 +51,10 @@
 			<dd>Starts the news items at a certain offset. (the default is <em>0</em>)</dd>
 		</dl>
 
-		<em>e.g. &lt;?php echo file_get_contents('<a href="http://www.simplemachines.org/community/SSI.php?ssi_function=boardNews;board=9;limit=7">http://www.simplemachines.org/community/SSI.php?ssi_function=boardNews;board=9;limit=7</a>'); ?&gt;</em><br />
+		<em>e.g. &lt;?php echo file_get_contents('<a href="http://www.yourfourm.com/SSI.php?ssi_function=boardNews;board=9;limit=7">http://www.yourfourm.com/SSI.php?ssi_function=boardNews;board=9;limit=7</a>'); ?&gt;</em><br />
 		<br />
 		This shows an example of how one might change the limit on the news items.
 		<br /><br />
-		Copyright &copy;2011 <a href="http://www.ezforum.com" title="Forum Software" target="_blank">ezForum</a>.<br />
+		Copyright &copy;2012 <a href="http://www.ezforum.com" title="Forum Software" target="_blank">ezForum</a>.<br />
 	</body>
 </html>
