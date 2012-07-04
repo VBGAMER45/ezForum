@@ -25,7 +25,7 @@ $txt['go_to_your_forum'] = 'Now you can see <a href="%1$s">your newly installed 
 $txt['good_luck'] = 'Good luck!<br />ezForum';
 
 $txt['install_welcome'] = 'Welcome';
-$txt['install_welcome_desc'] = 'Welcome to ezForum. This script will guide you through the process for installing %1$s. We\'ll gather a few details about your forum over the next few steps, and after a couple of minutes your forum will be ready for use.';
+$txt['install_welcome_desc'] = 'Welcome to ezForum. This script will guide you through the process for installing ezForum. We\'ll gather a few details about your forum over the next few steps, and after a couple of minutes your forum will be ready for use.';
 $txt['install_all_lovely'] = 'We\'ve completed some initial tests on your server and everything appears to be in order. Simply click the &quot;Continue&quot; button below to get started.';
 
 $txt['user_refresh_install'] = 'Forum Refreshed';
