@@ -823,6 +823,7 @@ function PackageInstall()
 	// Set the type of extraction...
 	$context['extract_type'] = isset($packageInfo['type']) ? $packageInfo['type'] : 'modification';
 
+	/*
 	// Create a backup file to roll back to! (but if they do this more than once, don't run it a zillion times.)
 	if (!empty($modSettings['package_make_backups']) && (!isset($_SESSION['last_backup_for']) || $_SESSION['last_backup_for'] != $context['filename'] . ($context['uninstalling'] ? '$$' : '$')))
 	{
@@ -830,6 +831,7 @@ function PackageInstall()
 		// !!! Internationalize this?
 		package_create_backup(($context['uninstalling'] ? 'backup_' : 'before_') . strtok($context['filename'], '.'));
 	}
+	*/
 
 	// The mod isn't installed.... unless proven otherwise.
 	$context['is_installed'] = false;

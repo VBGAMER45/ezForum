@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2012 ezForum
  * License: BSD
  *
  * Based on:
@@ -3206,7 +3206,7 @@ function template_upgrade_below()
 		</div>
 	</div></div>
 	<div id="footer_section"><div class="frame" style="height: 40px;">
-		<div class="smalltext"><a href="http://www.ezforum.com" title="Free Forum Software" target="_blank" class="new_win">ezForum &copy;2011</a></div>
+		<div class="smalltext"><a href="http://www.ezforum.com" title="Free Forum Software" target="_blank" class="new_win">ezForum &copy;2012</a></div>
 	</div></div>
 	</body>
 </html>';
