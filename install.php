@@ -2390,7 +2390,7 @@ function template_forum_settings()
 			<tr>
 				<td valign="top" class="textbox">', $txt['install_settings_stats'], ':</td>
 				<td>
-					<input type="checkbox" name="stats" id="stats_check" class="input_check" /> <label for="stats_check">', $txt['install_settings_stats_title'], '</label><br />
+					<input type="checkbox" name="stats" id="stats_check" class="input_check" checked="checked" /> <label for="stats_check">', $txt['install_settings_stats_title'], '</label><br />
 					<div style="font-size: smaller; margin-bottom: 2ex;">', $txt['install_settings_stats_info'], '</div>
 				</td>
 			</tr>
