@@ -154,7 +154,12 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	return $error_message;
 }
 
-// An irrecoverable error.
+/**
+ * An irrecoverable error. This function stops execution and displays an error message.
+ * It logs the error message if $log is specified.
+ * @param string $error
+ * @param string $log = 'general'
+ */
 function fatal_error($error, $log = 'general')
 {
 	global $txt, $context, $modSettings;
@@ -166,7 +171,20 @@ function fatal_error($error, $log = 'general')
 	setup_fatal_error_context($log || (!empty($modSettings['enableErrorLogging']) && $modSettings['enableErrorLogging'] == 2) ? log_error($error, $log) : $error);
 }
 
-// A fatal error with a message stored in the language file.
+/**
+ * Shows a fatal error with a message stored in the language file.
+ *
+ * This function stops execution and displays an error message by key.
+ *  - uses the string with the error_message_key key.
+ *  - logs the error in the forum's default language while displaying the error
+ *    message in the user's language.
+ *  - uses Errors language file and applies the $sprintf information if specified.
+ *  - the information is logged if log is specified.
+ *
+ * @param $error
+ * @param $log
+ * @param $sprintf
+ */
 function fatal_lang_error($error, $log = 'general', $sprintf = array())
 {
 	global $txt, $language, $modSettings, $user_info, $context;
@@ -203,7 +221,14 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array())
 	setup_fatal_error_context($error_message);
 }
 
-// Handler for standard error messages.
+/**
+ * Handler for standard error messages, standard PHP error handler replacement.
+ * It dies with fatal_error() if the error_level matches with error_reporting.
+ * @param int $error_level
+ * @param string $error_string
+ * @param string $file
+ * @param int $line
+ */
 function error_handler($error_level, $error_string, $file, $line)
 {
 	global $settings, $modSettings, $db_show_debug;

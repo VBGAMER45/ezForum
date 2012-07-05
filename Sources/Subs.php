@@ -747,7 +747,19 @@ function comma_format($number, $override_decimal_count = false)
 	return number_format($number, is_float($number) ? ($override_decimal_count === false ? $decimal_count : $override_decimal_count) : 0, $decimal_separator, $thousands_separator);
 }
 
-// Format a time to make it look purdy.
+/**
+ * Format a time to make it look purdy.
+ * 
+ * - returns a pretty formated version of time based on the user's format in $user_info['time_format'].
+ * - applies all necessary time offsets to the timestamp, unless offset_type is set.
+ * - if todayMod is set and show_today was not not specified or true, an
+ *   alternate format string is used to show the date with something to show it is "today" or "yesterday".
+ * - performs localization (more than just strftime would do alone.)
+ * 
+ * @param int $log_time
+ * @param bool $show_today = true
+ * @param string $offset_type = false
+ */
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $context, $user_info, $txt, $modSettings, $smcFunc;
@@ -837,7 +849,17 @@ function un_htmlspecialchars($string)
 	return strtr($string, $translation);
 }
 
-// Shorten a subject + internationalization concerns.
+/**
+ * Shorten a subject + internationalization concerns.
+ * 
+ * - shortens a subject so that it is either shorter than length, or that length plus an ellipsis.
+ * - respects internationalization characters and entities as one character.
+ * - avoids trailing entities.
+ * - returns the shortened string.
+ * 
+ * @param string $subject
+ * @param int $len
+ */
 function shorten_subject($subject, $len)
 {
 	global $smcFunc;
@@ -2503,7 +2525,16 @@ function parsesmileys(&$message)
 	$message = preg_replace($smileyPregSearch, 'isset($smileyPregReplacements[\'$1\']) ? $smileyPregReplacements[\'$1\'] : \'\'', $message);
 }
 
-// Highlight any code...
+/**
+ * Highlight any code.
+ *
+ * Uses PHP's highlight_string() to highlight PHP syntax
+ * does special handling to keep the tabs in the code available.
+ * used to parse PHP code from inside [code] and [php] tags.
+ *
+ * @param string $code
+ * @return string the code with highlighted HTML.
+ */
 function highlight_php_code($code)
 {
 	global $context;
@@ -2513,16 +2544,7 @@ function highlight_php_code($code)
 
 	$oldlevel = error_reporting(0);
 
-	// It's easier in 4.2.x+.
-	if (@version_compare(PHP_VERSION, '4.2.0') == -1)
-	{
-		ob_start();
-		@highlight_string($code);
-		$buffer = str_replace(array("\n", "\r"), '', ob_get_contents());
-		ob_end_clean();
-	}
-	else
-		$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
+	$buffer = str_replace(array("\n", "\r"), '', @highlight_string($code, true));
 
 	error_reporting($oldlevel);
 
@@ -3143,7 +3165,10 @@ function determineTopicClass(&$topic_context)
 	$topic_context['extended_class'] = &$topic_context['class'];
 }
 
-// Sets up the basic theme context stuff.
+/**
+ * Sets up the basic theme context stuff.
+ * @param bool $forceload = false
+ */
 function setupThemeContext($forceload = false)
 {
 	global $modSettings, $user_info, $scripturl, $context, $settings, $options, $txt, $maintenance;
@@ -3655,9 +3680,37 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 	return $filename;
 }
 
-// Convert a single IP to a ranged IP.
+/**
+ * Convert a single IP to a ranged IP.
+ * internal function used to convert a user-readable format to a format suitable for the database.
+ *
+ * @param string $fullip
+ * @return array|string 'unknown' if the ip in the input was '255.255.255.255'
+ */
 function ip2range($fullip)
 {
+	// If its IPv6, validate it first.
+	if (isValidIPv6($fullip) !== false)
+	{
+		$ip_parts = explode(':', expandIPv6($fullip, false));
+		$ip_array = array();
+
+		if (count($ip_parts) != 8)
+			return array();
+
+		for ($i = 0; $i < 8; $i++)
+		{
+			if ($ip_parts[$i] == '*')
+				$ip_array[$i] = array('low' => '0', 'high' => hexdec('ffff'));
+			elseif (preg_match('/^([0-9A-Fa-f]{1,4})\-([0-9A-Fa-f]{1,4})$/', $ip_parts[$i], $range) == 1)
+				$ip_array[$i] = array('low' => hexdec($range[1]), 'high' => hexdec($range[2]));
+			elseif (is_numeric(hexdec($ip_parts[$i])))
+				$ip_array[$i] = array('low' => hexdec($ip_parts[$i]), 'high' => hexdec($ip_parts[$i]));
+		}
+
+		return $ip_array;
+	}
+
 	// Pretend that 'unknown' is 255.255.255.255. (since that can't be an IP anyway.)
 	if ($fullip == 'unknown')
 		$fullip = '255.255.255.255';
@@ -3678,6 +3731,12 @@ function ip2range($fullip)
 			$ip_array[$i] = array('low' => $ip_parts[$i], 'high' => $ip_parts[$i]);
 	}
 
+	// Makes it simpiler to work with.
+	$ip_array[4] = array('low' => 0, 'high' => 0);
+	$ip_array[5] = array('low' => 0, 'high' => 0);
+	$ip_array[6] = array('low' => 0, 'high' => 0);
+	$ip_array[7] = array('low' => 0, 'high' => 0);
+
 	return $ip_array;
 }
 
@@ -3689,10 +3748,6 @@ function host_from_ip($ip)
 	if (($host = cache_get_data('hostlookup-' . $ip, 600)) !== null)
 		return $host;
 	$t = microtime();
-
-	// If we can't access nslookup/host, PHP 4.1.x might just crash.
-	if (@version_compare(PHP_VERSION, '4.2.0') == -1)
-		$host = false;
 
 	// Try the Linux host command, perhaps?
 	if (!isset($host) && (strpos(strtolower(PHP_OS), 'win') === false || strpos(strtolower(PHP_OS), 'darwin') !== false) && mt_rand(0, 1) == 1)
@@ -3714,7 +3769,7 @@ function host_from_ip($ip)
 	}
 
 	// This is nslookup; usually only Windows, but possibly some Unix?
-	if (!isset($host) && strpos(strtolower(PHP_OS), 'win') !== false && strpos(strtolower(PHP_OS), 'darwin') === false && mt_rand(0, 1) == 1)
+	if (!isset($host) && stripos(PHP_OS, 'win') !== false && strpos(strtolower(PHP_OS), 'darwin') === false && mt_rand(0, 1) == 1)
 	{
 		$test = @shell_exec('nslookup -timeout=1 ' . @escapeshellarg($ip));
 		if (strpos($test, 'Non-existent domain') !== false)

@@ -46,7 +46,11 @@ function db_search_init()
 		);
 }
 
-// Does this database type support this search type?
+/**
+ * This function will tell you whether this database type supports this search type.
+ *
+ * @param string $search_type
+ */
 function smf_db_search_support($search_type)
 {
 	$supported_types = array('fulltext');
@@ -54,7 +58,11 @@ function smf_db_search_support($search_type)
 	return in_array($search_type, $supported_types);
 }
 
-// Highly specific - create the custom word index table!
+/**
+ * Highly specific function, to create the custom word index table.
+ *
+ * @param $size
+ */
 function smf_db_create_word_search($size)
 {
 	global $smcFunc;

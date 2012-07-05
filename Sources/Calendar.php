@@ -16,38 +16,19 @@
  * @version 2.0
  */
 
-// Original module by Aaron O'Neil - aaron@mud-master.com
-
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/*	This file has only one real task... showing the calendar.  Posting is done
-	in Post.php - this just has the following functions:
-
-	void CalendarMain()
-		- loads the specified month's events, holidays, and birthdays.
-		- requires the calendar_view permission.
-		- depends on the cal_enabled setting, and many of the other cal_
-		  settings.
-		- uses the calendar_start_day theme option. (Monday/Sunday)
-		- uses the main sub template in the Calendar template.
-		- goes to the month and year passed in 'month' and 'year' by
-		  get or post.
-		- accessed through ?action=calendar.
-
-	void CalendarPost()
-		- processes posting/editing/deleting a calendar event.
-		- calls Post() function if event is linked to a post.
-		- calls insertEvent() to insert the event if not linked to post.
-		- requires the calendar_post permission to use.
-		- uses the event_post sub template in the Calendar template.
-		- is accessed with ?action=calendar;sa=post.
-
-	void iCalDownload()
-		- offers up a download of an event in iCal 2.0 format.
-*/
-
-// Show the calendar.
+/**
+ * Show the calendar.
+ * It loads the specified month's events, holidays, and birthdays.
+ * It requires the calendar_view permission.
+ * It depends on the cal_enabled setting, and many of the other cal_ settings.
+ * It uses the calendar_start_day theme option. (Monday/Sunday)
+ * It uses the main sub template in the Calendar template.
+ * It goes to the month and year passed in 'month' and 'year' by get or post.
+ * It is accessed through ?action=calendar.
+ */
 function CalendarMain()
 {
 	global $txt, $context, $modSettings, $scripturl, $options, $sourcedir;
@@ -167,6 +148,16 @@ function CalendarMain()
 		);
 }
 
+/**
+ * This function processes posting/editing/deleting a calendar event.
+ *
+ * 	- calls Post() function if event is linked to a post.
+ *  - calls insertEvent() to insert the event if not linked to post.
+ *
+ * It requires the calendar_post permission to use.
+ * It uses the event_post sub template in the Calendar template.
+ * It is accessed with ?action=calendar;sa=post.
+ */
 function CalendarPost()
 {
 	global $context, $txt, $user_info, $sourcedir, $scripturl;
@@ -313,6 +304,16 @@ function CalendarPost()
 	);
 }
 
+/**
+ * This function offers up a download of an event in iCal 2.0 format.
+ *
+ * follows the conventions in RFC5546 http://tools.ietf.org/html/rfc5546
+ * sets events as all day events since we don't have hourly events
+ * will honor and set multi day events
+ * sets a sequence number if the event has been modified
+ *
+ * @todo .... allow for week or month export files as well?
+ */
 function iCalDownload()
 {
 	global $smcFunc, $sourcedir, $forum_version, $context, $modSettings;
@@ -371,9 +372,7 @@ function iCalDownload()
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . 'GMT');
 	header('Accept-Ranges: bytes');
 	header('Connection: close');
-	header('Content-Disposition: attachment; filename=' . $event['title'] . '.ics');
-
-	// How big is it?
+	header('Content-Disposition: attachment; filename="' . $event['title'] . '.ics"');
 	if (empty($modSettings['enableCompressedOutput']))
 		header('Content-Length: ' . $smcFunc['strlen']($filecontents));
 

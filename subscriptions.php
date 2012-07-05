@@ -25,6 +25,7 @@
 */
 
 // Start things rolling by getting ezForum alive...
+$ssi_guest_access = true;
 if (!file_exists(dirname(__FILE__) . '/SSI.php'))
 	die('Cannot find SSI.php');
 

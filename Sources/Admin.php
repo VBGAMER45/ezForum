@@ -510,7 +510,16 @@ function AdminMain()
 	$admin_include_data['function']();
 }
 
-// The main administration section.
+/**
+ * The main administration section.
+ * It prepares all the data necessary for the administration front page.
+ * It uses the Admin template along with the admin sub template.
+ * It requires the moderate_forum, manage_membergroups, manage_bans,
+ *  admin_forum, manage_permissions, manage_attachments, manage_smileys,
+ *  manage_boards, edit_news, or send_mail permission.
+ *  It uses the index administrative area.
+ *  It can be found by going to ?action=admin.
+*/
 function AdminHome()
 {
 	global $sourcedir, $forum_version, $txt, $scripturl, $context, $user_info, $boardurl, $modSettings, $smcFunc;
@@ -671,7 +680,9 @@ if (!(\'smfForum_sessionvar\' in window))
 	obExit(false);
 }
 
-// This allocates out all the search stuff.
+/**
+ * This function allocates out all the search stuff.
+ */
 function AdminSearch()
 {
 	global $txt, $context, $smcFunc, $sourcedir;
@@ -707,7 +718,9 @@ function AdminSearch()
 		$subactions[$context['search_type']]();
 }
 
-// A complicated but relatively quick internal search.
+/**
+ * A complicated but relatively quick internal search.
+ */
 function AdminSearchInternal()
 {
 	global $context, $txt, $helptxt, $scripturl, $sourcedir;

@@ -1615,7 +1615,12 @@ function loadAttachmentContext($id_msg)
 	return $attachmentData;
 }
 
-// A sort function for putting unapproved attachments first.
+/**
+ * A sort function for putting unapproved attachments first.
+ * @param $a
+ * @param $b
+ * @return int, -1, 0, 1
+ */
 function approved_attach_sort($a, $b)
 {
 	if ($a['is_approved'] == $b['is_approved'])
@@ -1624,7 +1629,9 @@ function approved_attach_sort($a, $b)
 	return $a['is_approved'] > $b['is_approved'] ? -1 : 1;
 }
 
-// In-topic quick moderation.
+/**
+ * In-topic quick moderation.
+ */
 function QuickInTopicModeration()
 {
 	global $sourcedir, $topic, $board, $user_info, $smcFunc, $modSettings, $context;

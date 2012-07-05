@@ -93,14 +93,22 @@ CREATE TABLE {$db_prefix}ban_groups (
 CREATE TABLE {$db_prefix}ban_items (
   id_ban mediumint(8) unsigned NOT NULL auto_increment,
   id_ban_group smallint(5) unsigned NOT NULL default '0',
-  ip_low1 tinyint(3) unsigned NOT NULL default '0',
-  ip_high1 tinyint(3) unsigned NOT NULL default '0',
-  ip_low2 tinyint(3) unsigned NOT NULL default '0',
-  ip_high2 tinyint(3) unsigned NOT NULL default '0',
-  ip_low3 tinyint(3) unsigned NOT NULL default '0',
-  ip_high3 tinyint(3) unsigned NOT NULL default '0',
-  ip_low4 tinyint(3) unsigned NOT NULL default '0',
-  ip_high4 tinyint(3) unsigned NOT NULL default '0',
+  ip_low1 smallint(255) unsigned NOT NULL default '0',
+  ip_high1 smallint(255) unsigned NOT NULL default '0',
+  ip_low2 smallint(255) unsigned NOT NULL default '0',
+  ip_high2 smallint(255) unsigned NOT NULL default '0',
+  ip_low3 smallint(255) unsigned NOT NULL default '0',
+  ip_high3 smallint(255) unsigned NOT NULL default '0',
+  ip_low4 smallint(255) unsigned NOT NULL default '0',
+  ip_high4 smallint(255) unsigned NOT NULL default '0',
+  ip_low5 smallint(255) unsigned NOT NULL default '0',
+  ip_high5 smallint(255) unsigned NOT NULL default '0',
+  ip_low6 smallint(255) unsigned NOT NULL default '0',
+  ip_high6 smallint(255) unsigned NOT NULL default '0',
+  ip_low7 smallint(255) unsigned NOT NULL default '0',
+  ip_high7 smallint(255) unsigned NOT NULL default '0',
+  ip_low8 smallint(255) unsigned NOT NULL default '0',
+  ip_high8 smallint(255) unsigned NOT NULL default '0',
   hostname varchar(255) NOT NULL default '',
   email_address varchar(255) NOT NULL default '',
   id_member mediumint(8) unsigned NOT NULL default '0',
@@ -487,6 +495,7 @@ CREATE TABLE {$db_prefix}boards (
   unapproved_posts smallint(5) NOT NULL default '0',
   unapproved_topics smallint(5) NOT NULL default '0',
   redirect varchar(255) NOT NULL default '',
+  deny_member_groups varchar(255) NOT NULL default '',
   show_rssicon tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY (id_board),
   UNIQUE categories (id_cat, id_board),
@@ -823,7 +832,7 @@ CREATE TABLE {$db_prefix}log_errors (
   ip char(16) NOT NULL default '                ',
   url text NOT NULL,
   message text NOT NULL,
-  session char(32) NOT NULL default '                                ',
+  session char(64) NOT NULL default '                                                                ',
   error_type char(15) NOT NULL default 'general',
   file varchar(255) NOT NULL default '',
   line mediumint(8) unsigned NOT NULL default '0',
@@ -911,7 +920,7 @@ CREATE TABLE {$db_prefix}log_notify (
 #
 
 CREATE TABLE {$db_prefix}log_online (
-  session varchar(32) NOT NULL default '',
+  session varchar(64) NOT NULL default '',
   log_time int(10) NOT NULL default '0',
   id_member mediumint(8) unsigned NOT NULL default '0',
   id_spider smallint(5) unsigned NOT NULL default '0',
@@ -942,6 +951,7 @@ CREATE TABLE {$db_prefix}log_packages (
   failed_steps text NOT NULL,
   themes_installed varchar(255) NOT NULL default '',
   db_changes text NOT NULL,
+  credits varchar(255) NOT NULL default '',
   PRIMARY KEY (id_install),
   KEY filename (filename(15))
 ) ENGINE=MyISAM;
@@ -969,7 +979,7 @@ CREATE TABLE {$db_prefix}log_reported (
   id_member mediumint(8) unsigned NOT NULL default '0',
   membername varchar(255) NOT NULL default '',
   subject varchar(255) NOT NULL default '',
-  body text NOT NULL,
+  body mediumtext NOT NULL,
   time_started int(10) NOT NULL default '0',
   time_updated int(10) NOT NULL default '0',
   num_reports mediumint(6) NOT NULL default '0',
@@ -1131,7 +1141,7 @@ CREATE TABLE {$db_prefix}mail_queue (
   id_mail int(10) unsigned NOT NULL auto_increment,
   time_sent int(10) NOT NULL default '0',
   recipient varchar(255) NOT NULL default '',
-  body text NOT NULL,
+  body mediumtext NOT NULL,
   subject varchar(255) NOT NULL default '',
   headers text NOT NULL,
   send_html tinyint(3) NOT NULL default '0',
@@ -1262,6 +1272,24 @@ CREATE TABLE {$db_prefix}members (
   KEY id_theme (id_theme)
 ) ENGINE=MyISAM;
 
+
+#
+# Table structure for table `member_logins`
+#
+
+CREATE TABLE {$db_prefix}member_logins (
+  id_login int(10) NOT NULL auto_increment,
+  id_member mediumint(8) NOT NULL default '0',
+  time int(10) NOT NULL default '0',
+  ip varchar(255) NOT NULL default '0',
+  ip2 varchar(255) NOT NULL default '0',
+  PRIMARY KEY (id_login),
+  KEY id_member (id_member),
+  KEY time (time)
+) ENGINE=MyISAM;
+
+
+
 #
 # Table structure for table `message_icons`
 #
@@ -1294,7 +1322,8 @@ VALUES ('xx', 'Standard', '0'),
 	('cheesy', 'Cheesy', '8'),
 	('grin', 'Grin', '9'),
 	('sad', 'Sad', '10'),
-	('wink', 'Wink', '11');
+	('wink', 'Wink', '11'),
+	('poll', 'Poll', '12');
 # --------------------------------------------------------
 
 #
