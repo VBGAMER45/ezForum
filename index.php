@@ -27,7 +27,7 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'SMF 2.0';
+$forum_version = 'ezForum 3.0';
 
 // Get everything started up...
 define('SMF', 1);

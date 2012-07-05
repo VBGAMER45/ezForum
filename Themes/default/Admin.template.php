@@ -273,34 +273,6 @@ function template_credits()
 			<span class="topslice"><span></span></span>
 			<div class="content">';
 
-	foreach ($context['credits'] as $section)
-	{
-		if (isset($section['pretext']))
-			echo '
-				<p>', $section['pretext'], '</p>';
-
-		echo '
-				<dl>';
-
-		foreach ($section['groups'] as $group)
-		{
-			if (isset($group['title']))
-				echo '
-					<dt>
-						<strong>', $group['title'], ':</strong>
-					</dt>';
-
-			echo '
-					<dd>', implode(', ', $group['members']), '</dd>';
-		}
-
-		echo '
-				</dl>';
-
-		if (isset($section['posttext']))
-			echo '
-				<p>', $section['posttext'], '</p>';
-	}
 
 	echo '
 			</div>

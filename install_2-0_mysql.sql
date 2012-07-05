@@ -1383,7 +1383,7 @@ CREATE TABLE {$db_prefix}package_servers (
 
 INSERT INTO {$db_prefix}package_servers
 	(name, url)
-VALUES ('ezForum Modification Site', 'http://mods.ezforum.com/files/mods');
+VALUES ('ezForum Modification Site', 'http://mods.ezforum.com);
 # --------------------------------------------------------
 
 #
@@ -1621,7 +1621,7 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('attachmentSizeLimit', '1280'),
 	('attachmentPostLimit', '1920'),
 	('attachmentNumPerPostLimit', '4'),
-	('attachmentDirSizeLimit', '10240'),
+	('attachmentDirSizeLimit', '102400'),
 	('attachmentUploadDir', '{$boarddir}/attachments'),
 	('attachmentExtensions', 'doc,gif,jpg,mpg,pdf,png,txt,zip,docx,xls,rar,odt'),
 	('attachmentCheckExtensions', '0'),
@@ -1778,7 +1778,9 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('disableHostnameLookup', '1'),
 	('countChildPosts', '1'),
 	('avatar_reencode', '1'),
-	('avatar_paranoid', '0');
+	('avatar_paranoid', '0'),
+	('messageIcons_enable', '1'),
+	('smiley_enable', '1');
 # --------------------------------------------------------
 
 #
@@ -1927,7 +1929,7 @@ VALUES (1, 'name', '{$default_theme_name}'),
 	(1, 'show_blurb', '1'),
 	(1, 'show_gender', '0'),
 	(1, 'show_newsfader', '0'),
-	(1, 'number_recent_posts', '0'),
+	(1, 'number_recent_posts', '5'),
 	(1, 'show_member_bar', '1'),
 	(1, 'linktree_link', '1'),
 	(1, 'show_profile_buttons', '1'),
@@ -1940,6 +1942,7 @@ VALUES (1, 'name', '{$default_theme_name}'),
 	(1, 'additional_options_collapsable', '1'),
 	(1, 'use_image_buttons', '1'),
 	(1, 'enable_news', '1'),
+	(1, 'show_group_key', '1'),
 	(1, 'forum_width', '90%');
 
 INSERT INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'display_quick_reply', '2');

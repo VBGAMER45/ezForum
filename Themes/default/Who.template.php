@@ -164,40 +164,7 @@ function template_credits()
 			<div class="content">
 				<dl>';
 
-		foreach ($section['groups'] as $group)
-		{
-			if (isset($group['title']))
-				echo '
-					<dt>
-						<strong>', $group['title'], '</strong>
-					</dt>
-					<dd>';
 
-			// Try to make this read nicely.
-			if (count($group['members']) <= 2)
-				echo implode(' ' . $txt['credits_and'] . ' ', $group['members']);
-			else
-			{
-				$last_peep = array_pop($group['members']);
-				echo implode(', ', $group['members']), ' ', $txt['credits_and'], ' ', $last_peep;
-			}
-
-			echo '
-					</dd>';
-		}
-
-		echo '
-				</dl>';
-
-		if (isset($section['posttext']))
-			echo '
-				<p class="posttext">', $section['posttext'], '</p>';
-
-		echo '
-			</div>
-			<span class="botslice"><span></span></span>
-		</div>';
-	}
 
 	echo '
 		<div class="cat_bar">
