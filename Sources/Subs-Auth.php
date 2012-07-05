@@ -23,7 +23,7 @@ if (!defined('SMF'))
 	and the like.  It provides these functions:
 
 	void setLoginCookie(int cookie_length, int id_member, string password = '')
-		- sets the SMF-style login cookie and session based on the id_member
+		- sets the ezForum-style login cookie and session based on the id_member
 		  and password passed.
 		- password should be already encrypted with the cookie salt.
 		- logs the user out if id_member is zero.

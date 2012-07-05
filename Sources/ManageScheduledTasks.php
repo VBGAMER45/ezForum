@@ -90,7 +90,6 @@ function ScheduledTasks()
 	global $context, $txt, $sourcedir, $smcFunc, $user_info, $modSettings, $scripturl;
 
 	// Mama, setup the template first - cause it's like the most important bit, like pickle in a sandwich.
-	// ... ironically I don't like pickle. </grudge>
 	$context['sub_template'] = 'view_scheduled_tasks';
 	$context['page_title'] = $txt['maintain_tasks'];
 

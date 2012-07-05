@@ -355,7 +355,7 @@ function template_info_center()
 			</div>
 			<p class="smalltext">';
 
-		// Holidays like "Christmas", "Chanukah", and "We Love [Unknown] Day" :P.
+		// Holidays
 		if (!empty($context['calendar_holidays']))
 				echo '
 				<span class="holiday">', $txt['calendar_prompt'], ' ', implode(', ', $context['calendar_holidays']), '</span><br />';

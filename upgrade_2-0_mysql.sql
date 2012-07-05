@@ -594,7 +594,6 @@ if (mysql_num_rows($request) != 0)
 	list ($oldValue) = mysql_fetch_row($request);
 	if ($oldValue != 0)
 	{
-		// We have changed the medium setting from SMF 1.1.2.
 		if ($oldValue == 4)
 			$oldValue = 5;
 
@@ -974,11 +973,7 @@ ALTER TABLE {$db_prefix}log_packages
 ADD db_changes text NOT NULL AFTER themes_installed;
 ---#
 
----# Changing URL to SMF package server...
-UPDATE {$db_prefix}package_servers
-SET url = 'http://custom.simplemachines.org/packages/mods'
-WHERE url = 'http://mods.simplemachines.org';
----#
+
 
 /******************************************************************************/
 --- Creating mail queue functionality.
@@ -2764,7 +2759,6 @@ if (!isset($modSettings['attachment_thumb_png']))
 
 ---# Installing theme settings...
 ---{
-// This is Grudge's secret "I'm not a developer" theme install code - keep this quiet ;)
 
 // Firstly, I'm going out of my way to not do this twice!
 if ((!isset($modSettings['smfVersion']) || $modSettings['smfVersion'] <= '2.0 RC5' || $modSettings['smfVersion'] === '2.0 a') && empty($modSettings['dont_repeat_theme_core']))
@@ -2832,7 +2826,7 @@ if ((!isset($modSettings['smfVersion']) || $modSettings['smfVersion'] <= '2.0 RC
 		// Update the name of the default theme in the database.
 		upgrade_query("
 			UPDATE {$db_prefix}themes
-			SET value = 'SMF Default Theme - Curve'
+			SET value = 'ezForum Default Theme - Curve'
 			WHERE id_theme = 1
 				AND variable = 'name'");
 

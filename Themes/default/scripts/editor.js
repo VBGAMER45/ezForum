@@ -682,7 +682,7 @@ smc_Editor.prototype.handleButtonClick = function (oButtonProperties)
 {
 	this.setFocus();
 
-	// A special SMF function?
+	// A special ezForum function?
 	if (oButtonProperties.sCode in this.oSmfExec)
 		this[this.oSmfExec[oButtonProperties.sCode]]();
 

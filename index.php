@@ -16,7 +16,7 @@
  * @version 2.0
  */
 
-/*	This, as you have probably guessed, is the crux on which SMF functions.
+/*	This, as you have probably guessed, is the crux on which ezForum functions.
 	Everything should start here, so all the setup and security is done
 	properly.  The most interesting part of this file is the action array in
 	the smf_main() function.  It is formatted as so:
@@ -27,7 +27,7 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'ezForum 3.0';
+$forum_version = 'ezForum 3.0 Alpha 1';
 
 // Get everything started up...
 define('SMF', 1);
@@ -66,7 +66,7 @@ if (@version_compare(PHP_VERSION, '5.1') == -1)
 if (!empty($maintenance) && $maintenance == 2)
 	db_fatal_error();
 
-// Create a variable to store some SMF specific functions in.
+// Create a variable to store some ezForum specific functions in.
 $smcFunc = array();
 
 // Initate the database connection and define some database functions to use.

@@ -61,10 +61,9 @@ if (!defined('SMF'))
 		- redirects to ?action=admin;area=viewmembers;sa=browse with the same parameters
 		  as the calling page.
 
-	int jeffsdatediff(int old)
+	int ezcdatediff(int old)
 		- nifty function to calculate the number of days ago a given date was.
 		- requires a unix timestamp as input, returns an integer.
-		- in honour of Jeff Lewis, the original creator of...this function.
 		- the returned number of days is based on the forum time.
 */
 
@@ -560,7 +559,7 @@ function ViewMemberlist()
 							$difference = $txt[\'never\'];
 						else
 						{
-							$num_days_difference = jeffsdatediff($rowData[\'last_login\']);
+							$num_days_difference = ezcdatediff($rowData[\'last_login\']);
 
 							// Today.
 							if (empty($num_days_difference))
@@ -1288,7 +1287,7 @@ function AdminApprove()
 	redirectexit('action=admin;area=viewmembers;sa=browse;type=' . $_REQUEST['type'] . ';sort=' . $_REQUEST['sort'] . ';filter=' . $current_filter . ';start=' . $_REQUEST['start']);
 }
 
-function jeffsdatediff($old)
+function ezcdatediff($old)
 {
 	// Get the current time as the user would see it...
 	$forumTime = forum_time();

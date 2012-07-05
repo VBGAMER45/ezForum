@@ -686,7 +686,6 @@ function DownloadLanguage()
 				$context_data['writable'] = true;
 		}
 
-		// I love PHP files, that's why I'm a developer and not an artistic type spending my time drinking absinth and living a life of sin...
 		if ($extension == 'php' && preg_match('~\w+\.\w+(?:-utf8)?\.php~', $filename))
 		{
 			$context_data += array(

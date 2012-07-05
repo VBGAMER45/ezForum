@@ -165,7 +165,7 @@ function html_to_bbc($text)
 	// Remove any formatting within code tags.
 	if (strpos($text, '[code') !== false)
 	{
-		$text = preg_replace('~<br\s?/?' . '>~i', '#smf_br_spec_grudge_cool!#', $text);
+		$text = preg_replace('~<br\s?/?' . '>~i', '#ezforum_br_elite!#', $text);
 		$parts = preg_split('~(\[/code\]|\[code(?:=[^\]]+)?\])~i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		// Only mess with stuff outside [code] tags.
@@ -176,7 +176,7 @@ function html_to_bbc($text)
 				$parts[$i] = strip_tags($parts[$i]);
 		}
 
-		$text = strtr(implode('', $parts), array('#smf_br_spec_grudge_cool!#' => '<br />'));
+		$text = strtr(implode('', $parts), array('#ezforum_br_elite!#' => '<br />'));
 	}
 
 	// Remove scripts, style and comment blocks.

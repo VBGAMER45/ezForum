@@ -712,7 +712,6 @@ function ModifyModerationSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
-// Let's try keep the spam to a minimum ah Thantos?
 function ModifySpamSettings($return_config = false)
 {
 	global $txt, $scripturl, $context, $settings, $sc, $modSettings, $smcFunc;

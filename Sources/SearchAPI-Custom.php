@@ -30,7 +30,7 @@ class custom_search
 {
 	// This is the last version of ezForum that this was tested on, to protect against API changes.
 	public $version_compatible = 'ezForum 3.0';
-	// This won't work with versions of SMF less than this.
+	// This won't work with versions of ezForum less than this.
 	public $min_smf_version = 'ezForum 3.0 Beta 2';
 	// Is it supported?
 	public $is_supported = true;

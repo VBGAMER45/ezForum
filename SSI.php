@@ -16,7 +16,7 @@
  * @version 2.0
  */
 
-// Don't do anything if SMF is already loaded.
+// Don't do anything if ezForum is already loaded.
 if (defined('SMF'))
 	return true;
 
@@ -74,7 +74,7 @@ require_once($sourcedir . '/Security.php');
 if (@version_compare(PHP_VERSION, '5.1') == -1)
 	require_once($sourcedir . '/Subs-Compat.php');
 
-// Create a variable to store some SMF specific functions in.
+// Create a variable to store some ezForum specific functions in.
 $smcFunc = array();
 
 // Initate the database connection and define some database functions to use.

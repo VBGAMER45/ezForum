@@ -214,13 +214,13 @@ if (!class_exists('ftp_connection'))
 		var $connection = 'no_connection', $error = false, $last_message, $pasv = array();
 
 		// Create a new FTP connection...
-		function ftp_connection($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@simplemachines.org')
+		function ftp_connection($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@yoursite.com')
 		{
 			if ($ftp_server !== null)
 				$this->connect($ftp_server, $ftp_port, $ftp_user, $ftp_pass);
 		}
 
-		function connect($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@simplemachines.org')
+		function connect($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@yoursite.com')
 		{
 			if (substr($ftp_server, 0, 6) == 'ftp://')
 				$ftp_server = substr($ftp_server, 6);
@@ -688,7 +688,7 @@ function upgradeExit($fallThrough = false)
 	// We usually dump our templates out.
 	if (!$fallThrough)
 	{
-		// This should not happen my dear... HELP ME DEVELOPERS!!
+		// This should not happen
 		if (!empty($command_line))
 		{
 			if (function_exists('debug_print_backtrace'))

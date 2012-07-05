@@ -24,7 +24,7 @@
 	// log the error for posterity
 */
 
-// Start things rolling by getting SMF alive...
+// Start things rolling by getting ezForum alive...
 if (!file_exists(dirname(__FILE__) . '/SSI.php'))
 	die('Cannot find SSI.php');
 

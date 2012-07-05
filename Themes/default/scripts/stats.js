@@ -156,7 +156,7 @@ smf_StatsCenter.prototype.onBeforeCollapseMonth = function (oToggle)
 {
 	if (!oToggle.bCollapsed)
 	{
-		// Tell SMF that it the state has changed.
+		// Tell ezForum that it the state has changed.
 		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=stats;collapse=' + oToggle.opt.sMonthId + ';xml');
 
 		// Remove the month rows from the year toggle.
@@ -191,7 +191,7 @@ smf_StatsCenter.prototype.onBeforeExpandMonth = function (oToggle)
 		this.bIsLoading = true;
 	}
 
-	// Silently let SMF know this one is expanded.
+	// Silently let ezForum know this one is expanded.
 	else
 		getXMLDocument(smf_prepareScriptUrl(smf_scripturl) + 'action=stats;expand=' + oToggle.opt.sMonthId + ';xml');
 }
