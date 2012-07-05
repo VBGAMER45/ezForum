@@ -442,8 +442,6 @@ function resizeImage($src_img, $destName, $src_width, $src_height, $max_width, $
 	// Save the image as ...
 	if (!empty($preferred_format) && ($preferred_format == 3) && function_exists('imagepng'))
 		$success = imagepng($dst_img, $destName);
-	elseif (!empty($preferred_format) && ($preferred_format == 1) && function_exists('imagegif'))
-		$success = imagegif($dst_img, $destName);
 	elseif (function_exists('imagejpeg'))
 		$success = imagejpeg($dst_img, $destName);
 
@@ -998,15 +996,15 @@ function showCodeImage($code)
 	}
 
 	// Show the image.
-	if (function_exists('imagegif'))
-	{
-		header('Content-type: image/gif');
-		imagegif($code_image);
-	}
-	else
+	if (function_exists('imagepng'))
 	{
 		header('Content-type: image/png');
 		imagepng($code_image);
+	}
+	else
+	{
+		header('Content-type: image/gif');
+		imagegif($code_image);
 	}
 
 	// Bail out.
