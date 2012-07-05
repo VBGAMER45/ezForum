@@ -729,7 +729,7 @@ function Credits($in_admin = false)
 
 		/* Modification Authors:  You may add a copyright statement to this array for your mods.
 			Copyright statements should be in the form of a value only without a array key.  I.E.:
-				'Some Mod by Thantos &copy; 2010',
+				'Some Mod by Name &copy; 2012',
 				$txt['some_mod_copyright'],
 		*/
 		'mods' => array(
