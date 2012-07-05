@@ -140,30 +140,6 @@ function template_credits()
 			<h3 class="catbg">', $txt['credits'], '</h3>
 		</div>';
 
-	foreach ($context['credits'] as $section)
-	{
-		if (isset($section['pretext']))
-		echo '
-		<div class="windowbg">
-			<span class="topslice"><span></span></span>
-			<div class="content">
-				<p>', $section['pretext'], '</p>
-			</div>
-			<span class="botslice"><span></span></span>
-		</div>';
-
-		if (isset($section['title']))
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $section['title'], '</h3>
-		</div>';
-
-		echo '
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
-			<div class="content">
-				<dl>';
-
 
 
 	echo '
