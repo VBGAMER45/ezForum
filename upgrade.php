@@ -17,7 +17,7 @@
  */
 
 // Version information...
-define('SMF_VERSION', '2.0');
+define('EZFORUM_VERSION', '3.0');
 define('SMF_LANG_VERSION', '2.0');
 
 $GLOBALS['required_php_version'] = '4.1.0';
@@ -956,7 +956,7 @@ function WelcomeLogin()
 	// Do a quick version spot check.
 	$temp = substr(@implode('', @file($boarddir . '/index.php')), 0, 4096);
 	preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $temp, $match);
-	if (empty($match[1]) || $match[1] != SMF_VERSION)
+	if (empty($match[1]) || $match[1] != EZFORUM_VERSION)
 		return throw_error('The upgrader found some old or outdated files.<br /><br />Please make certain you uploaded the new versions of all the files included in the package.');
 
 	// What absolutely needs to be writable?
@@ -1440,9 +1440,7 @@ function DatabaseChanges()
 	// All possible files.
 	// Name, <version, insert_on_complete
 	$files = array(
-		array('upgrade_1-0.sql', '1.1', '1.1 RC0'),
-		array('upgrade_1-1.sql', '2.0', '2.0 a'),
-		array('upgrade_2-0_' . $db_type . '.sql', '3.0', SMF_VERSION),
+		array('upgrade_2-0_' . $db_type . '.sql', '3.0', EZFORUM_VERSION),
 	);
 
 	// How many files are there in total?
@@ -1571,7 +1569,7 @@ function DeleteUpgrade()
 	else
 	{
 		require_once($sourcedir . '/ScheduledTasks.php');
-		$forum_version = SMF_VERSION;  // The variable is usually defined in index.php so lets just use the constant to do it for us.
+		$forum_version = EZFORUM_VERSION;  // The variable is usually defined in index.php so lets just use the constant to do it for us.
 		scheduled_fetchSMfiles(); // Now go get those files!
 	}
 
@@ -2666,7 +2664,7 @@ Usage: /path/to/php -f ' . basename(__FILE__) . ' -- [OPTION]...
 	// Do a quick version spot check.
 	$temp = substr(@implode('', @file($boarddir . '/index.php')), 0, 4096);
 	preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $temp, $match);
-	if (empty($match[1]) || $match[1] != SMF_VERSION)
+	if (empty($match[1]) || $match[1] != EZFORUM_VERSION)
 		print_error('Error: Some files have not yet been updated properly.');
 
 	// Make sure Settings.php is writable.
@@ -3276,22 +3274,22 @@ function template_welcome_message()
 	global $upcontext, $modSettings, $upgradeurl, $disable_security, $settings, $txt;
 
 	echo '
-		<script type="text/javascript" src="http://www.ezforum.com/ezc/current-version.js?version=' . SMF_VERSION . '"></script>
+		<script type="text/javascript" src="http://www.ezforum.com/ezc/current-version.js?version=' . EZFORUM_VERSION . '"></script>
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
-			<h3>', sprintf($txt['upgrade_ready_proceed'], SMF_VERSION), '</h3>
+			<h3>', sprintf($txt['upgrade_ready_proceed'], EZFORUM_VERSION), '</h3>
 	<form action="', $upcontext['form_url'], '" method="post" name="upform" id="upform" ', empty($upcontext['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $upcontext['rid'] . '\');"' : '', '>
 		<div id="version_warning" style="margin: 2ex; padding: 2ex; border: 2px dashed #a92174; color: black; background-color: #fbbbe2; display: none;">
 			<div style="float: left; width: 2ex; font-size: 2em; color: red;">!!</div>
 			<strong style="text-decoration: underline;">', $txt['upgrade_warning'], '</strong><br />
 			<div style="padding-left: 6ex;">
-				', sprintf($txt['upgrade_warning_out_of_date'], SMF_VERSION), '
+				', sprintf($txt['upgrade_warning_out_of_date'], EZFORUM_VERSION), '
 			</div>
 		</div>';
 
 	$upcontext['chmod_in_form'] = true;
 	template_chmod();
 
-	// For large, pre 1.1 RC2 forums give them a warning about the possible impact of this upgrade!
+	// For large, forums give them a warning about the possible impact of this upgrade!
 	if ($upcontext['is_large_forum'])
 		echo '
 		<div style="margin: 2ex; padding: 2ex; border: 2px dashed #cc3344; color: black; background-color: #ffe4e9;">
