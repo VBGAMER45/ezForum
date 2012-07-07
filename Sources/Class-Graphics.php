@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2012 ezForum
  * License: BSD
  *
  * Based on:
@@ -22,7 +22,7 @@
 	http://www.yamasoft.com/php-gif.zip
 */
 
-if (!defined('SMF'))
+if (!defined('EZF'))
 	die('Hacking attempt...');
 
 /*	Classes used for reading gif files (in case PHP's GD doesn't provide the

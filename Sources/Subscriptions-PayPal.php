@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2012 ezForum
  * License: BSD
  *
  * Based on:
@@ -17,9 +17,9 @@
  */
 
 // This won't be dedicated without this - this must exist in each gateway!
-// SMF Payment Gateway: paypal
+// ezForum Payment Gateway: paypal
 
-if (!defined('SMF'))
+if (!defined('EZF'))
 	die('Hacking attempt...');
 
 class paypal_display

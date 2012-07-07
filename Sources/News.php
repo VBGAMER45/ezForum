@@ -318,7 +318,7 @@ function ShowXmlFeed()
 
 	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
 	<tagline><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></tagline>
-	<generator uri="http://www.ezforum.com" version="', strtr($forum_version, array('SMF' => '')), '">SMF</generator>
+	<generator uri="http://www.ezforum.com" version="', strtr($forum_version, array('EZF' => '')), '">EZF</generator>
 	<author>
 		<name>', strip_tags($context['forum_name']), '</name>
 	</author>';

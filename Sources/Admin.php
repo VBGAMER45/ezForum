@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2012 ezForum
  * License: BSD
  *
  * Based on:
@@ -17,7 +17,7 @@
  * @version 2.0
  */
 
-if (!defined('SMF'))
+if (!defined('EZF'))
 	die('Hacking attempt...');
 
 /*	This file, unpredictable as this might be, handles basic administration.

@@ -16,7 +16,7 @@
  * @version 2.0
  */
 
-if (!defined('SMF'))
+if (!defined('EZF'))
 	die('Hacking attempt...');
 
 /*	This file maintains all XML-based interaction (mainly XMLhttp).

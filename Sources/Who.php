@@ -16,7 +16,7 @@
  * @version 2.0
  */
 
-if (!defined('SMF'))
+if (!defined('EZF'))
 	die('Hacking attempt...');
 
 /*	This file is mainly concerned, or that is to say only concerned, with the

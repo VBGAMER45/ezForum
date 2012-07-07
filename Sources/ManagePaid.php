@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2012 ezForum
  * License: BSD
  *
  * Based on:
@@ -16,7 +16,7 @@
  * @version 2.0
  */
 
-if (!defined('SMF'))
+if (!defined('EZF'))
 	die('Hacking attempt...');
 
 /*	This file contains all the screens that control settings for topics and
@@ -1759,7 +1759,7 @@ function loadPaymentGateways()
 				$header = fread($fp, 4096);
 				fclose($fp);
 
-				if (strpos($header, '// SMF Payment Gateway: ' . strtolower($matches[1])) !== false)
+				if (strpos($header, '// ezForum Payment Gateway: ' . strtolower($matches[1])) !== false)
 				{
 					loadClassFile($file);
 

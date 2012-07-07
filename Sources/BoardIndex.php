@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2012 ezForum
  * License: BSD
  *
  * Based on:
@@ -16,7 +16,7 @@
  * @version 2.0
  */
 
-if (!defined('SMF'))
+if (!defined('EZF'))
 	die('Hacking attempt...');
 
 /*	The single function this file contains is used to display the main
