@@ -301,6 +301,9 @@ function load_database()
 	require(dirname(__FILE__) . '/Settings.php');
 	if (!defined('SMF'))
 		define('SMF', 1);
+		
+	if (!defined('EZF'))	
+		define('EZF', 1);
 	if (empty($smcFunc))
 		$smcFunc = array();
 
