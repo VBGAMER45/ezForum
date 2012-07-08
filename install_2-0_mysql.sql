@@ -1412,7 +1412,7 @@ CREATE TABLE {$db_prefix}package_servers (
 
 INSERT INTO {$db_prefix}package_servers
 	(name, url)
-VALUES ('ezForum Modification Site', 'http://mods.ezforum.com);
+VALUES ('ezForum Modification Site', 'http://mods.ezforum.com');
 # --------------------------------------------------------
 
 #
