@@ -88,7 +88,7 @@ function template_ban_edit()
 						</legend>
 						<dl class="settings">
 							<dt>
-								<input type="checkbox" name="ban_suggestion[]" id="main_ip_check" value="main_ip" class="input_check" />
+								<input type="checkbox" name="ban_suggestion[]" id="main_ip_check" value="main_ip" class="input_check" checked="checked" />
 								<label for="main_ip_check">', $txt['ban_on_ip'], '</label>
 							</dt>
 							<dd>
