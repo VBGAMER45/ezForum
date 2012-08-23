@@ -19,74 +19,16 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/* This file contains all the functions used for the ban center.
-
-	void Ban()
-		- the main entrance point for all ban center functions.
-		- is accesssed by ?action=admin;area=ban.
-		- choses a function based on the 'sa' parameter.
-		- defaults to BanList().
-		- requires the ban_members permission.
-		- initializes the admin tabs.
-		- load the ManageBans template.
-
-	void BanList()
-		- shows a list of bans currently set.
-		- is accesssed by ?action=admin;area=ban;sa=list.
-		- uses the main ManageBans template.
-		- removes expired bans.
-		- allows sorting on different criteria.
-		- also handles removal of selected ban items.
-
-	void BanEdit()
-		- the screen for adding new bans and modifying existing ones.
-		- adding new bans:
-			- is accesssed by ?action=admin;area=ban;sa=add.
-			- uses the ban_edit sub template of the ManageBans template.
-		- modifying existing bans:
-			- is accesssed by ?action=admin;area=ban;sa=edit;bg=x
-			- uses the ban_edit sub template of the ManageBans template.
-			- shows a list of ban triggers for the specified ban.
-		- handles submitted forms that add, modify or remove ban triggers.
-
-	void BanEditTrigger()
-		- the screen for adding new ban triggers or modifying existing ones.
-		- adding new ban triggers:
-			- is accessed by ?action=admin;area=ban;sa=edittrigger;bg=x
-			- uses the ban_edit_trigger sub template of ManageBans.
-		- editing existing ban triggers:
-			- is accessed by ?action=admin;area=ban;sa=edittrigger;bg=x;bi=y
-			- uses the ban_edit_trigger sub template of ManageBans.
-
-	void BanBrowseTriggers()
-		- screen for showing the banned enities
-		- is accessed by ?action=admin;area=ban;sa=browse
-		- uses the browse_triggers sub template of the ManageBans template.
-		- uses sub-tabs for browsing by IP, hostname, email or username.
-
-	array BanLog()
-		- show a list of logged access attempts by banned users.
-		- is accessed by ?action=admin;area=ban;sa=log.
-		- allows sorting of several columns.
-		- also handles deletion of (a selection of) log entries.
-
-	string range2ip(array $low, array $high)
-		- reverse function of ip2range().
-		- converts a given array of IP numbers to a single string
-		- range2ip(array(10, 10, 10, 0), array(10, 10, 20, 255)) returns
-		   '10.10.10-20.*
-
-	array checkExistingTriggerIP(array $ip_array, string $fullip)
-		- checks whether a given IP range already exists in the trigger list.
-		- if yes, it returns an error message. Otherwise, it returns
-		  an array optimized for the database.
-
-	void updateBanMembers()
-		- updates the members table to match the new bans.
-		- is_activated >= 10: a member is banned.
-*/
-
-// Ban center.
+/**
+ * Ban center. The main entrance point for all ban center functions.
+ * It is accesssed by ?action=admin;area=ban.
+ * It choses a function based on the 'sa' parameter, like many others.
+ * The default sub-action is BanList().
+ * It requires the ban_members permission.
+ * It initializes the admin tabs.
+ *
+ * @uses ManageBans template.
+ */
 function Ban()
 {
 	global $context, $txt, $scripturl;
@@ -144,7 +86,15 @@ function Ban()
 	$subActions[$_REQUEST['sa']]();
 }
 
-// List all the bans.
+/**
+ * Shows a list of bans currently set.
+ * It is accesssed by ?action=admin;area=ban;sa=list.
+ * It removes expired bans.
+ * It allows sorting on different criteria.
+ * It also handles removal of selected ban items.
+ *
+ * @uses the main ManageBans template.
+ */
 function BanList()
 {
 	global $txt, $context, $ban_request, $ban_counts, $scripturl;
@@ -343,6 +293,14 @@ function BanList()
 	$context['default_list'] = 'ban_list';
 }
 
+/**
+ * Get bans, what else? For the given options.
+ *
+ * @param int $start
+ * @param int $items_per_page
+ * @param string $sort
+ * @return array
+ */
 function list_getBans($start, $items_per_page, $sort)
 {
 	global $smcFunc;
@@ -385,6 +343,19 @@ function list_getNumBans()
 	return $numBans;
 }
 
+/**
+ * This function is behind the screen for adding new bans and modifying existing ones.
+ * Adding new bans:
+ * 	- is accesssed by ?action=admin;area=ban;sa=add.
+ * 	- uses the ban_edit sub template of the ManageBans template.
+ * Modifying existing bans:
+ *  - is accesssed by ?action=admin;area=ban;sa=edit;bg=x
+ *  - uses the ban_edit sub template of the ManageBans template.
+ *  - shows a list of ban triggers for the specified ban.
+ *  - handles submitted forms that add, modify or remove ban triggers.
+ *
+ *  @todo insane number of writing to superglobals here...
+ */
 function BanEdit()
 {
 	global $txt, $modSettings, $context, $ban_request, $scripturl, $smcFunc;
@@ -410,6 +381,14 @@ function BanEdit()
 			'ip_high3' => 0,
 			'ip_low4' => 0,
 			'ip_high4' => 0,
+			'ip_low5' => 0,
+			'ip_high5' => 0,
+			'ip_low6' => 0,
+			'ip_high6' => 0,
+			'ip_low7' => 0,
+			'ip_high7' => 0,
+			'ip_low8' => 0,
+			'ip_high8' => 0,
 		);
 
 		// Preset all values that are required.
@@ -428,6 +407,14 @@ function BanEdit()
 				'ip_high3' => 'int',
 				'ip_low4' => 'int',
 				'ip_high4' => 'int',
+				'ip_low5' => 'int',
+				'ip_high5' => 'int',
+				'ip_low6' => 'int',
+				'ip_high6' => 'int',
+				'ip_low7' => 'int',
+				'ip_high7' => 'int',
+				'ip_low8' => 'int',
+				'ip_high8' => 'int',
 			);
 		}
 		else
@@ -436,7 +423,11 @@ function BanEdit()
 				ip_low1 = {int:ip_low1}, ip_high1 = {int:ip_high1},
 				ip_low2 = {int:ip_low2}, ip_high2 = {int:ip_high2},
 				ip_low3 = {int:ip_low3}, ip_high3 = {int:ip_high3},
-				ip_low4 = {int:ip_low4}, ip_high4 = {int:ip_high4}';
+				ip_low4 = {int:ip_low4}, ip_high4 = {int:ip_high4},
+				ip_low5 = {int:ip_low5}, ip_high5 = {int:ip_high5},
+				ip_low6 = {int:ip_low6}, ip_high6 = {int:ip_high6},
+				ip_low7 = {int:ip_low7}, ip_high7 = {int:ip_high7},
+				ip_low8 = {int:ip_low8}, ip_high8 = {int:ip_high8}';
 
 		if ($_POST['bantype'] == 'ip_ban')
 		{
@@ -631,6 +622,14 @@ function BanEdit()
 						$ip_parts[2]['high'],
 						$ip_parts[3]['low'],
 						$ip_parts[3]['high'],
+						$ip_parts[4]['low'],
+						$ip_parts[4]['high'],
+						$ip_parts[5]['low'],
+						$ip_parts[5]['high'],
+						$ip_parts[6]['low'],
+						$ip_parts[6]['high'],
+						$ip_parts[7]['low'],
+						$ip_parts[7]['high'],
 						'',
 						'',
 						0,
@@ -649,7 +648,7 @@ function BanEdit()
 					$_POST['hostname'] = str_replace('*', '%', $_POST['hostname']);
 
 					$ban_triggers[] = array(
-						0, 0, 0, 0, 0, 0, 0, 0,
+						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						substr($_POST['hostname'], 0, 255),
 						'',
 						0,
@@ -665,7 +664,7 @@ function BanEdit()
 					$_POST['email'] = strtolower(str_replace('*', '%', $_POST['email']));
 
 					$ban_triggers[] = array(
-						0, 0, 0, 0, 0, 0, 0, 0,
+						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						'',
 						substr($_POST['email'], 0, 255),
 						0,
@@ -701,7 +700,7 @@ function BanEdit()
 					}
 
 					$ban_triggers[] = array(
-						0, 0, 0, 0, 0, 0, 0, 0,
+						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						'',
 						'',
 						(int) $_POST['bannedUser'],
@@ -724,7 +723,7 @@ function BanEdit()
 						$ip_parts = ip2range($ip);
 
 						// They should be alright, but just to be sure...
-						if (count($ip_parts) != 4)
+						if (count($ip_parts) != 4 || count($ip_parts) != 8)
 							fatal_lang_error('invalid_ip', false);
 
 						$ban_triggers[] = array(
@@ -736,6 +735,14 @@ function BanEdit()
 							$ip_parts[2]['high'],
 							$ip_parts[3]['low'],
 							$ip_parts[3]['high'],
+							$ip_parts[4]['low'],
+							$ip_parts[4]['high'],
+							$ip_parts[5]['low'],
+							$ip_parts[5]['high'],
+							$ip_parts[6]['low'],
+							$ip_parts[6]['high'],
+							$ip_parts[7]['low'],
+							$ip_parts[7]['high'],
 							'',
 							'',
 							0,
@@ -777,8 +784,9 @@ function BanEdit()
 					'{db_prefix}ban_items',
 					array(
 						'id_ban_group' => 'int', 'ip_low1' => 'int', 'ip_high1' => 'int', 'ip_low2' => 'int', 'ip_high2' => 'int',
-						'ip_low3' => 'int', 'ip_high3' => 'int', 'ip_low4' => 'int', 'ip_high4' => 'int', 'hostname' => 'string-255',
-						'email_address' => 'string-255', 'id_member' => 'int',
+						'ip_low3' => 'int', 'ip_high3' => 'int', 'ip_low4' => 'int', 'ip_high4' => 'int', 'ip_low5' => 'int',
+						'ip_high5' => 'int', 'ip_low6' => 'int', 'ip_high6' => 'int', 'ip_low7' => 'int', 'ip_high7' => 'int',
+						'ip_low8' => 'int', 'ip_high8' => 'int', 'hostname' => 'string-255', 'email_address' => 'string-255', 'id_member' => 'int',
 					),
 					$ban_triggers,
 					array('id_ban')
@@ -824,6 +832,7 @@ function BanEdit()
 			SELECT
 				bi.id_ban, bi.hostname, bi.email_address, bi.id_member, bi.hits,
 				bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4,
+				bi.ip_low5, bi.ip_high5, bi.ip_low6, bi.ip_high6, bi.ip_low7, bi.ip_high7, bi.ip_low8, bi.ip_high8,
 				bg.id_ban_group, bg.name, bg.ban_time, bg.expire_time, bg.reason, bg.notes, bg.cannot_access, bg.cannot_register, bg.cannot_login, bg.cannot_post,
 				IFNULL(mem.id_member, 0) AS id_member, mem.member_name, mem.real_name
 			FROM {db_prefix}ban_groups AS bg
@@ -868,7 +877,7 @@ function BanEdit()
 				if (!empty($row['ip_high1']))
 				{
 					$context['ban_items'][$row['id_ban']]['type'] = 'ip';
-					$context['ban_items'][$row['id_ban']]['ip'] = range2ip(array($row['ip_low1'], $row['ip_low2'], $row['ip_low3'], $row['ip_low4']), array($row['ip_high1'], $row['ip_high2'], $row['ip_high3'], $row['ip_high4']));
+					$context['ban_items'][$row['id_ban']]['ip'] = range2ip(array($row['ip_low1'], $row['ip_low2'], $row['ip_low3'], $row['ip_low4'] ,$row['ip_low5'], $row['ip_low6'], $row['ip_low7'], $row['ip_low8']), array($row['ip_high1'], $row['ip_high2'], $row['ip_high3'], $row['ip_high4'], $row['ip_high5'], $row['ip_high6'], $row['ip_high7'], $row['ip_high8']));
 				}
 				elseif (!empty($row['hostname']))
 				{
@@ -1018,6 +1027,16 @@ function BanEdit()
 		$context['sub_template'] = 'ban_edit';
 }
 
+/**
+ * This function handles the ins and outs of the screen for adding new ban
+ * triggers or modifying existing ones.
+ * Adding new ban triggers:
+ * 	- is accessed by ?action=admin;area=ban;sa=edittrigger;bg=x
+ * 	- uses the ban_edit_trigger sub template of ManageBans.
+ * Editing existing ban triggers:
+ *  - is accessed by ?action=admin;area=ban;sa=edittrigger;bg=x;bi=y
+ *  - uses the ban_edit_trigger sub template of ManageBans.
+ */
 function BanEditTrigger()
 {
 	global $context, $smcFunc;
@@ -1057,6 +1076,7 @@ function BanEditTrigger()
 			SELECT
 				bi.id_ban, bi.id_ban_group, bi.hostname, bi.email_address, bi.id_member,
 				bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4,
+				bi.ip_low5, bi.ip_high5, bi.ip_low6, bi.ip_high6, bi.ip_low7, bi.ip_high7, bi.ip_low8, bi.ip_high8,
 				mem.member_name, mem.real_name
 			FROM {db_prefix}ban_items AS bi
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = bi.id_member)
@@ -1077,7 +1097,7 @@ function BanEditTrigger()
 			'id' => $row['id_ban'],
 			'group' => $row['id_ban_group'],
 			'ip' => array(
-				'value' => empty($row['ip_low1']) ? '' : range2ip(array($row['ip_low1'], $row['ip_low2'], $row['ip_low3'], $row['ip_low4']), array($row['ip_high1'], $row['ip_high2'], $row['ip_high3'], $row['ip_high4'])),
+				'value' => empty($row['ip_low1']) ? '' : range2ip(array($row['ip_low1'], $row['ip_low2'], $row['ip_low3'], $row['ip_low4'], $row['ip_low5'], $row['ip_low6'], $row['ip_low7'], $row['ip_low8']), array($row['ip_high1'], $row['ip_high2'], $row['ip_high3'], $row['ip_high4'], $row['ip_high5'], $row['ip_high6'], $row['ip_high7'], $row['ip_high8'])),
 				'selected' => !empty($row['ip_low1']),
 			),
 			'hostname' => array(
@@ -1097,6 +1117,13 @@ function BanEditTrigger()
 	}
 }
 
+/**
+ * This handles the screen for showing the banned entities
+ * It is accessed by ?action=admin;area=ban;sa=browse
+ * It uses sub-tabs for browsing by IP, hostname, email or username.
+ *
+ * @uses ManageBans template, browse_triggers sub template.
+ */
 function BanBrowseTriggers()
 {
 	global $modSettings, $context, $scripturl, $smcFunc, $txt;
@@ -1226,18 +1253,26 @@ function BanBrowseTriggers()
 					$rowData[\'ip_low1\'],
 					$rowData[\'ip_low2\'],
 					$rowData[\'ip_low3\'],
-					$rowData[\'ip_low4\']
+					$rowData[\'ip_low4\'],
+					$rowData[\'ip_low5\'],
+					$rowData[\'ip_low6\'],
+					$rowData[\'ip_low7\'],
+					$rowData[\'ip_low8\']
 				), array(
 					$rowData[\'ip_high1\'],
 					$rowData[\'ip_high2\'],
 					$rowData[\'ip_high3\'],
-					$rowData[\'ip_high4\']
+					$rowData[\'ip_high4\'],
+					$rowData[\'ip_high5\'],
+					$rowData[\'ip_high6\'],
+					$rowData[\'ip_high7\'],
+					$rowData[\'ip_high8\']
 				));
 			'),
 		);
 		$listOptions['columns']['banned_entity']['sort'] = array(
-			'default' => 'bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4',
-			'reverse' => 'bi.ip_low1 DESC, bi.ip_high1 DESC, bi.ip_low2 DESC, bi.ip_high2 DESC, bi.ip_low3 DESC, bi.ip_high3 DESC, bi.ip_low4 DESC, bi.ip_high4 DESC',
+			'default' => 'bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4, bi.ip_low5, bi.ip_high5, bi.ip_low6, bi.ip_high6, bi.ip_low7, bi.ip_high7, bi.ip_low8, bi.ip_high8',
+			'reverse' => 'bi.ip_low1 DESC, bi.ip_high1 DESC, bi.ip_low2 DESC, bi.ip_high2 DESC, bi.ip_low3 DESC, bi.ip_high3 DESC, bi.ip_low4 DESC, bi.ip_high4 DESC, bi.ip_low5 DESC, bi.ip_high5 DESC, bi.ip_low6 DESC, bi.ip_high6 DESC, bi.ip_low7 DESC, bi.ip_high7 DESC, bi.ip_low8 DESC, bi.ip_high8 DESC',
 		);
 	}
 	elseif ($context['selected_entity'] === 'hostname')
@@ -1292,6 +1327,15 @@ function BanBrowseTriggers()
 	$context['default_list'] = 'ban_trigger_list';
 }
 
+/**
+ * Get ban triggers for the given parameters.
+ *
+ * @param int $start
+ * @param int $items_per_page
+ * @param string $sort
+ * @param string $trigger_type
+ * @return array
+ */
 function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 {
 	global $smcFunc;
@@ -1304,7 +1348,7 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 
 	$request = $smcFunc['db_query']('', '
 		SELECT
-			bi.id_ban, bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4, bi.hostname, bi.email_address, bi.hits,
+			bi.id_ban, bi.ip_low1, bi.ip_high1, bi.ip_low2, bi.ip_high2, bi.ip_low3, bi.ip_high3, bi.ip_low4, bi.ip_high4, bi.ip_low5, bi.ip_high5, bi.ip_low6, bi.ip_high6, bi.ip_low7, bi.ip_high7, bi.ip_low8, bi.ip_high8, bi.hostname, bi.email_address, bi.hits,
 			bg.id_ban_group, bg.name' . ($trigger_type === 'member' ? ',
 			mem.id_member, mem.real_name' : '') . '
 		FROM {db_prefix}ban_items AS bi
@@ -1325,6 +1369,12 @@ function list_getBanTriggers($start, $items_per_page, $sort, $trigger_type)
 	return $ban_triggers;
 }
 
+/**
+ * This returns the total number of ban triggers of the given type.
+ *
+ * @param string $trigger_type
+ * @return int
+ */
 function list_getNumBanTriggers($trigger_type)
 {
 	global $smcFunc;
@@ -1350,6 +1400,14 @@ function list_getNumBanTriggers($trigger_type)
 	return $num_triggers;
 }
 
+/**
+ * This handles the listing of ban log entries, and allows their deletion.
+ * Shows a list of logged access attempts by banned users.
+ * It is accessed by ?action=admin;area=ban;sa=log.
+ * How it works:
+ *  - allows sorting of several columns.
+ *  - also handles deletion of (a selection of) log entries.
+ */
 function BanLog()
 {
 	global $scripturl, $context, $smcFunc, $sourcedir, $txt;
@@ -1368,7 +1426,7 @@ function BanLog()
 				)
 			);
 
-		// 'Delte selection' button was pressed.
+		// 'Delete selection' button was pressed.
 		else
 		{
 			// Make sure every entry is integer.
@@ -1498,6 +1556,14 @@ function BanLog()
 	$context['default_list'] = 'ban_log';
 }
 
+/**
+ * Load a list of ban log entries from the database.
+ * (no permissions check)
+ *
+ * @param int $start
+ * @param int $items_per_page
+ * @param string $sort
+ */
 function list_getBanLogEntries($start, $items_per_page, $sort)
 {
 	global $smcFunc;
@@ -1521,6 +1587,9 @@ function list_getBanLogEntries($start, $items_per_page, $sort)
 	return $log_entries;
 }
 
+/**
+ * This returns the total count of ban log entries.
+ */
 function list_getNumBanLogEntries()
 {
 	global $smcFunc;
@@ -1537,10 +1606,43 @@ function list_getNumBanLogEntries()
 	return $num_entries;
 }
 
+/**
+ * Convert a range of given IP number into a single string.
+ * It's practically the reverse function of ip2range().
+ *
+ * @example
+ * range2ip(array(10, 10, 10, 0), array(10, 10, 20, 255)) returns '10.10.10-20.*
+ *
+ * @param array $low, IPv4 format
+ * @param array $high, IPv4 format
+ * @return string
+ */
 function range2ip($low, $high)
 {
-	if (count($low) != 4 || count($high) != 4)
-		return '';
+	// IPv6 check.
+	if (!empty($high[4]) || !empty($high[5]) || !empty($high[6]) || !empty($high[7]))
+	{
+		if (count($low) != 8 || count($high) != 8)
+			return '';
+
+		$ip = array();
+		for ($i = 0; $i < 8; $i++)
+		{
+			if ($low[$i] == $high[$i])
+				$ip[$i] = dechex($low[$i]);
+			elseif ($low[$i] == '0' && $high[$i] == '255')
+				$ip[$i] = '*';
+			else
+				$ip[$i] = dechex($low[$i]) . '-' . dechex($high[$i]);
+		}
+
+		return implode(':', $ip);
+	}
+
+	// Legacy IPv4 stuff.
+	// (count($low) != 4 || count($high) != 4) would not work because $low and $high always contain 8 elements!
+	if ((count($low) != 4 || count($high) != 4) && (count($low) != 8 || count($high) != 8))
+			return '';
 
 	$ip = array();
 	for ($i = 0; $i < 4; $i++)
@@ -1560,11 +1662,20 @@ function range2ip($low, $high)
 	return implode('.', $ip);
 }
 
+/**
+ * Checks whether a given IP range already exists in the trigger list.
+ * If yes, it returns an error message. Otherwise, it returns an array
+ *  optimized for the database.
+ *
+ * @param array $ip_array
+ * @param string $fullip
+ * @return bool
+ */
 function checkExistingTriggerIP($ip_array, $fullip = '')
 {
 	global $smcFunc, $scripturl;
 
-	if (count($ip_array) == 4)
+	if (count($ip_array) == 4 || count($ip_array) == 8)
 		$values = array(
 			'ip_low1' => $ip_array[0]['low'],
 			'ip_high1' => $ip_array[0]['high'],
@@ -1574,6 +1685,14 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 			'ip_high3' => $ip_array[2]['high'],
 			'ip_low4' => $ip_array[3]['low'],
 			'ip_high4' => $ip_array[3]['high'],
+			'ip_low5' => $ip_array[4]['low'],
+			'ip_high5' => $ip_array[4]['high'],
+			'ip_low6' => $ip_array[5]['low'],
+			'ip_high6' => $ip_array[5]['high'],
+			'ip_low7' => $ip_array[6]['low'],
+			'ip_high7' => $ip_array[6]['high'],
+			'ip_low8' => $ip_array[7]['low'],
+			'ip_high8' => $ip_array[7]['high'],
 		);
 	else
 		return false;
@@ -1587,6 +1706,10 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 			AND ip_low2 = {int:ip_low2} AND ip_high2 = {int:ip_high2}
 			AND ip_low3 = {int:ip_low3} AND ip_high3 = {int:ip_high3}
 			AND ip_low4 = {int:ip_low4} AND ip_high4 = {int:ip_high4}
+			AND ip_low5 = {int:ip_low5} AND ip_high5 = {int:ip_high5}
+			AND ip_low6 = {int:ip_low6} AND ip_high6 = {int:ip_high6}
+			AND ip_low7 = {int:ip_low7} AND ip_high7 = {int:ip_high7}
+			AND ip_low8 = {int:ip_low8} AND ip_high8 = {int:ip_high8}
 		LIMIT 1',
 		$values
 	);
@@ -1603,6 +1726,10 @@ function checkExistingTriggerIP($ip_array, $fullip = '')
 	return $values;
 }
 
+/**
+ * As it says... this tries to review the list of banned members, to match new bans.
+ * Note: is_activated >= 10: a member is banned.
+ */
 function updateBanMembers()
 {
 	global $smcFunc;
