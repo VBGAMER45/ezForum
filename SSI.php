@@ -22,6 +22,7 @@ if (defined('EZF'))
 
 define('SMF', 'SSI');
 define('EZF', 'SSI');
+define('EZF_MULTISITESECURITY', 0);
 
 // We're going to want a few globals... these are all set later.
 global $time_start, $maintenance, $msubject, $mmessage, $mbname, $language;

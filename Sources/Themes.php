@@ -1296,6 +1296,9 @@ function ThemeInstall()
 {
 	global $sourcedir, $boarddir, $boardurl, $txt, $context, $settings, $modSettings, $smcFunc;
 
+	if (EZF_MULTISITESECURITY == 1)
+		die("Disabled by multisite security");
+	
 	checkSession('request');
 
 	isAllowedTo('admin_forum');
@@ -1687,6 +1690,9 @@ function SetJavaScript()
 function EditTheme()
 {
 	global $context, $settings, $scripturl, $boarddir, $smcFunc;
+	
+	if (EZF_MULTISITESECURITY == 1)
+		die("Disabled by multisite security");
 
 	if (isset($_REQUEST['preview']))
 	{
@@ -2018,6 +2024,9 @@ function get_file_listing($path, $relative)
 function CopyTemplate()
 {
 	global $context, $settings, $smcFunc;
+	
+	if (EZF_MULTISITESECURITY == 1)
+		die("Disabled by multisite security");
 
 	isAllowedTo('admin_forum');
 	loadTemplate('Themes');

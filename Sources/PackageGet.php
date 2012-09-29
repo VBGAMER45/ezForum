@@ -44,7 +44,10 @@ if (!defined('SMF'))
 function PackageGet()
 {
 	global $txt, $scripturl, $context, $boarddir, $sourcedir, $modSettings;
-
+	
+	if (EZF_MULTISITESECURITY == 1)
+		die("Disabled by multisite security");	
+	
 	isAllowedTo('admin_forum');
 	require_once($sourcedir . '/Subs-Package.php');
 

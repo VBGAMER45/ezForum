@@ -32,6 +32,7 @@ $forum_version = 'ezForum 3.0 Alpha 1';
 // Get everything started up...
 define('SMF', 1);
 define('EZF', 1);
+define('EZF_MULTISITESECURITY', 0);
 if (function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);

@@ -60,7 +60,9 @@ function Packages()
 {
 	global $txt, $scripturl, $sourcedir, $context;
 
-	//!!! Remove this!
+	if (EZF_MULTISITESECURITY == 1)
+		die("Disabled by multisite security");
+
 	if (isset($_GET['get']) || isset($_GET['pgdownload']))
 	{
 		require_once($sourcedir . '/PackageGet.php');
