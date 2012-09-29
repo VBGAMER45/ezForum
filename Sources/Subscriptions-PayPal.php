@@ -164,9 +164,13 @@ class paypal_payment
 		else
 		{
 			// Setup the headers.
-			$header = 'POST /cgi-bin/webscr HTTP/1.0' . "\r\n";
+			$header = 'POST /cgi-bin/webscr HTTP/1.1' . "\r\n";
 			$header .= 'Content-Type: application/x-www-form-urlencoded' . "\r\n";
-			$header .= 'Content-Length: ' . strlen ($requestString) . "\r\n\r\n";
+			$header .="Host: www." . (!empty($modSettings['paidsubs_test']) ? 'sandbox.' : '') . "paypal.com\r\n";
+			$header .= "Content-Length: " . strlen($requestString) . "\r\n";
+			$header .="Connection: close\r\n\r\n";
+			
+
 
 			// Open the connection.
 			$fp = fsockopen('www.' . (!empty($modSettings['paidsubs_test']) ? 'sandbox.' : '') . 'paypal.com', 80, $errno, $errstr, 30);
