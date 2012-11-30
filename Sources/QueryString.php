@@ -310,7 +310,7 @@ function isValidIPv6($ip)
 /**
  * Converts IPv6s to numbers.  This makes ban checks much easier.
  * @param string $ip ip address to be converted
- * @return array 
+ * @return array
  */
 function convertIPv6toInts($ip)
 {
@@ -375,7 +375,7 @@ function expandIPv6($addr, $strict_check = true)
 	// Save this incase of repeated use.
 	$converted[$addr] = $result;
 
-	// Quick check to make sure the length is as expected. 
+	// Quick check to make sure the length is as expected.
 	if (!$strict_check || strlen($result) == 39)
 		return $result;
 	else
@@ -553,7 +553,7 @@ function cleanXml($string)
 	global $context;
 
 	// http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char
-	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19' . ($context['utf8'] ? '\x{FFFE}\x{FFFF}' : '') . ']~' . ($context['utf8'] ? 'u' : ''), '', $string);
+	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19' . ($context['utf8'] ? (@version_compare(PHP_VERSION, '4.3.3') != -1 ? '\x{FFFE}\x{FFFF}' : "\xED\xA0\x80-\xED\xBF\xBF\xEF\xBF\xBE\xEF\xBF\xBF") : '') . ']~' . ($context['utf8'] ? 'u' : ''), '', $string);
 }
 
 /**
