@@ -320,7 +320,7 @@ function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method
 }
 
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.
-function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = '', $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false)
+function ssi_queryPosts($query_where = '', $query_where_params = array(), $query_limit = 10, $query_order = 'm.id_msg DESC', $output_method = 'echo', $limit_body = false, $override_permissions = false)
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
 	global $modSettings, $smcFunc;
@@ -337,11 +337,15 @@ function ssi_queryPosts($query_where = '', $query_where_params = array(), $query
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)' . (!$user_info['is_guest'] ? '
 			LEFT JOIN {db_prefix}log_topics AS lt ON (lt.id_topic = m.id_topic AND lt.id_member = {int:current_member})
 			LEFT JOIN {db_prefix}log_mark_read AS lmr ON (lmr.id_board = m.id_board AND lmr.id_member = {int:current_member})' : '') . '
-		' . (empty($query_where) ? '' : 'WHERE ' . $query_where) . '
+		WHERE 1=1 ' . ($override_permissions ? '' : '
+			AND {query_wanna_see_board}') . ($modSettings['postmod_active'] ? '
+			AND m.approved = {int:is_approved}' : '') . '
+			' . (empty($query_where) ? '' : 'AND ' . $query_where) . '
 		ORDER BY ' . $query_order . '
 		' . ($query_limit == '' ? '' : 'LIMIT ' . $query_limit),
 		array_merge($query_where_params, array(
 			'current_member' => $user_info['id'],
+			'is_approved' => 1,
 		))
 	);
 	$posts = array();
@@ -1640,11 +1644,13 @@ function ssi_boardNews($board = null, $limit = null, $start = null, $length = nu
 
 	// Find the post ids.
 	$request = $smcFunc['db_query']('', '
-		SELECT id_first_msg
-		FROM {db_prefix}topics
-		WHERE id_board = {int:current_board}' . ($modSettings['postmod_active'] ? '
-			AND approved = {int:is_approved}' : '') . '
-		ORDER BY id_first_msg DESC
+		SELECT t.id_first_msg
+		FROM {db_prefix}topics as t
+		LEFT JOIN {db_prefix}boards as b ON (b.id_board = t.id_board)
+		WHERE t.id_board = {int:current_board}' . ($modSettings['postmod_active'] ? '
+			AND t.approved = {int:is_approved}' : '') . '
+			AND {query_see_board}
+		ORDER BY t.id_first_msg DESC
 		LIMIT ' . $start . ', ' . $limit,
 		array(
 			'current_board' => $board,
