@@ -393,11 +393,13 @@ function show_db_error($loadavg = false)
 			// Avoid writing to the Settings.php file if at all possible; use shared memory instead.
 			cache_put_data('db_last_error', time(), 600);
 			if (($temp = cache_get_data('db_last_error', 600)) == null)
-				updateLastDatabaseError();
+			{
 
+				//updateLastDatabaseError();
+			}
 			// Language files aren't loaded yet :(.
 			$db_error = @$smcFunc['db_error']($db_connection);
-			@mail($webmaster_email, $mbname . ': ezForum Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\n" . $smcFunc['db_title'] . ' reported:' . "\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that ezForum could not connect to the database, contact your host if this continues.');
+			// @mail($webmaster_email, $mbname . ': ezForum Database Error!', 'There has been a problem with the database!' . ($db_error == '' ? '' : "\n" . $smcFunc['db_title'] . ' reported:' . "\n" . $db_error) . "\n\n" . 'This is a notice email to let you know that ezForum could not connect to the database, contact your host if this continues.');
 		}
 	}
 
