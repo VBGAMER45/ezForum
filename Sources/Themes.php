@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -1787,6 +1787,9 @@ function EditTheme()
 	);
 	list ($theme_dir, $context['theme_id']) = $smcFunc['db_fetch_row']($request);
 	$smcFunc['db_free_result']($request);
+
+	if (!file_exists($theme_dir . '/index.template.php') && !file_exists($theme_dir . '/css/index.css'))
+		fatal_lang_error('theme_edit_missing', false);
 
 	if (!isset($_REQUEST['filename']))
 	{

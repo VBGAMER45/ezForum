@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2012 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -298,9 +298,12 @@ function ssi_recentPosts($num_recent = 8, $exclude_boards = null, $include_board
 }
 
 // Fetch a post with a particular ID. By default will only show if you have permission to the see the board in question - this can be overriden.
-function ssi_fetchPosts($post_ids, $override_permissions = false, $output_method = 'echo')
+function ssi_fetchPosts($post_ids = array(), $override_permissions = false, $output_method = 'echo')
 {
 	global $user_info, $modSettings;
+    
+ 	if (empty($post_ids))
+		return;
 
 	// Allow the user to request more than one - why not?
 	$post_ids = is_array($post_ids) ? $post_ids : array($post_ids);
@@ -797,8 +800,11 @@ function ssi_randomMember($random_type = '', $output_method = 'echo')
 }
 
 // Fetch a specific member.
-function ssi_fetchMember($member_ids, $output_method = 'echo')
+function ssi_fetchMember($member_ids = array(), $output_method = 'echo')
 {
+	if (empty($member_ids))
+		return;
+        
 	// Can have more than one member if you really want...
 	$member_ids = is_array($member_ids) ? $member_ids : array($member_ids);
 
@@ -815,8 +821,11 @@ function ssi_fetchMember($member_ids, $output_method = 'echo')
 }
 
 // Get all members of a group.
-function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
+function ssi_fetchGroupMembers($group_id = null, $output_method = 'echo')
 {
+	if ($group_id === null)
+		return;
+
 	$query_where = '
 		id_group = {int:id_group}
 		OR id_post_group = {int:id_group}
@@ -830,10 +839,13 @@ function ssi_fetchGroupMembers($group_id, $output_method = 'echo')
 }
 
 // Fetch some member data!
-function ssi_queryMembers($query_where, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
+function ssi_queryMembers($query_where = null, $query_where_params = array(), $query_limit = '', $query_order = 'id_member DESC', $output_method = 'echo')
 {
 	global $context, $settings, $scripturl, $txt, $db_prefix, $user_info;
 	global $modSettings, $smcFunc, $memberContext;
+
+	if ($query_where === null)
+		return;
 
 	// Fetch the members in question.
 	$request = $smcFunc['db_query']('', '
@@ -1483,6 +1495,9 @@ function ssi_todaysBirthdays($output_method = 'echo')
 {
 	global $scripturl, $modSettings, $user_info;
 
+	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view') || !allowedTo('profile_view_any'))
+		return;
+
 	$eventOptions = array(
 		'include_birthdays' => true,
 		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
@@ -1502,6 +1517,9 @@ function ssi_todaysHolidays($output_method = 'echo')
 {
 	global $modSettings, $user_info;
 
+	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view'))
+		return;
+
 	$eventOptions = array(
 		'include_holidays' => true,
 		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
@@ -1519,6 +1537,9 @@ function ssi_todaysHolidays($output_method = 'echo')
 function ssi_todaysEvents($output_method = 'echo')
 {
 	global $modSettings, $user_info;
+
+	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view'))
+		return;
 
 	$eventOptions = array(
 		'include_events' => true,
@@ -1545,7 +1566,7 @@ function ssi_todaysCalendar($output_method = 'echo')
 	global $modSettings, $txt, $scripturl, $user_info;
 
 	$eventOptions = array(
-		'include_birthdays' => true,
+		'include_birthdays' => allowedTo('profile_view_any'),
 		'include_holidays' => true,
 		'include_events' => true,
 		'num_days_shown' => empty($modSettings['cal_days_for_index']) || $modSettings['cal_days_for_index'] < 1 ? 1 : $modSettings['cal_days_for_index'],
@@ -1763,6 +1784,9 @@ function ssi_recentEvents($max_events = 7, $output_method = 'echo')
 {
 	global $db_prefix, $user_info, $scripturl, $modSettings, $txt, $context, $smcFunc;
 
+	if (empty($modSettings['cal_enabled']) || !allowedTo('calendar_view'))
+		return;
+        
 	// Find all events which are happening in the near future that the member can see.
 	$request = $smcFunc['db_query']('', '
 		SELECT

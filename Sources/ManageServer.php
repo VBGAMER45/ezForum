@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -938,7 +938,18 @@ function ModifyLanguages()
 	{
 		checkSession();
 
-		if ($_POST['def_language'] != $language)
+        getLanguages(true, false);
+		$lang_exists = false;
+		foreach ($context['languages'] as $lang)
+		{
+			if ($_POST['def_language'] == $lang['filename'])
+			{
+				$lang_exists = true;
+				break;
+			}
+		}
+
+		if ($_POST['def_language'] != $language && $lang_exists)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
 			updateSettingsFile(array('language' => '\'' . $_POST['def_language'] . '\''));

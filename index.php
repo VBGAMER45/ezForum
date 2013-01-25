@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2012 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -27,7 +27,7 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'ezForum 3.0 Alpha 1';
+$forum_version = 'ezForum 3.0 Alpha 2';
 
 // Get everything started up...
 define('SMF', 1);
