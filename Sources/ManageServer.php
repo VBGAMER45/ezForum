@@ -222,6 +222,8 @@ function ModifyGeneralSettings($return_config = false)
 		array('maintenance', $txt['admin_maintain'], 'file', 'check'),
 		array('mtitle', $txt['maintenance_subject'], 'file', 'text', 36),
 		array('mmessage', $txt['maintenance_message'], 'file', 'text', 36),
+		array('db_show_debug', $txt['admin_db_show_debug'], 'file', 'check'),
+		
 		'',
 		array('webmaster_email', $txt['admin_webmaster_email'], 'file', 'text', 30),
 		'',

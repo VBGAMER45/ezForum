@@ -25,6 +25,7 @@ $txt['admin_basic_settings'] = 'This page allows you to change the basic setting
 $txt['admin_maintain'] = 'Enable Maintenance Mode';
 $txt['admin_title'] = 'Forum Title';
 $txt['admin_url'] = 'Forum URL';
+$txt['admin_db_show_debug'] = 'Enable Debug Mode';
 $txt['cookie_name'] = 'Cookie Name';
 $txt['admin_webmaster_email'] = 'Webmaster Email Address';
 $txt['boarddir'] = 'ezForum Directory';
