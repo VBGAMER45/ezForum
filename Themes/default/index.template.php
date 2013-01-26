@@ -391,7 +391,7 @@ function template_menu()
 		echo '
 				<li id="button_', $act, '">
 					<a class="', $button['active_button'] ? 'active ' : '', 'firstlevel" href="', $button['href'], '"', isset($button['target']) ? ' target="' . $button['target'] . '"' : '', '>
-						<span class="', isset($button['is_last']) ? 'last ' : '', 'firstlevel">', $button['title'], '</span>
+						<span class="', isset($button['is_last']) ? 'last ' : '', 'firstlevel">', (isset($button['icon']) ? '<img align="absMiddle" src="'. $button['icon'] . '" alt="'.  $button['title']. '" />&nbsp; ' : ''), $button['title'], '</span>
 					</a>';
 		if (!empty($button['sub_buttons']))
 		{

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -3918,7 +3918,7 @@ function loadClassFile($filename)
 
 function setupMenuContext()
 {
-	global $context, $modSettings, $user_info, $txt, $scripturl;
+	global $context, $modSettings, $user_info, $txt, $scripturl, $settings;
 
 	// Set up the menu privileges.
 	$context['allow_search'] = allowedTo('search_posts');
@@ -3942,6 +3942,7 @@ function setupMenuContext()
 				'sub_buttons' => array(
 				),
 				'is_last' => $context['right_to_left'],
+				'icon' => $settings['images_url'] . '/menu_icons/house.png',
 			),
 			'search' => array(
 				'title' => $txt['search'],
@@ -3949,6 +3950,7 @@ function setupMenuContext()
 				'show' => $context['allow_search'],
 				'sub_buttons' => array(
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/magnifier.png',
 			),
 			'admin' => array(
 				'title' => $txt['admin'],
@@ -3977,6 +3979,7 @@ function setupMenuContext()
 						'is_last' => true,
 					),
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/star.png',
 			),
 			'moderate' => array(
 				'title' => $txt['moderate'],
@@ -4005,6 +4008,7 @@ function setupMenuContext()
 						'is_last' => true,
 					),
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/report.png',
 			),
 			'profile' => array(
 				'title' => $txt['profile'],
@@ -4028,6 +4032,7 @@ function setupMenuContext()
 						'is_last' => true,
 					),
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/user.png',
 			),
 			'pm' => array(
 				'title' => $txt['pm_short'],
@@ -4046,6 +4051,7 @@ function setupMenuContext()
 						'is_last' => true,
 					),
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/email.png',
 			),
 			'calendar' => array(
 				'title' => $txt['calendar'],
@@ -4064,6 +4070,7 @@ function setupMenuContext()
 						'is_last' => true,
 					),
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/date.png',
 			),
 			'mlist' => array(
 				'title' => $txt['members_title'],
@@ -4082,6 +4089,7 @@ function setupMenuContext()
 						'is_last' => true,
 					),
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/group.png',
 			),
 			'login' => array(
 				'title' => $txt['login'],
@@ -4089,6 +4097,7 @@ function setupMenuContext()
 				'show' => $user_info['is_guest'],
 				'sub_buttons' => array(
 				),
+				'icon' => $settings['images_url'] . '/menu_icons/key.png',
 			),
 			'register' => array(
 				'title' => $txt['register'],
@@ -4097,6 +4106,7 @@ function setupMenuContext()
 				'sub_buttons' => array(
 				),
 				'is_last' => !$context['right_to_left'],
+				'icon' => $settings['images_url'] . '/menu_icons/key_add.png',
 			),
 			'logout' => array(
 				'title' => $txt['logout'],
@@ -4105,6 +4115,7 @@ function setupMenuContext()
 				'sub_buttons' => array(
 				),
 				'is_last' => !$context['right_to_left'],
+				'icon' => $settings['images_url'] . '/menu_icons/delete.png',
 			),
 		);
 
