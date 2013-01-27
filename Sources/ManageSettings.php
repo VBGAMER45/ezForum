@@ -755,7 +755,7 @@ function ModifySpamSettings($return_config = false)
 			array('title','solvemedia_settings'),
 			array('desc', 'solvemedia_settings_desc', 'class' => 'windowbg'),
 			array('check','solvemedia_enabled'),
-			array('text', 'solvemedia_publickey'),
+			array('text', 'solvemedia_publickey', 'subtext' => $txt['solvemedia_no_key_question']),
 			array('text', 'solvemedia_privatekey'),
 			array('text', 'solvemedia_hashkey'),
 			array('select','solvemedia_theme', array('white' => $txt['solvemedia_theme_white'],'black' => $txt['solvemedia_theme_black'], 'red' => $txt['solvemedia_theme_red'],'purple' => $txt['solvemedia_theme_purple'], )),

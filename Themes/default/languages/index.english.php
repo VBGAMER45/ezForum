@@ -759,8 +759,8 @@ $txt['stopforumspam_checkusername'] = 'Check Username';
 $txt['stopforumspam_err_youareaspammer'] = 'Your details match that of a known spammer. If this is not the case please contact an administrator of the forum.';
 
 // SolveMedia
-$txt['solvemedia_configure'] = 'Solve Media Puzzle Verification System';
-$txt['solvemedia_configure_desc'] = 'Use the Solve Media Puzzle Verification System. Get Solve Media API keys <a href="http://portal.solvemedia.com/portal/public/signup">here</a>.';
+$txt['solvemedia_settings'] = 'Solve Media Puzzle Verification System';
+$txt['solvemedia_settings_desc'] = 'Use the Solve Media Puzzle Verification System. Get Solve Media API keys <a href="http://portal.solvemedia.com/portal/public/signup">here</a>.';
 $txt['solvemedia_enabled'] = 'Use Solve Media Puzzle Verification System';
 $txt['solvemedia_theme'] = 'Solve Media Theme';
 $txt['solvemedia_theme_purple'] = 'Purple';
@@ -770,7 +770,7 @@ $txt['solvemedia_theme_white'] = 'White';
 $txt['solvemedia_publickey'] = 'Solve Media Public Key';
 $txt['solvemedia_privatekey'] = 'Solve Media Private Key';
 $txt['solvemedia_hashkey'] = 'Solve Media Hash Key';
-$txt['solvemedia_no_key_question'] = 'Don\'t have Solve Media API keys?';
+$txt['solvemedia_no_key_question'] = 'Don\'t have Solve Media API keys? Visit <a href="https://portal.solvemedia.com/portal/public/signup" target="_blank">SolveMedia.com</a>';
 $txt['solvemedia_get_key'] = 'Get your Solve Media API keys here.';
 $txt['solvemedia_lang'] = 'Solve Media Language';
 $txt['solvemedia_lang_en'] = 'English';
