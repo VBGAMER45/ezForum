@@ -796,6 +796,10 @@ $txt['error_wrong_solvemedia_verification'] = 'You did not complete the Solve Me
 $txt['recaptcha_settings'] = 'reCAPTCHA Verification System';
 $txt['recaptcha_settings_desc'] = 'Use the reCAPTCHA Verification System. Get reCAPTCHA API keys <a href="http://www.google.com/recaptcha" target="_blank">here</a>.';
 $txt['recaptcha_enabled'] = 'Use reCAPTCHA Verification System';
+$txt['recaptcha_publickey'] = 'reCAPTCHA Public Key';
+$txt['recaptcha_privatekey'] = 'reCAPTCHA Private Key';
+$txt['recaptcha_lang'] = 'Language';
+$txt['recaptcha_theme'] = 'Theme';
 $txt['recaptcha_theme_red'] = 'Red';
 $txt['recaptcha_theme_white'] = 'White';
 $txt['recaptcha_theme_blackglass'] = 'Blackglass';
