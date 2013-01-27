@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2012 ezForum
+ * Copyright 2012-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -19,7 +19,7 @@
 $GLOBALS['current_smf_version'] = '2.0';
 $GLOBALS['db_script_version'] = '2-0';
 
-$GLOBALS['required_php_version'] = '4.1.0';
+$GLOBALS['required_php_version'] = '5.0';
 
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none;">

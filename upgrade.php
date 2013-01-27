@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2012 ezForum
+ * Copyright 2012-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -20,7 +20,7 @@
 define('EZFORUM_VERSION', '3.0');
 define('SMF_LANG_VERSION', '2.0');
 
-$GLOBALS['required_php_version'] = '4.1.0';
+$GLOBALS['required_php_version'] = '5.0';
 $GLOBALS['required_mysql_version'] = '4.0.18';
 
 $databases = array(
