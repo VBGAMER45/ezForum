@@ -309,7 +309,7 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 		// Do the actual stuff - image first?
 		if ($i == 0 && ($verify_context['show_visual'] || $modSettings['solvemedia_enabled'] || $modSettings['recaptcha_enabled']))
 		{
-			if ($modSettings['adcopy_enabled'])
+			if ($modSettings['solvemedia_enabled'])
 			{
 				
 				require_once("$librarydir/solvemedialib.php");
