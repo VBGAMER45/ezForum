@@ -307,7 +307,7 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			<div id="verification_control_', $i, '" class="verification_control">';
 
 		// Do the actual stuff - image first?
-		if ($i == 0 && ($verify_context['show_visual'] || $modSettings['solvemedia_enabled']))
+		if ($i == 0 && ($verify_context['show_visual'] || $modSettings['solvemedia_enabled']) || $modSettings['recaptcha_enabled'])
 		{
 			if ($modSettings['adcopy_enabled'])
 			{
@@ -322,6 +322,24 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 								</script>
 								<p>' .$txt['solvemedia_pleaseverify'] . '</p>';
 				echo $format . solvemedia_get_html($modSettings['solvemedia_publickey']);
+			}
+			else if ($modSettings['recaptcha_enabled'])
+			{
+				require_once("$librarydir/recaptchalib.php");
+				
+				$format = '
+								 <script type="text/javascript">
+								 var RecaptchaOptions = {
+								    theme : \''. (empty($modSettings['recaptcha_theme']) ? 'white' : $modSettings['recaptcha_theme']) . '\',
+								    lang : \''. (empty($modSettings['recaptcha_lang']) ? 'en' : $modSettings['recaptcha_lang']) . '\'
+								 };
+								 </script>	
+		
+								<p>' .$txt['recaptcha_pleaseverify'] . '</p>';
+				
+				echo $format . recaptcha_get_html($modSettings['recaptcha_publickey']);
+				
+				
 			}
 			else
 			{

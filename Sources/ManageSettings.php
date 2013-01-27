@@ -749,6 +749,22 @@ function ModifySpamSettings($return_config = false)
 			
 			
 			// reCaptcha
+			array('title','recaptcha_settings'),
+			array('desc', 'recaptcha_settings_desc', 'class' => 'windowbg'),
+			array('check','recaptcha_enabled'),
+			array('text', 'recaptcha_publickey'),
+			array('text', 'recaptcha_privatekey'),
+			array('select','recaptcha_theme', array('white' => $txt['recaptcha_theme_white'],'blackglass' => $txt['recaptcha_theme_blackglass'], 'red' => $txt['recaptcha_theme_red'],'clean' => $txt['recaptcha_theme_clean'], )),
+			array('select','recaptcha_lang', array('en' => $txt['recaptcha_lang_en'],
+													 'es' => $txt['recaptcha_lang_es'],
+													 'fr' => $txt['recaptcha_lang_fr'],
+													 'de' => $txt['recaptcha_lang_de'],
+													 'pt' => $txt['recaptcha_lang_pt'],
+													 'nl' => $txt['recaptcha_lang_nl'],
+													 'tr' => $txt['recaptcha_lang_tr'],
+				                                     'ru' => $txt['recaptcha_lang_ru'],
+				                                     )
+           ),
 			
 			
 			// Solve Media

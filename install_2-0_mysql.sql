@@ -1821,7 +1821,13 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('stopforumspam_enabled', '1'),
 	('stopforumspam_checkip', '1'),
 	('stopforumspam_checkemail', '1'),
-	('stopforumspam_checkusername', '1');
+	('stopforumspam_checkusername', '1'),
+	('recaptcha_enabled', '0'),
+	('recaptcha_publickey', ''),
+	('recaptcha_privatekey', ''),
+	('recaptcha_theme', 'white'),
+	('recaptcha_lang', 'en');
+	;
 # --------------------------------------------------------
 
 #

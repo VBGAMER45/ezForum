@@ -760,7 +760,7 @@ $txt['stopforumspam_err_youareaspammer'] = 'Your details match that of a known s
 
 // SolveMedia
 $txt['solvemedia_settings'] = 'Solve Media Puzzle Verification System';
-$txt['solvemedia_settings_desc'] = 'Use the Solve Media Puzzle Verification System. Get Solve Media API keys <a href="http://portal.solvemedia.com/portal/public/signup">here</a>.';
+$txt['solvemedia_settings_desc'] = 'Use the Solve Media Puzzle Verification System. Get Solve Media API keys <a href="http://portal.solvemedia.com/portal/public/signup" target="_blank">here</a>.';
 $txt['solvemedia_enabled'] = 'Use Solve Media Puzzle Verification System';
 $txt['solvemedia_theme'] = 'Solve Media Theme';
 $txt['solvemedia_theme_purple'] = 'Purple';
@@ -790,5 +790,26 @@ $txt['solvemedia_lang_ja'] = 'Japanese';
 $txt['solvemedia_lang_yi'] = 'Yiddish';
 $txt['solvemedia_pleaseverify'] = 'Please verify that you are human by following the instructions and completing the puzzle below:';
 $txt['error_wrong_solvemedia_verification'] = 'You did not complete the Solve Media puzzle correctly.';
+
+
+// reCaptcha
+$txt['recaptcha_settings'] = 'reCAPTCHA Verification System';
+$txt['recaptcha_settings_desc'] = 'Use the reCAPTCHA Verification System. Get reCAPTCHA API keys <a href="http://www.google.com/recaptcha" target="_blank">here</a>.';
+$txt['recaptcha_enabled'] = 'Use reCAPTCHA Verification System';
+$txt['recaptcha_theme_red'] = 'Red';
+$txt['recaptcha_theme_white'] = 'White';
+$txt['recaptcha_theme_blackglass'] = 'Blackglass';
+$txt['recaptcha_theme_clean'] = 'Clean';
+$txt['recaptcha_lang_en'] = 'English';
+$txt['recaptcha_lang_es'] = 'Spanish';
+$txt['recaptcha_lang_fr'] = 'French';
+$txt['recaptcha_lang_it'] = 'Italian';
+$txt['recaptcha_lang_de'] = 'German';
+$txt['recaptcha_lang_pt'] = 'Portuguese';
+$txt['recaptcha_lang_nl'] = 'Dutch';
+$txt['recaptcha_lang_tr'] = 'Turkish';
+$txt['recaptcha_lang_ru'] = 'Russian';
+$txt['recaptcha_pleaseverify'] = 'Please verify that you are human by solving the CAPTCHA below.';
+$txt['error_wrong_recaptcha_verification'] = 'You did not enter the CAPTCHA correctly.';
 
 ?>

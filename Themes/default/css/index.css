@@ -3624,3 +3624,8 @@ span.hidelink
   margin: auto;
   text-align: left;
 }
+
+.centertext #recaptcha_table
+{
+	margin: 0 auto !important;
+}

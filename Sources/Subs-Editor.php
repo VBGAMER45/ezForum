@@ -1985,7 +1985,7 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		// SolveMedia Captcha Option
 		if (!empty($modSettings['solvemedia_enabled']) && ($modSettings['solvemedia_enabled'] == 1 && !empty($modSettings['solvemedia_publickey']) && !empty($modSettings['solvemedia_privatekey']) && !empty($modSettings['solvemedia_hashkey'])))
 		{
-			if(!empty($_POST["adcopy_response"]) && !empty($_POST["adcopy_challenge"])) //Check if a challenge code exists, and whether the user has entered a reponse
+			if(!empty($_POST['adcopy_response']) && !empty($_POST['adcopy_challenge']))
 			{
 			
 				require_once("$librarydir/solvemedialib.php");
@@ -2002,6 +2002,23 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 			else
 				$verification_errors[] = 'wrong_solvemedia_verification';
 		}
+		elseif (!empty($modSettings['recaptcha_enabled']) && ($modSettings['recaptcha_enabled'] == 1 && !empty($modSettings['recaptcha_publickey']) && !empty($modSettings['recaptcha_privatekey'])))
+		{
+			if (!empty($_POST['recaptcha_response_field']) && !empty($_POST['recaptcha_challenge_field']))
+			{
+				require_once("$librarydir/recaptchalib.php");
+
+				$resp = recaptcha_check_answer($modSettings['recaptcha_privatekey'], $_SERVER['REMOTE_ADDR'], $_REQUEST['recaptcha_challenge_field'], $_REQUEST['recaptcha_response_field']);
+
+				if (!$resp->is_valid)
+					fatal_lang_error('error_wrong_recaptcha_verification', false);
+			}
+			else
+				fatal_lang_error('error_wrong_recaptcha_verification', false);
+		}
+		
+		
+		
 		elseif ($thisVerification['show_visual'] && (empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['code']) || strtoupper($_REQUEST[$verificationOptions['id'] . '_vv']['code']) !== $_SESSION[$verificationOptions['id'] . '_vv']['code']))
 			$verification_errors[] = 'wrong_verification_code';
 		if ($thisVerification['number_questions'])
