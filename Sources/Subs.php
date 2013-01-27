@@ -4321,11 +4321,54 @@ function remove_integration_function($hook, $function)
 	$modSettings[$hook] = implode(',', $functions);
 }
 
-function CheckSpamStopForumSpam()
+function CheckSpam_StopForumSpam($ip = '', $email = '', $username = '')
 {
+	global $sourcedir;	
+
 	/*
 	Uses the stopforumspam.com api to check if the information passed is a spammer.
 	*/
+	
+	require_once($sourcedir . '/Subs-Package.php');
+	
+	$spamOptions = '';
+
+	if (!empty($ip))
+		$spamOptions .= 'ip=' . $ip;
+		
+	if (!empty($email))
+	{
+		if (!empty($spamOptions))
+			$spamOptions .= '&';	
+	
+		$spamOptions .= 'email=' . $email;	
+	}		
+	
+	if (!empty($username))
+	{
+		if (!empty($spamOptions))
+			$spamOptions .= '&';	
+	
+		$spamOptions .= 'username=' . $username;	
+	
+	}		
+	
+	
+	
+	if (!empty($spamOptions))
+	{
+		$data = fetch_web_data('http://www.stopforumspam.com/api?' . $spamOptions);
+		
+		if (strpos($data, '<appears>yes</appears>') > 0)
+			return true;
+		else 
+			return false;	
+	}
+	else 
+		return false;
+	
+
+	
 }
 
 ?>

@@ -749,6 +749,15 @@ $txt['debug_query_which_took_at'] = 'which took %1$s seconds at %2$s into reques
 $txt['debug_show_queries'] = '[Show Queries]';
 $txt['debug_hide_queries'] = '[Hide Queries]';
 
+// Stop Forum Spam
+$txt['stopforumspam_configure'] = 'StopForumSpam.com - Anti Spam Filter';
+$txt['stopforumspam_configure_desc'] = 'Uses the StopForumSpam.com system to block spam bots using email, IP address, and username.';
+$txt['stopforumspam_enabled'] = 'Enable Stop Forum Spam';
+$txt['stopforumspam_checkip'] = 'Check IP Address';
+$txt['stopforumspam_checkemail'] = 'Check Email Address';
+$txt['stopforumspam_checkusername'] = 'Check Username';
+$txt['stopforumspam_err_youareaspammer'] = 'Your details match that of a known spammer. If this is not the case please contact an administrator of the forum.';
+
 // SolveMedia
 $txt['solvemedia_configure'] = 'Solve Media Puzzle Verification System';
 $txt['solvemedia_configure_desc'] = 'Use the Solve Media Puzzle Verification System. Get Solve Media API keys <a href="http://portal.solvemedia.com/portal/public/signup">here</a>.';

@@ -1817,7 +1817,11 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('solvemedia_privatekey', ''),
 	('solvemedia_hashkey', ''),
 	('solvemedia_theme', 'white'),
-	('solvemedia_lang', 'en');
+	('solvemedia_lang', 'en'),
+	('stopforumspam_enabled', '1'),
+	('stopforumspam_checkip', '1'),
+	('stopforumspam_checkemail', '1'),
+	('stopforumspam_checkusername', '1');
 # --------------------------------------------------------
 
 #

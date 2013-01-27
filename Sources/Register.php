@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -447,6 +447,37 @@ function Register2($verifiedOpenID = false)
 		foreach ($custom_field_errors as $error)
 			$reg_errors[] = vsprintf($txt['error_' . $error[0]], $error[1]);
 	}
+	
+	// Check if they are a spammer.
+	if (empty($reg_errors))
+	{
+		// Is StopForumSpam.com enabled?
+		if ($modSettings['stopforumspam_enabled'])
+		{
+			$spamCheckEmail = $_POST['email'];
+			$spamCheckIP = $_SERVER['REMOTE_ADDR'];
+			$spamCheckUser = $_POST['user'];
+			
+			if ($modSettings['stopforumspam_checkip'] == false)
+				$spamCheckIP = '';
+				
+			if ($modSettings['stopforumspam_checkemail'] == false)
+				$spamCheckEmail = '';
+				
+			if ($modSettings['stopforumspam_checkusername'] == false)
+				$spamCheckUser = '';
+				
+			if (CheckSpam_StopForumSpam($spamCheckIP,$spamCheckEmail,$spamCheckUser))
+			{
+				// Spammer!!! noooo!!
+				
+				$reg_errors[] = $txt['stopforumspam_err_youareaspammer'];
+			}
+			
+			
+			
+		}
+	}
 
 	// Lets check for other errors before trying to register the member.
 	if (!empty($reg_errors))
@@ -475,6 +506,8 @@ function Register2($verifiedOpenID = false)
 		$regOptions['openid'] = !empty($_POST['openid_identifier']) ? $_POST['openid_identifier'] : $_SESSION['openid']['openid_uri'];
 	}
 
+	
+	
 	$memberID = registerMember($regOptions, true);
 
 	// What there actually an error of some kind dear boy?

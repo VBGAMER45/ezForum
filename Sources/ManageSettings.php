@@ -739,6 +739,15 @@ function ModifySpamSettings($return_config = false)
 				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
 			
+			// Stop Forum Spam
+			array('title','stopforumspam_configure'),
+			array('desc', 'stopforumspam_configure_desc', 'class' => 'windowbg'),
+			array('check','stopforumspam_enabled'),
+			array('check','stopforumspam_checkip'),
+			array('check','stopforumspam_checkemail'),
+			array('check','stopforumspam_checkusername'),
+			
+			
 			// reCaptcha
 			
 			
