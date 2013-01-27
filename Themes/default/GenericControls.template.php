@@ -307,7 +307,7 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			<div id="verification_control_', $i, '" class="verification_control">';
 
 		// Do the actual stuff - image first?
-		if ($i == 0 && ($verify_context['show_visual'] || $modSettings['solvemedia_enabled']) || $modSettings['recaptcha_enabled'])
+		if ($i == 0 && ($verify_context['show_visual'] || $modSettings['solvemedia_enabled'] || $modSettings['recaptcha_enabled']))
 		{
 			if ($modSettings['adcopy_enabled'])
 			{
