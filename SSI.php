@@ -48,6 +48,9 @@ require_once(dirname(__FILE__) . '/Settings.php');
 // Make absolutely sure the cache directory is defined.
 if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
 	$cachedir = $boarddir . '/cache';
+	
+if (empty($librarydir))
+	$librarydir = dirname(__FILE__) . '/Libraries';
 
 $ssi_error_reporting = error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
 /* Set this to one of three values depending on what you want to happen in the case of a fatal error.

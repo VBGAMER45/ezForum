@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -48,6 +48,7 @@ $db_show_debug = false; // Show debugging information useful for modification/th
 $boarddir = dirname(__FILE__);		# The absolute path to the forum's folder. (not just '.'!)
 $sourcedir = dirname(__FILE__) . '/Sources';		# Path to the Sources directory.
 $cachedir = dirname(__FILE__) . '/cache';		# Path to the cache directory.
+$librarydir = dirname(__FILE__) . '/Libraries'; # Path to Libraries directory.
 
 ########## Error-Catching ##########
 # Note: You shouldn't touch these settings.
