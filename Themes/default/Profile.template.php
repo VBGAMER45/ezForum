@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -2318,7 +2318,7 @@ function template_issueWarning()
 // Template to show for deleting a users account - now with added delete post capability!
 function template_deleteAccount()
 {
-	global $context, $settings, $options, $scripturl, $txt, $scripturl;
+	global $context, $settings, $options, $scripturl, $txt, $scripturl, $modSettings;
 
 	// The main containing header.
 	echo '
@@ -2373,6 +2373,109 @@ function template_deleteAccount()
 							<option value="topics">', $txt['deleteAccount_topics'], '</option>
 						</select>
 					</div>';
+			
+			
+
+		echo '
+			<div>
+				<input type="checkbox" name="full_ban" id="full_ban" value="1" checked="checked" />&nbsp;&nbsp;<label for="full_ban">', $txt['ban_full_ban'], '</label><br />
+				
+			</div>
+';
+
+
+	if (!empty($context['ban_suggestions']))
+	{
+		echo '
+					<fieldset>
+						<legend>
+							', $txt['ban_triggers'], '
+						</legend>
+						<dl class="settings">
+							<dt>
+								<input type="checkbox" name="ban_suggestion[]" id="main_ip_check" value="main_ip" class="input_check" />
+								<label for="main_ip_check">', $txt['ban_on_ip'], '</label>
+							</dt>
+							<dd>
+								<input type="text" name="main_ip" value="', $context['ban_suggestions']['main_ip'], '" size="44" onfocus="document.getElementById(\'main_ip_check\').checked = true;" class="input_text" />
+							</dd>';
+
+		if (empty($modSettings['disableHostnameLookup']))
+			echo '
+							<dt>
+								<input type="checkbox" name="ban_suggestion[]" id="hostname_check" value="hostname" class="input_check" />
+								<label for="hostname_check">', $txt['ban_on_hostname'], '</label>
+							</dt>
+							<dd>
+								<input type="text" name="hostname" value="', $context['ban_suggestions']['hostname'], '" size="44" onfocus="document.getElementById(\'hostname_check\').checked = true;" class="input_text" />
+							</dd>';
+
+		echo '
+							<dt>
+								<input type="checkbox" name="ban_suggestion[]" id="email_check" value="email" class="input_check" checked="checked" />
+								<label for="email_check">', $txt['ban_on_email'], '</label>
+							</dt>
+							<dd>
+								<input type="text" name="email" value="', $context['ban_suggestions']['email'], '" size="44" onfocus="document.getElementById(\'email_check\').checked = true;" class="input_text" />
+							</dd>
+							<dt>
+								<input type="checkbox" name="ban_suggestion[]" id="user_check" value="user" class="input_check" checked="checked" />
+								<label for="user_check">', $txt['ban_on_username'], '</label>:
+							</dt>
+							<dd>';
+
+		if (empty($context['ban_suggestions']['member']['id']))
+			echo '
+								<input type="text" name="user" id="user" value="" size="44" class="input_text" />';
+		else
+			echo '
+								', $context['ban_suggestions']['member']['link'], '
+								<input type="hidden" name="bannedUser" value="', $context['ban_suggestions']['member']['id'], '" />';
+		echo '
+							</dd>';
+
+		if (!empty($context['ban_suggestions']['message_ips']))
+		{
+			echo '
+						</dl>
+						<div>', $txt['ips_in_messages'], ':</div>
+						<dl class="settings">';
+
+			foreach ($context['ban_suggestions']['message_ips'] as $ip)
+				echo '
+							<dt>
+								<input type="checkbox" name="ban_suggestion[ips][]" value="', $ip, '" class="input_check" />
+							</dt>
+							<dd>
+								', $ip, '
+							</dd>';
+		}
+
+		if (!empty($context['ban_suggestions']['error_ips']))
+		{
+			echo '
+						</dl>
+						<div>', $txt['ips_in_errors'], '</div>
+						<dl class="settings">';
+
+			foreach ($context['ban_suggestions']['error_ips'] as $ip)
+				echo '
+							<dt>
+								<input type="checkbox" name="ban_suggestion[ips][]" value="', $ip, '" class="input_check" />
+							</dt>
+							<dd>
+								', $ip, '
+							</dd>';
+		}
+
+		echo '
+							</dl>
+						</fieldset>';
+
+
+
+	}
+	
 
 		echo '
 					<div>

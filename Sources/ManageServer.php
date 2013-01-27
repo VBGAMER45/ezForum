@@ -2016,7 +2016,7 @@ function saveSettings(&$config_vars)
 	// All the checkboxes.
 	$config_bools = array(
 		'db_persist', 'db_error_send',
-		'maintenance',
+		'maintenance', 'db_show_debug'
 	);
 
 	// Now sort everything into a big array, and figure out arrays and etc.
