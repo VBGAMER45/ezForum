@@ -1224,6 +1224,7 @@ CREATE TABLE {$db_prefix}members (
   skype varchar(255) NOT NULL default '',
   facebook varchar(255) NOT NULL default '',
   twitter varchar(255) NOT NULL default '',
+  linkedin varchar(255) NOT NULL default '',
   googleplus varchar(255) NOT NULL default '',
   hide_email tinyint(4) NOT NULL default '0',
   show_online tinyint(4) NOT NULL default '1',
