@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -280,7 +280,7 @@ function template_control_richedit_buttons($editor_id)
 // What's this, verification?!
 function template_control_verification($verify_id, $display_type = 'all', $reset = false)
 {
-	global $context, $settings, $options, $txt, $modSettings;
+	global $context, $settings, $options, $txt, $modSettings, $librarydir;
 
 	$verify_context = &$context['controls']['verification'][$verify_id];
 
@@ -307,20 +307,37 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			<div id="verification_control_', $i, '" class="verification_control">';
 
 		// Do the actual stuff - image first?
-		if ($i == 0 && $verify_context['show_visual'])
+		if ($i == 0 && ($verify_context['show_visual'] || $modSettings['solvemedia_enabled']))
 		{
-			if ($context['use_graphic_library'])
-				echo '
-				<img src="', $verify_context['image_href'], '" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '" />';
+			if ($modSettings['adcopy_enabled'])
+			{
+				
+				require_once("$librarydir/solvemedialib.php");
+				$format = '
+								<script type="text/javascript">
+								var ACPuzzleOptions = {
+								   theme : \''. (empty($modSettings['solvemedia_theme']) ? 'white' : $modSettings['solvemedia_theme']) . '\',
+								   lang : \''. (empty($modSettings['solvemedia_lang']) ? 'en' : $modSettings['solvemedia_lang']) . '\'
+								};
+								</script>
+								<p>' .$txt['solvemedia_pleaseverify'] . '</p>';
+				echo $format . solvemedia_get_html($modSettings['solvemedia_publickey']);
+			}
 			else
-				echo '
-				<img src="', $verify_context['image_href'], ';letter=1" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_1" />
-				<img src="', $verify_context['image_href'], ';letter=2" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_2" />
-				<img src="', $verify_context['image_href'], ';letter=3" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_3" />
-				<img src="', $verify_context['image_href'], ';letter=4" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_4" />
-				<img src="', $verify_context['image_href'], ';letter=5" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_5" />
-				<img src="', $verify_context['image_href'], ';letter=6" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_6" />';
-
+			{
+				if ($context['use_graphic_library'])
+					echo '
+					<img src="', $verify_context['image_href'], '" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '" />';
+				else
+					echo '
+					<img src="', $verify_context['image_href'], ';letter=1" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_1" />
+					<img src="', $verify_context['image_href'], ';letter=2" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_2" />
+					<img src="', $verify_context['image_href'], ';letter=3" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_3" />
+					<img src="', $verify_context['image_href'], ';letter=4" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_4" />
+					<img src="', $verify_context['image_href'], ';letter=5" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_5" />
+					<img src="', $verify_context['image_href'], ';letter=6" alt="', $txt['visual_verification_description'], '" id="verification_image_', $verify_id, '_6" />';
+			}
+		
 			if (WIRELESS)
 				echo '<br />
 				<input type="text" name="', $verify_id, '_vv[code]" value="', !empty($verify_context['text_value']) ? $verify_context['text_value'] : '', '" size="30" tabindex="', $context['tabindex']++, '" class="input_text" />';

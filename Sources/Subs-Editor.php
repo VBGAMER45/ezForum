@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -1885,7 +1885,7 @@ function create_control_richedit($editorOptions)
 function create_control_verification(&$verificationOptions, $do_test = false)
 {
 	global $txt, $modSettings, $options, $smcFunc;
-	global $context, $settings, $user_info, $sourcedir, $scripturl;
+	global $context, $settings, $user_info, $sourcedir, $scripturl, $librarydir;
 
 	// First verification means we need to set up some bits...
 	if (empty($context['controls']['verification']))
@@ -1982,7 +1982,27 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		if ($thisVerification['number_questions'] && (!isset($_SESSION[$verificationOptions['id'] . '_vv']['q']) || !isset($_REQUEST[$verificationOptions['id'] . '_vv']['q'])))
 			fatal_lang_error('no_access', false);
 
-		if ($thisVerification['show_visual'] && (empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['code']) || strtoupper($_REQUEST[$verificationOptions['id'] . '_vv']['code']) !== $_SESSION[$verificationOptions['id'] . '_vv']['code']))
+		// SolveMedia Captcha Option
+		if (!empty($modSettings['solvemedia_enabled']) && ($modSettings['solvemedia_enabled'] == 1 && !empty($modSettings['solvemedia_publickey']) && !empty($modSettings['solvemedia_privatekey']) && !empty($modSettings['solvemedia_hashkey'])))
+		{
+			if(!empty($_POST["adcopy_response"]) && !empty($_POST["adcopy_challenge"])) //Check if a challenge code exists, and whether the user has entered a reponse
+			{
+			
+				require_once("$librarydir/solvemedialib.php");
+
+				$resp = solvemedia_check_answer($modSettings['solvemedia_privatekey'],
+												$_SERVER['REMOTE_ADDR'],
+												$_REQUEST['adcopy_challenge'],
+												$_REQUEST['adcopy_response'],
+												$modSettings['solvemedia_hashkey']);
+
+				if (!$resp->is_valid)
+					$verification_errors[] = 'wrong_solvemedia_verification';
+			}
+			else
+				$verification_errors[] = 'wrong_solvemedia_verification';
+		}
+		elseif ($thisVerification['show_visual'] && (empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['code']) || strtoupper($_REQUEST[$verificationOptions['id'] . '_vv']['code']) !== $_SESSION[$verificationOptions['id'] . '_vv']['code']))
 			$verification_errors[] = 'wrong_verification_code';
 		if ($thisVerification['number_questions'])
 		{

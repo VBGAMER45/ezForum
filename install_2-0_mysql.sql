@@ -1811,7 +1811,13 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('enableReportPM', '1'),
 	('approveAccountDeletion', '1'),
 	('messageIcons_enable', '1'),
-	('smiley_enable', '1');
+	('smiley_enable', '1'),
+	('solvemedia_enabled', '0'),
+	('solvemedia_publickey', ''),
+	('solvemedia_privatekey', ''),
+	('solvemedia_hashkey', ''),
+	('solvemedia_theme', 'white'),
+	('solvemedia_lang', 'en');
 # --------------------------------------------------------
 
 #

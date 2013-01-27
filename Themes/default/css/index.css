@@ -3618,3 +3618,9 @@ span.hidelink
 		border: none;
 	}
 }
+
+/* Make the SolveMedia puzzle centered to match the positioning of the built-in verification */
+#simple_search #adcopy-outer, .centertext #adcopy-outer {
+  margin: auto;
+  text-align: left;
+}

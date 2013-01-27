@@ -738,6 +738,37 @@ function ModifySpamSettings($return_config = false)
 				'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext'=> $txt['setting_visual_verification_type_desc'], 'onchange' => $context['use_graphic_library'] ? 'refreshImages();' : ''),
 				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
+			
+			// reCaptcha
+			
+			
+			// Solve Media
+			array('title','solvemedia_settings'),
+			array('desc', 'solvemedia_settings_desc', 'class' => 'windowbg'),
+			array('check','solvemedia_enabled'),
+			array('text', 'solvemedia_publickey'),
+			array('text', 'solvemedia_privatekey'),
+			array('text', 'solvemedia_hashkey'),
+			array('select','solvemedia_theme', array('white' => $txt['solvemedia_theme_white'],'black' => $txt['solvemedia_theme_black'], 'red' => $txt['solvemedia_theme_red'],'purple' => $txt['solvemedia_theme_purple'], )),
+			array('select','solvemedia_lang', array('en' => $txt['solvemedia_lang_en'],
+													 'es' => $txt['solvemedia_lang_es'],
+													 'fr' => $txt['solvemedia_lang_fr'],
+													 'it' => $txt['solvemedia_lang_it'],
+													 'de' => $txt['solvemedia_lang_de'],
+													 'ca' => $txt['solvemedia_lang_ca'],
+													 'pl' => $txt['solvemedia_lang_pl'],
+													 'hu' => $txt['solvemedia_lang_hu'],
+													 'sv' => $txt['solvemedia_lang_sv'],
+													 'no' => $txt['solvemedia_lang_no'],
+													 'pt' => $txt['solvemedia_lang_pt'],
+													 'nl' => $txt['solvemedia_lang_nl'],
+													 'tr' => $txt['solvemedia_lang_tr'],
+													 'ja' => $txt['solvemedia_lang_ja'],
+				                                     'yi' => $txt['solvemedia_lang_yi'],)
+           ),
+			
+			
+			
 			array('title', 'setup_verification_questions'),
 			array('desc', 'setup_verification_questions_desc'),
 				array('callback', 'question_answer_list'),

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -896,7 +896,7 @@ function PlushSearch2()
 	if ($user_info['is_guest'] && !empty($modSettings['search_enable_captcha']) && empty($_SESSION['ss_vv_passed']) && (empty($_SESSION['last_ss']) || $_SESSION['last_ss'] != $search_params['search']))
 	{
 		// If we come from another search box tone down the error...
-		if (!isset($_REQUEST['search_vv']))
+		if (!isset($_REQUEST['search_vv']) && !isset($_REQUEST['adcopy_response']))
 			$context['search_errors']['need_verification_code'] = true;
 		else
 		{

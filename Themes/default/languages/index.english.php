@@ -749,4 +749,37 @@ $txt['debug_query_which_took_at'] = 'which took %1$s seconds at %2$s into reques
 $txt['debug_show_queries'] = '[Show Queries]';
 $txt['debug_hide_queries'] = '[Hide Queries]';
 
+// SolveMedia
+$txt['solvemedia_configure'] = 'Solve Media Puzzle Verification System';
+$txt['solvemedia_configure_desc'] = 'Use the Solve Media Puzzle Verification System. Get Solve Media API keys <a href="http://portal.solvemedia.com/portal/public/signup">here</a>.';
+$txt['solvemedia_enabled'] = 'Use Solve Media Puzzle Verification System';
+$txt['solvemedia_theme'] = 'Solve Media Theme';
+$txt['solvemedia_theme_purple'] = 'Purple';
+$txt['solvemedia_theme_black'] = 'Black';
+$txt['solvemedia_theme_red'] = 'Red';
+$txt['solvemedia_theme_white'] = 'White';
+$txt['solvemedia_publickey'] = 'Solve Media Public Key';
+$txt['solvemedia_privatekey'] = 'Solve Media Private Key';
+$txt['solvemedia_hashkey'] = 'Solve Media Hash Key';
+$txt['solvemedia_no_key_question'] = 'Don\'t have Solve Media API keys?';
+$txt['solvemedia_get_key'] = 'Get your Solve Media API keys here.';
+$txt['solvemedia_lang'] = 'Solve Media Language';
+$txt['solvemedia_lang_en'] = 'English';
+$txt['solvemedia_lang_es'] = 'Spanish';
+$txt['solvemedia_lang_fr'] = 'French';
+$txt['solvemedia_lang_it'] = 'Italian';
+$txt['solvemedia_lang_de'] = 'German';
+$txt['solvemedia_lang_ca'] = 'Catalan';
+$txt['solvemedia_lang_pl'] = 'Polish';
+$txt['solvemedia_lang_hu'] = 'Hungarian';
+$txt['solvemedia_lang_sv'] = 'Swedish';
+$txt['solvemedia_lang_no'] = 'Norwegian';
+$txt['solvemedia_lang_pt'] = 'Portuguese';
+$txt['solvemedia_lang_nl'] = 'Dutch';
+$txt['solvemedia_lang_tr'] = 'Turkish';
+$txt['solvemedia_lang_ja'] = 'Japanese';
+$txt['solvemedia_lang_yi'] = 'Yiddish';
+$txt['solvemedia_pleaseverify'] = 'Please verify that you are human by following the instructions and completing the puzzle below:';
+$txt['error_wrong_solvemedia_verification'] = 'You did not complete the Solve Media puzzle correctly.';
+
 ?>

@@ -4321,4 +4321,11 @@ function remove_integration_function($hook, $function)
 	$modSettings[$hook] = implode(',', $functions);
 }
 
+function CheckSpamStopForumSpam()
+{
+	/*
+	Uses the stopforumspam.com api to check if the information passed is a spammer.
+	*/
+}
+
 ?>
