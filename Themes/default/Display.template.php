@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -351,8 +351,26 @@ function template_main()
 										', !empty($message['member']['msn']['link']) ? '<li>' . $message['member']['msn']['link'] . '</li>' : '', '
 										', !empty($message['member']['aim']['link']) ? '<li>' . $message['member']['aim']['link'] . '</li>' : '', '
 										', !empty($message['member']['yim']['link']) ? '<li>' . $message['member']['yim']['link'] . '</li>' : '', '
+										', !empty($message['member']['skype']['link']) ? '<li>' . $message['member']['skype']['link'] . '</li>' : '', '
 									</ul>
 								</li>';
+				
+			// This shows the social media icons. by hcfwesker
+			if ($message['member']['has_messenger'] && $message['member']['can_view_profile'])
+				echo '
+								<li class="im_icons">
+									<ul>
+										', !isset($context['disabled_fields']['facebook']) && !empty($message['member']['facebook']['link']) ? '<li>' . $message['member']['facebook']['link'] . '</li>' : '', '
+										', !isset($context['disabled_fields']['myspace']) && !empty($message['member']['myspace']['link']) ? '<li>' . $message['member']['myspace']['link'] . '</li>' : '', '
+										', !isset($context['disabled_fields']['twitter']) && !empty($message['member']['twitter']['link']) ? '<li>' . $message['member']['twitter']['link'] . '</li>' : '', '
+										', !isset($context['disabled_fields']['googleplus']) && !empty($message['member']['googleplus']['link']) ? '<li>' . $message['member']['googleplus']['link'] . '</li>' : '', '
+										', !isset($context['disabled_fields']['linkedin']) && !empty($message['member']['linkedin']['link']) ? '<li>' . $message['member']['linkedin']['link'] . '</li>' : '', '
+										', !isset($context['disabled_fields']['youtube']) && !empty($message['member']['youtube']['link']) ? '<li>' . $message['member']['youtube']['link'] . '</li>' : '', '
+										', !isset($context['disabled_fields']['deviantart']) && !empty($message['member']['deviantart']['link']) ? '<li>' . $message['member']['deviantart']['link'] . '</li>' : '', '
+										', !isset($context['disabled_fields']['pinterest']) && !empty($message['member']['pinterest']['link']) ? '<li>' . $message['member']['pinterest']['link'] . '</li>' : '', '
+									</ul>
+								</li>';	
+				
 
 			// Show the profile, website, email address, and personal message buttons.
 			if ($settings['show_profile_buttons'])

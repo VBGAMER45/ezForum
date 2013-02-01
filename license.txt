@@ -1,5 +1,9 @@
 Copyright 2012-2013 ezForum http://www.ezforum.com  All rights reserved.
+Licensed under BSD.
 
+
+Credits:
+ezForum is based off of Simple Machines (SMF)
 
 Copyright 2011 Simple Machines.  All rights reserved.
 
@@ -27,3 +31,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 WITH THE SOFTWARE.
 
+
+
+
+Social Media Profile Fields by hcfwesker Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)

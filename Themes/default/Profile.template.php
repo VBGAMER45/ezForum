@@ -93,6 +93,15 @@ function template_summary()
 				', !isset($context['disabled_fields']['msn']) && !empty($context['member']['msn']['link']) ? '<li>' . $context['member']['msn']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['aim']) && !empty($context['member']['aim']['link']) ? '<li>' . $context['member']['aim']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['yim']) && !empty($context['member']['yim']['link']) ? '<li>' . $context['member']['yim']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['skype']) && !empty($context['member']['skype']['link']) ? '<li>' . $context['member']['skype']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['facebook']) && !empty($context['member']['facebook']['link']) ? '<li>' . $context['member']['facebook']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['myspace']) && !empty($context['member']['myspace']['link']) ? '<li>' . $context['member']['myspace']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['twitter']) && !empty($context['member']['twitter']['link']) ? '<li>' . $context['member']['twitter']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['googleplus']) && !empty($context['member']['googleplus']['link']) ? '<li>' . $context['member']['googleplus']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['linkedin']) && !empty($context['member']['linkedin']['link']) ? '<li>' . $context['member']['linkedin']['link'] . '</li>' : '', '				
+				', !isset($context['disabled_fields']['youtube']) && !empty($context['member']['youtube']['link']) ? '<li>' . $context['member']['youtube']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['deviantart']) && !empty($context['member']['deviantart']['link']) ? '<li>' . $context['member']['deviantart']['link'] . '</li>' : '', '
+				', !isset($context['disabled_fields']['pinterest']) && !empty($context['member']['pinterest']['link']) ? '<li>' . $context['member']['pinterest']['link'] . '</li>' : '', '
 			</ul>
 			<span id="userstatus">', $context['can_send_pm'] ? '<a href="' . $context['member']['online']['href'] . '" title="' . $context['member']['online']['label'] . '" rel="nofollow">' : '', $settings['use_image_buttons'] ? '<img src="' . $context['member']['online']['image_href'] . '" alt="' . $context['member']['online']['text'] . '" align="middle" />' : $context['member']['online']['text'], $context['can_send_pm'] ? '</a>' : '', $settings['use_image_buttons'] ? '<span class="smalltext"> ' . $context['member']['online']['text'] . '</span>' : '';
 
@@ -506,6 +515,8 @@ function template_editBuddies()
 				<th scope="col">', $txt['aim'], '</th>
 				<th scope="col">', $txt['yim'], '</th>
 				<th scope="col">', $txt['msn'], '</th>
+				<th scope="col">', $txt['smi_skype_title'], '</th>
+				<th scope="col">', $txt['smi_buddies_title'], '</th>
 				<th class="last_th" scope="col"></th>
 			</tr>';
 
@@ -529,6 +540,9 @@ function template_editBuddies()
 				<td align="center">', $buddy['aim']['link'], '</td>
 				<td align="center">', $buddy['yim']['link'], '</td>
 				<td align="center">', $buddy['msn']['link'], '</td>
+				<td align="center">', $buddy['msn']['link'], '</td>
+				<td align="center">', $buddy['skype']['link'], '</td>
+				<td align="center">', $buddy['facebook']['link'], ' ', $buddy['myspace']['link'], ' ', $buddy['twitter']['link'], ' ', $buddy['googleplus']['link'], ' ', $buddy['linkedin']['link'], ' ', $buddy['youtube']['link'], ' ', $buddy['deviantart']['link'], ' ', $buddy['pinterest']['link'], '</td>
 				<td align="center"><a href="', $scripturl, '?action=profile;area=lists;sa=buddies;u=', $context['id_member'], ';remove=', $buddy['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '" /></a></td>
 			</tr>';
 

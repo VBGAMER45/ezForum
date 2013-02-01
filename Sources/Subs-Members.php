@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -667,6 +667,15 @@ function registerMember(&$regOptions, $return_errors = false)
 		'aim' => '',
 		'yim' => '',
 		'msn' => '',
+		'skype' => '',
+		'facebook' => '',
+		'myspace' => '',
+		'twitter' => '',
+		'googleplus' => '',
+		'linkedin' => '',
+		'youtube' => '',
+		'deviantart' => '',
+		'pinterest' => '',
 		'time_format' => '',
 		'signature' => '',
 		'avatar' => '',
@@ -1211,6 +1220,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			mem.id_member, mem.member_name, mem.real_name, mem.email_address, mem.icq, mem.aim, mem.yim, mem.msn, mem.member_ip, mem.member_ip2, mem.last_login,
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.googleplus, mem.linkedin, mem.youtube, mem.deviantart, mem.pinterest, mem.skype, 
 			mem.posts, mem.is_activated, mem.date_registered, mem.id_group, mem.additional_groups, mg.group_name
 		FROM {db_prefix}members AS mem
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)

@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -70,7 +70,10 @@ function template_main()
 			echo '
 								<span class="contact_info floatright">
 									', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['label'] . '">' : '', $settings['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '" align="bottom" />' : $member['online']['text'], $context['can_send_pm'] ? '</a>' : '', '
-									', isset($context['disabled_fields']['icq']) ? '' : $member['icq']['link'] , ' ', isset($context['disabled_fields']['msn']) ? '' : $member['msn']['link'], ' ', isset($context['disabled_fields']['yim']) ? '' : $member['yim']['link'], ' ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], '
+									', isset($context['disabled_fields']['icq']) ? '' : $member['icq']['link'] , ' ', isset($context['disabled_fields']['msn']) ? '' : $member['msn']['link'], ' ', isset($context['disabled_fields']['yim']) ? '' : $member['yim']['link'], ' ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], ' ', isset($context['disabled_fields']['skype']) ? '' : $member['skype']['link'], '  ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], ' 
+									', isset($context['disabled_fields']['facebook']) ? '' : $member['facebook']['link'], ' ', isset($context['disabled_fields']['myspace']) ? '' : $member['myspace']['link'], ' ', isset($context['disabled_fields']['twitter']) ? '' : $member['twitter']['link'], ' ', isset($context['disabled_fields']['googleplus']) ? '' : $member['googleplus']['link'], ' ', isset($context['disabled_fields']['linkedin']) ? '' : $member['linkedin']['link'], ' ', isset($context['disabled_fields']['youtube']) ? '' : $member['youtube']['link'], ' ', isset($context['disabled_fields']['deviantart']) ? '' : $member['deviantart']['link'], ' ', isset($context['disabled_fields']['pinterest']) ? '' : $member['pinterest']['link'], '
+
+
 								</span>';
 		}
 

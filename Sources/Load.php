@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -973,6 +973,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login,
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype, 
 			mem.karma_good, mem.id_post_group, mem.karma_bad, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mem.buddy_list, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank_string}) AS member_group,
 			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.is_activated, mem.warning,
@@ -991,6 +992,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.openid_uri, mem.birthdate, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login, mem.karma_good,
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype, 
 			mem.karma_bad, mem.member_ip, mem.member_ip2, mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list,
 			mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from, mem.time_offset' . (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '') . ',
 			mem.time_format, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
@@ -1199,6 +1201,60 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'link' => '<a class="msn new_win" href="http://members.msn.com/' . $profile['msn'] . '" title="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '"><img src="' . $settings['images_url'] . '/msntalk.gif" alt="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '" /></a>',
 			'link_text' => '<a class="msn new_win" href="http://members.msn.com/' . $profile['msn'] . '" title="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '">' . $profile['msn'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'skype' => $profile['skype'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['skype'],
+			'href' => 'skype:'.$profile['skype'].'?userinfo',
+			'link' => '<a href="skype:'.$profile['skype'].'?userinfo" target="_blank" title="' . $txt['smi_skype_title'] . ' - ' . $profile['skype'] . '"><img src="' . $settings['images_url'] . '/skype.gif" alt="Skype" border="0" /></a>',
+			'link_text' => '<a href="skype:'.$profile['skype'].'?userinfo" target="_blank" title="' . $txt['smi_skype_title'] . ' - ' . $profile['skype'] . '">' . $profile['skype'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),	
+		'facebook' => $profile['facebook'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['facebook'],
+			'href' => 'http://www.facebook.com/'.$profile['facebook'],
+			'link' => '<a href="http://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '"><img src="' . $settings['images_url'] . '/facebook.png" alt="Facebook" border="0" /></a>',
+			'link_text' => '<a href="http://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '">' . $profile['facebook'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),		
+		'myspace' => $profile['myspace'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['myspace'],
+			'href' => 'http://www.myspace.com/'.$profile['myspace'],
+			'link' => '<a href="http://www.myspace.com/' . $profile['myspace'] . '" target="_blank" title="' . $txt['smi_myspace_title'] . ' - ' . $profile['myspace'] . '"><img src="' . $settings['images_url'] . '/myspace.png" alt="My Space" border="0" /></a>',
+			'link_text' => '<a href="http://www.myspace.com/' . $profile['myspace'] . '" target="_blank" title="' . $txt['smi_myspace_title'] . ' - ' . $profile['myspace'] . '">' . $profile['myspace'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'twitter' => $profile['twitter'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['twitter'],
+			'href' => 'http://www.twitter.com/'.$profile['twitter'],
+			'link' => '<a href="http://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '"><img src="' . $settings['images_url'] . '/twitter.png" alt="Twitter" border="0" /></a>',
+			'link_text' => '<a href="http://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '">' . $profile['twitter'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'googleplus' => $profile['googleplus'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['googleplus'],
+			'href' => 'http://www.googleplus.com/'.$profile['googleplus'],
+			'link' => '<a href="https://plus.google.com/' . $profile['googleplus'] . '" target="_blank" title="' . $txt['smi_googleplus_title'] . ' - ' . $profile['googleplus'] . '"><img src="' . $settings['images_url'] . '/googleplus.png" alt="Google+" border="0" /></a>',
+			'link_text' => '<a href="https://plus.google.com/' . $profile['googleplus'] . '" target="_blank" title="' . $txt['smi_googleplus_title'] . ' - ' . $profile['googleplus'] . '">' . $profile['googleplus'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'linkedin' => $profile['linkedin'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['linkedin'],
+			'href' => 'http://www.linkedin.com/'.$profile['linkedin'],
+			'link' => '<a href="' . $profile['linkedin'] . '" target="_blank" title="' . $txt['smi_linkedin_title'] . '"><img src="' . $settings['images_url'] . '/linkedin.png" alt="LinkedIn" border="0" /></a>',
+			'link_text' => '<a href="http://www.linkedin.com/' . $profile['linkedin'] . '" target="_blank" title="' . $txt['smi_linkedin_title'] . '">' . $profile['linkedin'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'youtube' => $profile['youtube'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['youtube'],
+			'href' => 'http://www.youtube.com/'.$profile['youtube'],
+			'link' => '<a href="http://www.youtube.com/' . $profile['youtube'] . '" target="_blank" title="' . $txt['smi_youtube_title'] . ' - ' . $profile['youtube'] . '"><img src="' . $settings['images_url'] . '/youtube.png" alt="Youtube" border="0" /></a>',
+			'link_text' => '<a href="http://www.youtube.com/' . $profile['youtube'] . '" target="_blank" title="' . $txt['smi_youtube_title'] . ' - ' . $profile['youtube'] . '">' . $profile['youtube'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'deviantart' => $profile['deviantart'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['deviantart'],
+			'href' => 'http://' . $profile['deviantart'] . '.deviantart.com',
+			'link' => '<a href="http://' . $profile['deviantart'] . '.deviantart.com/" target="_blank" title="' . $txt['smi_deviantart_title'] . ' - ' . $profile['deviantart'] . '"><img src="' . $settings['images_url'] . '/deviantart.png" alt="DeviantArt" border="0" /></a>',
+			'link_text' => '<a href="http://' . $profile['deviantart'] . '.deviantart.com/" target="_blank" title="' . $txt['smi_deviantart_title'] . ' - ' . $profile['deviantart'] . '">' . $profile['deviantart'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
+		'pinterest' => $profile['pinterest'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
+			'name' => $profile['pinterest'],
+			'href' => 'http://www.pinterest.com/'.$profile['pinterest'],
+			'link' => '<a href="http://www.pinterest.com/' . $profile['pinterest'] . '" target="_blank" title="' . $txt['smi_pinterest_title'] . ' - ' . $profile['pinterest'] . '"><img src="' . $settings['images_url'] . '/pinterest.png" alt="Pinterest" border="0" /></a>',
+			'link_text' => '<a href="http://www.pinterest.com/' . $profile['pinterest'] . '" target="_blank" title="' . $txt['smi_pinterest_title'] . ' - ' . $profile['pinterest'] . '">' . $profile['pinterest'] . '</a>'
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'real_posts' => $profile['posts'],
 		'posts' => $profile['posts'] > 500000 ? $txt['geek'] : comma_format($profile['posts']),
 		'avatar' => array(
@@ -1243,7 +1299,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// First do a quick run through to make sure there is something to be shown.
 	$memberContext[$user]['has_messenger'] = false;
-	foreach (array('icq', 'msn', 'aim', 'yim') as $messenger)
+	foreach (array('icq', 'msn', 'aim', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest') as $messenger)
 	{
 		if (!isset($context['disabled_fields'][$messenger]) && !empty($memberContext[$user][$messenger]['link']))
 		{

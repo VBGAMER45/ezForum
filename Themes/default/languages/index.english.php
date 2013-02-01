@@ -860,4 +860,25 @@ $txt['ls_ip_address_protection_note'] = 'You can allow multiple ips by seperatin
 
 // END  Login Security Text Strings	
 
+// Social Sharing Icons
+$txt['smi_buddies_title'] = 'Social Networks';
+$txt['smi_facebook_title'] = 'Facebook';
+$txt['smi_facebook_desc'] = 'Input your Facebook username.';
+$txt['smi_myspace_title'] = 'MySpace';
+$txt['smi_myspace_desc'] = 'Input your MySpace username.';
+$txt['smi_twitter_title'] = 'Twitter';
+$txt['smi_twitter_desc'] = 'Input your Twitter username.';
+$txt['smi_youtube_title'] = 'Youtube';
+$txt['smi_youtube_desc'] = 'Input your Youtube username.';
+$txt['smi_deviantart_title'] = 'DeviantArt';
+$txt['smi_deviantart_desc'] = 'Input your DeviantArt username.';
+$txt['smi_pinterest_title'] = 'Pinterest';
+$txt['smi_pinterest_desc'] = 'Input your Pinterest username.';
+$txt['smi_googleplus_title'] = 'Google+';
+$txt['smi_googleplus_desc'] = 'Input your Google+ User ID.';
+$txt['smi_linkedin_title'] = 'LinkedIn';
+$txt['smi_linkedin_desc'] = 'Copy & Paste your LinkedIn profile link.';
+$txt['smi_skype_title'] = 'Skype';
+$txt['smi_skype_desc'] = 'Input your Skype username.';
+
 ?>
