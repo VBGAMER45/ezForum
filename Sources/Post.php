@@ -1954,7 +1954,7 @@ function Post2()
 			$row2 = $smcFunc['db_fetch_assoc']($request);
 			$smcFunc['db_free_result']($request);
 
-			// Silly hacker, Trix are for kids. ...probably trademarked somewhere, this is FAIR USE! (parody...)
+
 			isAllowedTo('calendar_edit_' . ($row2['id_member'] == $user_info['id'] ? 'own' : 'any'));
 		}
 

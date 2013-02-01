@@ -244,6 +244,22 @@ function ThemeAdmin()
 		));
 		if ((int) $_POST['theme_reset'] == 0 || in_array($_POST['theme_reset'], $_POST['options']['known_themes']))
 			updateMemberData(null, array('id_theme' => (int) $_POST['theme_reset']));
+            
+        /* Start Mobile Device Detect */
+        /**
+        * Mobile Device Detect (MDD)
+        *
+        * @package MDD
+        * @author emanuele
+        * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+        * @copyright 2012 emanuele, Simple Machines
+        * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+        *
+        * @version 0.2.2
+        */          
+        if (isset($_POST['mobile_theme_id']) && ((int) $_POST['mobile_theme_id'] == 0 || in_array($_POST['mobile_theme_id'], $_POST['options']['known_themes'])))
+			updateSettings(array('mobile_theme_id' => (int) $_POST['mobile_theme_id']));
+        /* End Mobile Device Detect */
 
 		redirectexit('action=admin;area=theme;' . $context['session_var'] . '=' . $context['session_id'] . ';sa=admin');
 	}
@@ -1001,6 +1017,30 @@ function PickTheme()
 		checkSession('get');
 
 		$_GET['th'] = (int) $_GET['th'];
+        
+        
+        /* Start Mobile Device Detect */
+        /**
+        * Mobile Device Detect (MDD)
+        *
+        * @package MDD
+        * @author emanuele
+        * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+        * @copyright 2012 emanuele, Simple Machines
+        * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+        *
+        * @version 0.2.2
+        */
+        if ($_REQUEST['u'] == -2)
+		{
+			// 0 is legal! It's the default theme
+			updateSettings(array('mobile_theme_id' => $_GET['th']));
+
+			redirectexit('action=admin;area=theme;sa=admin');
+		}
+        
+        /* End Mobile Device Detect */
+        
 
 		// Save for this user.
 		if (!isset($_REQUEST['u']) || !allowedTo('admin_forum'))
@@ -1107,6 +1147,25 @@ function PickTheme()
 		$context['current_member'] = -1;
 		$context['current_theme'] = $modSettings['theme_guests'];
 	}
+    /* Start Mobile Device Detect */
+        /**
+        * Mobile Device Detect (MDD)
+        *
+        * @package MDD
+        * @author emanuele
+        * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+        * @copyright 2012 emanuele, Simple Machines
+        * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+        *
+        * @version 0.2.2
+        */
+    elseif ($_REQUEST['u'] == '-2')
+	{
+		$context['current_member'] = -2;
+		$context['current_theme'] = isset($modSettings['mobile_theme_id']) ? $modSettings['mobile_theme_id'] : 0;
+	}
+    // End Mobile Device Detect
+    
 	// Someones else :P.
 	else
 	{

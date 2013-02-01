@@ -816,4 +816,8 @@ $txt['recaptcha_lang_ru'] = 'Russian';
 $txt['recaptcha_pleaseverify'] = 'Please verify that you are human by solving the CAPTCHA below.';
 $txt['error_wrong_recaptcha_verification'] = 'You did not enter the CAPTCHA correctly.';
 
+
+// emanuele Mobile Device Detect
+$txt['mobile_theme_id'] = 'Theme to use for mobile devices';
+
 ?>

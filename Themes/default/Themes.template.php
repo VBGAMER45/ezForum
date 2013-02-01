@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -92,7 +92,43 @@ function template_main()
 	echo '
 							</select>
 							<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=0;', $context['session_var'], '=', $context['session_id'], '">', $txt['theme_select'], '</a></span>
-						</dd>
+';
+
+
+        /* Start Mobile Device Detect */
+        /**
+        * Mobile Device Detect (MDD)
+        *
+        * @package MDD
+        * @author emanuele
+        * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+        * @copyright 2012 emanuele, Simple Machines
+        * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+        *
+        * @version 0.2.2
+        */
+    echo '
+                        </dd>
+						<dt>
+							<label for="mobile_theme_id">', $txt['mobile_theme_id'], ':</label>
+						</dt>
+						<dd>
+							<select name="mobile_theme_id" id="mobile_theme_id">';
+
+	// Put an option for each theme in the select box.
+	foreach ($context['themes'] as $theme)
+		echo '
+								<option value="', $theme['id'], '"', !empty($modSettings['mobile_theme_id']) && $modSettings['mobile_theme_id'] == $theme['id'] ? ' selected="selected"' : '', '>', $theme['name'], '</option>';
+
+	echo '
+							</select>
+							<span class="smalltext pick_theme"><a href="', $scripturl, '?action=theme;sa=pick;u=-2;', $context['session_var'], '=', $context['session_id'], '">', $txt['theme_select'], '</a></span>
+                ';
+     /* End Mobile Device Detect */           
+
+                        
+echo '        
+                        </dd>
 					</dl>
 					<div class="righttext">
 						<input type="submit" name="submit" value="' . $txt['save'] . '" class="button_submit" />

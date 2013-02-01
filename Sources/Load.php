@@ -307,6 +307,24 @@ function loadUserSettings()
 	global $modSettings, $user_settings, $sourcedir, $smcFunc;
 	global $cookiename, $user_info, $language;
 
+
+	/* Start Mobile Device Detect */
+        /**
+        * Mobile Device Detect (MDD)
+        *
+        * @package MDD
+        * @author emanuele
+        * @copyright the class uagent_info is copyright of Anthony Hand (see Subs-MobileDetect.php for details)
+        * @copyright 2012 emanuele, Simple Machines
+        * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache License 2.0 (AL2)
+        *
+        * @version 0.2.2
+        */
+	require_once($sourcedir . "/Subs-MobileDetect.php");
+	setThemeForMobileDevices();
+	/* End Mobile Device Detect */
+
+
 	// Check first the integration, then the cookie, and last the session.
 	if (count($integration_ids = call_integration_hook('integrate_verify_user')) > 0)
 	{
