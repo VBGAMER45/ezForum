@@ -881,4 +881,24 @@ $txt['smi_linkedin_desc'] = 'Copy & Paste your LinkedIn profile link.';
 $txt['smi_skype_title'] = 'Skype';
 $txt['smi_skype_desc'] = 'Input your Skype username.';
 
+/**
+* User Mass Actions (uma)
+*
+* @package uma
+* @author emanuele
+* @copyright 2011 emanuele, Simple Machines
+* @license http://www.simplemachines.org/about/smf/license.php BSD
+*
+*/
+$txt['admin_change_primary_membergroup'] = 'Change primary member group';
+$txt['admin_change_secondary_membergroup'] = 'Change/add additional member group';
+$txt['confirm_remove_membergroup'] = 'Selecting this all the membergroups will be removed! Are you sure?';
+$txt['confirm_change_primary_membergroup'] = 'Are you sure you want to change the primary group of the selected members?';
+$txt['confirm_change_secondary_membergroup'] = 'Are you sure you want to change the additional group of the selected members?';
+$txt['admin_ban_usernames'] = 'Ban by usernames';
+$txt['admin_ban_useremails'] = 'Ban by email addresses';
+$txt['admin_ban_userips'] = 'Ban by IPs';
+$txt['admin_ban_usernames_and_emails'] = 'Ban by usernames and email addresses';
+$txt['users_mass_action_ban_name'] = 'Name of the ban list to be used for mass ban actions';
+
 ?>

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -180,25 +180,200 @@ function ViewMemberlist()
 	// Set the current sub action.
 	$context['sub_action'] = $_REQUEST['sa'];
 
-	// Are we performing a delete?
-	if (isset($_POST['delete_members']) && !empty($_POST['delete']) && allowedTo('profile_remove_any'))
+	loadLanguage('Profile');
+	// Are we performing a mass action?
+	if (isset($_POST['maction_on_members']) && isset($_POST['maction']) && !empty($_POST['delete']))
 	{
 		checkSession();
-
-		// Clean the input.
+		// Clean the input if delete or ban.
+		$members = array();
 		foreach ($_POST['delete'] as $key => $value)
 		{
-			$_POST['delete'][$key] = (int) $value;
-			// Don't delete yourself, idiot.
-			if ($value == $user_info['id'])
-				unset($_POST['delete'][$key]);
+			// Don't delete nor ban yourself, idiot.
+			if ($_POST['maction'] != 'pgroup' && $_POST['maction'] != 'agroup')
+			{
+				if ($value != $user_info['id'])
+					$members[] = $value;
+			}
+			else
+				$members[] = $value;
 		}
 
-		if (!empty($_POST['delete']))
+		if (!empty($members))
 		{
-			// Delete all the selected members.
-			require_once($sourcedir . '/Subs-Members.php');
-			deleteMembers($_POST['delete'], true);
+			// Are we performing a delete?
+			if ($_POST['maction'] == 'delete' && allowedTo('profile_remove_any'))
+			{
+				foreach ($members as $memID)
+				{
+					// Code duplication FTW!!!
+					// From Profile-Actions.php, function deleteAccount2
+					if ($_POST['maction_remove_type'] != 'none' && allowedTo('moderate_forum'))
+					{
+						// Include RemoveTopics - essential for this type of work!
+						require_once($sourcedir . '/RemoveTopic.php');
+
+						// First off we delete any topics the member has started - if they wanted topics being done.
+						if ($_POST['maction_remove_type'] == 'topics')
+						{
+							// Fetch all topics started by this user within the time period.
+							$request = $smcFunc['db_query']('', '
+								SELECT t.id_topic
+								FROM {db_prefix}topics AS t
+								WHERE t.id_member_started = {int:selected_member}',
+								array(
+									'selected_member' => $memID,
+								)
+							);
+							$topicIDs = array();
+							while ($row = $smcFunc['db_fetch_assoc']($request))
+								$topicIDs[] = $row['id_topic'];
+							$smcFunc['db_free_result']($request);
+
+							// Actually remove the topics.
+							// !!! This needs to check permissions, but we'll let it slide for now because of moderate_forum already being had.
+							removeTopics($topicIDs);
+						}
+
+						// Now delete the remaining messages.
+						$request = $smcFunc['db_query']('', '
+							SELECT m.id_msg
+							FROM {db_prefix}messages AS m
+								INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic
+									AND t.id_first_msg != m.id_msg)
+							WHERE m.id_member = {int:selected_member}',
+							array(
+								'selected_member' => $memID,
+							)
+						);
+						// This could take a while... but ya know it's gonna be worth it in the end.
+						while ($row = $smcFunc['db_fetch_assoc']($request))
+						{
+							if (function_exists('apache_reset_timeout'))
+								@apache_reset_timeout();
+
+							removeMessage($row['id_msg']);
+						}
+						$smcFunc['db_free_result']($request);
+					}
+				}
+
+				// Delete all the selected members.
+				require_once($sourcedir . '/Subs-Members.php');
+				deleteMembers($members, true);
+			}
+			// Are we changing groups?
+			elseif (($_POST['maction'] == 'pgroup' || $_POST['maction'] == 'agroup') && allowedTo('manage_membergroups'))
+			{
+				$groups = array('p', 'a');
+				foreach($groups as $group){
+					if ($_POST['maction'] == $group . 'group' && !empty($_POST['new_membergroup']))
+					{
+						$type = $group == 'p' ? 'force_primary' : 'only_additional';
+
+						// Change all the selected members' group.
+						require_once($sourcedir . '/Subs-Membergroups.php');
+						if($_POST['new_membergroup'] != -1)
+							addMembersToGroup($members, $_POST['new_membergroup'], $type, true);
+						else
+							removeMembersFromGroups($members,null,true);
+					}
+				}
+			}
+			// Are we banning?
+			elseif(($_POST['maction'] == 'ban_names' || $_POST['maction'] == 'ban_mails' || $_POST['maction'] == 'ban_ips' || $_POST['maction'] == 'ban_names_mails') && allowedTo('manage_bans'))
+			{
+				require_once($sourcedir . '/ManageBans.php');
+
+				$id_ban = $smcFunc['db_query']('', '
+					SELECT id_ban_group
+					FROM {db_prefix}ban_groups
+					WHERE name = \'' . $modSettings['users_mass_action_ban_name'] . '\'
+					LIMIT 1',
+					array()
+				);
+				if ($smcFunc['db_num_rows']($id_ban) != 0)
+					list($ban_group_id) = $smcFunc['db_fetch_row']($id_ban);
+				else
+					$ban_group_id = null;
+
+				$smcFunc['db_free_result']($id_ban);
+
+				$_REQUEST['bg'] = $ban_group_id;
+				$mactions = $_POST['maction'] == 'ban_names_mails' ? array('ban_names', 'ban_mails') : array($_POST['maction']);
+
+				foreach ($mactions as $maction) {
+					$checkIPs = false;
+					switch ($maction) {
+						case 'ban_names':
+							$what = 'member_name';
+							$post_ban = 'user';
+							$_POST['ban_suggestion'][] = 'user';
+							$_POST['bantype'] = 'user_ban';
+							break;
+						case 'ban_mails':
+							$what = 'email_address';
+							$post_ban = 'email';
+							$_POST['ban_suggestion'][] = 'email';
+							$_POST['bantype'] = 'email_ban';
+							break;
+						case 'ban_ips':
+							$checkIPs = true;
+							$what = 'member_ip';
+							$post_ban = !empty($ban_group_id) ? 'ip' : 'main_ip';
+							$_POST['ban_suggestion'][] = 'main_ip';
+							$_POST['bantype'] = 'ip_ban';
+							break;
+						default:
+							return false;
+					}
+					$request = $smcFunc['db_query']('', '
+						SELECT id_member, member_name, ' . $what . '
+						FROM {db_prefix}members
+						WHERE id_member IN ({array_int:id_members})',
+						array(
+							'id_members' => $members,
+					));
+
+					$_POST['expiration'] = 'never';
+					$_POST['full_ban'] = 1;
+					$_POST['reason'] = !empty($modSettings['users_mass_action_ban_name']) ? $modSettings['users_mass_action_ban_name'] : 'Mass ban';
+					$_POST['ban_name'] = !empty($modSettings['users_mass_action_ban_name']) ? $modSettings['users_mass_action_ban_name'] : 'Mass ban';
+					$_POST['notes'] = '';
+
+					while ($row = $smcFunc['db_fetch_assoc']($request))
+					{
+						if ($checkIPs) {
+							$ip_parts = ip2range($row[$what]);
+							if (users_mass_action_checkExistingTriggerIP($ip_parts, $row[$what]))
+								continue;
+
+							$_POST['ip'] = $row[$what];
+						}
+						$_POST['add_new_trigger'] = !empty($ban_group_id) ? 1 : null;
+						$_POST['add_ban'] = empty($ban_group_id) ? 1 : null;
+						$_POST[$post_ban] = $row[$what];
+						$_REQUEST['u'] = $row['id_member'];
+
+						BanEdit();
+						if(empty($ban_group_id)){
+							$id_ban = $smcFunc['db_query']('', '
+								SELECT id_ban_group
+								FROM {db_prefix}ban_groups
+								WHERE name = \'Mass bans\'
+								LIMIT 1',
+								array()
+							);
+							if($smcFunc['db_num_rows']($id_ban)!=0)
+								list($ban_group_id) = $smcFunc['db_fetch_row']($id_ban);
+							else
+								$ban_group_id = null;
+							$smcFunc['db_free_result']($id_ban);
+						}
+					}
+					$smcFunc['db_free_result']($request);
+				}
+			}
 		}
 	}
 
@@ -621,7 +796,25 @@ function ViewMemberlist()
 		'additional_rows' => array(
 			array(
 				'position' => 'below_table_data',
-				'value' => '<input type="submit" name="delete_members" value="' . $txt['admin_delete_members'] . '" onclick="return confirm(\'' . $txt['confirm_delete_members'] . '\');" class="button_submit" />',
+				'value' => '
+				<select name="maction" onchange="this.form.new_membergroup.disabled = (this.options[this.selectedIndex].value != \'pgroup\' && this.options[this.selectedIndex].value != \'agroup\');this.form.maction_remove_type.disabled = (this.options[this.selectedIndex].value != \'delete\');">
+					<option value="">--------</option>
+					<option value="delete">' . $txt['admin_delete_members'] . '</option>
+					<option value="pgroup">' . $txt['admin_change_primary_membergroup'] . '</option>
+					<option value="agroup">' . $txt['admin_change_secondary_membergroup'] . '</option>
+					<option value="ban_names">' . $txt['admin_ban_usernames'] . '</option>
+					<option value="ban_mails">' . $txt['admin_ban_useremails'] . '</option>
+					<option value="ban_names_mails">' . $txt['admin_ban_usernames_and_emails'] . '</option>
+					<option value="ban_ips">' . $txt['admin_ban_userips'] . '</option>
+				</select>
+				<select onchange="if(this.value==-1){if(!confirm(\'' . $txt['confirm_remove_membergroup'] . '\')){this.value=0;}}" name="new_membergroup" id="new_membergroup" disabled="disabled">' . 
+				createGroupsList() . '</select>
+				<select name="maction_remove_type" id="maction_remove_type" disabled="disabled">
+					<option value="none">' . $txt['deleteAccount_none'] . '</option>
+					<option value="posts">' . $txt['deleteAccount_all_posts'] . '</option>
+					<option value="topics">' . $txt['deleteAccount_topics'] . '</option>
+				</select>
+				<input type="submit" name="maction_on_members" value="' . $txt['quick_mod_go'] . '" onclick="return confirm(\'' . $txt['quickmod_confirm'] . '\');" class="button_submit" />',
 				'style' => 'text-align: right;',
 			),
 		),
@@ -1306,6 +1499,100 @@ function ezcdatediff($old)
 
 	// Divide out the seconds in a day to get the number of days.
 	return ceil($dis / (24 * 60 * 60));
+}
+
+
+function createGroupsList()
+{
+    /**
+    * User Mass Actions (uma)
+    *
+    * @package uma
+    * @author emanuele
+    * @copyright 2011 emanuele, Simple Machines
+    * @license http://www.simplemachines.org/about/smf/license.php BSD
+    *
+    */
+	global $context, $smcFunc, $user_info, $sourcedir, $txt;
+
+	$selects = '';
+
+	require_once($sourcedir . '/Profile-Modify.php');
+	loadLanguage('Profile');
+	profileLoadGroups();
+
+	// Better remove admin membergroup...and set it to a "remove all"
+	$context['member_groups'][1] = array(
+		'id' => -1,
+		'name' => $txt['remove_all'],
+		'is_primary' => 0,
+	);
+	// no primary is tricky...
+	$context['member_groups'][0] = array(
+		'id' => 0,
+		'name' => '',
+		'is_primary' => 1,
+	);
+
+	foreach($context['member_groups'] as $member_group){
+		$selects .= '
+			<option value="' . $member_group['id'] . '"' . ($member_group['is_primary'] ? ' selected="selected"' : '') . '>
+				' . $member_group['name'] . '
+			</option>';
+	}
+	return $selects;
+}
+
+function users_mass_action_checkExistingTriggerIP($ip_array, $fullip = '')
+{
+    /**
+    * User Mass Actions (uma)
+    *
+    * @package uma
+    * @author emanuele
+    * @copyright 2011 emanuele, Simple Machines
+    * @license http://www.simplemachines.org/about/smf/license.php BSD
+    *
+    */
+	global $smcFunc, $user_info;
+
+	if (count($ip_array) == 4)
+		$values = array(
+			'ip_low1' => $ip_array[0]['low'],
+			'ip_high1' => $ip_array[0]['high'],
+			'ip_low2' => $ip_array[1]['low'],
+			'ip_high2' => $ip_array[1]['high'],
+			'ip_low3' => $ip_array[2]['low'],
+			'ip_high3' => $ip_array[2]['high'],
+			'ip_low4' => $ip_array[3]['low'],
+			'ip_high4' => $ip_array[3]['high'],
+		);
+	else
+		return true;
+
+	// Again...don't ban yourself!!
+	if (!empty($fullip) && ($user_info['ip'] == $fullip || $user_info['ip2'] == $fullip))
+		return true;
+
+	$request = $smcFunc['db_query']('', '
+		SELECT bg.id_ban_group, bg.name
+		FROM {db_prefix}ban_groups AS bg
+		INNER JOIN {db_prefix}ban_items AS bi ON
+			(bi.id_ban_group = bg.id_ban_group)
+			AND ip_low1 = {int:ip_low1} AND ip_high1 = {int:ip_high1}
+			AND ip_low2 = {int:ip_low2} AND ip_high2 = {int:ip_high2}
+			AND ip_low3 = {int:ip_low3} AND ip_high3 = {int:ip_high3}
+			AND ip_low4 = {int:ip_low4} AND ip_high4 = {int:ip_high4}
+		LIMIT 1',
+		$values
+	);
+	if ($smcFunc['db_num_rows']($request) != 0)
+		$ret = true;
+	else
+		$ret = false;
+	$smcFunc['db_free_result']($request);
+
+	return $ret;
 }
 
 ?>

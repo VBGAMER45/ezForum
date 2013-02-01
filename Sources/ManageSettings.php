@@ -491,6 +491,7 @@ function ModifyBasicSettings($return_config = false)
 			// Option-ish things... miscellaneous sorta.
 			array('check', 'allow_disableAnnounce'),
 			array('check', 'disallow_sendBody'),
+            array('text', 'users_mass_action_ban_name'),
 	);
 
 	// Get all the time zones.
