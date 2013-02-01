@@ -1060,6 +1060,34 @@ CREATE TABLE {$db_prefix}log_search_topics (
 ) ENGINE=MyISAM;
 
 #
+# Table structure for table `login_security`
+#
+
+CREATE TABLE {$db_prefix}login_security
+(
+id_member mediumint(8) unsigned NOT NULL, 
+allowedips text,
+lastfailedlogintime int(10) unsigned NOT NULL default '0',
+lockedaccountuntiltime int(10) unsigned NOT NULL default '0',
+secureloginhash tinytext,
+secureloginhashexpiretime int(10) unsigned NOT NULL default '0',
+PRIMARY KEY  (id_member)
+) ENGINE=MyISAM;
+
+
+#
+# Table structure for table `login_security_log`
+#
+
+CREATE TABLE {$db_prefix}login_security_log
+(
+id_log mediumint(8) NOT NULL auto_increment,
+id_member mediumint(8) unsigned NOT NULL default '0',
+date int(10) unsigned NOT NULL default '0',
+ip tinytext,
+PRIMARY KEY  (id_log) ENGINE=MyISAM;
+
+#
 # Table structure for table `log_spider_hits`
 #
 
@@ -1819,8 +1847,15 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('recaptcha_publickey', ''),
 	('recaptcha_privatekey', ''),
 	('recaptcha_theme', 'white'),
-	('recaptcha_lang', 'en');
+	('recaptcha_lang', 'en'),
+	('ls_securehash_expire_minutes', '30'),
+	('ls_allowed_login_attempts', '5'),
+	('ls_allowed_login_attempts_mins', '60'),
+	('ls_login_retry_minutes', '15'),
+	('ls_allow_ip_security', '0'),
+	('ls_send_mail_failed_login', '1')
 	;
+	
 # --------------------------------------------------------
 
 #

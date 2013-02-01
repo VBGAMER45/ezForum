@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2012 ezForum
+ * Copyright 2012-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -134,6 +134,7 @@ function AdminMain()
 					'subsections' => array(
 						'basic' => array($txt['mods_cat_features']),
 						'layout' => array($txt['mods_cat_layout']),
+						'loginsecurity' => array($txt['ls_login_security']),
 						'karma' => array($txt['karma'], 'enabled' => in_array('k', $context['admin_features'])),
 						'sig' => array($txt['signature_settings_short']),
 						'profile' => array($txt['custom_profile_shorttitle'], 'enabled' => in_array('cp', $context['admin_features'])),

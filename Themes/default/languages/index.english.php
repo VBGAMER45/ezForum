@@ -820,4 +820,44 @@ $txt['error_wrong_recaptcha_verification'] = 'You did not enter the CAPTCHA corr
 // emanuele Mobile Device Detect
 $txt['mobile_theme_id'] = 'Theme to use for mobile devices';
 
+// Begin Login Security Text Strings
+$txt['ls_login_security'] = 'Login Security';
+$txt['ls_invalid_ip'] = 'Login failed. This account is protected by ip address. If you are the owner of this account you can reset this by creating a <a href="%link">secure login link</a> sent to your email address.';
+$txt['ls_account_locked'] = 'Account Locked due to failed logins. This account has been locked until %min. If you are the owner of this account you can reset this by creating a <a href="%link">secure login link</a> sent to your email address.';
+$txt['ls_secure_email_subject'] = 'Secure Login Link';
+$txt['ls_secure_email_body'] = 'Hello %name,
+A secure login link has been requested for your account. 
+If you requested this link please follow the link below to login into your account.
+
+%link
+
+This link expires in %min minutes.
+
+Requesters IP address: %ip';
+
+$txt['ls_matched_members'] = 'Matched forum members with same ip address:';
+
+$txt['ls_failed_email_subject'] = 'Failed Login Attempt';
+$txt['ls_failed_email_body'] = 'Hello %name,
+We have detected a failed login attempt on your account.
+
+%membermatches
+
+IP address of the failed login attempt: %ip
+';
+
+// Settings
+$txt['ls_securehash_expire_minutes'] = 'Secure Login Link Expire time in minutes';
+$txt['ls_allowed_login_attempts'] = 'Number of allowed login attempts';
+$txt['ls_allowed_login_attempts_mins'] = 'Login attempt check time range in minutes';
+$txt['ls_login_retry_minutes'] = 'Account locked retry minutes';
+$txt['ls_allow_ip_security'] = 'Allow users to protect their account by ip address';
+$txt['ls_send_mail_failed_login'] = 'Send email on failed login attempt';
+
+$txt['ls_current_ip_address'] = 'Current IP Address: ';
+$txt['ls_ip_address_protection'] = 'IP Address Account Protection';
+$txt['ls_ip_address_protection_note'] = 'You can allow multiple ips by seperating them with a comma';
+
+// END  Login Security Text Strings	
+
 ?>

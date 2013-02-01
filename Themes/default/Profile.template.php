@@ -1132,7 +1132,7 @@ function template_statPanel()
 // Template for editing profile options.
 function template_edit_options()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt;
+	global $context, $settings, $options, $scripturl, $modSettings, $txt, $user_info;
 
 	// The main header!
 	echo '
@@ -1262,6 +1262,25 @@ function template_edit_options()
 
 			echo '
 						</dd>';
+			
+		// Login Security Mod
+		if ($modSettings['ls_allow_ip_security'] && $key == 'real_name')
+		{
+			
+			echo '
+				<dt><b>', $txt['ls_ip_address_protection'], ':</b></dt>
+				<dd>'
+				,$txt['ls_current_ip_address'],$user_info['ip'],'<br />
+				<br />
+				<input type="text" name="allowedips" size="30" value="', $context['allowedips'], '" />
+				<br /><span class="smalltext">',$txt['ls_ip_address_protection_note'],'</span>
+				</dd>
+			';
+		}
+		
+			
+			
+			
 		}
 	}
 

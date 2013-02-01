@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -786,7 +786,7 @@ function loadProfileFields($force_reload = false)
 // Setup the context for a page load!
 function setupProfileContext($fields)
 {
-	global $profile_fields, $context, $cur_profile, $smcFunc, $txt;
+	global $profile_fields, $context, $cur_profile, $smcFunc, $txt, $sourcedir;
 
 	// Make sure we have this!
 	loadProfileFields(true);
@@ -864,6 +864,22 @@ function setupProfileContext($fields)
 
 	// Free up some memory.
 	unset($profile_fields);
+	
+	// Login Security
+	$allowedips = '';
+		
+	if ($modSettings['ls_allow_ip_security'])
+	{
+		require_once($sourcedir . '/Subs-LoginSecurity.php');
+			
+		if (isset($_REQUEST['allowedips']))
+			$allowedips = $_REQUEST['allowedips'];
+			
+			
+		UpdateAllowedIPs($context['id_member'], $allowedips);
+	}
+		
+	
 }
 
 // Save the profile changes.
@@ -1593,11 +1609,39 @@ function editIgnoreList($memID)
 
 function account($memID)
 {
-	global $context, $txt;
+	global $context, $txt, $smcFunc, $modSettings;
 
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_identity_own', 'profile_identity_any')))
 		loadCustomFields($memID, 'account');
+		
+
+	// Login Security
+	$allowedips = '';
+
+	if ($modSettings['ls_allow_ip_security'])
+	{
+			
+		$dbresult = $smcFunc['db_query']('',"
+			SELECT 
+				allowedips 
+			FROM {db_prefix}login_security
+			WHERE ID_MEMBER = " . $memID);
+		$numRows = $smcFunc['db_num_rows']($dbresult);
+		// We are not going to do anything since they don't have any settings defined
+		if ($numRows != 0)
+		{
+				
+			$ipRow = $smcFunc['db_fetch_assoc']($dbresult);
+			$allowedips = $ipRow['allowedips'];
+		}
+		
+		$smcFunc['db_free_result']($dbresult);
+			
+		$context['allowedips'] = $allowedips;
+			
+	}
+		
 
 	$context['sub_template'] = 'edit_options';
 	$context['page_desc'] = $txt['account_info'];

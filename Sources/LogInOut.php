@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -86,6 +86,13 @@ function Login()
 		'url' => $scripturl . '?action=login',
 		'name' => $txt['login'],
 	);
+	
+	
+	// Login Security
+	if (isset($_REQUEST['securelogin']))
+	{
+		$_SESSION['secureloginhash'] = $_REQUEST['securelogin'];
+	}
 
 	// Set the login URL - will be used when the login process is done (but careful not to send us to an attachment).
 	if (isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && preg_match('~(board|topic)[=,]~', $_SESSION['old_url']) != 0)
@@ -150,10 +157,7 @@ function Login2()
 	if (empty($_SESSION['login_url']) && isset($_SESSION['old_url']) && strpos($_SESSION['old_url'], 'dlattach') === false && preg_match('~(board|topic)[=,]~', $_SESSION['old_url']) != 0)
 		$_SESSION['login_url'] = $_SESSION['old_url'];
 
-	// Been guessing a lot, haven't we?
-	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $modSettings['failed_login_threshold'] * 3)
-		fatal_lang_error('login_threshold_fail', 'critical');
-
+	
 	// Set up the cookie length.  (if it's invalid, just fall through and use the default.)
 	if (isset($_POST['cookieneverexp']) || (!empty($_POST['cookielength']) && $_POST['cookielength'] == -1))
 		$modSettings['cookieTime'] = 3153600;
@@ -256,6 +260,23 @@ function Login2()
 	$user_settings = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
+	// Login Securit
+	require_once($sourcedir . '/Subs-LoginSecurity.php');
+	
+	// Check if they can access it via this ip
+	CheckAllowedIP($user_settings['id_member']);
+	
+	// Check if the account is locked out
+	CheckIfAccountIsLocked($user_settings['id_member']);
+	
+	$loginSecurityErrorLogged = false;
+	
+	
+	// Been guessing a lot, haven't we?
+	if (isset($_SESSION['failed_login']) && $_SESSION['failed_login'] >= $modSettings['failed_login_threshold'] * 3)
+		fatal_lang_error('login_threshold_fail', 'critical');	
+	
+	
 	// Figure out the password using SMF's encryption - if what they typed is right.
 	if (isset($_POST['hash_passwrd']) && strlen($_POST['hash_passwrd']) == 40)
 	{
@@ -296,6 +317,13 @@ function Login2()
 	// Bad password!  Thought you could fool the database?!
 	if ($user_settings['passwd'] != $sha_passwd)
 	{
+		// Login Security Mod
+		require_once($sourcedir . '/Subs-LoginSecurity.php');
+		
+		// They failed login....
+		AddLoginFailure($user_settings['id_member']);
+		$loginSecurityErrorLogged = true;
+		
 		// Let's be cautious, no hacking please. thanx.
 		validatePasswordFlood($user_settings['id_member'], $user_settings['passwd_flood']);
 
@@ -381,6 +409,17 @@ function Login2()
 		// Okay, they for sure didn't enter the password!
 		else
 		{
+			
+			// Login Security
+			if ($loginSecurityErrorLogged == true)
+			{
+				require_once($sourcedir . '/Subs-LoginSecurity.php');
+		
+				// They failed login....
+				AddLoginFailure($user_settings['id_member']);
+			}
+			
+			
 			// They've messed up again - keep a count to see if they need a hand.
 			$_SESSION['failed_login'] = @$_SESSION['failed_login'] + 1;
 
@@ -472,6 +511,22 @@ function DoLogin()
 	global $txt, $scripturl, $user_info, $user_settings, $smcFunc;
 	global $cookiename, $maintenance, $modSettings, $context, $sourcedir;
 
+	
+	// Login Security Mod
+	if (isset($_REQUEST['sa']))
+	{
+		if ($_REQUEST['sa'] == 'securelink')
+		{
+			require_once($sourcedir . '/Subs-LoginSecurity.php');
+
+			// Send security login link
+			SendSecureLink();
+		}
+	}
+	
+	
+	
+	
 	// Load cookie authentication stuff.
 	require_once($sourcedir . '/Subs-Auth.php');
 

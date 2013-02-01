@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -103,6 +103,7 @@ function ModifyFeatureSettings()
 	$subActions = array(
 		'basic' => 'ModifyBasicSettings',
 		'layout' => 'ModifyLayoutSettings',
+		'loginsecurity' => 'ModifyLoginSecuritySettings',
 		'karma' => 'ModifyKarmaSettings',
 		'sig' => 'ModifySignatureSettings',
 		'profile' => 'ShowCustomProfiles',
@@ -120,6 +121,8 @@ function ModifyFeatureSettings()
 			'basic' => array(
 			),
 			'layout' => array(
+			),
+			'loginsecurity' => array(
 			),
 			'karma' => array(
 			),
@@ -2113,6 +2116,34 @@ function ModifyGeneralModSettings($return_config = false)
 	}
 
 	// This line is to help mod authors do a search/add after if you want to add something here. Keyword: RED INK IS FOR TEACHERS AND THOSE WHO LIKE PAIN!
+	prepareDBSettingContext($config_vars);
+}
+
+function ModifyLoginSecuritySettings($return_config = false)
+{
+	global $txt, $scripturl, $context, $settings, $sc;
+
+	$config_vars = array(
+			
+			array('int', 'ls_allowed_login_attempts'),
+			array('int', 'ls_allowed_login_attempts_mins'),
+			array('int', 'ls_login_retry_minutes'),
+			array('check', 'ls_send_mail_failed_login'),
+			array('check', 'ls_allow_ip_security'),
+			array('int', 'ls_securehash_expire_minutes'),
+		
+	);
+
+	// Saving?
+	if (isset($_GET['save']))
+	{
+		saveDBSettings($config_vars);
+		redirectexit('action=admin;area=featuresettings;sa=loginsecurity');
+	}
+
+	$context['post_url'] = $scripturl . '?action=admin;area=featuresettings;save;sa=loginsecurity';
+	$context['settings_title'] = $txt['ls_login_security'];
+
 	prepareDBSettingContext($config_vars);
 }
 
