@@ -448,6 +448,7 @@ function CheckFilesWritable()
 		'Packages/installed.list',
 		'Smileys',
 		'Themes',
+		'useravatars',
 		'agreement.txt',
 		'Settings.php',
 		'Settings_bak.php'
