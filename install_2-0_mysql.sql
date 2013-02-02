@@ -1085,7 +1085,8 @@ id_log mediumint(8) NOT NULL auto_increment,
 id_member mediumint(8) unsigned NOT NULL default '0',
 date int(10) unsigned NOT NULL default '0',
 ip tinytext,
-PRIMARY KEY  (id_log) ENGINE=MyISAM;
+PRIMARY KEY  (id_log) 
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `log_spider_hits`
