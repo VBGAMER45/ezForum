@@ -741,8 +741,15 @@ function ModifySpamSettings($return_config = false)
 			array('desc', 'configure_verification_means_desc'),
 				'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext'=> $txt['setting_visual_verification_type_desc'], 'onchange' => $context['use_graphic_library'] ? 'refreshImages();' : ''),
 				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
+
+
+
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
-			
+			array('title', 'setup_verification_questions'),
+			array('desc', 'setup_verification_questions_desc'),
+				array('callback', 'question_answer_list'),
+
+
 			// Stop Forum Spam
 			array('title','stopforumspam_configure'),
 			array('desc', 'stopforumspam_configure_desc', 'class' => 'windowbg'),
@@ -750,8 +757,8 @@ function ModifySpamSettings($return_config = false)
 			array('check','stopforumspam_checkip'),
 			array('check','stopforumspam_checkemail'),
 			array('check','stopforumspam_checkusername'),
-			
-			
+
+
 			// reCaptcha
 			array('title','recaptcha_settings'),
 			array('desc', 'recaptcha_settings_desc', 'class' => 'windowbg'),
@@ -769,8 +776,8 @@ function ModifySpamSettings($return_config = false)
 				                                     'ru' => $txt['recaptcha_lang_ru'],
 				                                     )
            ),
-			
-			
+
+
 			// Solve Media
 			array('title','solvemedia_settings'),
 			array('desc', 'solvemedia_settings_desc', 'class' => 'windowbg'),
@@ -795,12 +802,10 @@ function ModifySpamSettings($return_config = false)
 													 'ja' => $txt['solvemedia_lang_ja'],
 				                                     'yi' => $txt['solvemedia_lang_yi'],)
            ),
-			
-			
-			
-			array('title', 'setup_verification_questions'),
-			array('desc', 'setup_verification_questions_desc'),
-				array('callback', 'question_answer_list'),
+
+
+
+
 	);
 
 	if ($return_config)
@@ -2125,14 +2130,14 @@ function ModifyLoginSecuritySettings($return_config = false)
 	global $txt, $scripturl, $context, $settings, $sc;
 
 	$config_vars = array(
-			
+
 			array('int', 'ls_allowed_login_attempts'),
 			array('int', 'ls_allowed_login_attempts_mins'),
 			array('int', 'ls_login_retry_minutes'),
 			array('check', 'ls_send_mail_failed_login'),
 			array('check', 'ls_allow_ip_security'),
 			array('int', 'ls_securehash_expire_minutes'),
-		
+
 	);
 
 	// Saving?
