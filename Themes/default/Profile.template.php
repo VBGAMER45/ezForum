@@ -98,7 +98,7 @@ function template_summary()
 				', !isset($context['disabled_fields']['myspace']) && !empty($context['member']['myspace']['link']) ? '<li>' . $context['member']['myspace']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['twitter']) && !empty($context['member']['twitter']['link']) ? '<li>' . $context['member']['twitter']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['googleplus']) && !empty($context['member']['googleplus']['link']) ? '<li>' . $context['member']['googleplus']['link'] . '</li>' : '', '
-				', !isset($context['disabled_fields']['linkedin']) && !empty($context['member']['linkedin']['link']) ? '<li>' . $context['member']['linkedin']['link'] . '</li>' : '', '				
+				', !isset($context['disabled_fields']['linkedin']) && !empty($context['member']['linkedin']['link']) ? '<li>' . $context['member']['linkedin']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['youtube']) && !empty($context['member']['youtube']['link']) ? '<li>' . $context['member']['youtube']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['deviantart']) && !empty($context['member']['deviantart']['link']) ? '<li>' . $context['member']['deviantart']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['pinterest']) && !empty($context['member']['pinterest']['link']) ? '<li>' . $context['member']['pinterest']['link'] . '</li>' : '', '
@@ -524,7 +524,7 @@ function template_editBuddies()
 	if (empty($context['buddies']))
 		echo '
 			<tr class="windowbg2">
-				<td colspan="8" align="center"><strong>', $txt['no_buddies'], '</strong></td>
+				<td colspan="9" align="center"><strong>', $txt['no_buddies'], '</strong></td>
 			</tr>';
 
 	// Now loop through each buddy showing info on each.
@@ -1276,11 +1276,11 @@ function template_edit_options()
 
 			echo '
 						</dd>';
-			
+
 		// Login Security Mod
 		if ($modSettings['ls_allow_ip_security'] && $key == 'real_name')
 		{
-			
+
 			echo '
 				<dt><b>', $txt['ls_ip_address_protection'], ':</b></dt>
 				<dd>'
@@ -1291,10 +1291,10 @@ function template_edit_options()
 				</dd>
 			';
 		}
-		
-			
-			
-			
+
+
+
+
 		}
 	}
 
@@ -2406,13 +2406,13 @@ function template_deleteAccount()
 							<option value="topics">', $txt['deleteAccount_topics'], '</option>
 						</select>
 					</div>';
-			
-			
+
+
 
 		echo '
 			<div>
 				<input type="checkbox" name="full_ban" id="full_ban" value="1" checked="checked" />&nbsp;&nbsp;<label for="full_ban">', $txt['ban_full_ban'], '</label><br />
-				
+
 			</div>
 ';
 
@@ -2508,7 +2508,7 @@ function template_deleteAccount()
 
 
 	}
-	
+
 
 		echo '
 					<div>
