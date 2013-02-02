@@ -2069,7 +2069,7 @@ function template_install_below()
 		</div>
 	</div></div>
 	<div id="footer_section"><div class="frame" style="height: 40px;">
-		<div class="smalltext"><a href="http://www.ezforum.com" title="ezForum" target="_blank" class="new_win">ezForum &copy; 2012</a></div>
+		<div class="smalltext"><a href="http://www.ezforum.com" title="ezForum" target="_blank" class="new_win">ezForum &copy; 2013</a></div>
 	</div></div>
 	</body>
 </html>';
