@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -728,7 +728,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	}
 
 	// Well, first of all, if a from_action is specified you'd better have an old_url.
-	if (!empty($from_action) && (!isset($_SESSION['old_url']) || preg_match('~[?;&]action=' . $from_action . '([;&]|$)~', $_SESSION['old_url']) == 0))
+	if (!empty($from_action) && (!isset($_SESSION['old_url']) || preg_match('~[?;&]action=' . $from_action . '([;&]|$)|' . $boardurl . '/' . $from_action . '~', $_SESSION['old_url']) == 0))
 	{
 		$error = 'verify_url_fail';
 		$log_error = true;

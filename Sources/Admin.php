@@ -195,6 +195,13 @@ function AdminMain()
 						'edit' => array($txt['themeadmin_edit_title']),
 					),
 				),
+				'pretty' => array(
+					'label' => (isset($txt['pretty_urls']) ? $txt['pretty_urls'] : 'Pretty URLs'),
+					'file' => 'PrettyUrls.php',
+					'function' => 'PrettyInterface',
+					'custom_url' => $scripturl . '?action=admin;area=pretty',
+				),
+				
 				'modsettings' => array(
 					'label' => $txt['admin_modifications'],
 					'file' => 'ManageSettings.php',

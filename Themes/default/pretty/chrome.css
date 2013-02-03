@@ -1,0 +1,120 @@
+/*
+ * Pretty URLs Chrome (Admin Interface)
+ * Version: 1.0
+ */
+
+div#chrome
+{
+	background: url('./chrome-bottom.png') 0% 100% no-repeat;
+	color: #000;
+	font-family: Verdana, sans-serif;
+	font-size: 12px;
+	line-height: 1.5em;
+	margin: 0 auto;
+	padding: 0 0 30px;
+	width: 600px;
+}
+
+div#chrome h1, div#chrome h2, div#chrome h3, div#chrome h4, div#chrome p, ul#chrome_menu, #chrome_caption, p#chrome_notice
+{
+	margin: 0;
+	padding: 0;
+}
+
+div#chrome a
+{
+	color: #d00;
+}
+
+div#chrome h1
+{
+	background: url('./chrome-h1.png') no-repeat;
+	color: #fff;
+	font-size: 2em;
+	line-height: 42px;
+	height: 42px;
+	padding: 48px 30px 20px;
+}
+
+div#chrome h2
+{
+	background: #ebebeb url('./chrome-h2.png') repeat-x;
+	color: #000;
+	font-size: 1.5em;
+	line-height: 2em;
+}
+
+p#chrome_caption
+{
+	background: #CCC;
+	padding: 0.5em;
+}
+
+div#chrome_main
+{
+	background: url('./chrome-back.png') repeat-y;
+	padding: 0 30px;
+}
+
+p#chrome_notice
+{
+	color: red;
+	padding: 0.5em;
+}
+
+/*	The menu...	*/
+ul#chrome_menu
+{
+	float: left;
+	list-style: none;
+	min-height: 30px;
+	height: 3em;
+	margin: 0 0.5em 0 0;
+}
+
+ul#chrome_menu li
+{
+	background: url('./chrome-button.png') bottom left no-repeat;
+	display: inline;
+	float: left;
+	height: 30px;
+	margin: 0.25em 0.5em;
+	width: 30px;
+}
+
+ul#chrome_menu li:hover
+{
+	background-position: top left;
+}
+
+ul#chrome_menu a
+{
+	display: block;
+	height: 30px;
+	text-indent: -9999em;
+	width: 30px;
+}
+
+ul#chrome_menu a.news
+{
+	background: url('./icon-news.png') 50% 50% no-repeat;
+}
+
+ul#chrome_menu a.settings
+{
+	background: url('./icon-settings.png') 50% 50% no-repeat;
+}
+
+ul#chrome_menu a.maintenance
+{
+	background: url('./icon-maintenance.png') 50% 50% no-repeat;
+}
+
+/*	Filters tool	*/
+textarea#pretty_json_filters
+{
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	font-family: monospace;
+	width: 100%;
+}

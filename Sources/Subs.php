@@ -2730,6 +2730,25 @@ function redirectexit($setLocation = '', $refresh = false)
 			$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?$/e', "\$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2'", $setLocation);
 	}
 
+	//	Redirections should be pretty too
+	if (!empty($modSettings['pretty_enable_filters']))
+	{
+		global $sourcedir;
+		require_once($sourcedir . '/PrettyUrls-Filters.php');
+		$url = array(0 => array('url' => $setLocation, 'url_id' => 'setLocation'));
+		$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
+		foreach ($filter_callbacks as $callback)
+		{
+			$pretty_url = call_user_func($callback, $url);
+			if (isset($pretty_url[0]['replacement']))
+				break;
+		}
+		if (isset($pretty_url[0]['replacement']))
+			$setLocation = $pretty_url[0]['replacement'];
+		$setLocation = str_replace("\x12", '\'', $setLocation);
+		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~\?#|;#|=#~', '~\?$|;$|#$|=$~'), array(';', '?', '#', ''), $setLocation);
+	}
+	
 	// Maybe integrations want to change where we are heading?
 	call_integration_hook('integrate_redirect', array(&$setLocation, &$refresh));
 

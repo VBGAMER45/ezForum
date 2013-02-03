@@ -79,9 +79,15 @@ loadDatabase();
 
 // Load the settings from the settings table, and perform operations like optimizing.
 reloadSettings();
+
+// Unserialize the array of pretty board URLs
+$context = array('pretty' => array(
+	'action_array' => unserialize($modSettings['pretty_action_array']),
+	'board_urls' => unserialize($modSettings['pretty_board_urls']),
+	'db_count' => 0,
+));
 // Clean the request variables, add slashes, etc.
 cleanRequest();
-$context = array();
 
 // Seed the random generator.
 if (empty($modSettings['rand_seed']) || mt_rand(1, 250) == 69)

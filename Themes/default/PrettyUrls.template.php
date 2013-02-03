@@ -59,7 +59,7 @@ function template_pretty_news()
 		<h3>', $txt['pretty_chrome_menu_news'], '</h3>
 		<div id="chrome_news">', $txt['ajax_in_progress'], '</div>
 		<h3>', $txt['pretty_version'], '</h3>
-		<p>', $txt['pretty_current_version'], ': 1.0RC5</p>
+		<p>', $txt['pretty_current_version'], ': 1.0</p>
 		<p>', $txt['pretty_latest_version'], ': <span id="chrome_latest">', $txt['ajax_in_progress'], '</span></p>';
 }
 
@@ -79,7 +79,11 @@ function template_pretty_settings()
 				<label for="pretty_skipactions">', $txt['pretty_skipactions'], '</label>
 				<input type="text" name="pretty_skipactions" id="pretty_skipactions" value="', (isset($modSettings['pretty_skipactions']) ? $modSettings['pretty_skipactions'] : ''), '" />
 				<br />
-				<span class="smalltext">',$txt['pretty_skipactions_note'],'</span>
+				<span class="smalltext">',$txt['pretty_skipactions_note'],'</span><br />
+				<label for="pretty_bufferusecache">', $txt['pretty_bufferusecache'], '</label>
+				<input type="checkbox" name="pretty_bufferusecache" id="pretty_bufferusecache"', ($modSettings['pretty_bufferusecache'] ? ' checked="checked"' : ''), ' />
+			
+				
 			</fieldset>
 			<fieldset>
 				<legend>', $txt['pretty_filters'], '</legend>';

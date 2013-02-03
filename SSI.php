@@ -87,6 +87,12 @@ loadDatabase();
 
 // Load installed 'Mods' settings.
 reloadSettings();
+// Unserialize the array of pretty board URLs
+$context = array('pretty' => array(
+	'action_array' => unserialize($modSettings['pretty_action_array']),
+	'board_urls' => unserialize($modSettings['pretty_board_urls']),
+	'db_count' => 0,
+));
 // Clean the request variables.
 cleanRequest();
 

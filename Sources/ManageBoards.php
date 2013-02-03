@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -89,6 +89,7 @@ function ManageBoards()
 		'newcat' => array('EditCategory', 'manage_boards'),
 		'newboard' => array('EditBoard', 'manage_boards'),
 		'settings' => array('EditBoardSettings', 'admin_forum'),
+		'pretty' => array('PrettyBoardUrls', 'admin_forum'),
 	);
 
 	// Default to sub action 'main' or 'settings' depending on permissions.
@@ -764,5 +765,104 @@ function EditBoardSettings($return_config = false)
 	// Prepare the settings...
 	prepareDBSettingContext($config_vars);
 }
+
+//	Interface to manage a board's Pretty URLs
+function PrettyBoardUrls()
+{
+	global $boards, $context, $modSettings, $scripturl, $smcFunc, $sourcedir, $txt;
+
+	//	Start by getting a list of the boards, and see if we're editing a deleted board or not
+	require_once($sourcedir . '/Subs-Boards.php');
+	getBoardTree();
+	$board_id = (int) $_REQUEST['boardid'];
+	$context['pretty']['board_title'] = $txt['pretty_board_url_title'] . (isset($boards[$board_id]) ? $boards[$board_id]['name'] : $txt['pretty_deleted_board'] . $board_id);
+
+	//	Get all the pretty URLs for this board
+	$pretty_board_urls = unserialize($modSettings['pretty_board_urls']);
+	$pretty_board_lookup = unserialize($modSettings['pretty_board_lookup']);
+
+	//	Are we missing a primary URL?
+	if (!isset($pretty_board_urls[$board_id]) && isset($boards[$board_id]))
+		$context['pretty']['warning'] = $txt['pretty_no_primary_warning'];
+
+	//	Deleting a URL?
+	if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'delete')
+	{
+		foreach ($pretty_board_urls as $id => $url)
+			if ($url == $_REQUEST['url'])
+				unset($pretty_board_urls[$id]);
+		foreach ($pretty_board_lookup as $url => $id)
+			if ($url == $_REQUEST['url'])
+				unset($pretty_board_lookup[$url]);
+
+		//	Update the database of course
+		updateSettings(array(
+			'pretty_board_lookup' => serialize($pretty_board_lookup),
+			'pretty_board_urls' => serialize($pretty_board_urls),
+		));
+
+		//	Clear the URLs cache
+			$smcFunc['db_query']('truncate_table', "TRUNCATE {db_prefix}pretty_urls_cache");
+
+		redirectexit('action=admin;area=manageboards;sa=pretty;boardid=' . $board_id);
+	}
+	//	Changing the primary URL?
+	if (isset($_REQUEST['do']) && $_REQUEST['do'] == 'primary')
+		if (isset($pretty_board_lookup[$_REQUEST['url']]) && $pretty_board_lookup[$_REQUEST['url']] == $board_id)
+		{
+			$pretty_board_urls[$board_id] = $_REQUEST['url'];
+			updateSettings(array('pretty_board_urls' => serialize($pretty_board_urls)));
+			$smcFunc['db_query']('truncate_table', "TRUNCATE {db_prefix}pretty_urls_cache");
+			redirectexit('action=admin;area=manageboards;sa=pretty;boardid=' . $board_id);
+		}
+	//	Adding a URL?
+	if (isset($_REQUEST['add']) && $_REQUEST['add'] != '')
+	{
+		require_once($sourcedir . '/Subs-PrettyUrls.php');
+
+		$pretty_text = pretty_generate_url($_REQUEST['add']);
+		//	Numerical or URLs the same as actions aren't allowed!
+		if (is_numeric($pretty_text) || in_array($pretty_text, $context['pretty']['action_array']))
+		{
+			//	Add suffix '-board_id' to the pretty url
+			$_SESSION['pretty']['warning'] = $txt['pretty_numerical'];
+			$pretty_text .= ($pretty_text != '' ? '-' : 'b') . $board_id;
+		}
+
+		//	Duplicate URL?
+		if (isset($pretty_board_lookup[$pretty_text]))
+			$context['pretty']['warning'] = $txt['pretty_duplicate_warning'] . '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=pretty;boardid=' . $pretty_board_lookup[$pretty_text] . '">' . $txt['pretty_duplicate_link'] . '</a>';
+		else
+		{
+			//	No it's unique, so we can update the database
+			$pretty_board_lookup[$pretty_text] = $board_id;
+			updateSettings(array('pretty_board_lookup' => serialize($pretty_board_lookup)));
+			$smcFunc['db_query']('truncate_table', "TRUNCATE {db_prefix}pretty_urls_cache");
+			redirectexit('action=admin;area=manageboards;sa=pretty;boardid=' . $board_id);
+		}
+	}
+
+	//	Prepare the list of board URLs
+	$context['pretty']['this_board'] = array();
+	foreach ($pretty_board_lookup as $url => $id)
+		if ($id == $board_id)
+			$context['pretty']['this_board'][] = array(
+				'primary' => !isset($context['pretty']['no_primary_warning']) && $url == $pretty_board_urls[$board_id],
+				'url' => $url,
+			);
+
+	//	Load the right template
+	loadTemplate('ManageBoards');
+	if (loadLanguage('PrettyUrls') == false)
+		loadLanguage('PrettyUrls', 'english');
+	$context['sub_template'] = 'pretty_board_url';
+	$context['page_title'] = $context['pretty']['board_title'];
+	if (isset($_SESSION['pretty']['warning']))
+	{
+		$context['pretty']['warning'] = $_SESSION['pretty']['warning'];
+		unset($_SESSION['pretty']['warning']);
+	}
+}
+
 
 ?>

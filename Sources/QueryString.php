@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -33,7 +33,7 @@ if (!defined('SMF'))
 
 function cleanRequest()
 {
-	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc;
+	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc, $context;
 
 	// Makes it easier to refer to things this way.
 	$scripturl = $boardurl . '/index.php';
@@ -127,14 +127,16 @@ function cleanRequest()
 		else
 			$request = $_SERVER['REQUEST_URI'];
 
-		// !!! smflib.
 		// Replace 'index.php/a,b,c/d/e,f' with 'a=b,c&d=&e=f' and parse it into $_GET.
 		if (strpos($request, basename($scripturl) . '/') !== false)
 		{
-			parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($request, strpos($request, basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
-			if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
-				$temp = $removeMagicQuoteFunction($temp);
-			$_GET += $temp;
+			if (strpos($request, basename($scripturl)) !== false)
+			{
+				parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($request, strpos($request, basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
+				if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+					$temp = $removeMagicQuoteFunction($temp);
+				$_GET += $temp;
+			}
 		}
 	}
 
@@ -168,7 +170,23 @@ function cleanRequest()
 		elseif (strpos($_REQUEST['board'], '.') !== false)
 			list ($_REQUEST['board'], $_REQUEST['start']) = explode('.', $_REQUEST['board']);
 		// Now make absolutely sure it's a number.
-		$board = (int) $_REQUEST['board'];
+		// Check for pretty board URLs too, and possibly redirect if oldschool queries were used.
+		$_REQUEST['board'] = str_replace(array('&#039;', '\\'), array("\x12", ''), $_REQUEST['board']);
+		$context['pretty']['query_string']['board'] = $_REQUEST['board'];
+		if (is_numeric($_REQUEST['board']))
+		{
+			$board = (int) $_REQUEST['board'];
+			if (!isset($_REQUEST['pretty']))
+				$context['pretty']['oldschoolquery'] = true;
+		} 
+		else 
+		{
+			$pretty_board_lookup = unserialize($modSettings['pretty_board_lookup']);
+			$board = (int) isset($pretty_board_lookup[$_REQUEST['board']]) ? $pretty_board_lookup[$_REQUEST['board']] : 0;
+
+			//	Fix $_REQUEST for silly mods that don't check $board
+			$_REQUEST['board'] = $board;
+		}
 		$_REQUEST['start'] = isset($_REQUEST['start']) ? (int) $_REQUEST['start'] : 0;
 
 		// This is for "Who's Online" because it might come via POST - and it should be an int here.
@@ -195,13 +213,48 @@ function cleanRequest()
 		elseif (strpos($_REQUEST['topic'], '.') !== false)
 			list ($_REQUEST['topic'], $_REQUEST['start']) = explode('.', $_REQUEST['topic']);
 
-		$topic = (int) $_REQUEST['topic'];
+		// Check for pretty topic URLs, and possibly redirect if oldschool queries were used.
+		$context['pretty']['query_string']['topic'] = $_REQUEST['topic'];
+		if (is_numeric($_REQUEST['topic']))
+		{
+			$topic = (int) $_REQUEST['topic'];
+			if (!isset($_REQUEST['pretty']))
+				$context['pretty']['oldschoolquery'] = true;
+		} 
+		else 
+		{
+			$_REQUEST['topic'] = str_replace(array('&#039;', '\\'), array("\x12", ''), $_REQUEST['topic']);
+			//	Are we feeling lucky?
+			$query = $smcFunc['db_query']('', "
+				SELECT id_topic
+				FROM {db_prefix}pretty_topic_urls
+				WHERE pretty_url = {string:topic}",
+			array('topic' => $_REQUEST['topic']));
+			//	No? No topic?!
+			if ($smcFunc['db_num_rows']($query) == 0)
+				$topic = 0;
+			else
+			{
+				$row = $smcFunc['db_fetch_row']($query);
+				$topic = (int) $row[0];
+			}
+			$smcFunc['db_free_result']($query);
+
+			//	Fix $_REQUEST for silly mods that don't check $topic
+			$_REQUEST['topic'] = $topic;
+
+			//	That query should be counted separately
+			$context['pretty']['db_count']++;
+		}
 
 		// Now make sure the online log gets the right number.
 		$_GET['topic'] = $topic;
 	}
 	else
 		$topic = 0;
+
+	// Remove our querystring flag so that the noindex meta logic will work
+	unset($_GET['pretty']);
 
 	// There should be a $_REQUEST['start'], some at least.  If you need to default to other than 0, use $_GET['start'].
 	if (empty($_REQUEST['start']) || $_REQUEST['start'] < 0 || (int) $_REQUEST['start'] > 2147473647)
@@ -596,7 +649,7 @@ function JavaScriptEscape($string)
  */
 function ob_sessrewrite($buffer)
 {
-	global $scripturl, $modSettings, $user_info, $context;
+	global $scripturl, $modSettings, $user_info, $context, $boardurl, $db_count, $sourcedir, $time_start, $txt;
 
 	// If $scripturl is set to nothing, or the SID is not defined (SSI?) just quit.
 	if ($scripturl == '' || !defined('SID'))
@@ -609,7 +662,7 @@ function ob_sessrewrite($buffer)
 	// Debugging templates, are we?
 	elseif (isset($_GET['debug']))
 		$buffer = preg_replace('/(?<!<link rel="canonical" href=)"' . preg_quote($scripturl, '/') . '\\??/', '"' . $scripturl . '?debug;', $buffer);
-
+	/***	Pretty URLs says no!
 	// This should work even in 4.2.x, just not CGI without cgi.fix_pathinfo.
 	if (!empty($modSettings['queryless_urls']) && (!$context['server']['is_cgi'] || @ini_get('cgi.fix_pathinfo') == 1 || @get_cfg_var('cgi.fix_pathinfo') == 1) && ($context['server']['is_apache'] || $context['server']['is_lighttpd']))
 	{
@@ -620,6 +673,27 @@ function ob_sessrewrite($buffer)
 			$buffer = preg_replace('/"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);
 	}
 
+***/
+
+	//	Rewrite the buffer with Pretty URLs!
+	if (!empty($modSettings['pretty_enable_filters']))
+	{
+		require_once($sourcedir . '/PrettyUrls-Filters.php');
+		$buffer = pretty_rewrite_buffer($buffer);
+	}
+
+	//	Update the load times
+	$pattern = '~<span class="smalltext">' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '</span>~';
+	if (preg_match($pattern, $buffer, $matches))
+	{
+		$newTime = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
+		$timeDiff = $newTime - (float) $matches[1];
+		$queriesDiff = $db_count + $context['pretty']['db_count'] - (int) $matches[2];
+		//	Remove the link if you like, I won't enforce it like others do
+		$newLoadTime = '<span class="smalltext">' . $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . ' (<a href="http://code.google.com/p/prettyurls/">Pretty URLs</a> adds ' . $timeDiff . 's, ' . $queriesDiff . 'q)</span>';
+		$buffer = str_replace($matches[0], $newLoadTime, $buffer);
+	}
+	
 	// Return the changed buffer.
 	return $buffer;
 }

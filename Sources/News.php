@@ -254,7 +254,12 @@ function ShowXmlFeed()
 		@ob_start('ob_gzhandler');
 	else
 		ob_start();
-
+		
+	//	Pretty URLs need to be rewritten
+	ob_start('ob_sessrewrite');
+	$context['pretty']['search_patterns'][] = '~(<link>|<id>|<comments>|<guid>)([^#<]+)~';
+	$context['pretty']['replace_patterns'][] = '~(<link>|<id>|<comments>|<guid>)([^<]+)~';
+		
 	if ($xml_format == 'smf' || isset($_REQUEST['debug']))
 		header('Content-Type: text/xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
 	elseif ($xml_format == 'rss' || $xml_format == 'rss2' || $xml_format == 'webslice')
@@ -379,11 +384,15 @@ function fix_possible_url($val)
 
 	call_integration_hook('integrate_fix_url', array(&$val));
 
+	/*
+	
 	if (empty($modSettings['queryless_urls']) || ($context['server']['is_cgi'] && @ini_get('cgi.fix_pathinfo') == 0 && @get_cfg_var('cgi.fix_pathinfo') == 0) || (!$context['server']['is_apache'] && !$context['server']['is_lighttpd']))
 		return $val;
 
 	$val = preg_replace('/^' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+)(#[^"]*)?$/e', '\'\' . $scripturl . \'/\' . strtr(\'$1\', \'&;=\', \'//,\') . \'.html$2\'', $val);
 	return $val;
+	
+	*/
 }
 
 function cdata_parse($data, $ns = '')

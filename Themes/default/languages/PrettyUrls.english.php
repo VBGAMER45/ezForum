@@ -32,7 +32,7 @@ $txt['pretty_filters'] = 'URL rewriting filters';
 $txt['pretty_save'] = 'Save changes';
 $txt['pretty_skipactions'] = 'Skip Actions List: ';
 $txt['pretty_skipactions_note'] = 'Enter any actions seperated by a comma to skip url rewriting';
-
+$txt['pretty_bufferusecache'] = 'Use caching instead of database table for PrettyUrls';
 // Tests page
 $txt['pretty_chrome_caption_tests'] = 'Before enabling URL rewriting, please check that these rewritten links work.';
 

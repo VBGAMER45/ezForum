@@ -617,4 +617,6 @@ $txt['spider_stats'] = 'Stats';
 $txt['paid_subscriptions'] = 'Paid Subscriptions';
 $txt['paid_subs_view'] = 'View Subscriptions';
 
+$txt['pretty_urls'] = 'Pretty URLs';
+
 ?>

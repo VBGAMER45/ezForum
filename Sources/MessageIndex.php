@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -49,6 +49,18 @@ function MessageIndex()
 		);
 
 		redirectexit($board_info['redirect']);
+	}
+
+	//	301 redirects
+	if ((isset($context['pretty']['oldschoolquery']) || $context['pretty']['query_string']['board'] != $context['pretty']['board_urls'][$board]) && $modSettings['pretty_enable_filters'])
+	{
+		$filterData = unserialize($modSettings['pretty_filters']);
+		if ($filterData['boards']['enabled'])
+		{
+			$url = 'board=' . $board . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['sort']) ? ';sort=' . $_REQUEST['sort'] : '');
+			header('HTTP/1.1 301 Moved Permanently');
+			redirectexit($url, false);
+		}
 	}
 
 	if (WIRELESS)

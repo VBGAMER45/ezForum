@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -75,7 +75,17 @@ function Display()
 	if (empty($topic))
 		fatal_lang_error('no_board', false);
 
-	// Load the proper template and/or sub template.
+	//	301 redirects
+	if ((isset($context['pretty']['oldschoolquery']) || $context['pretty']['query_string']['board'] != $context['pretty']['board_urls'][$board]) && $modSettings['pretty_enable_filters'])
+	{
+		$filterData = unserialize($modSettings['pretty_filters']);
+		if ($filterData['topics']['enabled'])
+		{
+			$url = 'topic=' . $topic . '.' . (isset($_REQUEST['start']) ? $_REQUEST['start'] : '0') . (isset($_REQUEST['prev_next']) ? ';prev_next=' . $_REQUEST['prev_next'] : '') . (isset($_REQUEST['topicseen']) ? ';topicseen' : '') . (isset($_REQUEST['all']) ? ';all' : '') . (isset($_REQUEST['viewResults']) ? ';viewResults' : '');
+			header('HTTP/1.1 301 Moved Permanently');
+			redirectexit($url, false);
+		}
+	}
 	if (WIRELESS)
 		$context['sub_template'] = WIRELESS_PROTOCOL . '_display';
 	else

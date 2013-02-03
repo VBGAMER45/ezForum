@@ -9,6 +9,13 @@ if (!defined('SMF'))
 function pretty_rewrite_buffer($buffer)
 {
 	global $boardurl, $context, $modSettings, $smcFunc;
+	
+	if (!empty($modSettings['pretty_bufferusecache']))
+	{
+		$buffer = pretty_rewrite_buffer_fromcache($buffer);
+		return $buffer;
+	}
+	
 
 	//	Remove the script tags now
 	$context['pretty']['scriptID'] = 0;
@@ -96,6 +103,113 @@ function pretty_rewrite_buffer($buffer)
 					array('url_id' => 'string', 'replacement' => 'string'),
 					$cache_data,
 					array('url_id'));
+		}
+
+		//	Put the URLs back into the buffer
+		$context['pretty']['replace_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<form[^>]+?action=)(\"[^\"]+\"|\'[^\']+\')~';
+		foreach ($context['pretty']['replace_patterns'] as $pattern)
+			$buffer = preg_replace_callback($pattern, 'pretty_buffer_callback', $buffer);
+	}
+
+	//	Restore the script tags
+	if ($context['pretty']['scriptID'] > 0)
+		$buffer = preg_replace_callback("~\x14([0-9]+)\x14~", 'pretty_scripts_restore', $buffer);
+
+	// Return the changed buffer.
+	return $buffer;
+}
+
+function pretty_rewrite_buffer_fromcache($buffer)
+{
+	global $boardurl, $context, $modSettings;
+
+	// Function by nend
+	// http://www.simplemachines.org/community/index.php?topic=146969.msg3277889#msg3277889
+	
+
+	
+	//	Remove the script tags now
+	$context['pretty']['scriptID'] = 0;
+	$context['pretty']['scripts'] = array();
+	$buffer = preg_replace_callback('~<script.+?</script>~s', 'pretty_scripts_remove', $buffer);
+
+	//	Find all URLs in the buffer
+	$context['pretty']['search_patterns'][] = '~(<a[^>]+href=|<link[^>]+href=|<form[^>]+?action=)(\"[^\"#]+|\'[^\'#]+)~';
+	$urls_query = array();
+	$uncached_urls = array();
+	foreach ($context['pretty']['search_patterns'] as $pattern)
+	{
+		preg_match_all($pattern, $buffer, $matches, PREG_PATTERN_ORDER);
+		foreach ($matches[2] as $match)
+		{
+			//	Rip out everything that shouldn't be cached
+			$match = preg_replace(array('~^[\"\']|PHPSESSID=[^;]+|(se)?sc=[^;]+|' . $context['session_var'] . '=[^;]+~', '~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('', '%22', ';', '?', ''), $match);
+
+			// Absolutise relative URLs
+			if (!preg_match('~^[a-zA-Z]+:|^#|@~', $match) && SMF != 'SSI')
+				$match = $boardurl . '/' . $match;
+
+			// Replace $boardurl with something a little shorter
+			$url_id = str_replace($boardurl, '`B', $match);
+
+			if (substr($url_id,0,7) == 'mailto:')
+				continue;
+			if (substr($url_id,0,10) == 'javascript')
+				continue;
+
+			$urls_query[] = $url_id;
+			$uncached_urls[$url_id] = array(
+				'url' => $match,
+				'url_id' => $url_id
+			);
+		}
+	}
+
+	//	Procede only if there are actually URLs in the page
+	if (count($urls_query) != 0)
+	{
+		$urls_query = array_keys(array_flip($urls_query));
+		//	Retrieve cached URLs
+		$context['pretty']['cached_urls'] = array();
+
+		// Load file cache
+		$cache_data = array(); //moved this to merge, can just use the cached urls context but this will do for now.
+		if (($data = cache_get_data(strtr('pretty-'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],'/' ,'--'))) != null) {
+			foreach($data as $id => $url) {
+				$context['pretty']['cached_urls'][$id] = $url;
+				$cache_data[] = array($id, $url);
+				unset($uncached_urls[$id]);
+			}
+		}
+
+		//	If there are any uncached URLs, process them
+		if (count($uncached_urls) != 0)
+		{
+			//	Run each filter callback function on each URL
+			$filter_callbacks = unserialize($modSettings['pretty_filter_callbacks']);
+			foreach ($filter_callbacks as $callback)
+				$uncached_urls = call_user_func($callback, $uncached_urls);
+
+			//	Fill the cached URLs array
+//			$cache_data = array();
+			foreach ($uncached_urls as $url_id => $url)
+			{
+				if (!isset($url['replacement']))
+					$url['replacement'] = $url['url'];
+				$url['replacement'] = str_replace("\x12", '\'', $url['replacement']);
+				$url['replacement'] = preg_replace(array('~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('%22', ';', '?', ''), $url['replacement']);
+				$context['pretty']['cached_urls'][$url_id] = $url['replacement'];
+
+				// Cache only the URLs which will fit, but replace $boardurl first, that will help!
+//				if (strlen($url_id) < 256 && strlen($url['replacement']) < 256 && stristr($url['replacement'], $boardurl))
+//				$cache_data[] = array($url_id, str_replace($boardurl, '`B', $url['replacement']));
+				$cache_data[] = array($url_id, $url['replacement']);
+			}
+
+
+			// File based caching
+			if (count($cache_data) != 0)
+				cache_put_data(strtr('pretty-'.$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],'/' ,'--'), $cache_data);
 		}
 
 		//	Put the URLs back into the buffer

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -477,7 +477,7 @@ function getMsgMemberID($messageID)
 // Modify the settings and position of a board.
 function modifyBoard($board_id, &$boardOptions)
 {
-	global $sourcedir, $cat_tree, $boards, $boardList, $modSettings, $smcFunc;
+	global $sourcedir, $cat_tree, $boards, $boardList, $modSettings, $smcFunc, $context;
 
 	// Get some basic information about all boards and categories.
 	getBoardTree();
@@ -738,6 +738,34 @@ function modifyBoard($board_id, &$boardOptions)
 	if (isset($boardOptions['move_to']))
 		reorderBoards();
 
+//	Update the pretty board URLs
+	if (isset($boardOptions['pretty_url']))
+	{
+		require_once($sourcedir . '/Subs-PrettyUrls.php');
+
+		//	Get the current board URLs
+		$pretty_board_lookup = unserialize($modSettings['pretty_board_lookup']);
+		//	Generate a new one
+		$pretty_url = pretty_generate_url($boardOptions['pretty_url']);
+
+		//	Can't be empty, can't be a number and can't be the same as another
+		if ($pretty_url == '' || is_numeric($pretty_url) || (isset($pretty_board_lookup[$pretty_url]) && $pretty_board_lookup[$pretty_url] != $board_id))
+			//	Add suffix '-board_id' to the pretty url
+			$pretty_url .= ($pretty_url != '' ? '-' : 'b') . $board_id;
+
+		//	Save to the database
+		$context['pretty']['board_urls'][$board_id] = $pretty_url;
+		$pretty_board_lookup[$pretty_url] = $board_id;
+		updateSettings(array(
+			'pretty_board_lookup' => serialize($pretty_board_lookup),
+			'pretty_board_urls' => serialize($context['pretty']['board_urls']),
+		));
+
+		//	Count that query!
+		$context['pretty']['db_count']++;
+	}
+
+
 	clean_cache('data');
 
 	if (empty($boardOptions['dont_log']))
@@ -786,6 +814,9 @@ function createBoard($boardOptions)
 
 	if (empty($board_id))
 		return 0;
+
+	if (!isset($boardOptions['pretty_url']))
+		$boardOptions['pretty_url'] = $boardOptions['board_name'];
 
 	// Change the board according to the given specifications.
 	modifyBoard($board_id, $boardOptions);

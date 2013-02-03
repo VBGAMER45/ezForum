@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -78,7 +78,9 @@ function template_main()
 						<li', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? ' id="recycle_board"' : ' ', ' class="windowbg', $alternate ? '' : '2', '" style="padding-' . ($context['right_to_left'] ? 'right' : 'left') . ': ', 5 + 30 * $board['child_level'], 'px;', $board['move'] ? 'color: red;' : '', '"><span class="floatleft"><a href="', $scripturl, '?board=', $board['id'], '">', $board['name'], '</a>', !empty($modSettings['recycle_board']) && !empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] == $board['id'] ? '<a href="' . $scripturl . '?action=admin;area=manageboards;sa=settings"> <img src="' . $settings['images_url'] . '/post/recycled.gif" alt="' . $txt['recycle_board'] . '" /></a></span>' : '</span>', '
 							<span class="floatright">', $context['can_manage_permissions'] ? '<span class="modify_boards"><a href="' . $scripturl . '?action=admin;area=permissions;sa=index;pid=' . $board['permission_profile'] . ';' . $context['session_var'] . '=' . $context['session_id'] . '">' . $txt['mboards_permissions'] . '</a></span>' : '', '
 							<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;move=', $board['id'], '">', $txt['mboards_move'], '</a></span>
-							<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span></span><br style="clear: right;" />
+							
+							<span class="modify_boards"><a href="', $scripturl, '?action=admin;area=manageboards;sa=board;boardid=', $board['id'], '">', $txt['mboards_modify'], '</a></span>
+							', allowedTo('admin_forum') ? '<span class="modify_boards"><a href="' . $scripturl . '?action=admin;area=manageboards;sa=pretty;boardid=' . $board['id'] . '">' . $txt['pretty_urls'] . '</a></span>' : '', '</span><br style="clear: right;" />
 						</li>';
 
 			if (!empty($board['move_links']))
@@ -633,6 +635,50 @@ function template_confirm_board_delete()
 		</form>
 	</div>
 	<br class="clear" />';
+}
+
+//	Interface to manage a board's Pretty URLs
+function template_pretty_board_url()
+{
+	global $context, $scripturl, $txt;
+
+	//	Core really, really sucks.
+	echo '
+<table align="center" cellspacing="1" cellpadding="4" class="bordercolor" style="border: 0; min-width: 650px; width: 50%;">
+	<tr class="titlebg"><th>', $context['pretty']['board_title'], '</th></tr>
+	<tr class="windowbg2"><td>';
+
+	//	Is something wrong?
+	if (isset($context['pretty']['warning']))
+		echo '
+		<p><strong>', $context['pretty']['warning'], '</strong></p>';
+
+	echo '
+		<ul>';
+
+	//	List out the URLs
+	foreach ($context['pretty']['this_board'] as $url)
+	{
+		echo '
+			<li>', $url['url'], ' ';
+
+		if ($url['primary'])
+			echo '<b>', $txt['pretty_primary_url'], '</b>';
+		else
+			echo '<a href="', $scripturl, '?action=admin;area=manageboards;sa=pretty;boardid=', $_REQUEST['boardid'], ';do=primary;url=', $url['url'], '">', $txt['pretty_make_primary'], '</a>';
+
+		echo ' <a href="', $scripturl, '?action=admin;area=manageboards;sa=pretty;boardid=', $_REQUEST['boardid'], ';do=delete;url=', $url['url'], '">', $txt['delete'], '</a></li>';
+	}
+
+	echo '
+		</ul>
+		<form action="', $scripturl, '?action=admin;area=manageboards;sa=pretty;boardid=', $_REQUEST['boardid'], '" method="post" accept-charset="', $context['character_set'], '">
+			<p><label for="pretty_add_url">', $txt['pretty_add_url_description'], '</label>
+			<input type="text" style="width: 150px;" value="" name="add" id="pretty_add_url" /></p>
+			<p><input type="submit" value="', $txt['pretty_add_url'], '" name="submit" /></p>
+		</form>
+	</td></tr>
+</table>';
 }
 
 ?>

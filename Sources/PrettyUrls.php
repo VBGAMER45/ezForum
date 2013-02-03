@@ -112,9 +112,13 @@ function pretty_manage_settings()
 		
 		$_POST['pretty_skipactions'] = strtolower($_POST['pretty_skipactions']);
 		$_POST['pretty_skipactions'] = trim($_POST['pretty_skipactions']);
+		
+		
+		$pretty_bufferusecache = isset($_REQUEST['pretty_bufferusecache']) ? 1 : 0;
 		updateSettings(
 		array(
 		'pretty_skipactions' => $_POST['pretty_skipactions'],
+		'pretty_bufferusecache' => $pretty_bufferusecache,
 		));
 
 		// If you want to turn rewriting on you must test that it will work first!

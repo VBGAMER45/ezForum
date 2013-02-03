@@ -287,6 +287,9 @@ function ViewErrorLog()
 	$context['page_title'] = $txt['errlog'];
 	$context['has_filter'] = isset($filter);
 	$context['sub_template'] = 'error_log';
+
+	//	Don't rewrite any URLs, we need these ones to remain exact!
+	$modSettings['pretty_enable_filters'] = false;
 }
 
 // Delete errors from the database.

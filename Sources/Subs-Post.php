@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -617,7 +617,7 @@ function fixTag(&$message, $myTag, $protocols, $embeddedUrl = false, $hasEqualSi
 // Send off an email.
 function sendmail($to, $subject, $message, $from = null, $message_id = null, $send_html = false, $priority = 3, $hotmail_fix = null, $is_private = false)
 {
-	global $webmaster_email, $context, $modSettings, $txt, $scripturl;
+	global $webmaster_email, $context, $modSettings, $txt, $scripturl, $boardurl, $sourcedir;
 	global $smcFunc;
 
 	// Use sendmail if it's set or if no SMTP server is set.
@@ -662,13 +662,23 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	$subject = un_htmlspecialchars($subject);
 	// Make the message use the proper line breaks.
 	$message = str_replace(array("\r", "\n"), array('', $line_break), $message);
+	// Prettify any URLs
+	if (!empty($modSettings['pretty_enable_filters']))
+	{
+		require_once($sourcedir . '/PrettyUrls-Filters.php');
+		$context['pretty']['search_patterns'][] = '`(\s)(' . $scripturl . '[^#\s]*)`';
+		$context['pretty']['replace_patterns'][] = '`(\s)(' . $scripturl . '[^\s]*)`';
+		$message = pretty_rewrite_buffer($message);
+	}
 
 	// Make sure hotmail mails are sent as HTML so that HTML entities work.
 	if ($hotmail_fix && !$send_html)
 	{
 		$send_html = true;
 		$message = strtr($message, array($line_break => '<br />' . $line_break));
-		$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w\-_%\.,\?&;=#]+)?)~', '<a href="$1">$1</a>', $message);
+		//$message = preg_replace('~(' . preg_quote($scripturl, '~') . '(?:[?/][\w\-_%\.,\?&;=#]+)?)~', '<a href="$1">$1</a>', $message);
+		// We have to account for rewritten URLs now
+		$message = preg_replace('`\s(' . $boardurl . '[^\s<]*)`', '<a href="$1">$1</a>', $message);
 	}
 
 	list (, $from_name) = mimespecialchars(addcslashes($from !== null ? $from : $context['forum_name'], '<>()\'\\"'), true, $hotmail_fix, $line_break);
