@@ -11,22 +11,22 @@ function pretty_generate_url($text)
 
 	//	Do you know your ABCs?
 	$characterHash = array (
-		'a'	=>	array ('a', 'A', 'à', 'À', 'á', 'Á', 'â', 'Â', 'ã', 'Ã', 'ä', 'Ä', 'å', 'Å', 'ª', 'ą', 'Ą', 'а', 'А', 'ạ', 'Ạ', 'ả', 'Ả', 'Ầ', 'ầ', 'Ấ', 'ấ', 'Ậ', 'ậ', 'Ẩ', 'ẩ', 'Ẫ', 'ẫ', 'Ă', 'ă', 'Ắ', 'ắ', 'Ẵ', 'ẵ', 'Ặ', 'ặ', 'Ằ', 'ằ', 'Ẳ', 'ẳ'),
+		'a'	=>	array ('a', 'A', 'à', 'À', 'á', '�?', 'â', 'Â', 'ã', 'Ã', 'ä', 'Ä', 'å', 'Å', 'ª', 'ą', 'Ą', 'а', '�?', 'ạ', 'Ạ', 'ả', 'Ả', 'Ầ', 'ầ', 'Ấ', 'ấ', 'Ậ', 'ậ', 'Ẩ', 'ẩ', 'Ẫ', 'ẫ', 'Ă', 'ă', 'Ắ', 'ắ', 'Ẵ', 'ẵ', 'Ặ', 'ặ', 'Ằ', 'ằ', 'Ẳ', 'ẳ'),
 		'ae'	=>	array ('æ', 'Æ'),
 		'b'	=>	array ('b', 'B'),
-		'c'	=>	array ('c', 'C', 'ç', 'Ç', 'ć', 'Ć', 'č', 'Č'),
-		'd'	=>	array ('d', 'D', 'Ð', 'đ', 'Đ', 'ď', 'Ď'),
-		'e'	=>	array ('e', 'E', 'è', 'È', 'é', 'É', 'ê', 'Ê', 'ë', 'Ë', 'ę', 'Ę', 'е', 'Е', 'ё', 'Ё', 'э', 'Э', 'Ẹ', 'ẹ', 'Ẻ', 'ẻ', 'Ẽ', 'ẽ', 'Ề', 'ề', 'Ế', 'ế', 'Ệ', 'ệ', 'Ể', 'ể', 'Ễ', 'ễ', 'ε', 'Ε', 'ě', 'Ě'),
+		'c'	=>	array ('c', 'C', 'ç', 'Ç', 'ć', 'Ć', '�?', 'Č'),
+		'd'	=>	array ('d', 'D', '�?', 'đ', '�?', '�?', 'Ď'),
+		'e'	=>	array ('e', 'E', 'è', 'È', 'é', 'É', 'ê', 'Ê', 'ë', 'Ë', 'ę', 'Ę', 'е', 'Е', 'ё', '�?', '�?', 'Э', 'Ẹ', 'ẹ', 'Ẻ', 'ẻ', 'Ẽ', 'ẽ', 'Ề', '�?', 'Ế', 'ế', 'Ệ', 'ệ', 'Ể', 'ể', 'Ễ', 'ễ', 'ε', 'Ε', 'ě', 'Ě'),
 		'f'	=>	array ('f', 'F'),
 		'g'	=>	array ('g', 'G', 'ğ', 'Ğ'),
 		'h'	=>	array ('h', 'H'),
-		'i'	=>	array ('i', 'I', 'ì', 'Ì', 'í', 'Í', 'î', 'Î', 'ï', 'Ï', 'ı', 'İ', 'Ị', 'ị', 'Ỉ', 'ỉ', 'Ĩ', 'ĩ', 'Ι', 'ι'),
+		'i'	=>	array ('i', 'I', 'ì', 'Ì', 'í', '�?', 'î', 'Î', 'ï', '�?', 'ı', 'İ', 'Ị', 'ị', 'Ỉ', 'ỉ', 'Ĩ', 'ĩ', 'Ι', 'ι'),
 		'j'	=>	array ('j', 'J'),
 		'k'	=>	array ('k', 'K', 'к', 'К', 'κ', 'Κ'),
-		'l'	=>	array ('l', 'L', 'ł', 'Ł'),
+		'l'	=>	array ('l', 'L', 'ł', '�?'),
 		'm'	=>	array ('m', 'M', 'м', 'М', 'Μ'),
 		'n'	=>	array ('n', 'N', 'ñ', 'Ñ', 'ń', 'Ń', 'ň', 'Ň'),
-		'o'	=>	array ('o', 'O', 'ò', 'Ò', 'ó', 'Ó', 'ô', 'Ô', 'õ', 'Õ', 'ö', 'Ö', 'ø', 'Ø', 'º', 'о', 'О', 'Ọ', 'ọ', 'Ỏ', 'ỏ', 'Ộ', 'ộ', 'Ố', 'ố', 'Ỗ', 'ỗ', 'Ồ', 'ồ', 'Ổ', 'ổ', 'Ơ', 'ơ', 'Ờ', 'ờ', 'Ớ', 'ớ', 'Ợ', 'ợ', 'Ở', 'ở', 'Ỡ', 'ỡ', 'ο', 'Ο'),
+		'o'	=>	array ('o', 'O', 'ò', 'Ò', 'ó', 'Ó', 'ô', 'Ô', 'õ', 'Õ', 'ö', 'Ö', 'ø', 'Ø', 'º', 'о', 'О', 'Ọ', '�?', 'Ỏ', '�?', 'Ộ', 'ộ', '�?', 'ố', 'Ỗ', 'ỗ', 'Ồ', 'ồ', 'Ổ', 'ổ', 'Ơ', 'ơ', 'Ờ', '�?', 'Ớ', 'ớ', 'Ợ', 'ợ', 'Ở', 'ở', 'Ỡ', 'ỡ', 'ο', 'Ο'),
 		'p'	=>	array ('p', 'P'),
 		'q'	=>	array ('q', 'Q'),
 		'r'	=>	array ('r', 'R', 'ř', 'Ř'),
@@ -37,7 +37,7 @@ function pretty_generate_url($text)
 		'v'	=>	array ('v', 'V'),
 		'w'	=>	array ('w', 'W'),
 		'x'	=>	array ('x', 'X', '×'),
-		'y'	=>	array ('y', 'Y', 'ý', 'Ý', 'ÿ', 'Ỳ', 'ỳ', 'Ỵ', 'ỵ', 'Ỷ', 'ỷ', 'Ỹ', 'ỹ'),
+		'y'	=>	array ('y', 'Y', 'ý', '�?', 'ÿ', 'Ỳ', 'ỳ', 'Ỵ', 'ỵ', 'Ỷ', 'ỷ', 'Ỹ', 'ỹ'),
 		'z'	=>	array ('z', 'Z', 'ż', 'Ż', 'ź', 'Ź', 'ž', 'Ž', 'Ζ'),
 		'-'	=>	array ('-', ' ', '.', ','),
 		'_'	=>	array ('_'),
@@ -350,5 +350,98 @@ function pretty_json($json)
 
 	return $new_json;
 }
+
+function InstallPrettyURLS()
+{
+	global $boardurl, $modSettings;
+	
+	//	Default filter settings
+	$prettyFilters = array(
+	'boards' => array(
+		'description' => 'Rewrite Board URLs',
+		'enabled' => 1,
+		'filter' => array(
+			'priority' => 35,
+			'callback' => 'pretty_urls_board_filter',
+		),
+		'rewrite' => array(
+			'priority' => 50,
+			'rule' => array(
+				'RewriteRule ^ROOTURL([-_!~*\'()$a-zA-Z0-9]+)/?$ ./index.php?pretty;board=$1.0 [L,QSA]',
+				'RewriteRule ^ROOTURL([-_!~*\'()$a-zA-Z0-9]+)/([0-9]*)/?$ ./index.php?pretty;board=$1.$2 [L,QSA]',
+			),
+		),
+		'test_callback' => 'pretty_boards_test',
+		'title' => 'Boards',
+	),
+	'topics' => array(
+		'description' => 'Rewrite Topic URLs',
+		'enabled' => 1,
+		'filter' => array(
+			'priority' => 40,
+			'callback' => 'pretty_urls_topic_filter',
+		),
+		'rewrite' => array(
+			'priority' => 55,
+			'rule' => array(
+				'RewriteRule ^ROOTURL([-_!~*\'()$a-zA-Z0-9]+)/([-_!~*\'()$a-zA-Z0-9]+)/?$ ./index.php?pretty;board=$1;topic=$2.0 [L,QSA]',
+				'RewriteRule ^ROOTURL([-_!~*\'()$a-zA-Z0-9]+)/([-_!~*\'()$a-zA-Z0-9]+)/([0-9]*|msg[0-9]*|new)/?$ ./index.php?pretty;board=$1;topic=$2.$3 [L,QSA]',
+			),
+		),
+		'test_callback' => 'pretty_topics_test',
+		'title' => 'Topics',
+	),
+	'actions' => array(
+		'description' => 'Rewrite Action URLs (ie, index.php?action=something)',
+		'enabled' => 0,
+		'filter' => array(
+			'priority' => 55,
+			'callback' => 'pretty_urls_actions_filter',
+		),
+		'rewrite' => array(
+			'priority' => 45,
+			'rule' => '#ACTIONS',	//	To be replaced in pretty_update_filters()
+		),
+		'test_callback' => 'pretty_actions_test',
+		'title' => 'Actions',
+	),
+	'profiles' => array(
+		'description' => 'Rewrite Profile URLs. As this uses the Username of an account rather than it\'s Display Name, it may not be desirable to your users.',
+		'enabled' => 0,
+		'filter' => array(
+			'priority' => 50,
+			'callback' => 'pretty_profiles_filter',
+		),
+		'rewrite' => array(
+			'priority' => 40,
+			'rule' => 'RewriteRule ^profile/([^/]+)/?$ ./index.php?pretty;action=profile;user=$1 [L,QSA]',
+		),
+		'test_callback' => 'pretty_profiles_test',
+		'title' => 'Profiles',
+	),
+);
+
+
+
+
+//	Add the pretty_root_url and pretty_enable_filters settings:
+$pretty_root_url = isset($modSettings['pretty_root_url']) ? $modSettings['pretty_root_url'] : $boardurl;
+//$pretty_enable_filters = isset($modSettings['pretty_enable_filters']) ? $modSettings['pretty_enable_filters'] : 0;
+
+//	Update the settings table
+updateSettings(array(
+	'pretty_enable_filters' => 0,
+	'pretty_filters' => serialize($prettyFilters),
+	'pretty_root_url' => $pretty_root_url,
+	'pretty_urls_installed' => '1',
+	'pretty_action_array' => '',
+	'pretty_board_urls' => '',
+));
+
+//	Run maintenance
+pretty_run_maintenance(true);
+
+}
+
 
 ?>

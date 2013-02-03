@@ -80,6 +80,12 @@ loadDatabase();
 // Load the settings from the settings table, and perform operations like optimizing.
 reloadSettings();
 
+if (!isset($modSettings['pretty_urls_installed']))
+{
+	require_once($sourcedir . '/Subs-PrettyUrls.php');
+	InstallPrettyURLS();
+}
+
 // Unserialize the array of pretty board URLs
 $context = array('pretty' => array(
 	'action_array' => unserialize($modSettings['pretty_action_array']),
