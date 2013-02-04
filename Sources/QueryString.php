@@ -680,18 +680,18 @@ function ob_sessrewrite($buffer)
 	{
 		require_once($sourcedir . '/PrettyUrls-Filters.php');
 		$buffer = pretty_rewrite_buffer($buffer);
-	}
+	
 
-	//	Update the load times
-	$pattern = '~<span class="smalltext">' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '</span>~';
-	if (preg_match($pattern, $buffer, $matches))
-	{
-		$newTime = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
-		$timeDiff = $newTime - (float) $matches[1];
-		$queriesDiff = $db_count + $context['pretty']['db_count'] - (int) $matches[2];
-		//	Remove the link if you like, I won't enforce it like others do
-		$newLoadTime = '<span class="smalltext">' . $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . ' (<a href="http://code.google.com/p/prettyurls/">Pretty URLs</a> adds ' . $timeDiff . 's, ' . $queriesDiff . 'q)</span>';
-		$buffer = str_replace($matches[0], $newLoadTime, $buffer);
+		//	Update the load times
+		$pattern = '~<span class="smalltext">' . $txt['page_created'] . '([.0-9]+)' . $txt['seconds_with'] . '([0-9]+)' . $txt['queries'] . '</span>~';
+		if (preg_match($pattern, $buffer, $matches))
+		{
+			$newTime = round(array_sum(explode(' ', microtime())) - array_sum(explode(' ', $time_start)), 3);
+
+			$newLoadTime = '<span class="smalltext">' . $txt['page_created'] . $newTime . $txt['seconds_with'] . $db_count . $txt['queries'] . '</span>';
+			$buffer = str_replace($matches[0], $newLoadTime, $buffer);
+		}
+	
 	}
 	
 	// Return the changed buffer.
