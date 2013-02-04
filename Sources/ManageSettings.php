@@ -2091,6 +2091,9 @@ function ModifyGeneralModSettings($return_config = false)
 
 	// Make it even easier to add new settings.
 	call_integration_hook('integrate_general_mod_settings', array(&$config_vars));
+    
+
+
 
 	if ($return_config)
 		return $config_vars;

@@ -414,6 +414,7 @@ function EditBoard()
 			'redirect' => '',
 			'category' => (int) $_REQUEST['cat'],
 			'no_children' => true,
+            'apmt_prune_frequency' => 30,
 		);
 	}
 	else
@@ -424,6 +425,7 @@ function EditBoard()
 		$context['board']['name'] = htmlspecialchars(strtr($context['board']['name'], array('&amp;' => '&')));
 		$context['board']['description'] = htmlspecialchars($context['board']['description']);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
+        $context['board']['apmt_prune_frequency'] = !empty($boards[$_REQUEST['boardid']]['apmt_prune_frequency']) ? $boards[$_REQUEST['boardid']]['apmt_prune_frequency'] : 0;
 		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
 	}
 
@@ -624,7 +626,9 @@ function EditBoard2()
 
 		// Are they doing redirection?
 		$boardOptions['redirect'] = !empty($_POST['redirect_enable']) && isset($_POST['redirect_address']) && trim($_POST['redirect_address']) != '' ? trim($_POST['redirect_address']) : '';
-
+        // Auto pruning
+		$boardOptions['apmt_prune_frequency'] = (int) $_POST['apmt_prune_frequency'];
+        
 		// Profiles...
 		$boardOptions['profile'] = $_POST['profile'];
 		$boardOptions['inherit_permissions'] = $_POST['profile'] == -1;
@@ -726,10 +730,13 @@ function EditBoardSettings($return_config = false)
 			array('check', 'recycle_enable', 'onclick' => 'document.getElementById(\'recycle_board\').disabled = !this.checked;'),
 			array('select', 'recycle_board', $recycle_boards),
 			array('check', 'allow_ignore_boards'),
+            array('text', 'apmt_taskFrequency'),
+            array('text', 'apmt_numberOfBoards')
 	);
 
 	if ($return_config)
 		return $config_vars;
+ 
 
 	// Needed for the settings template and inline permission functions.
 	require_once($sourcedir . '/ManagePermissions.php');
@@ -752,6 +759,34 @@ function EditBoardSettings($return_config = false)
 
 	// Warn the admin against selecting the recycle topic without selecting a board.
 	$context['force_form_onsubmit'] = 'if(document.getElementById(\'recycle_enable\').checked && document.getElementById(\'recycle_board\').value == 0) { return confirm(\'' . $txt['recycle_board_unselected_notice'] . '\');} return true;';
+
+    
+    /**
+     * Auto Prune Moved Topics (apmt)
+     *
+     * @package apmt
+     * @author emanuele
+     * @copyright 2011 emanuele, Simple Machines
+     * @license http://www.simplemachines.org/about/smf/license.php BSD
+     *
+     * @version 0.1.0
+     */
+	if (isset($_GET['save']))
+	{
+		$_POST['apmt_taskFrequency'] = (int) $_POST['apmt_taskFrequency'];
+		$_POST['apmt_taskFrequency'] = empty($_POST['apmt_taskFrequency']) ? 15 : $_POST['apmt_taskFrequency'];
+		$_POST['apmt_numberOfBoards'] = (int) $_POST['apmt_numberOfBoards'];
+		$_POST['apmt_numberOfBoards'] = empty($_POST['apmt_numberOfBoards']) ? 5 : $_POST['apmt_numberOfBoards'];
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}scheduled_tasks
+			SET time_regularity = {int:taskFrequency}
+			WHERE task = {string:task_func}',
+			array(
+				'task_func' => 'apmt_prunetopics',
+				'taskFrequency' => $_POST['apmt_taskFrequency'],
+		));
+	}
+    // End Auto Prune Moved Topics (apmt)
 
 	// Doing a save?
 	if (isset($_GET['save']))

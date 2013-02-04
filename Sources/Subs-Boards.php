@@ -655,6 +655,25 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdates[] = 'num_posts = {int:num_posts}';
 		$boardUpdateParameters['num_posts'] = (int) $boardOptions['num_posts'];
 	}
+    
+    /**
+     * Auto Prune Moved Topics (apmt)
+     *
+     * @package apmt
+     * @author emanuele
+     * @copyright 2011 emanuele, Simple Machines
+     * @license http://www.simplemachines.org/about/smf/license.php BSD
+     *
+     * @version 0.1.0
+     */
+	if (isset($boardOptions['apmt_prune_frequency']))
+	{
+		$boardUpdates[] = 'prune_frequency = {int:prune_frequency}';
+		$boardUpdates[] = 'last_pruned = {int:last_pruned}';
+		$boardUpdateParameters['prune_frequency'] = $boardOptions['apmt_prune_frequency'] * 24 * 60 * 60;
+		$boardUpdateParameters['prune_frequency'] = time();
+	}
+    // End Auto Prune Moved Topics (apmt)
 
 	// Do the updates (if any).
 	if (!empty($boardUpdates))
@@ -1074,7 +1093,7 @@ function getBoardTree()
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level,
 			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.override_theme, b.id_profile, b.redirect,
-			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse
+			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse, b.prune_frequency 
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)
 		ORDER BY c.cat_order, b.child_level, b.board_order',
@@ -1124,7 +1143,8 @@ function getBoardTree()
 				'override_theme' => $row['override_theme'],
 				'profile' => $row['id_profile'],
 				'redirect' => $row['redirect'],
-				'prev_board' => $prevBoard
+				'prev_board' => $prevBoard,
+				'apmt_prune_frequency' => (int) ($row['prune_frequency'] / (24 * 60 * 60))
 			);
 			$prevBoard = $row['id_board'];
 			$last_board_order = $row['board_order'];

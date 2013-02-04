@@ -455,6 +455,32 @@ function template_modify_board()
 							</dd>
 						</dl>
 					</div>';
+                    
+    /**
+     * Auto Prune Moved Topics (apmt)
+     *
+     * @package apmt
+     * @author emanuele
+     * @copyright 2011 emanuele, Simple Machines
+     * @license http://www.simplemachines.org/about/smf/license.php BSD
+     *
+     * @version 0.1.0
+     */                
+ 	echo '
+					<div id="apmt_prune_frequency">
+						<dl class="settings">
+							<dt>
+								<strong>', $txt['apmt_prune_frequency'], ':</strong><br />
+								<span class="smalltext">', $txt['apmt_prune_frequency_desc'], '</span><br />
+							</dt>
+							<dd>
+								<input type="text" name="apmt_prune_frequency" value="', $context['board']['apmt_prune_frequency'], '" size="10" class="input_text" />
+							</dd>
+						</dl>
+					</div>';
+       // End Auto Prune Moved Topics (apmt)            
+                    
+                    
 
 	// Here the user can choose to force this board to use a theme other than the default theme for the forum.
 	echo '

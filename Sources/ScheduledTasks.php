@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -1643,6 +1643,16 @@ function scheduled_paid_subscriptions()
 		);
 
 	return true;
+}
+
+
+function scheduled_apmt_prunetopics_task()
+{
+	global $sourcedir;
+    /* Auto Prune Topics Scheduled Task" */
+	require $sourcedir . "/Subs-AutoPruneMoved.php";
+
+	return scheduled_apmt_prunetopics();
 }
 
 ?>

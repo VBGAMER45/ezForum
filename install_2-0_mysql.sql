@@ -497,6 +497,8 @@ CREATE TABLE {$db_prefix}boards (
   redirect varchar(255) NOT NULL default '',
   deny_member_groups varchar(255) NOT NULL default '',
   show_rssicon tinyint(1) unsigned NOT NULL default '0',
+  last_pruned int(10) unsigned NOT NULL default '0',
+  prune_frequency int(10) unsigned NOT NULL default '0',
   PRIMARY KEY (id_board),
   UNIQUE categories (id_cat, id_board),
   KEY id_parent (id_parent),
@@ -1659,7 +1661,9 @@ VALUES
 	(7, 0, {$sched_task_offset}, 1, 'd', 0, 'fetchSMfiles'),
 	(8, 0, 0, 1, 'd', 1, 'birthdayemails'),
 	(9, 0, 0, 1, 'w', 0, 'weekly_maintenance'),
-	(10, 0, 120, 1, 'd', 1, 'paid_subscriptions');
+	(10, 0, 120, 1, 'd', 1, 'paid_subscriptions'),
+	(11, 0, 0, 15, 'm', 0, 'apmt_prunetopics_task');
+	
 
 # --------------------------------------------------------
 
@@ -1881,7 +1885,9 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('ls_allowed_login_attempts_mins', '60'),
 	('ls_login_retry_minutes', '15'),
 	('ls_allow_ip_security', '0'),
-	('ls_send_mail_failed_login', '1')
+	('ls_send_mail_failed_login', '1'),
+	('apmt_taskFrequency', '15'),
+	('apmt_numberOfBoards', '5')
 	;
 	
 # --------------------------------------------------------
