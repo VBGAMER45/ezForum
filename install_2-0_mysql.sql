@@ -1408,6 +1408,33 @@ CREATE TABLE {$db_prefix}moderators (
   PRIMARY KEY (id_board, id_member)
 ) ENGINE=MyISAM;
 
+
+#
+# Table structure for table `oasl_users`
+#
+
+CREATE TABLE {$db_prefix}oasl_users (
+  id_oasl_user int(10) unsigned NOT NULL auto_increment,
+  id_member int(10) unsigned NOT NULL default '0',
+  user_token char(40) NOT NULL,
+  PRIMARY KEY  (id_oasl_user),
+  KEY id_member (id_member),
+  UNIQUE KEY user_token (user_token)
+) ENGINE=MyISAM;
+
+#
+# Table structure for table `oasl_identities`
+#
+
+CREATE TABLE {$db_prefix}oasl_identities (
+  id_oasl_identity int(10) unsigned NOT NULL auto_increment,
+  id_oasl_user int(10) unsigned NOT NULL default '0',
+  identity_token char(40) NOT NULL,
+  PRIMARY KEY  (id_oasl_identity),
+  UNIQUE KEY identity_token (identity_token)
+) ENGINE=MyISAM;
+
+
 #
 # Table structure for table `openid_assoc`
 #
@@ -1887,9 +1914,22 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('ls_allow_ip_security', '0'),
 	('ls_send_mail_failed_login', '1'),
 	('apmt_taskFrequency', '15'),
-	('apmt_numberOfBoards', '5')
+	('apmt_numberOfBoards', '5'),
+	('oasl_api_handler', 'curl'),
+	('oasl_api_port', '443'),
+	('oasl_api_subdomain', ''),
+	('oasl_api_key', ''),
+	('oasl_api_secret', ''),
+	('oasl_settings_login_caption', 'Login with your social network'),
+	('oasl_settings_registration_caption', 'Or simply register using your social network account'),
+	('oasl_settings_profile_caption', 'Social Networks'),
+	('oasl_settings_profile_desc', 'Link your forum account to one or more social network accounts.'),
+	('oasl_settings_link_accounts', '1'),
+	('oasl_settings_use_avatars'', '1'),
+	('oasl_providers', 'facebook,twitter,google,linkedin,yahoo,github,foursquare,youtube,skyrock,openid,wordpress,hyves,paypal,livejournal,steam,windowslive,blogger,disqus,stackexchange,vkontakte,odnoklassniki,mailru'),
+	('apmt_numberOfBoards', 'facebook,twitter,google,linkedin')
 	;
-	
+
 # --------------------------------------------------------
 
 #

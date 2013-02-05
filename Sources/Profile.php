@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -474,7 +474,32 @@ function ModifyProfile($post_errors = array())
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
+    
+    // OneAll Social Login (https://docs.oneall.com/plugins/)
+    /**
+     * Copyright 2012 OneAll, LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License"); you may
+     * not use this file except in compliance with the License. You may obtain
+     * a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+     * License for the specific language governing permissions and limitations
+     * under the License.
+     *
+     */
+    // OneAll Social Login : The user has no password to login, so disable it.
+	$request = $smcFunc['db_query']('', 'SELECT user_token FROM {db_prefix}oasl_users WHERE id_member = {int:id_member} LIMIT 1', array ('id_member' => $memID));
+	$userRow = $smcFunc['db_fetch_assoc']($request);		
+	$smcFunc['db_free_result']($request);		
+	if (!empty($userRow['user_token']))	
+		$check_password =  false;	
 	$context['require_password'] = $check_password && empty($user_settings['openid_uri']);
+    // End OneAll Social Login 
 
 	// If we're in wireless then we have a cut down template...
 	if (WIRELESS && $context['sub_template'] == 'summary' && WIRELESS_PROTOCOL != 'wap')

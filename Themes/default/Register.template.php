@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -157,6 +157,74 @@ function template_registration_form()
 							<input type="checkbox" name="allow_email" id="allow_email" tabindex="', $context['tabindex']++, '" class="input_check" />
 						</dd>
 					</dl>';
+
+    // OneAll Social Login (https://docs.oneall.com/plugins/)
+    /**
+     * Copyright 2012 OneAll, LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License"); you may
+     * not use this file except in compliance with the License. You may obtain
+     * a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+     * License for the specific language governing permissions and limitations
+     * under the License.
+     *
+     */
+
+
+    // OneAll Social Login (https://docs.oneall.com/plugins/)
+	if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
+	{
+		global $boardurl;
+		
+		//Extract providers
+		$providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
+		
+		//Random integer
+		$rand = mt_rand (99999, 9999999);
+			
+		echo '
+				</fieldset>
+				<span class="botslice"><span></span></span>
+			</div>';			
+
+		if ( ! empty ($modSettings['oasl_settings_registration_caption']))		
+			echo '
+				<div class="title_bar">
+					<h4 class="titlebg">
+						<strong>'.$modSettings['oasl_settings_registration_caption'].'
+					</h4>
+				</div>';		
+		else		
+			echo '
+				<hr />';		
+
+		echo '	
+			<div class="windowbg2">
+				<span class="topslice"><span></span></span>
+				<fieldset class="content">
+					<dl class="register_form">					
+						<dd>
+							<label>
+								<div class="oneall_social_login_providers" id="oneall_social_login_providers_'.$rand.'"></div>
+								<script type="text/javascript">
+									oneall.api.plugins.social_login.build("oneall_social_login_providers_'.$rand.'", {
+										"providers": [\''.implode ("', '", $providers).'\'], 
+										"callback_uri": \''.$boardurl.'/oneall_social_login.callback.php?oasl_source=registration\'
+									  });
+								</script>
+							 	<!-- OneAll.com / Social Login -->
+							</label>		
+						</dd>
+					</dl>';
+	}	
+
+    // End OneAll Social Login
 
 	// If OpenID is enabled, give the user a choice between password and OpenID.
 	if (!empty($modSettings['enableOpenID']))

@@ -1632,6 +1632,14 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Some basic information...
 	if (!isset($context['html_headers']))
 		$context['html_headers'] = '';
+        
+    // OneAll Social Login (https://docs.oneall.com/plugins/)
+	if ( ! empty ($modSettings['oasl_api_subdomain']))
+	{
+		$context['html_headers'] .= "\n<!-- OneAll.com / Social Login //-->\n";
+		$context['html_headers'] .= '<script type="text/javascript" src="//' . htmlspecialchars ($modSettings['oasl_api_subdomain']) . '.api.oneall.com/socialize/library.js"></script>';
+	}
+        
 
 	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
 	$context['session_var'] = $_SESSION['session_var'];

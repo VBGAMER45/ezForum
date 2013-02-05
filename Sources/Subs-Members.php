@@ -367,6 +367,57 @@ function deleteMembers($users, $check_not_admin = false)
 		)
 	);
 
+
+    /**
+     * Copyright 2012 OneAll, LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License"); you may
+     * not use this file except in compliance with the License. You may obtain
+     * a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+     * License for the specific language governing permissions and limitations
+     * under the License.
+     *
+     */
+    // OneAll Social Login : Remove linked social network accounts.		
+	$request = $smcFunc['db_query']('', '
+		SELECT id_oasl_user 
+		FROM {db_prefix}oasl_users 
+		WHERE id_member IN ({array_int:users})', 
+		array(
+			'users' => $users,
+		)
+	);
+	
+	while ($row = $smcFunc['db_fetch_assoc']($request))
+	{
+		// Remove user_token.
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}oasl_users	
+			WHERE id_oasl_user = {int:id_oasl_user}', 
+			array(
+				'id_oasl_user' => $row['id_oasl_user'],
+			)
+		);
+		
+		// Remove identity_token.		
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}oasl_identities 
+			WHERE id_oasl_user = {int:id_oasl_user}', 
+			array(
+				'id_oasl_user' => $row['id_oasl_user'],
+			)
+		);
+	}
+	$smcFunc['db_free_result']($request);
+    // End OneAll Social Login
+
+
 	// Delete personal messages.
 	require_once($sourcedir . '/PersonalMessage.php');
 	deleteMessages(null, null, $users);

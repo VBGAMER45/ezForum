@@ -1146,7 +1146,7 @@ function template_statPanel()
 // Template for editing profile options.
 function template_edit_options()
 {
-	global $context, $settings, $options, $scripturl, $modSettings, $txt, $user_info;
+	global $context, $settings, $options, $scripturl, $modSettings, $txt, $user_info, $boardurl, $sourcedir;
 
 	// The main header!
 	echo '
@@ -1328,6 +1328,69 @@ function template_edit_options()
 					</dl>';
 
 	}
+    
+    
+    // OneAll Social Login (https://docs.oneall.com/plugins/)
+    /**
+     * Copyright 2012 OneAll, LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License"); you may
+     * not use this file except in compliance with the License. You may obtain
+     * a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+     * License for the specific language governing permissions and limitations
+     * under the License.
+     *
+     */
+    
+	if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
+	{
+		if ( ! empty ($context['user']['is_owner']) && ! empty ($context['user']['id']))
+		{		
+	
+			// Include the OneAll Toolbox.
+			require_once($sourcedir . '/OneallSocialLogin.sdk.php');
+				
+			//Extract providers
+			$oasl_enabled_providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
+			
+			//User Token
+			$oasl_user_token = oneall_social_login_get_user_token_for_id_member($context['user']['id']);
+			
+			//Random integer
+			$rand = mt_rand (99999, 9999999);
+			
+			echo '
+				<hr width="100%" size="1" class="hrcolor clear" />
+				<dl id="oasl_social_link">
+					<dt>
+						<strong>'.$modSettings['oasl_settings_profile_caption'].'</strong><br />
+						<span class="smalltext">'.$modSettings['oasl_settings_profile_desc'].'</span>
+					</dt>
+					<dd>
+						<div class="oneall_social_login_providers" id="oneall_social_login_providers_'.$rand.'"></div>
+							<script type="text/javascript">
+								oneall.api.plugins.social_link.build("oneall_social_login_providers_'.$rand.'", {
+									"providers": [\''.implode ("', '", $oasl_enabled_providers).'\'], 
+									"user_token": \''.$oasl_user_token.'\',
+									"callback_uri": \''.$boardurl.'/oneall_social_login.callback.php?oasl_source=profile;oasl_uid='.$context['user']['id'].'\'
+								});
+							</script>
+							<!-- OneAll.com / Social Login -->
+					</dd>
+				</dl>';		
+		}
+	 }
+     
+     // End OneAll Social Login
+	 
+	
+    
 
 	// Any closing HTML?
 	if (!empty($context['profile_posthtml']))

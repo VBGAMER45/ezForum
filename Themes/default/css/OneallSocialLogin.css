@@ -1,0 +1,154 @@
+/**
+ * @package   	OneAll Social Login
+ * @copyright 	Copyright 2012 http://www.oneall.com - All rights reserved.
+ * @license   	GNU/GPL 2 or later
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,USA.
+ *
+ * The "GNU General Public License" (GPL) is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ *
+ */
+ 
+.oasl_info_box {
+  background-color: #F4FA7D;
+}
+
+.oasl_success_message {
+  color: green;
+  font-weight: bold;
+  margin-left: 20px
+}
+
+.oasl_error_message {
+  color: red;
+  font-weight: bold;
+  margin-left: 20px
+}
+
+.oasl_info_message {
+  color: #999;
+  font-weight: bold;
+  margin-left: 20px
+}
+
+.oasl_provider_row{
+  line-height: 35px;
+}
+
+.oasl_provider {
+  background-image: url("../images/OneallSocialLogin.providers.png");
+  text-indent: -9999px;
+  height: 35px;
+  width: 35px;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.oasl_provider.oasl_provider_aol {
+  background-position: -2px -1px;
+}
+
+.oasl_provider.oasl_provider_blogger {
+  background-position: -39px -1px;
+}
+
+.oasl_provider.oasl_provider_facebook {
+  background-position: -76px -1px;
+}
+
+.oasl_provider.oasl_provider_foursquare {
+  background-position: -113px -1px;
+}
+
+.oasl_provider.oasl_provider_google {
+  background-position: -150px -1px;
+}
+
+.oasl_provider.oasl_provider_hyves {
+  background-position: -187px -1px;
+}
+
+.oasl_provider.oasl_provider_linkedin {
+  background-position: -224px -1px;
+}
+
+.oasl_provider.oasl_provider_windowslive {
+  background-position: -261px -1px;
+}
+
+.oasl_provider.oasl_provider_livejournal {
+  background-position: -298px -1px;
+}
+
+.oasl_provider.oasl_provider_myspace {
+  background-position: -372px -1px;
+}
+
+.oasl_provider.oasl_provider_openid {
+  background-position: -409px -1px;
+}
+
+.oasl_provider.oasl_provider_twitter {
+  background-position: -520px -1px;
+}
+
+.oasl_provider.oasl_provider_vkontakte {
+  background-position: -631px -1px;
+}
+
+.oasl_provider.oasl_provider_wordpress {
+  background-position: -668px -1px;
+}
+
+.oasl_provider.oasl_provider_yahoo {
+  background-position: -705px -1px;
+}
+
+.oasl_provider.oasl_provider_paypal {
+  background-position: -742px -1px;
+}
+
+.oasl_provider.oasl_provider_stackexchange {
+  background-position: -779px -1px;
+}
+
+.oasl_provider.oasl_provider_steam {
+  background-position: -816px -1px;
+}
+
+.oasl_provider.oasl_provider_mailru {
+  background-position: -853px -1px;
+}
+
+.oasl_provider.oasl_provider_skyrock {
+  background-position: -890px -1px;
+}
+
+.oasl_provider.oasl_provider_github {
+  background-position: -927px -1px;
+}
+
+.oasl_provider.oasl_provider_disqus {
+  background-position: -964px -1px;
+}
+
+.oasl_provider.oasl_provider_youtube {
+  background-position: -1001px -1px;
+}
+
+.oasl_provider.oasl_provider_odnoklassniki {
+  background-position: -1038px -1px;
+}

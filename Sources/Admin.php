@@ -216,6 +216,21 @@ function AdminMain()
 				),
 			),
 		),
+  // OneAll Social Login (https://docs.oneall.com/plugins/)
+		'oasl' => array(
+			'title' => $txt['oasl_title'],
+			'permission' => array('admin_forum'),
+			'areas' => array(
+				'oasl' => array(
+					'label' => $txt['oasl_config'],
+					'file' => 'Subs-OneallSocialLogin.php',
+					'function' => 'oneall_social_login_config',
+					'custom_url' => $scripturl . '?action=admin;area=oasl;sa=settings;sesc=' . $sc,
+					'icon' => 'server.gif'	
+				)	
+			)
+		),
+        
 		'layout' => array(
 			'title' => $txt['layout_controls'],
 			'permission' => array('manage_boards', 'admin_forum', 'manage_smileys', 'manage_attachments', 'moderate_forum'),

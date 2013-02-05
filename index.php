@@ -305,6 +305,7 @@ function smf_main()
 		'notify' => array('Notify.php', 'Notify'),
 		'notifyboard' => array('Notify.php', 'BoardNotify'),
 		'openidreturn' => array('Subs-OpenID.php', 'smf_openID_return'),
+        'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
 		'pm' => array('PersonalMessage.php', 'MessageMain'),
 		'post' => array('Post.php', 'Post'),
 		'post2' => array('Post.php', 'Post2'),

@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -77,6 +77,12 @@ function template_login()
 				</dl>
 				<p><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
 				<p class="smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
+';
+							
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	template_oneall_social_login();
+			
+	echo '
 				<input type="hidden" name="hash_passwrd" value="" />
 			</div>
 			<span class="lowerframe"><span></span></span>
@@ -147,6 +153,13 @@ function template_kick_guest()
 				</dl>
 				<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
 				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
+                ';
+							
+	// OneAll Social Login (https://docs.oneall.com/plugins/)
+	template_oneall_social_login();
+			
+	echo '
+
 			</div>
 			<span class="lowerframe"><span></span></span>
 			<input type="hidden" name="hash_passwrd" value="" />
@@ -317,5 +330,56 @@ function template_resend()
 			<span class="lowerframe"><span></span></span>
 		</form>';
 }
+
+    /**
+     * Copyright 2012 OneAll, LLC.
+     *
+     * Licensed under the Apache License, Version 2.0 (the "License"); you may
+     * not use this file except in compliance with the License. You may obtain
+     * a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+     * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+     * License for the specific language governing permissions and limitations
+     * under the License.
+     */
+// OneAll Social Login (https://docs.oneall.com/plugins/)
+function template_oneall_social_login()
+{
+	global $modSettings, $boardurl;
+	if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
+	{		
+		//Extract providers
+		$providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
+		
+		//Random integer
+		$rand = mt_rand (99999, 9999999);
+		
+		echo '
+			<hr />';		
+
+		if ( ! empty ($modSettings['oasl_settings_login_caption']))		
+			echo '
+				<p style="text-align:left;">
+					<strong>', $modSettings['oasl_settings_login_caption'], '</strong>
+				</p>';		
+		
+		echo '
+			<p style="text-align:left;">
+				<div class="oneall_social_login_providers" id="oneall_social_login_providers_', $rand, '"></div>
+				<script type="text/javascript">
+					oneall.api.plugins.social_login.build("oneall_social_login_providers_', $rand, '", {
+						"providers": [\'', implode ("', '", $providers), '\'], 
+						"callback_uri": \'', $boardurl, '/oneall_social_login.callback.php?oasl_source=login\',
+					});
+				</script>
+				<!-- OneAll.com / Social Login -->				
+			</p>';
+	}
+}
+// End OneAll
 
 ?>

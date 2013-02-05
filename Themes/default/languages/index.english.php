@@ -826,7 +826,7 @@ $txt['ls_invalid_ip'] = 'Login failed. This account is protected by ip address. 
 $txt['ls_account_locked'] = 'Account Locked due to failed logins. This account has been locked until %min. If you are the owner of this account you can reset this by creating a <a href="%link">secure login link</a> sent to your email address.';
 $txt['ls_secure_email_subject'] = 'Secure Login Link';
 $txt['ls_secure_email_body'] = 'Hello %name,
-A secure login link has been requested for your account. 
+A secure login link has been requested for your account.
 If you requested this link please follow the link below to login into your account.
 
 %link
@@ -858,7 +858,7 @@ $txt['ls_current_ip_address'] = 'Current IP Address: ';
 $txt['ls_ip_address_protection'] = 'IP Address Account Protection';
 $txt['ls_ip_address_protection_note'] = 'You can allow multiple ips by seperating them with a comma';
 
-// END  Login Security Text Strings	
+// END  Login Security Text Strings
 
 // Social Sharing Icons
 $txt['smi_buddies_title'] = 'Social Networks';
@@ -900,5 +900,11 @@ $txt['admin_ban_useremails'] = 'Ban by email addresses';
 $txt['admin_ban_userips'] = 'Ban by IPs';
 $txt['admin_ban_usernames_and_emails'] = 'Ban by usernames and email addresses';
 $txt['users_mass_action_ban_name'] = 'Name of the ban list to be used for mass ban actions';
+
+
+// OneAll Social Login (https://docs.oneall.com/plugins/)
+$txt['oasl_title'] = 'OneAll Social Login';
+$txt['oasl_config'] = 'Configuration';
+$txt['oasl_settings_descr'] = 'OneAll Social Login Settings';
 
 ?>
