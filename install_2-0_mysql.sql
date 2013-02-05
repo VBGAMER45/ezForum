@@ -1664,7 +1664,7 @@ ENGINE=MyISAM;
 # Table structure for table `pretty_urls_cache`
 #
 
-CREATE TABLE IF NOT EXISTS {db_prefix}pretty_urls_cache
+CREATE TABLE IF NOT EXISTS {$db_prefix}pretty_urls_cache
 (
 url_id varchar(255) NOT NULL ,
 replacement varchar(255) NOT NULL ,
@@ -1675,7 +1675,7 @@ PRIMARY KEY (url_id)) ENGINE=MyISAM;
 # Table structure for table `related_topics`
 #
 
-CREATE TABLE IF NOT EXISTS {db_prefix}related_topics (
+CREATE TABLE IF NOT EXISTS {$db_prefix}related_topics (
   id_topic_first int(10) unsigned NOT NULL,
   id_topic_second int(10) unsigned NOT NULL,
   score float unsigned NOT NULL,
@@ -1686,7 +1686,7 @@ CREATE TABLE IF NOT EXISTS {db_prefix}related_topics (
 # Table structure for table `related_subjects`
 #
 
-CREATE TABLE IF NOT EXISTS {db_prefix}related_subjects (
+CREATE TABLE IF NOT EXISTS {$db_prefix}related_subjects (
   id_topic int(10) unsigned NOT NULL,
   subject tinytext NOT NULL,
   score float unsigned NOT NULL,
@@ -1964,7 +1964,7 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('oasl_settings_profile_caption', 'Social Networks'),
 	('oasl_settings_profile_desc', 'Link your forum account to one or more social network accounts.'),
 	('oasl_settings_link_accounts', '1'),
-	('oasl_settings_use_avatars'', '1'),
+	('oasl_settings_use_avatars', '1'),
 	('oasl_providers', 'facebook,twitter,google,linkedin,yahoo,github,foursquare,youtube,skyrock,openid,wordpress,hyves,paypal,livejournal,steam,windowslive,blogger,disqus,stackexchange,vkontakte,odnoklassniki,mailru'),
 	('oasl_enabled_providers', 'facebook,twitter,google,linkedin'),
 	('relatedTopicsEnabled', '1'),
