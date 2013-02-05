@@ -671,7 +671,7 @@ function modifyBoard($board_id, &$boardOptions)
 		$boardUpdates[] = 'prune_frequency = {int:prune_frequency}';
 		$boardUpdates[] = 'last_pruned = {int:last_pruned}';
 		$boardUpdateParameters['prune_frequency'] = $boardOptions['apmt_prune_frequency'] * 24 * 60 * 60;
-		$boardUpdateParameters['prune_frequency'] = time();
+		$boardUpdateParameters['last_pruned'] = time();
 	}
     // End Auto Prune Moved Topics (apmt)
 
