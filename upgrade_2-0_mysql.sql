@@ -2172,6 +2172,30 @@ ALTER TABLE {$db_prefix}members
 ADD openid_uri text NOT NULL;
 ---#
 
+---# Adding OneAll Social Login Users table...
+CREATE TABLE IF NOT EXISTS {$db_prefix}oasl_users (
+  id_oasl_user int(10) unsigned NOT NULL auto_increment,
+  id_member int(10) unsigned NOT NULL default '0',
+  user_token char(40) NOT NULL,
+  PRIMARY KEY  (id_oasl_user),
+  KEY id_member (id_member),
+  UNIQUE KEY user_token (user_token)
+) ENGINE=MyISAM{$db_collation};
+---#
+
+
+---# Adding OneAll Social Login Identities  table...
+CREATE TABLE IF NOT EXISTS {$db_prefix}oasl_identities (
+  id_oasl_identity int(10) unsigned NOT NULL auto_increment,
+  id_oasl_user int(10) unsigned NOT NULL default '0',
+  identity_token char(40) NOT NULL,
+  PRIMARY KEY  (id_oasl_identity),
+  UNIQUE KEY identity_token (identity_token)
+) ENGINE=MyISAM{$db_collation};
+---#
+
+
+
 /******************************************************************************/
 --- Adding paid subscriptions.
 /******************************************************************************/
