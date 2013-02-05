@@ -1407,8 +1407,7 @@ CREATE TABLE {$db_prefix}messages_history (
   id_member mediumint(8) NOT NULL default '0',
   modified_name varchar(255),
   modified_time int(10) NOT NULL default '0',
-  body varchar(255) text,
-
+  body text,
   PRIMARY KEY (id_edit),
   KEY id_msg (id_msg)
 ) ENGINE=MyISAM;
