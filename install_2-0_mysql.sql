@@ -1655,6 +1655,30 @@ url_id varchar(255) NOT NULL ,
 replacement varchar(255) NOT NULL ,
 PRIMARY KEY (url_id)) ENGINE=MyISAM;
 
+
+#
+# Table structure for table `related_topics`
+#
+
+CREATE TABLE IF NOT EXISTS {db_prefix}related_topics (
+  id_topic_first int(10) unsigned NOT NULL,
+  id_topic_second int(10) unsigned NOT NULL,
+  score float unsigned NOT NULL,
+  PRIMARY KEY  (id_topic_first,id_topic_second)
+) ENGINE=MyISAM;
+
+#
+# Table structure for table `related_subjects`
+#
+
+CREATE TABLE IF NOT EXISTS {db_prefix}related_subjects (
+  id_topic int(10) unsigned NOT NULL,
+  subject tinytext NOT NULL,
+  score float unsigned NOT NULL,
+  PRIMARY KEY (id_topic),
+  FULLTEXT KEY subject (subject)
+);
+
 #
 # Table structure for table `scheduled_tasks`
 #
@@ -1927,7 +1951,11 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('oasl_settings_link_accounts', '1'),
 	('oasl_settings_use_avatars'', '1'),
 	('oasl_providers', 'facebook,twitter,google,linkedin,yahoo,github,foursquare,youtube,skyrock,openid,wordpress,hyves,paypal,livejournal,steam,windowslive,blogger,disqus,stackexchange,vkontakte,odnoklassniki,mailru'),
-	('apmt_numberOfBoards', 'facebook,twitter,google,linkedin')
+	('oasl_enabled_providers', 'facebook,twitter,google,linkedin'),
+	('relatedTopicsEnabled', '1'),
+	('relatedTopicsCount', '5'),
+	('relatedIndex', 'fulltext'),
+	('relatedIgnoredboards', '')
 	;
 
 # --------------------------------------------------------

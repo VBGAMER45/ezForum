@@ -27,7 +27,7 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'ezForum 3.0 Alpha 2';
+$forum_version = 'ezForum 3.0 Alpha 1.5';
 
 // Get everything started up...
 define('SMF', 1);
@@ -317,6 +317,7 @@ function smf_main()
 		'recent' => array('Recent.php', 'RecentPosts'),
 		'register' => array('Register.php', 'Register'),
 		'register2' => array('Register.php', 'Register2'),
+        'related' => array('Subs-Related.php', 'Related'),
 		'reminder' => array('Reminder.php', 'RemindMe'),
 		'removepoll' => array('Poll.php', 'RemovePoll'),
 		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),

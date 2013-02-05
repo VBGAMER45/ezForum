@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -260,6 +260,11 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		}
 		$smcFunc['db_free_result']($requestMembers);
 	}
+    
+        // Added by Related Topics
+		require_once($sourcedir . '/Subs-Related.php');
+		relatedRemoveTopics($topics);
+		// Related Topics END
 
 	// Recycle topics that aren't in the recycle board...
 	if (!empty($modSettings['recycle_enable']) && $modSettings['recycle_board'] > 0 && !$ignoreRecycling)

@@ -175,6 +175,16 @@ function AdminMain()
 						'loads' => array($txt['load_balancing_settings']),
 					),
 				),
+                'relatedtopics' => array(
+					'label' => $txt['admin_related_topic'],
+					'file' => 'RelatedTopics.php',
+					'function' => 'RelatedTopicsAdmin',
+					'subsections' => array(
+						'main' => array($txt['admin_related_topics_information']),
+						'settings' => array($txt['admin_related_topics_settings']),
+						'methods' => array($txt['admin_related_topics_methods']),
+					),
+				),
 				'current_theme' => array(
 					'label' => $txt['theme_current_settings'],
 					'file' => 'Themes.php',
@@ -210,6 +220,7 @@ function AdminMain()
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
 						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
+                        'related' => array($txt['admin_related_topic']),
 						// 'shout' => array($txt['shout']),
 						// Note the comma!! The setting with automatically appear with the first mod to be added.
 					),

@@ -1873,6 +1873,12 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			array('id_topic')
 		);
 		$topicOptions['id'] = $smcFunc['db_insert_id']('{db_prefix}topics', 'id_topic');
+        
+        // Added by Related Topics
+	   global $sourcedir;
+   	   require_once($sourcedir . '/Subs-Related.php');
+	   relatedUpdateTopics($topicOptions['id']);
+	   // Related Topics END
 
 		// The topic couldn't be created for some reason.
 		if (empty($topicOptions['id']))
@@ -2574,7 +2580,15 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			)
 		);
 		if ($smcFunc['db_num_rows']($request) == 1)
+		{
 			updateStats('subject', $topicOptions['id'], $msgOptions['subject']);
+
+			// Added by Related Topics
+			global $sourcedir;
+			require_once($sourcedir . '/Subs-Related.php');
+			relatedUpdateTopics($topicOptions['id']);
+			// Related Topics END
+		}
 		$smcFunc['db_free_result']($request);
 	}
 
