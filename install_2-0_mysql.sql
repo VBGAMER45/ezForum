@@ -1402,8 +1402,8 @@ VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'ezForum', 'no
 #
 
 CREATE TABLE {$db_prefix}messages_history (
-  id_edit unsigned int(10) NOT NULL auto_increment,
-  id_msg unsigned int(10) default 0,
+  id_edit int(10) unsigned NOT NULL auto_increment,
+  id_msg int(10) unsigned default 0,
   id_member mediumint(8) NOT NULL default '0',
   modified_name varchar(255),
   modified_time int(10) NOT NULL default '0',
