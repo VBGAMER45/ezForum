@@ -457,6 +457,16 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 		'id_topic' => $topics,
 	);
 	removeAttachments($attachmentQuery, 'messages');
+    
+    
+    // Delete edit history of message
+		$smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}messages_history
+			WHERE id_msg = {int:id_msg}',
+			array(
+				'id_msg' => $message,
+			)
+		);
 
 	// Delete possible search index entries.
 	if (!empty($modSettings['search_custom_index_config']))
@@ -495,6 +505,29 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 				)
 			);
 	}
+
+    // Delete edit history of messages
+		$messages = array();
+		$request = $smcFunc['db_query']('', '
+			SELECT id_msg
+			FROM {db_prefix}messages
+			WHERE id_topic IN ({array_int:topics})',
+			array(
+				'topics' => $topics,
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$messages[] = $row['id_msg'];
+		$smcFunc['db_free_result']($request);
+		
+		if (!empty($messages))
+			$smcFunc['db_query']('', '
+				DELETE FROM {db_prefix}messages_history
+				WHERE id_msg IN({array_int:messages})',
+				array(
+					'messages' => $messages,
+				)
+			);
 
 	// Delete anything related to the topic.
 	$smcFunc['db_query']('', '

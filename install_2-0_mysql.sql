@@ -1300,7 +1300,6 @@ CREATE TABLE {$db_prefix}members (
   KEY id_theme (id_theme)
 ) ENGINE=MyISAM;
 
-
 #
 # Table structure for table `member_logins`
 #
@@ -1397,6 +1396,22 @@ INSERT INTO {$db_prefix}messages
 	(id_msg, id_msg_modified, id_topic, id_board, poster_time, subject, poster_name, poster_email, poster_ip, modified_name, body, icon)
 VALUES (1, 1, 1, 1, UNIX_TIMESTAMP(), '{$default_topic_subject}', 'ezForum', 'noreply@test.com', '127.0.0.1', '', '{$default_topic_message}', 'xx');
 # --------------------------------------------------------
+
+#
+# Table structure for table `messages_history`
+#
+
+CREATE TABLE {$db_prefix}messages_history (
+  id_edit unsigned int(10) NOT NULL auto_increment,
+  id_msg unsigned int(10) default 0,
+  id_member mediumint(8) NOT NULL default '0',
+  modified_name varchar(255),
+  modified_time int(10) NOT NULL default '0',
+  body varchar(255) text,
+
+  PRIMARY KEY (id_edit),
+  KEY id_msg (id_msg)
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `moderators`
@@ -1955,7 +1970,8 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('relatedTopicsEnabled', '1'),
 	('relatedTopicsCount', '5'),
 	('relatedIndex', 'fulltext'),
-	('relatedIgnoredboards', '')
+	('relatedIgnoredboards', ''),
+	('posthistoryEnabled','1')
 	;
 
 # --------------------------------------------------------

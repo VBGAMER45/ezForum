@@ -575,10 +575,20 @@ function template_main()
 						<div class="moderatorbar">
 							<div class="smalltext modified" id="modified_', $message['id'], '">';
 
-		// Show "� Last Edit: Time by Person �" if this post was edited.
-		if ($settings['show_modify'] && !empty($message['modified']['name']))
+		// Show " Last Edit: Time by Person " if this post was edited.
+		// Show last edit + has history?
+		if ($settings['show_modify'] && !empty($message['modified']['name']) && $message['can_see_history'] && $message['has_history'])
+			echo '
+								<a href="', $scripturl, '?action=posthistory;topic=', $context['current_topic'], '.0;msg=', $message['id'], '" onclick="return reqWin(this.href + \';popup\');">&#171; <em>', $txt['last_edit'], ': ', $message['modified']['time'], $message['modified']['name'] !== $message['member']['name'] ? ' ' . $txt['by'] . ' ' . $message['modified']['name'] : '', '</em> &#187;</a>';
+		// No last edit but history?
+		elseif ($message['can_see_history'] && $message['has_history'])
+			echo '
+								<a href="', $scripturl, '?action=posthistory;topic=', $context['current_topic'], '.0;msg=', $message['id'], '" onclick="return reqWin(this.href + \';popup\');">&#171; <em>', $txt['view_post_history'], '</em> &#187;</a>';
+		// or ..last edit but no history?
+		elseif ($settings['show_modify'] && !empty($message['modified']['name']))
 			echo '
 								&#171; <em>', $txt['last_edit'], ': ', $message['modified']['time'], ' ', $txt['by'], ' ', $message['modified']['name'], '</em> &#187;';
+
 
 		echo '
 							</div>

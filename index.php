@@ -309,6 +309,7 @@ function smf_main()
 		'pm' => array('PersonalMessage.php', 'MessageMain'),
 		'post' => array('Post.php', 'Post'),
 		'post2' => array('Post.php', 'Post2'),
+        'posthistory' => array('PostHistory.php', 'PostHistory'),
 		'printpage' => array('Printpage.php', 'PrintTopic'),
 		'profile' => array('Profile.php', 'ModifyProfile'),
 		'quotefast' => array('Post.php', 'QuoteFast'),

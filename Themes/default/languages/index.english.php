@@ -943,4 +943,42 @@ $txt['no_methods_selected'] = 'You haven\'t selected which methods to use to det
 $txt['related_topics'] = 'Related Topics';
 // END Added by Related Topics
 
+// Post History Start
+$txt['core_settings_item_posthistory'] = 'Post History';
+$txt['core_settings_item_posthistory_desc'] = 'Store history of edits of message content into database.';
+
+$txt['view_post_history'] = 'View Edits of Post';
+$txt['title_view_post_history'] = 'Viewing Post History for - %1$s';
+
+$txt['ph_last_edit'] = 'Latest Edit By';
+$txt['ph_last_time'] = 'Edit Time';
+$txt['ph_view_edit'] = 'View Post';
+
+$txt['ph_original_edit'] = 'original';
+$txt['ph_current_edit'] = 'current';
+$txt['ph_current_original_edit'] = 'current, original';
+
+$txt['ph_no_edits'] = 'No one has edited this post yet';
+
+$txt['compare_selected'] = 'Compare Selected';
+$txt['restore'] = 'Restore';
+
+$txt['permissionname_posthistory_view'] = 'View Edit History of Post';
+$txt['permissionhelp_posthistory_view'] = 'Allows user to view past versions of post.';
+$txt['permissionname_posthistory_view_own'] = 'Own post';
+$txt['permissionname_posthistory_view_any'] = 'Any post';
+$txt['permissionname_posthistory_restore'] = 'Restore older version';
+$txt['permissionhelp_posthistory_restore'] = 'Allows user to start editing from older version of post.';
+$txt['permissionname_posthistory_restore_own'] = 'Own post';
+$txt['permissionname_posthistory_restore_any'] = 'Any post';
+$txt['permissionname_simple_posthistory_view_own'] = 'View edit history of their own post';
+$txt['permissionname_simple_posthistory_view_any'] = 'View edit history of someone else\'s post';
+$txt['permissionname_simple_posthistory_restore_own'] = 'Restore older version of own post';
+$txt['permissionname_simple_posthistory_restore_any'] = 'Restore older versions of someone else\'s post';
+
+$txt['cannot_posthistory_view_any'] = 'You are not allowed to view history of this post!';
+$txt['cannot_posthistory_restore_own'] = 'You are not allowed to start editing from older version of your posts!';
+$txt['cannot_posthistory_restore_any'] = 'You are not allowed to start editing from older version of someone else\'s post!';
+// Post History END
+
 ?>

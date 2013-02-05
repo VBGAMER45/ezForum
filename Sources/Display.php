@@ -956,6 +956,27 @@ function Display()
 	// If there _are_ messages here... (probably an error otherwise :!)
 	if (!empty($messages))
 	{
+	   
+        // Get edited posts for Post History
+		if (!empty($modSettings['posthistoryEnabled']) && (allowedTo('posthistory_view_any') || allowedTo('posthistory_view_own')))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT DISTINCT id_msg
+				FROM {db_prefix}messages_history
+				WHERE id_msg IN ({array_int:message_list})',
+				array(
+					'message_list' => $messages,
+				)
+			);
+			
+			$context['post_history'] = array();
+			
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+				$context['post_history'][$row['id_msg']] = $row['id_msg'];
+
+			$smcFunc['db_free_result']($request);
+		}
+        
 		// Fetch attachments.
 		if (!empty($modSettings['attachmentEnable']) && allowedTo('view_attachments'))
 		{
@@ -1220,7 +1241,9 @@ function prepareDisplayContext($reset = false)
 		'can_unapprove' => $message['approved'] && $context['can_approve'],
 		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time()))),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
-		'can_see_ip' => allowedTo('moderate_forum') || ($message['id_member'] == $user_info['id'] && !empty($user_info['id'])),
+		'can_see_history' => !empty($modSettings['posthistoryEnabled']) && (allowedTo('posthistory_view_any') || (allowedTo('posthistory_view_own') && $message['id_member'] == $user_info['id'] && !empty($user_info['id']))),
+		'has_history' => isset($context['post_history'][$message['id_msg']]),	
+        'can_see_ip' => allowedTo('moderate_forum') || ($message['id_member'] == $user_info['id'] && !empty($user_info['id'])),
 	);
 
 	// Is this user the message author?

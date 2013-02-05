@@ -361,6 +361,11 @@ function ModifyCoreFeatures($return_config = false)
 				recacheSpiderNames();
 			'),
 		),
+		'posthistory' => array(
+				'settings' => array(
+					'posthistoryEnabled' => 1,
+			),
+		),
 	);
 
 	// Anyone who would like to add a core feature?
@@ -2091,7 +2096,7 @@ function ModifyGeneralModSettings($return_config = false)
 
 	// Make it even easier to add new settings.
 	call_integration_hook('integrate_general_mod_settings', array(&$config_vars));
-    
+
 
 
 

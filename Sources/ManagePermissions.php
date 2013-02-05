@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -1529,6 +1529,8 @@ function loadAllPermissions($loadType = 'classic')
 			'view_attachments' => array(false, 'attachment', 'participate'),
 			'post_unapproved_attachments' => array(false, 'attachment', 'make_unapproved_posts'),
 			'post_attachment' => array(false, 'attachment', 'attach'),
+			'posthistory_view' => array(true, 'post', 'moderate', 'moderate'),
+			'posthistory_restore' => array(true, 'post', 'moderate', 'moderate'),
 		),
 	);
 

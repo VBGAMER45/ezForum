@@ -2020,7 +2020,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	}
 
 	// If there's a custom search index, it needs updating...
-	if (!empty($modSettings['search_custom_index_config']))
+	if (!empty($modSettings['search_custom_index_config']) || !empty($modSettings['posthistoryEnabled']))
 	{
 		$customIndexSettings = unserialize($modSettings['search_custom_index_config']);
 
@@ -2433,15 +2433,39 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		if (!empty($modSettings['search_custom_index_config']))
 		{
 			$request = $smcFunc['db_query']('', '
-				SELECT body
+				SELECT body, modified_name, modified_time, poster_name, poster_time
 				FROM {db_prefix}messages
 				WHERE id_msg = {int:id_msg}',
 				array(
 					'id_msg' => $msgOptions['id'],
 				)
 			);
-			list ($old_body) = $smcFunc['db_fetch_row']($request);
+			list ($old_body, $ph_modify_name, $ph_modify_time, $ph_poster_name, $ph_poster_time) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
+			
+			// Add to Post History table
+			if (!empty($modSettings['posthistoryEnabled']))
+				$smcFunc['db_insert']('',
+					'{db_prefix}messages_history',
+					array(
+						'id_msg' => 'int',
+						'modified_name' => 'string-255',
+						'modified_time' => 'int',
+						'body' => 'string',
+					),
+					array(
+						$msgOptions['id'],
+						!empty($ph_modify_name) ? $ph_modify_name : $ph_poster_name,
+						!empty($ph_modify_time) ? $ph_modify_time : $ph_poster_time,
+						$old_body,
+					),
+					array('id_edit')
+				);
+
+			if (empty($modSettings['search_custom_index_config']))
+				unset($old_body);
+			unset($ph_modify_name, $ph_modify_time, $ph_poster_name, $ph_poster_time);
+			// END Post History
 		}
 	}
 	if (!empty($msgOptions['modify_time']))

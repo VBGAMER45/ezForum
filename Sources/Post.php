@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -719,7 +719,7 @@ function Post()
 		// Get the existing message.
 		$request = $smcFunc['db_query']('', '
 			SELECT
-				m.id_member, m.modified_time, m.smileys_enabled, m.body,
+				m.id_member, m.modified_time, m.smileys_enabled, IFNULL(h.body, m.body) AS body,
 				m.poster_name, m.poster_email, m.subject, m.icon, m.approved,
 				IFNULL(a.size, -1) AS filesize, a.filename, a.id_attach,
 				a.approved AS attachment_approved, t.id_member_started AS id_member_poster,
@@ -727,12 +727,14 @@ function Post()
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = {int:current_topic})
 				LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = m.id_msg AND a.attachment_type = {int:attachment_type})
+                LEFT JOIN {db_prefix}messages_history AS h ON (h.id_msg = {int:id_msg} AND h.id_edit = {int:id_edit})
 			WHERE m.id_msg = {int:id_msg}
 				AND m.id_topic = {int:current_topic}',
 			array(
 				'current_topic' => $topic,
 				'attachment_type' => 0,
 				'id_msg' => $_REQUEST['msg'],
+                'id_edit' => isset($_REQUEST['restore_edit']) ? (int) $_REQUEST['restore_edit'] : 0,
 			)
 		);
 		// The message they were trying to edit was most likely deleted.
@@ -760,6 +762,13 @@ function Post()
 			isAllowedTo('modify_replies');
 		else
 			isAllowedTo('modify_any');
+
+
+        if (isset($_REQUEST['restoreEdit']) && $row['id_member_poster'] == $user_info['id'] && !allowedTo('posthistory_restore_any'))
+			isAllowedTo('posthistory_restore_own');
+		elseif (isset($_REQUEST['restoreEdit']))
+			isAllowedTo('posthistory_restore_any');
+
 
 		// When was it last modified?
 		if (!empty($row['modified_time']))

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -733,6 +733,7 @@ function Credits($in_admin = false)
 				$txt['some_mod_copyright'],
 		*/
 		'mods' => array(
+        'Post History &copy; 2007-2009 <a href="http://www.madjoki.com/">Niko Pahajoki</a>',
 		),
 	);
 
