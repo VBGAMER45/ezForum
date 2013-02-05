@@ -180,7 +180,6 @@ function AdminMain()
 					'file' => 'RelatedTopics.php',
 					'function' => 'RelatedTopicsAdmin',
 					'subsections' => array(
-						'main' => array($txt['admin_related_topics_information']),
 						'settings' => array($txt['admin_related_topics_settings']),
 						'methods' => array($txt['admin_related_topics_methods']),
 					),

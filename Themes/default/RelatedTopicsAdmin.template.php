@@ -4,7 +4,9 @@
  *
  * @package RelatedTopics
  * @version 1.4
+ * @license http://madjoki.com/smf-mods/license/ New-BSD
  */
+
 
 function template_related_topics_admin_main()
 {
@@ -29,41 +31,12 @@ function template_related_topics_admin_main()
 		<div class="windowbg2 smallpadding">
 			<span class="topslice"><span></span></span>
 			<div style="overflow: auto; height: 18ex;" class="windowbg2 smallpadding">
-				', $txt['related_installed_version'], ': <span id="related_installed_version">', $related_version, '</span><br />
-				', $txt['related_latest_version'], ': <span id="related_latest_version">???</span>
-			</div>
+				', $txt['related_installed_version'], ': <span id="related_installed_version">', $related_version, '</span><br />			</div>
 			<span class="botslice"><span></span></span>
 		</div>
 	</div>
-	<div style="clear: both"></div>
-	<script language="JavaScript" type="text/javascript"><!-- // --><![CDATA[
-		function setRelatedNews()
-		{
-			if (typeof(window.relatedNews) == "undefined" || typeof(window.relatedNews.length) == "undefined")
-					return;
+	<div style="clear: both"></div>';
 
-				var str = "<div style=\"margin: 4px; font-size: 0.85em;\">";
-
-				for (var i = 0; i < window.relatedNews.length; i++)
-				{
-					str += "\n	<div style=\"padding-bottom: 2px;\"><a href=\"" + window.relatedNews[i].url + "\">" + window.relatedNews[i].subject + "</a> on " + window.relatedNews[i].time + "</div>";
-					str += "\n	<div style=\"padding-left: 2ex; margin-bottom: 1.5ex; border-top: 1px dashed;\">"
-					str += "\n		" + window.relatedNews[i].message;
-					str += "\n	</div>";
-				}
-
-				setInnerHTML(document.getElementById("related_news"), str + "</div>");
-		}
-
-		function setRelatedVersion()
-		{
-			if (typeof(window.relatedCurrentVersion) == "undefined")
-				return;
-
-			setInnerHTML(document.getElementById("related_latest_version"), window.relatedCurrentVersion);
-		}
-	// ]]></script>
-	<script language="JavaScript" type="text/javascript" src="http://service.smfarcade.info/related/news.js?v=', urlencode($related_version), '" defer="defer"></script>';
 }
 
 function template_related_topics_admin_methods()
@@ -79,7 +52,7 @@ function template_related_topics_admin_methods()
 			<span class="topslice"><span></span></span>
 			<div class="content">
 				<dl class="settings">';
-						
+
 	foreach ($context['categories'] as $cat)
 	{
 		echo '
@@ -93,7 +66,7 @@ function template_related_topics_admin_methods()
 		echo '
 					</dd>';
 	}
-	
+
 	echo '
 					<dt>', $txt['related_topics_methods'], '</dt>
 					<dd>';
@@ -121,10 +94,10 @@ function template_related_topics_admin_methods()
 	</div>
 	<div class="windowbg2">
 		<span class="topslice"><span></span></span>
-		
+
 		<a href="', $scripturl, '?action=admin;area=relatedtopics;sa=buildIndex">', $txt['related_topics_rebuild'], '</a><br />
 		<span class="smalltext">', $txt['related_topics_rebuild_desc'], '</span>
-		
+
 		<span class="botslice"><span></span></span>
 	</div><br />';
 }
