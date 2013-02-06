@@ -205,4 +205,25 @@ function template_show_file()
 </html>';
 }
 
+//  Copyright (c) 2011, Kays BSD
+// Display any attachment errors
+function template_attachment_errors()
+{
+	global $context, $scripturl, $txt;
+
+	echo '
+	<div>
+		<div class="cat_bar">
+			<h3 class="catbg">
+				', $txt['attachment_error'], '
+			</h3>
+		</div>
+		<div class="windowbg">
+			<span class="topslice"><span></span></span>
+			<div class="padding">', $context['error_message'], '</div>
+			<span class="botslice"><span></span></span>
+		</div>
+	</div>
+	<div class="centertext"><a href="', $scripturl, $context['redirect_link'], '">', $txt['continue'], '</a> :: <a href="', $scripturl, $context['modify_link'], '">', $txt['modify'], '</a></div>';
+}
 ?>

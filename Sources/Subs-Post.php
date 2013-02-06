@@ -2071,6 +2071,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 function createAttachment(&$attachmentOptions)
 {
 	global $modSettings, $sourcedir, $smcFunc, $context;
+    global $txt, $boarddir;
 
 	require_once($sourcedir . '/Subs-Graphics.php');
 
@@ -2090,7 +2091,38 @@ function createAttachment(&$attachmentOptions)
 		$id_folder = 1;
 	}
 
-	$attachmentOptions['errors'] = array();
+	// Is the attachments folder actualy there?
+	if (!is_dir($attach_dir))
+	{
+			log_error(vsprintf($txt['attach_folder_admin_warning'], array($attach_dir)), 'critical');
+			$attachmentOptions['errors'][] = 'attach_folder_warning';
+			return false;
+	}
+
+	// Check that the attachments folder is writable. No sense in proceeding if it isn't.
+	if (!is_writable($attach_dir))
+	{
+		// But, let's try to make it writable first.
+		chmod($attach_dir, 0755);
+		if (!is_writable($attach_dir))
+		{
+			chmod($attach_dir, 0775);
+			if (!is_writable($attach_dir))
+			{
+				chmod($attach_dir, 0777);
+				if (!is_writable($attach_dir))
+				{
+					$attachmentOptions['errors'][] = 'attachments_no_write';
+					log_error($txt['attachments_no_write'], 'critical');
+					return false;
+				}
+			}
+		}
+	}
+
+	if(!isset($attachmentOptions['errors']));
+		$attachmentOptions['errors'] = array();
+        
 	if (!isset($attachmentOptions['post']))
 		$attachmentOptions['post'] = 0;
 	if (!isset($attachmentOptions['approved']))
@@ -2105,7 +2137,7 @@ function createAttachment(&$attachmentOptions)
 	// Make sure the file actually exists... sometimes it doesn't.
 	if ((!$file_restricted && !file_exists($attachmentOptions['tmp_name'])) || (!$already_uploaded && !is_uploaded_file($attachmentOptions['tmp_name'])))
 	{
-		$attachmentOptions['errors'] = array('could_not_upload');
+		$attachmentOptions['errors'][] = 'attach_timeout';
 		return false;
 	}
 
@@ -2145,7 +2177,7 @@ function createAttachment(&$attachmentOptions)
 
 	// Is the file too big?
 	if (!empty($modSettings['attachmentSizeLimit']) && $attachmentOptions['size'] > $modSettings['attachmentSizeLimit'] * 1024)
-		$attachmentOptions['errors'][] = 'too_large';
+		$attachmentOptions['errors'][] = array('file_too_big', array($modSettings['attachmentSizeLimit']));
 
 	if (!empty($modSettings['attachmentCheckExtensions']))
 	{
@@ -2154,36 +2186,47 @@ function createAttachment(&$attachmentOptions)
 			$allowed[$k] = trim($dummy);
 
 		if (!in_array(strtolower(substr(strrchr($attachmentOptions['name'], '.'), 1)), $allowed))
-			$attachmentOptions['errors'][] = 'bad_extension';
+			$attachmentOptions['errors'][] = 'cant_upload_type';
 	}
 
-	if (!empty($modSettings['attachmentDirSizeLimit']))
+    //  Copyright (c) 2011, Kays
+    if (!empty($modSettings['attachmentDirSizeLimit']))
 	{
-		// Make sure the directory isn't full.
-		$dirSize = 0;
-		$dir = @opendir($attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
-		while ($file = readdir($dir))
+		// Check the folder size if it hasn't been done already.
+		if (!isset($context['dir_size']))
 		{
-			if ($file == '.' || $file == '..')
-				continue;
-
-			if (preg_match('~^post_tmp_\d+_\d+$~', $file) != 0)
+			$context['dir_size'] = 0;
+			if ($dir = @opendir($attach_dir))
 			{
-				// Temp file is more than 5 hours old!
-				if (filemtime($attach_dir . '/' . $file) < time() - 18000)
-					@unlink($attach_dir . '/' . $file);
-				continue;
-			}
+				while (false !== ($file = readdir($dir)))
+				{
+					if ($file == '.' || $file == '..')
+						continue;
 
-			$dirSize += filesize($attach_dir . '/' . $file);
+					if (preg_match('~^post_tmp_\d+_\d+$~', $file) != 0)
+					{
+						// Temp file is more than 5 hours old!
+						if (filemtime($attach_dir . '/' . $file) < time() - 18000)
+							@unlink($attach_dir . '/' . $file);
+						continue;
+					}
+
+					$context['dir_size'] += filesize($attach_dir . '/' . $file);
+				}
+				closedir($dir);
+			}
+			else
+			{
+				$attachmentOptions['errors'][] = 'cant_access_upload_path';
+				return false;
+			}
 		}
-		closedir($dir);
 
 		// Too big!  Maybe you could zip it or something...
-		if ($attachmentOptions['size'] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)
-			$attachmentOptions['errors'][] = 'directory_full';
+		if ($attachmentOptions['size'] + $context['dir_size'] > $modSettings['attachmentDirSizeLimit'] * 1024)
+			$attachmentOptions['errors'][] = 'ran_out_of_space';
 		// Soon to be too big - warn the admins...
-		elseif (!isset($modSettings['attachment_full_notified']) && $modSettings['attachmentDirSizeLimit'] > 4000 && $attachmentOptions['size'] + $dirSize > ($modSettings['attachmentDirSizeLimit'] - 2000) * 1024)
+		elseif (empty($modSettings['attachment_full_notified']) && $modSettings['attachmentDirSizeLimit'] > 4000 && $attachmentOptions['size'] + $context['dir_size'] > ($modSettings['attachmentDirSizeLimit'] - 2000) * 1024)
 		{
 			require_once($sourcedir . '/Subs-Admin.php');
 			emailAdmins('admin_attachments_full');
@@ -2191,34 +2234,11 @@ function createAttachment(&$attachmentOptions)
 		}
 	}
 
-	// Check if the file already exists.... (for those who do not encrypt their filenames...)
-	if (empty($modSettings['attachmentEncryptFilenames']))
-	{
-		// Make sure they aren't trying to upload a nasty file.
-		$disabledFiles = array('con', 'com1', 'com2', 'com3', 'com4', 'prn', 'aux', 'lpt1', '.htaccess', 'index.php');
-		if (in_array(strtolower(basename($attachmentOptions['name'])), $disabledFiles))
-			$attachmentOptions['errors'][] = 'bad_filename';
-
-		// Check if there's another file with that name...
-		$request = $smcFunc['db_query']('', '
-			SELECT id_attach
-			FROM {db_prefix}attachments
-			WHERE filename = {string:filename}
-			LIMIT 1',
-			array(
-				'filename' => strtolower($attachmentOptions['name']),
-			)
-		);
-		if ($smcFunc['db_num_rows']($request) > 0)
-			$attachmentOptions['errors'][] = 'taken_filename';
-		$smcFunc['db_free_result']($request);
-	}
 
 	if (!empty($attachmentOptions['errors']))
 		return false;
 
-	if (!is_writable($attach_dir))
-		fatal_lang_error('attachments_no_write', 'critical');
+
 
 	// Assuming no-one set the extension let's take a look at it.
 	if (empty($attachmentOptions['fileext']))
@@ -2265,7 +2285,10 @@ function createAttachment(&$attachmentOptions)
 	if ($already_uploaded)
 		rename($attachmentOptions['tmp_name'], $attachmentOptions['destination']);
 	elseif (!move_uploaded_file($attachmentOptions['tmp_name'], $attachmentOptions['destination']))
-		fatal_lang_error('attach_timeout', 'critical');
+	{
+		$attachmentOptions['errors'][] = 'attach_timeout';
+		return false;
+	}
 
 	// Attempt to chmod it.
 	@chmod($attachmentOptions['destination'], 0644);

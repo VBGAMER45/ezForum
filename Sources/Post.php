@@ -999,69 +999,119 @@ function Post()
 				if ($_FILES['attachment']['name'][$n] == '')
 					continue;
 
-				if (!is_uploaded_file($_FILES['attachment']['tmp_name'][$n]) || (@ini_get('open_basedir') == '' && !file_exists($_FILES['attachment']['tmp_name'][$n])))
-					fatal_lang_error('attach_timeout', 'critical');
-
-				if (!empty($modSettings['attachmentSizeLimit']) && $_FILES['attachment']['size'][$n] > $modSettings['attachmentSizeLimit'] * 1024)
-					fatal_lang_error('file_too_big', false, array($modSettings['attachmentSizeLimit']));
-
-				$quantity++;
-				if (!empty($modSettings['attachmentNumPerPostLimit']) && $quantity > $modSettings['attachmentNumPerPostLimit'])
-					fatal_lang_error('attachments_limit_per_post', false, array($modSettings['attachmentNumPerPostLimit']));
-
-				$total_size += $_FILES['attachment']['size'][$n];
-				if (!empty($modSettings['attachmentPostLimit']) && $total_size > $modSettings['attachmentPostLimit'] * 1024)
-					fatal_lang_error('file_too_big', false, array($modSettings['attachmentPostLimit']));
-
-				if (!empty($modSettings['attachmentCheckExtensions']))
+				$errors = array();
+				// Check for PHP errors first
+				if (!empty($_FILES['attachment']['error'][$n]))
 				{
-					if (!in_array(strtolower(substr(strrchr($_FILES['attachment']['name'][$n], '.'), 1)), explode(',', strtolower($modSettings['attachmentExtensions']))))
-						fatal_error($_FILES['attachment']['name'][$n] . '.<br />' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
-				}
-
-				if (!empty($modSettings['attachmentDirSizeLimit']))
-				{
-					// Make sure the directory isn't full.
-					$dirSize = 0;
-					$dir = @opendir($current_attach_dir) or fatal_lang_error('cant_access_upload_path', 'critical');
-					while ($file = readdir($dir))
-					{
-						if ($file == '.' || $file == '..')
-							continue;
-
-						if (preg_match('~^post_tmp_\d+_\d+$~', $file) != 0)
-						{
-							// Temp file is more than 5 hours old!
-							if (filemtime($current_attach_dir . '/' . $file) < time() - 18000)
-								@unlink($current_attach_dir . '/' . $file);
-							continue;
-						}
-
-						$dirSize += filesize($current_attach_dir . '/' . $file);
-					}
-					closedir($dir);
-
-					// Too big!  Maybe you could zip it or something...
-					if ($_FILES['attachment']['size'][$n] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)
-						fatal_lang_error('ran_out_of_space');
+					if ($_FILES['attachment']['error'][$n] == 2)
+  						$errors[] = vsprintf($txt['file_too_big'], array($modSettings['attachmentSizeLimit']));
+          else
+          		$errors[] = 'attach_php_error';
 				}
 
 				if (!is_writable($current_attach_dir))
-					fatal_lang_error('attachments_no_write', 'critical');
+				{
+					$errors[] = $txt['attachments_no_write'];
+					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['attachments_no_write'], 'critical');
+				}
 
-				$attachID = 'post_tmp_' . $user_info['id'] . '_' . $temp_start++;
-				$_SESSION['temp_attachments'][$attachID] = basename($_FILES['attachment']['name'][$n]);
-				$context['current_attachments'][] = array(
-					'name' => htmlspecialchars(basename($_FILES['attachment']['name'][$n])),
-					'id' => $attachID,
-					'approved' => 1,
-				);
+				if (empty($errors))
+				{
+					if (!empty($modSettings['attachmentDirSizeLimit']))
+					{
+						if (!isset($dirSize))
+						{
+							// Make sure the directory isn't full.
+							$dirSize = 0;
+							if ($dir = @opendir($current_attach_dir))
+							{
+								while (false !== ($file = readdir($dir)))
+								{
+									if ($file == '.' || $file == '..')
+										continue;
 
-				$destName = $current_attach_dir . '/' . $attachID;
+									$dirSize += filesize($current_attach_dir . '/' . $file);
+								}
+								closedir($dir);
+							}
+							else
+							{
+								 $errors[] = $txt['cant_access_upload_path'];
+								 log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['cant_access_upload_path'], 'critical');
+							}
+						}
 
-				if (!move_uploaded_file($_FILES['attachment']['tmp_name'][$n], $destName))
-					fatal_lang_error('attach_timeout', 'critical');
-				@chmod($destName, 0644);
+						if (empty($errors))
+						{
+							// Too big!  Maybe you could zip it or something...
+							if ($_FILES['attachment']['size'][$n] + $dirSize > $modSettings['attachmentDirSizeLimit'] * 1024)
+								$errors[] = $txt['ran_out_of_space'];
+							else
+								$dirSize = $_FILES['attachment']['size'][$n] + $dirSize;
+						}
+					}
+
+					$quantity++;
+					if (!empty($modSettings['attachmentNumPerPostLimit']) && $quantity > $modSettings['attachmentNumPerPostLimit'])
+						$errors[] = vsprintf($txt['attachments_limit_per_post'], array($modSettings['attachmentNumPerPostLimit']));
+
+					if (!empty($modSettings['attachmentCheckExtensions']))
+					{
+						if (!in_array(strtolower(substr(strrchr($_FILES['attachment']['name'][$n], '.'), 1)), explode(',', strtolower($modSettings['attachmentExtensions']))))
+							$errors[] = $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.';
+					}
+
+					if (!is_uploaded_file($_FILES['attachment']['tmp_name'][$n]) || (@ini_get('open_basedir') == '' && !file_exists($_FILES['attachment']['tmp_name'][$n])))
+						$errors[] = $txt['attach_timeout'];
+
+					if (!empty($modSettings['attachmentSizeLimit']) && $_FILES['attachment']['size'][$n] > $modSettings['attachmentSizeLimit'] * 1024)
+						$errors[] = vsprintf($txt['file_too_big'], array($modSettings['attachmentSizeLimit']));
+
+					$total_size += $_FILES['attachment']['size'][$n];
+					if (!empty($modSettings['attachmentPostLimit']) && $total_size > $modSettings['attachmentPostLimit'] * 1024)
+					{
+						$errors[] = vsprintf($txt['max_total_file_size'], array($modSettings['attachmentPostLimit'], $modSettings['attachmentPostLimit'] - ($total_size - $_FILES['attachment']['size'][$n]) / 1024));
+						$total_size -= $_FILES['attachment']['size'][$n];
+					}
+				}
+
+				if (empty($errors))
+				{
+					$attachID = 'post_tmp_' . $user_info['id'] . '_' . $temp_start++;
+					$destName = $current_attach_dir . '/' . $attachID;
+
+					if (@move_uploaded_file($_FILES['attachment']['tmp_name'][$n], $destName))
+					{
+						@chmod($destName, 0644);
+						
+						$_SESSION['temp_attachments'][$attachID] = basename($_FILES['attachment']['name'][$n]);
+						$context['current_attachments'][] = array(
+							'name' => htmlspecialchars(basename($_FILES['attachment']['name'][$n])),
+							'id' => $attachID,
+							'approved' => 1,
+						);
+					}
+					else
+					{
+						$errors[] = $txt['attach_timeout'];
+						log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['attach_timeout'], 'critical');
+					}
+				}
+
+				if (!empty($errors))
+				{
+					@unlink($_FILES['attachment']['tmp_name'][$n]);
+					
+					if (!isset($attach_errors))
+					{
+						$attach_errors = true;
+						$context['post_error']['messages'][] = '<hr />' . $txt['attachment_error'];
+					}
+					
+					// Add to the message errors
+					foreach ($errors as $error)
+						$context['post_error']['messages'][] = '<strong>' . $_FILES['attachment']['name'][$n] . ':</strong> ' . $error;
+				}
 			}
 	}
 
@@ -1751,25 +1801,48 @@ function Post2()
 			$_FILES['attachment']['tmp_name'] = array();
 
 		$attachIDs = array();
+		$attach_errors = array();
 		foreach ($_FILES['attachment']['tmp_name'] as $n => $dummy)
 		{
 			if ($_FILES['attachment']['name'][$n] == '')
 				continue;
 
-			// Have we reached the maximum number of files we are allowed?
-			$quantity++;
-			if (!empty($modSettings['attachmentNumPerPostLimit']) && $quantity > $modSettings['attachmentNumPerPostLimit'])
+			// First check for PHP upload errors.
+			$errors = array();
+			if (!empty($_FILES['attachment']['error'][$n]))
 			{
-				checkSubmitOnce('free');
-				fatal_lang_error('attachments_limit_per_post', false, array($modSettings['attachmentNumPerPostLimit']));
+				if ($_FILES['attachment']['error'][$n] == 1)
+					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_1']);
+				elseif ($_FILES['attachment']['error'][$n] == 2)
+					$errors[] = array('file_too_big', array($modSettings['attachmentSizeLimit']));
+				elseif ($_FILES['attachment']['error'][$n] == 3)
+					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_3']);
+				elseif ($_FILES['attachment']['error'][$n] == 4)
+					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_4']);
+				elseif ($_FILES['attachment']['error'][$n] == 6)
+					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_6'], 'critical');
+				elseif ($_FILES['attachment']['error'][$n] == 7)
+					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_7']);
+				elseif ($_FILES['attachment']['error'][$n] == 8)
+					log_error($_FILES['attachment']['name'][$n] . ': ' . $txt['php_upload_error_8']);
+				if (empty($errors))
+					$errors[] = 'attach_php_error';
 			}
-
-			// Check the total upload size for this post...
-			$total_size += $_FILES['attachment']['size'][$n];
-			if (!empty($modSettings['attachmentPostLimit']) && $total_size > $modSettings['attachmentPostLimit'] * 1024)
+			
+			if (empty($errors))
 			{
-				checkSubmitOnce('free');
-				fatal_lang_error('file_too_big', false, array($modSettings['attachmentPostLimit']));
+				// Have we reached the maximum number of files we are allowed?
+				$quantity++;
+				if (!empty($modSettings['attachmentNumPerPostLimit']) && $quantity > $modSettings['attachmentNumPerPostLimit'])
+				$errors[] = array('attachments_limit_per_post', array($modSettings['attachmentNumPerPostLimit']));
+
+				// Check the total upload size for this post...
+				$total_size += $_FILES['attachment']['size'][$n];
+				if (!empty($modSettings['attachmentPostLimit']) && $total_size > $modSettings['attachmentPostLimit'] * 1024)
+				{
+					$errors[] = array('max_total_file_size', array($modSettings['attachmentPostLimit'], $modSettings['attachmentPostLimit'] - (($total_size - $_FILES['attachment']['size'][$n]) / 1024)));
+					$total_size -= $_FILES['attachment']['size'][$n];
+				}
 			}
 
 			$attachmentOptions = array(
@@ -1779,51 +1852,44 @@ function Post2()
 				'tmp_name' => $_FILES['attachment']['tmp_name'][$n],
 				'size' => $_FILES['attachment']['size'][$n],
 				'approved' => !$modSettings['postmod_active'] || allowedTo('post_attachment'),
+				'errors' => $errors,
 			);
 
-			if (createAttachment($attachmentOptions))
+			if (empty($errors))
 			{
-				$attachIDs[] = $attachmentOptions['id'];
-				if (!empty($attachmentOptions['thumb']))
-					$attachIDs[] = $attachmentOptions['thumb'];
+				if (createAttachment($attachmentOptions))
+				{
+					$attachIDs[] = $attachmentOptions['id'];
+					if (!empty($attachmentOptions['thumb']))
+						$attachIDs[] = $attachmentOptions['thumb'];
+				}
 			}
-			else
+
+			if (!empty($attachmentOptions['errors']))
 			{
-				if (in_array('could_not_upload', $attachmentOptions['errors']))
+				if (!isset($txt['file_too_big']))
+					loadLanguage('errors');
+
+				$log_these = array('attachments_no_write', 'attach_timeout', 'ran_out_of_space', 'cant_access_upload_path');
+
+				foreach ($attachmentOptions['errors'] as $error)
 				{
-					checkSubmitOnce('free');
-					fatal_lang_error('attach_timeout', 'critical');
+					if (is_array($error))
+					{				
+						$attach_errors[] = '<strong>' . $_FILES['attachment']['name'][$n] . ':</strong> ' . vsprintf($txt[$error[0]], $error[1]);
+						if (in_array($error[0], $log_these))
+							log_error($_FILES['attachment']['name'][$n] . ': ' . vsprintf($txt[$error[0]], $error[1]), 'critical');
+					}
+					else
+					{
+						$attach_errors[] = '<strong>' . $_FILES['attachment']['name'][$n] . ':</strong> ' . $txt[$error] . ($error == 'cant_upload_type' ? ' ' . $modSettings['attachmentExtensions'] : '');
+						if (in_array($error, $log_these))
+							log_error($_FILES['attachment']['name'][$n] . ': ' . $txt[$error], 'critical');
+					}
 				}
-				if (in_array('too_large', $attachmentOptions['errors']))
-				{
-					checkSubmitOnce('free');
-					fatal_lang_error('file_too_big', false, array($modSettings['attachmentSizeLimit']));
-				}
-				if (in_array('bad_extension', $attachmentOptions['errors']))
-				{
-					checkSubmitOnce('free');
-					fatal_error($attachmentOptions['name'] . '.<br />' . $txt['cant_upload_type'] . ' ' . $modSettings['attachmentExtensions'] . '.', false);
-				}
-				if (in_array('directory_full', $attachmentOptions['errors']))
-				{
-					checkSubmitOnce('free');
-					fatal_lang_error('ran_out_of_space', 'critical');
-				}
-				if (in_array('bad_filename', $attachmentOptions['errors']))
-				{
-					checkSubmitOnce('free');
-					fatal_error(basename($attachmentOptions['name']) . '.<br />' . $txt['restricted_filename'] . '.', 'critical');
-				}
-				if (in_array('taken_filename', $attachmentOptions['errors']))
-				{
-					checkSubmitOnce('free');
-					fatal_lang_error('filename_exists');
-				}
-				if (in_array('bad_attachment', $attachmentOptions['errors']))
-				{
-					checkSubmitOnce('free');
-					fatal_lang_error('bad_attachment');
-				}
+				$quantity--;
+				$total_size -= $_FILES['attachment']['size'][$n];
+				@unlink($_FILES['attachment']['tmp_name'][$n]);
 			}
 		}
 	}
@@ -2100,6 +2166,35 @@ function Post2()
 
 	if (!empty($_POST['move']) && allowedTo('move_any'))
 		redirectexit('action=movetopic;topic=' . $topic . '.0' . (empty($_REQUEST['goback']) ? '' : ';goback'));
+
+    // If there are attachment errors. Let's show a list to the user.
+	if (!empty($attach_errors))
+	{
+		global $settings, $scripturl;
+
+		loadTemplate('Errors');
+		$context['sub_template'] = 'attachment_errors';
+		checkSubmitOnce();
+		
+		$context['error_message'] = implode('<br />', $attach_errors);
+		$context['page_title'] = $txt['error_occured'];
+
+		$context['linktree'][] = array(
+			'url' => $scripturl . '?topic=' . $topic . '.0',
+			'name' => $_POST['subject'],
+			'extra_before' => $settings['linktree_inline'] ? $txt['topic'] . ': ' : ''
+		);
+
+		if (isset($_REQUEST['msg']))
+			$context['redirect_link'] = '?topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'];
+		else
+			$context['redirect_link'] = '?topic=' . $topic . '.new#new';
+			
+		$context['modify_link'] = '?action=post;msg=' . $msgOptions['id'] . ';topic=' . $topic;
+
+		obExit(null, true);
+	}
+
 
 	// Return to post if the mod is on.
 	if (isset($_REQUEST['msg']) && !empty($_REQUEST['goback']))

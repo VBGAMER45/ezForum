@@ -193,4 +193,45 @@ $txt['digest_mod_act_move'] = '"%1$s" was moved';
 $txt['digest_mod_act_merge'] = '"%1$s" was merged';
 $txt['digest_mod_act_split'] = '"%1$s" was split';
 
+
+/*
+ Copyright (c) 2011, Kays
+ 
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without modification, 
+ are permitted provided that the following conditions are met:
+ 
+ Redistributions of source code must retain the above copyright notice, this list 
+ of conditions and the following disclaimer. Redistributions in binary form must 
+ reproduce the above copyright notice, this list of conditions and the following 
+ disclaimer in the documentation and/or other materials provided with the 
+ distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE ARE 
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT  HOLDER OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+$txt['attachment_error'] = 'There was a problem uploading the following:';
+$txt['continue'] = 'Continue';
+$txt['max_total_file_size'] = 'No room left! The total attachment size allowed per post is %1$d KB. Space available is %2$d KB.';
+$txt['attach_folder_warning'] = 'The attachments directory can not be located. Please notify an administrator of this problem.';
+$txt['attach_folder_admin_warning'] = 'The path to the attachments directory (%1$s) is incorrect. Please correct it in the attachment settings.';
+$txt['attach_php_error'] = 'Due to an error, your attachment couldn\'t be uploaded. Please contact the forum administrator if this continues to be a problem.';
+$txt['php_upload_error_1'] = 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
+$txt['php_upload_error_3'] = 'The uploaded file was only partially uploaded.';
+$txt['php_upload_error_4'] = 'No file was uploaded.';
+$txt['php_upload_error_6'] = 'Unable to save. Missing a temporary folder';
+$txt['php_upload_error_7'] = 'Failed to write file to disk.';
+$txt['php_upload_error_8'] = 'A PHP extension stopped the file upload.';
+// End Kays
+
+
 ?>
