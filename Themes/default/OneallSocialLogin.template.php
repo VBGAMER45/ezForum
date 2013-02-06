@@ -27,14 +27,7 @@ function template_oneall_social_login_config ()
 	global $txt, $context, $scripturl, $modSettings;
 
 	?>
-		<div class="oasl_info_box information">
-			<ul>
-				<li><?php echo $txt['oasl_follow_twitter']; ?>;</li>
-				<li><?php echo $txt['oasl_read_documentation']; ?>;</li>
-				<li><?php echo $txt['oasl_contact_us']; ?>;</li>
-				<li><?php echo $txt['oasl_other_plugins']; ?></li>
-			</ul>
-		</div>
+	
 		<form method="post" name="creator" id="creator" action="<?php echo $scripturl; ?>?action=oasl" accept-charset="<?php echo $context['character_set']; ?>">
 			<div class="cat_bar" id="oasl_api_connection_handler">
 				<h3 class="catbg">
