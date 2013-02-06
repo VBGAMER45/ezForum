@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -583,6 +583,9 @@ function template_editicon()
 		</form>
 	</div>
 	<br class="clear" />';
+    
+    // Added by the Theme Image Uploader
+	themeImageUpload($folder = 'images/post', $redirect_to = 'action=admin;area=smileys;sa=editicon#uploader');	
 }
 
 ?>

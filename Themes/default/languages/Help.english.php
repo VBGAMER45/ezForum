@@ -600,5 +600,8 @@ $helptxt['custom_mask'] = 'The input mask is important for your forum\'s securit
 		\ - Escapes the next character.<br />
 	</div><br /><br />
 	More information and advanced techniques may be found on the internet.';
+    
+ // Added by the Theme Image Uploader
+$helptxt['theme_image_uploader'] = 'Upload image files directly to the images directory and sub-directorys of the current theme. Only JPEG, GIF and PNG image types are allowed.<br /><br />Note: Due to the fact that this is designed to replace existing images. There is no overwrite protect or warning if an existing image is overwritten.';
 
 ?>

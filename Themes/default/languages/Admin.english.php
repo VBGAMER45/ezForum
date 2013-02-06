@@ -629,4 +629,25 @@ $txt['apmt_numberOfBoards'] = 'Number of boards to process at a time by the sche
 $txt['apmt_prune_frequency'] = 'Days after automatically delete topic moved notices';
 $txt['apmt_prune_frequency_desc'] = 'Interval of days after which automatically remove the "[MOVED]" topics notices from the board.<br />0 to disable automatic pruning';
 
+// Added by the Theme Image Uploader
+// Copyright (c) 2011, Kays
+$txt['theme_image_uploader'] = 'Upload images to the (%1$s) theme';
+$txt['clean_image'] = 'Remove entry';
+$txt['more_images'] = 'Add more images';
+$txt['select_image'] = 'Select an image, or images to upload:';
+$txt['select_folder'] = 'Choose destination directory:';
+$txt['theme_image_upload'] = 'Upload';
+$txt['upload_success'] = 'The following were uploaded sucessfully to the %1$s directory:';
+$txt['upload_fail'] = '<span class="error">Error!</span> There was a problem uploading the following:';
+$txt['image_no_find'] = 'Unable to locate uploaded image. This could possibly be caused by a server time out.';
+$txt['wrong_file_type'] = 'Incorrect file type. The only allowable file types are JPEG, PNG and GIF.';
+$txt['fail_re-encoding'] = 'Failed the security check and cannot be uploaded.';
+$txt['image_move_timeout'] = 'Could not be saved. This could be caused by either a timeout or if the destination directory is not writable.';
+$txt['file_not_image'] = 'Not a valid image file.';
+$txt['folder_not_writable'] = 'The %1$s directory in the (%2$s) theme is not writable.';
+$txt['cant_access_folder'] = 'Unable to access the images directory.';
+$txt['theme_quick_change'] = 'Theme quick change';
+$txt['theme_quick_change_select'] = 'Select theme';
+
+
 ?>

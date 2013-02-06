@@ -215,6 +215,12 @@ echo '
 		</form>
 	</div>
 	<br class="clear" />
+';
+
+	// Added by the Theme Image Uploader
+	themeImageUpload();
+
+	echo '
 
 		<script type="text/javascript"><!-- // --><![CDATA[
 			window.smfForum_scripturl = "', $scripturl, '";

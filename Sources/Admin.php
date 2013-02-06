@@ -1047,4 +1047,130 @@ function AdminLogs()
 	$log_functions[$sub_action][1]();
 }
 
+
+// Added by the Theme Image Uploader
+// Copyright (c) 2011, Kays - License BSD
+function themeImageUpload($folder = 'all', $redirect_to = 'action=admin;area=theme;sa=admin#uploader')
+{
+	global $txt, $context, $scripturl, $settings, $sourcedir;
+	
+	if(!allowedTo('admin_forum'))
+		return;
+
+	$images_url = $settings['actual_images_url'];
+	$images_dir = $settings['actual_theme_dir'] . '/' . basename($settings['actual_images_url']);
+	$image_folder = basename($settings['actual_images_url']);
+	$context['images_folder'] = $image_folder;
+
+	if (!is_writable($images_dir))
+	{
+		log_error(vsprintf($txt['folder_not_writable'], array($image_folder, $settings['name'])), 'critical');
+		return;
+	}
+
+	// Not an upload, so we should get the info to display.
+	if (!isset($_POST['upload']))
+	{
+		$context['redirect_to'] = $redirect_to;
+		
+		if ($folder == 'all')
+		{
+			// Lets see which folders are in this theme?
+			if ($dir = @opendir($images_dir))
+			{
+				$context['folders'] = array();
+				while ($file = readdir($dir))
+				{
+					if ($file == '.' || $file == '..' || !is_dir($images_dir . '/' . $file))
+						continue;
+
+					$context['folders'][] = $file;
+				}
+				closedir($dir);
+			}
+			else
+			{
+				log_error($txt['cant_access_folder'], 'critical');
+				return false;
+			}
+		}
+		else
+			$context['folder'] = $folder;
+
+		if (!empty($_SESSION['upload_message']))
+		{
+			$context['upload_message'] = $_SESSION['upload_message'];
+			unset($_SESSION['upload_message']);
+		}
+
+		// Load the template.
+		theme_image_upload_template();
+	}
+	else
+	// Uploading some images are we now?
+	{
+		checkSession('post');
+
+		loadLanguage('Admin');
+		if (!is_writable($settings['actual_theme_dir'] . $_POST['folder_path']))
+		{
+			$error = vsprintf($txt['folder_not_writable'], array($_POST['folder_path'], $settings['name']));
+			log_error($error, 'critical');
+		}
+
+		$success = array();
+		$errors = array();
+		require_once($sourcedir . '/Subs-Graphics.php');
+		foreach ($_FILES['imageUpload']['tmp_name'] as $n => $dummy)
+		{
+			if (empty($_FILES['imageUpload']['name'][$n]))
+				continue;
+
+			$dest = $settings['actual_theme_dir'] . $_POST['folder_path'] . $_FILES['imageUpload']['name'][$n];
+
+			if (!file_exists($_FILES['imageUpload']['tmp_name'][$n]))
+				$errors[] = $_FILES['imageUpload']['name'][$n] . ': ' . $txt['image_no_find'];
+			else
+				if (!$sizes = @getimagesize($_FILES['imageUpload']['tmp_name'][$n]))
+				{
+					$errors[] = $_FILES['imageUpload']['name'][$n] . ': ' . $txt['file_not_image'];
+					@unlink($_FILES['imageUpload']['tmp_name'][$n]);
+				}
+				else	
+					// Only .jpg, .gif, .png are allowed
+					if (!in_array($sizes[2], array(1,2,3)))
+					{
+						$errors[] = $_FILES['imageUpload']['name'][$n] . ': ' . $txt['wrong_file_type'];
+						@unlink($_FILES['imageUpload']['tmp_name'][$n]);
+					}
+					else
+						// Can't re-encode the imgage since the transpeancy layer is lost. So, I hope this check don't cause no problems.
+						if (!checkImageContents($_FILES['imageUpload']['tmp_name'][$n]))
+						{
+							$errors[] = $_FILES['imageUpload']['name'][$n] . ': ' . $txt['fail_re-encoding'];
+							@unlink($_FILES['imageUpload']['tmp_name'][$n]);
+						}
+						else
+							if (!move_uploaded_file($_FILES['imageUpload']['tmp_name'][$n], $dest))
+							{
+								$errors[] = $_FILES['imageUpload']['name'][$n] . ': ' . $txt['image_move_timeout'];
+								@unlink($_FILES['imageUpload']['tmp_name'][$n]);
+							}
+							else
+								$success[] = $_FILES['imageUpload']['name'][$n];
+		}
+
+		// Put together a nice little message to show the user the good news and the bad news.
+		$_SESSION['upload_message'] = '';
+		if(!empty($success))
+			$_SESSION['upload_message'] .= vsprintf($txt['upload_success'], $_POST['folder_path']) . '<ul><li>' . implode('</li><li>', $success) . '</li></ul>';
+		if (!empty($error))
+			$_SESSION['upload_message'] = '<div class="error">' . $error . '</div>';
+		if (!empty($errors))
+			$_SESSION['upload_message'] .= (!empty($success) ? '<hr />' : '') . $txt['upload_fail'] . '<ul><li>' . implode('</li><li>', $errors) . '</li></ul>';			
+
+		redirectexit($_POST['redirect_to']);
+	}
+}
+
 ?>

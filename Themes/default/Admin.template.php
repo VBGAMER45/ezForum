@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -2083,6 +2083,118 @@ function template_repair_boards()
 			setTimeout("doAutoSubmit();", 1000);
 		}
 	// ]]></script>';
+	}
+}
+
+// Added by the Theme Image Uploader 
+// Copyright (c) 2011, Kays - License BSD
+function theme_image_upload_template()
+{
+	global $txt, $context, $scripturl, $settings, $settings;
+	
+	echo '
+
+		<a name="uploader"></a>
+		<div class="cat_bar">
+			<h3 class="catbg">
+				<span class="ie6_header floatleft"><a href="', $scripturl, '?action=helpadmin;help=theme_image_uploader" onclick="return reqWin(this.href);" class="help"><img src="', $settings['images_url'], '/helptopics.gif" class="icon" alt="', $txt['help'], '" /></a> ', vsprintf($txt['theme_image_uploader'], $settings['name']), '</span>
+			</h3>
+		</div>
+		<form action="', $scripturl, '?action=imageUpload" method="post" accept-charset="', $context['character_set'], '" enctype="multipart/form-data">
+			<div class="windowbg', isset($context['folder']) ? '2' : '', '">
+				<span class="topslice"><span></span></span>
+				<div class="content">
+					<div id="upload">';
+
+	if (!empty($context['upload_message']))
+		echo '
+					<fieldset class="windowbg', !isset($context['folder']) ? '2' : '', '">', $context['upload_message'], '</fieldset><br />';
+	
+	if (isset($context['folder']))
+		echo '
+					<dl class="settings">
+						<input type="hidden" name="folder_path" value="/',  $context['folder'], '/" />';
+	else
+	{
+		// Folder Select
+		echo '
+						<dl class="settings">
+							<dt><label for="folders">', $txt['select_folder'], '</label></dt>
+							<dd class="smalltext">
+								<select id="folders" name="folder_path">
+									<option value="/', $context['images_folder'], '/">/', $context['images_folder'], '&nbsp;</option>';
+
+		foreach ($context['folders'] as $folder)
+			echo '
+									<option value="/', $context['images_folder'], '/', $folder, '/">/', $context['images_folder'], '/', $folder, '&nbsp;</option>';
+
+		echo '
+								</select>
+							</dd>';
+	}
+
+	// File upload box thingies.
+	echo '
+							<dt><label for="image1">', $txt['select_image'], '</label></dt>
+							<dd class="smalltext"><input type="file" size="40" name="imageUpload[]" id="image1" class="input_file" /> (<a href="javascript:void(0);" onclick="cleanFileInput(\'image1\');">', $txt['clean_image'], '</a>)
+								<script type="text/javascript"><!-- // --><![CD', 'ATA[
+									var current_image = 1;
+
+									function addImage()
+									{
+										current_image = current_image + 1;
+										setOuterHTML(document.getElementById("moreImages"), \'<dd class="smalltext"><input type="file" size="40" name="imageUpload[]" id="image\' + current_image + \'" class="input_file" /> (<a href="javascript:void(0);" onclick="cleanFileInput(\\\'image\' + current_image + \'\\\');">', $txt['clean_image'], '<\' + \'/a>)\' + \'<\' + \'/dd><dt><\' + \'/dt><dd class="smalltext" id="moreImages"><a href="#" onclick="addImage(); return false;">(', $txt['more_images'], ')<\' + \'/a><\' + \'/dd>\');
+										return true;
+									}
+								// ]', ']></script></dd>
+							<dt></dt>
+							<dd class="smalltext" id="moreImages"><a href="#" onclick="addImage(); return false;">(', $txt['more_images'], ')</a></dd>';
+
+	// The End. :)
+	echo '
+						</dl>
+						<div class="righttext">
+							<input type="hidden" name="redirect_to" value="', $context['redirect_to'], '" />
+							<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+							<input type="submit" name="upload" value="', $txt['theme_image_upload'], '" class="button_submit" />
+						</div>
+					</div>
+				</div>
+				<span class="botslice"><span></span></span>
+			</div>
+		</form>';
+
+	// Theme quick change
+	if (isset($context['themes']))
+	{
+		echo '
+		<br />
+		<div class="cat_bar">
+			<h3 class="catbg">
+				<span class="ie6_header floatleft">', $txt['theme_quick_change'], '</span>
+			</h3>
+		</div>
+		<div class="windowbg">
+			<span class="topslice"><span></span></span>
+			<div class="content">
+				<dl class="settings">
+					<dd><br /></dd>
+					<dt><label for="themes">', $txt['theme_quick_change_select'], '</label></dt>
+					<dd class="smalltext">
+						<select onchange="window.location=document.getElementById(\'themes\').value;" id="themes" name="quick_change">';
+
+		foreach ($context['themes'] as $theme)
+			echo '
+							<option value="', $scripturl, '?theme=', $theme['id'], ';', $context['redirect_to'], '"', $theme['id'] == $settings['theme_id'] ? ' selected="selected"' : '', '>', $theme['name'], '&nbsp;</option>';
+
+		echo '
+						</select>
+					</dd>
+				</dl>
+			</div>
+			<span class="botslice"><span></span></span>
+		</div>
+		';
 	}
 }
 

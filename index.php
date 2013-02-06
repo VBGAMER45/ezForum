@@ -287,6 +287,7 @@ function smf_main()
 		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
+        'imageUpload' => array('Admin.php', 'themeImageUpload'),
 		'jseditor' => array('Subs-Editor.php', 'EditorMain'),
 		'jsmodify' => array('Post.php', 'JavaScriptModify'),
 		'jsoption' => array('Themes.php', 'SetJavaScript'),

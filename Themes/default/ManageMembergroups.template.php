@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -22,6 +22,10 @@ function template_main()
 	template_show_list('regular_membergroups_list');
 	echo '<br /><br />';
 	template_show_list('post_count_membergroups_list');
+    
+    // Added by the Theme Image Uploader
+	echo '<br /><br />';
+	themeImageUpload($folder = 'images', $redirect_to = 'action=admin;area=membergroups#uploader');	
 
 }
 
@@ -388,6 +392,10 @@ function template_edit_group()
 			}
 			swapPostGroup(', $context['group']['is_post_group'] ? 'true' : 'false', ');
 		// ]]></script>';
+        
+        
+    // Added by the Theme Image Uploader
+	themeImageUpload($folder = 'images', $redirect_to = 'action=admin;area=membergroups;sa=edit;group=' . $context['group']['id'] . '#uploader');	
 }
 
 // Templating for viewing the members of a group.
