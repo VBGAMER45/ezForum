@@ -153,4 +153,8 @@ $txt['credits_groups_orignal_pm'] = 'Original Project Managers';
 
 // List of people who have made more than a token contribution to this translation. (blank for English)
 $txt['translation_credits'] = array();
+
+// geoIP Spuds
+$txt['whoall_geoIP'] = 'Viewing the Online Member Map.';
+
 ?>

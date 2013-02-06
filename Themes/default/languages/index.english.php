@@ -981,4 +981,20 @@ $txt['cannot_posthistory_restore_own'] = 'You are not allowed to start editing f
 $txt['cannot_posthistory_restore_any'] = 'You are not allowed to start editing from older version of someone else\'s post!';
 // Post History END
 
+// geoIP menu tabs
+// Spuds BSD
+$txt['geoIP'] = 'Geo-IP';
+$txt['geoIPMap'] = 'Map Settings';
+$txt['geoIPMain'] = 'Geo-IP';
+$txt['geoIPSettings'] = 'Registration Settings';
+$txt['geoIPOnlineMap'] = 'Online Member Map';
+$txt['geoIP_info'] = 'GeoIP information for IP';
+$txt['permissionname_geoIP_view'] = 'View Who\'s Online Map';
+$txt['permissionhelp_geoIP_view'] = 'Allow the members to view the geoIP Whos Online Map.  If not set, these members will not see the map.';
+$txt['permissionname_geoIP_viewdetail'] = 'Identify Pin owner in the Online Map';
+$txt['permissionhelp_geoIP_viewdetail'] = 'Allow the members to view which member a pin belongs to on the geoIP Whos Online Map.  If not set, these members will not see the pin details.';
+$txt['scheduled_task_desc_geoIP'] = 'Attempts to retrieve and install the latest database (of the type you installed) from Maxmind';
+$txt['scheduled_task_geoIP'] = 'geoIP Database Update';
+$txt['cannot_geoIP_view'] = 'Sorry, you are not allowed to view the Whos Online Map.';
+
 ?>
