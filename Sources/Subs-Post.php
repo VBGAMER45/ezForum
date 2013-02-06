@@ -1873,7 +1873,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			array('id_topic')
 		);
 		$topicOptions['id'] = $smcFunc['db_insert_id']('{db_prefix}topics', 'id_topic');
-        
+
         // Added by Related Topics
 	   global $sourcedir;
    	   require_once($sourcedir . '/Subs-Related.php');
@@ -2020,7 +2020,7 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	}
 
 	// If there's a custom search index, it needs updating...
-	if (!empty($modSettings['search_custom_index_config']) || !empty($modSettings['posthistoryEnabled']))
+	if (!empty($modSettings['search_custom_index_config']))
 	{
 		$customIndexSettings = unserialize($modSettings['search_custom_index_config']);
 
@@ -2442,7 +2442,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			);
 			list ($old_body, $ph_modify_name, $ph_modify_time, $ph_poster_name, $ph_poster_time) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
-			
+
 			// Add to Post History table
 			if (!empty($modSettings['posthistoryEnabled']))
 				$smcFunc['db_insert']('',
