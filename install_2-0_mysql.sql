@@ -1970,7 +1970,9 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('relatedTopicsCount', '5'),
 	('relatedIndex', 'fulltext'),
 	('relatedIgnoredboards', ''),
-	('posthistoryEnabled','1')
+	('posthistoryEnabled','1'),
+	('pretty_enable_filters', '0'),
+	('pretty_bufferusecache', '0')
 	;
 
 # --------------------------------------------------------
