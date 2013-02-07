@@ -681,6 +681,28 @@ CREATE TABLE {$db_prefix}collapsed_categories (
   PRIMARY KEY (id_cat, id_member)
 ) ENGINE=MyISAM;
 
+
+#
+# Table structure for table `custom_actions`
+#
+
+CREATE TABLE {$db_prefix}custom_actions (
+  id_action smallint(5) NOT NULL AUTO_INCREMENT,
+  id_parent smallint(5) NOT NULL DEFAULT '0',
+  name tinytext NOT NULL,
+  url varchar(40) NOT NULL DEFAULT '',
+  enabled tinyint(4) NOT NULL DEFAULT '0',
+  permissions_mode tinyint(4) NOT NULL DEFAULT '0',
+  action_type tinyint(4) NOT NULL DEFAULT '0',
+  menu tinyint(4) NOT NULL DEFAULT '0',
+  header text NOT NULL,
+  body mediumtext NOT NULL,
+  PRIMARY KEY (id_action),
+  KEY url (url)
+) ENGINE=MyISAM;
+
+
+
 #
 # Table structure for table `custom_fields`
 #
@@ -2039,7 +2061,10 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('anti_spam_links_nolinks', '0'),
 	('anti_spam_links_newbielinks', '0'),
 	('anti_spam_links_nofollowlinks', '0'),
-	('anti_spam_links_guests', '0')
+	('anti_spam_links_guests', '0'),
+	('ca_enabled', '1'),
+	('ca_cache', ''),
+	('ca_menu_cache', 'a:0:{}')
 	;
 
 # --------------------------------------------------------

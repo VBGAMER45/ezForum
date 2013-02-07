@@ -137,6 +137,7 @@ function AdminMain()
 						'loginsecurity' => array($txt['ls_login_security']),
 						'karma' => array($txt['karma'], 'enabled' => in_array('k', $context['admin_features'])),
 						'sig' => array($txt['signature_settings_short']),
+                        'action' => array($txt['custom_action_shorttitle'], 'admin_forum'),
 						'profile' => array($txt['custom_profile_shorttitle'], 'enabled' => in_array('cp', $context['admin_features'])),
 					),
 				),

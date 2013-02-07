@@ -352,6 +352,11 @@ function smf_main()
 	// Allow modifying $actionArray easily.
 	call_integration_hook('integrate_actions', array(&$actionArray));
 
+	// Add custom actions to the array.
+	$custom_actions = explode(';', $modSettings['ca_cache']);
+	foreach ($custom_actions as $custom_action)
+		$actionArray[$custom_action] = array('CustomAction.php', 'ViewCustomAction');
+
 	// Get the function and file to include - if it's not there, do the board index.
 	if (!isset($_REQUEST['action']) || !isset($actionArray[$_REQUEST['action']]))
 	{

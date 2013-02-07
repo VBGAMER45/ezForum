@@ -4170,6 +4170,20 @@ function setupMenuContext()
 		// Allow editing menu buttons easily.
 		call_integration_hook('integrate_menu_buttons', array(&$buttons));
 
+		// Any custom action buttons?
+		$ca_buttons = unserialize($modSettings['ca_menu_cache']);
+		foreach ($ca_buttons as $button)
+		{
+			$buttons[$button[0]] = array(
+				'title' => $button[1],
+				'href' => $scripturl . '?action=' . $button[0],
+				'show' => $button[2] ? allowedTo($button[2]) : true,
+				'sub_buttons' => array(
+				),
+				'is_last' => true,
+			);
+		}
+
 		// Now we put the buttons in the context so the theme can use them.
 		$menu_buttons = array();
 		foreach ($buttons as $act => $button)
