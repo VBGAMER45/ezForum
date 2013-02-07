@@ -496,6 +496,46 @@ function Post()
 		// Have we inadvertently trimmed off the subject of useful information?
 		if ($smcFunc['htmltrim']($form_subject) === '')
 			$context['post_error']['no_subject'] = true;
+			
+			
+		// Start of Anti-Spam-Links mod
+
+		// Previewing and modifying an existing post we need the original posters post count.
+		if (isset($_REQUEST['msg']))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT IFNULL(m.id_member, 0) AS poster_id, IFNULL(mem.posts, 0) AS postcount
+				FROM {db_prefix}messages AS m
+					LEFT JOIN {db_prefix}members AS mem ON (m.id_member = mem.id_member)
+				WHERE id_msg = {int:id_msg}',
+				array(
+					'id_msg' => $_REQUEST['msg'],
+				)
+			);
+			// Error, so treat them as a guest.
+			if ($smcFunc['db_num_rows']($request) == 0)
+				$poster_id = $posts = 0;
+
+			list($poster_id, $posts) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+		}
+		else
+		{
+			$poster_id = $user_info['is_guest'] ? 0 : $user_info['id'];
+			$posts = $user_info['is_guest'] ? 0 : $user_info['posts'];
+		}
+		// Are we editing our own post
+		$own_post = $poster_id != $user_info['id'];
+
+		global $boardurl;
+		// Ugly but necessary.
+		// Takes into account moderation when deciding whether to show the post error.
+		if((($own_post && $user_info['is_guest']) || (!$own_post && empty($poster_id)) && $modSettings['anti_spam_links_guests'] == 1) || ((($own_post && !$user_info['is_guest']) || !$own_post && !empty($poster_id)) && !empty($modSettings['anti_spam_links_nolinks']) && $posts < $modSettings['anti_spam_links_nolinks']))
+			// Your not allowed to use links, so give them an error.
+			if (preg_match('~<a href="(?!' . preg_quote($boardurl) . ')~i', parse_bbc($form_message, false)) > 0)
+				$context['post_error']['anti_spam_links_nolinks_' . ($user_info['is_guest'] ? 'guest' : 'member')] = true;
+
+		// End of Anti-Spam-Links mod
 
 		// Any errors occurred?
 		if (!empty($context['post_error']))
@@ -516,7 +556,7 @@ function Post()
 				$context['post_error']['messages'][] = $txt['error_' . $post_error];
 
 				// If it's not a minor error flag it as such.
-				if (!in_array($post_error, array('new_reply', 'not_approved', 'new_replies', 'old_topic', 'need_qr_verification')))
+				if (!in_array($post_error, array('new_reply', 'not_approved', 'new_replies', 'old_topic', 'need_qr_verification', 'anti_spam_links_nolinks_guest', 'anti_spam_links_nolinks_member')))
 					$context['error_type'] = 'serious';
 			}
 		}
@@ -583,7 +623,7 @@ function Post()
 			preparsecode($context['preview_message']);
 
 			// Do all bulletin board code tags, with or without smileys.
-			$context['preview_message'] = parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1);
+			$context['preview_message'] = parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1, NULL, NULL, $poster_id, $posts);
 
 			if ($form_subject != '')
 			{
@@ -1636,6 +1676,51 @@ function Post2()
 		$_POST['guestname'] = $user_info['username'];
 		$_POST['email'] = $user_info['email'];
 	}
+	
+// Start of Anti-Spam-Links mod
+
+	$poster_id = empty($row['id_member']) ? 0 : (int) $row['id_member'] ;
+	$own_post = $poster_id != $user_info['id'];
+
+	// Quick Edit - Not modifying your own post, then we need the original posters post count.
+	if (!$own_post)
+	{
+		// Obtain the members post count.
+		if (!empty($poster_id))
+		{
+			$request = $smcFunc['db_query']('', '
+				SELECT posts
+				FROM {db_prefix}members
+				WHERE id_member = {int:id_member}',
+				array(
+					'id_member' => $poster_id,
+				)
+			);
+			// Error, so treat them as a guest.
+			if ($smcFunc['db_num_rows']($request) == 0)
+				$poster_id = $posts = 0;
+
+			list($posts) = $smcFunc['db_fetch_row']($request);
+			$smcFunc['db_free_result']($request);
+		}
+		else
+			$posts = 0;
+	}
+	else
+		// Editing own post
+		$posts = $user_info['is_guest'] ? 0 : $user_info['posts'];
+
+	global $boardurl;
+	// Ugly but necessary.
+	// Takes into account moderation when deciding whether to show the post error.
+	if((($own_post && $user_info['is_guest']) || (!$own_post && empty($poster_id)) && $modSettings['anti_spam_links_guests'] == 1) || ((($own_post && !$user_info['is_guest']) || !$own_post && !empty($poster_id)) && !empty($modSettings['anti_spam_links_nolinks']) && $posts < $modSettings['anti_spam_links_nolinks']))
+		// Your not allowed to use links, so give them an error.
+		if (preg_match('~<a href="(?!' . preg_quote($boardurl) . ')~i', parse_bbc($_POST['message'], false)) > 0)
+			$post_errors[] = 'anti_spam_links_nolinks_' . ($user_info['is_guest'] ? 'guest' : 'member');
+
+	// End of Anti-Spam-Links mod
+
+	
 
 	// Any mistakes?
 	if (!empty($post_errors))
@@ -2592,9 +2677,9 @@ function getTopic()
 
 	// If you're modifying, get only those posts before the current one. (otherwise get all.)
 	$request = $smcFunc['db_query']('', '
-		SELECT
-			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time,
-			m.body, m.smileys_enabled, m.id_msg, m.id_member
+		SELECT 
+			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time, 
+			m.body, m.smileys_enabled, m.id_msg, IFNULL(mem.posts, 0) AS postcount, IFNULL(m.id_member, 0) AS poster_id, m.id_member
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
 		WHERE m.id_topic = {int:current_topic}' . (isset($_REQUEST['msg']) ? '
@@ -2612,7 +2697,7 @@ function getTopic()
 	{
 		// Censor, BBC, ...
 		censorText($row['body']);
-		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']);
+		$row['body'] = parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg'], NULL, (int) $row['poster_id'], (int) $row['postcount']);
 
 		// ...and store.
 		$context['previous_posts'][] = array(
@@ -2840,6 +2925,59 @@ function JavaScriptModify()
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);
 			}
+			
+// Start of Anti-Spam-Links mod
+
+			if (isset($_POST['message']))
+			{
+				$poster_id = empty($row['id_member']) ? 0 : (int) $row['id_member'] ;
+				$own_post = $poster_id != $user_info['id'];
+
+				// Quick Edit - Not modifying your own post, then we need the original posters post count.
+				if (!$own_post)
+				{
+					// Obtain the members post count.
+					if (!empty($poster_id))
+					{
+						$request = $smcFunc['db_query']('', '
+							SELECT posts
+							FROM {db_prefix}members
+							WHERE id_member = {int:id_member}',
+							array(
+								'id_member' => $poster_id,
+							)
+						);
+						// Error, so treat them as a guest.
+						if ($smcFunc['db_num_rows']($request) == 0)
+							$poster_id = $posts = 0;
+
+						list($posts) = $smcFunc['db_fetch_row']($request);
+						$smcFunc['db_free_result']($request);
+					}
+					else
+						$posts = 0;
+				}
+				else
+					// Editing own post
+					$posts = $user_info['is_guest'] ? 0 : $user_info['posts'];
+
+				global $boardurl;
+				// Ugly but necessary.
+				// Takes into account moderation when deciding whether to show the post error.
+				if((($own_post && $user_info['is_guest']) || (!$own_post && empty($poster_id)) && $modSettings['anti_spam_links_guests'] == 1) || ((($own_post && !$user_info['is_guest']) || !$own_post && !empty($poster_id)) && !empty($modSettings['anti_spam_links_nolinks']) && $posts < $modSettings['anti_spam_links_nolinks']))
+					// Your not allowed to use links, so give them an error.
+					if (preg_match('~<a href="(?!' . preg_quote($boardurl) . ')~i', parse_bbc($_POST['message'], false)) > 0)
+					{
+						$post_errors[] = 'anti_spam_links_nolinks_' . ($user_info['is_guest'] ? 'guest' : 'member');
+						unset($_POST['message']);
+					}
+			}
+
+			// End of Anti-Spam-Links mod
+
+			
+			
+			
 		}
 	}
 
@@ -2957,7 +3095,7 @@ function JavaScriptModify()
 			censorText($context['message']['subject']);
 			censorText($context['message']['body']);
 
-			$context['message']['body'] = parse_bbc($context['message']['body'], $row['smileys_enabled'], $row['id_msg']);
+			$context['message']['body'] = parse_bbc($context['message']['body'], $row['smileys_enabled'], $row['id_msg'], NULL, $poster_id, $posts);
 		}
 		// Topic?
 		elseif (empty($post_errors))
@@ -2981,7 +3119,7 @@ function JavaScriptModify()
 				'id' => $row['id_msg'],
 				'errors' => array(),
 				'error_in_subject' => in_array('no_subject', $post_errors),
-				'error_in_body' => in_array('no_message', $post_errors) || in_array('long_message', $post_errors),
+				'error_in_body' => in_array('no_message', $post_errors) || in_array('long_message', $post_errors) || in_array('anti_spam_links_nolinks_member', $post_errors) || in_array('anti_spam_links_nolinks_guest', $post_errors),
 			);
 
 			loadLanguage('Errors');

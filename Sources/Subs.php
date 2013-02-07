@@ -911,7 +911,7 @@ function permute($array)
 }
 
 // Parse bulletin board code in a string, as well as smileys optionally.
-function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array())
+function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = array(), $poster_id = '', $posts = '')
 {
 	global $txt, $scripturl, $context, $modSettings, $user_info, $smcFunc;
 	static $bbc_codes = array(), $itemcodes = array(), $no_autolink_tags = array();
@@ -2435,6 +2435,20 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// Cleanup whitespace.
 	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br />', '<br /> ' => '<br />&nbsp;', '&#13;' => "\n"));
 
+	
+	// Start of Anti-Spam-Links mod
+	global $boardurl;
+
+	// Links get made non-active with newbielinks prefix
+	if ((($poster_id === 0 && $modSettings['anti_spam_links_guests'] == 2) || (!empty($poster_id) && !empty($modSettings['anti_spam_links_newbielinks']) && $posts != '' && $posts < $modSettings['anti_spam_links_newbielinks'])) && strpos($message, '<a href') !== false)
+		$message = preg_replace('~<a href="(?!' . preg_quote($boardurl) . ')([^"]*?)"(?:[^>]*?)>(?:.*?)</a>~i', $txt['anti_spam_links_newbielink'] . '$1 <span class="alert smalltext" title="' . sprintf($txt['anti_spam_links_newbielinks_info'], $modSettings['anti_spam_links_newbielinks']) . '">' . $txt['anti_spam_links_nonactive'] . '</span>', $message);
+
+	// Links get rel="nofollow" so no page rank for you.
+	elseif ((($poster_id === 0 && $modSettings['anti_spam_links_guests'] == 3) || (!empty($poster_id) && !empty($modSettings['anti_spam_links_nofollowlinks']) && $posts != '' && $posts < $modSettings['anti_spam_links_nofollowlinks'])) && strpos($message, '<a href') !== false)
+		$message = preg_replace('~(<a)( href="(?!' . preg_quote($boardurl) . ')(?:[^"]*?)"(?:[^>]*?)\>(?:.*?)</a>)~i', '$1 rel="nofollow"$2 <span class="alert smalltext" title="' . sprintf($txt['anti_spam_links_nofollowlinks_info'], $modSettings['anti_spam_links_nofollowlinks']) . '">' . $txt['anti_spam_links_nofollow'] . '</span>', $message);
+
+	// End of Anti-Spam-Links mod
+	
 	// Cache the output if it took some time...
 	if (isset($cache_key, $cache_t) && array_sum(explode(' ', microtime())) - array_sum(explode(' ', $cache_t)) > 0.05)
 		cache_put_data($cache_key, $message, 240);

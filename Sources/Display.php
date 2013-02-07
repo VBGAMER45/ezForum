@@ -1210,8 +1210,14 @@ function prepareDisplayContext($reset = false)
 	censorText($message['body']);
 	censorText($message['subject']);
 
+	// Start of Anti-Spam-Links mod
+
+	$posts = $memberContext[$message['id_member']]['is_guest'] ? 0 : $memberContext[$message['id_member']]['posts'];
+
+	// End of Anti-Spam-Links mod
+
 	// Run BBC interpreter on the message.
-	$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg']);
+	$message['body'] = parse_bbc($message['body'], $message['smileys_enabled'], $message['id_msg'], NULL, (int) $message['id_member'], $posts);
 
 	// Compose the memory eat- I mean message array.
 	$output = array(

@@ -1972,7 +1972,11 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('relatedIgnoredboards', ''),
 	('posthistoryEnabled','1'),
 	('pretty_enable_filters', '0'),
-	('pretty_bufferusecache', '0')
+	('pretty_bufferusecache', '0'),
+	('anti_spam_links_nolinks', '0'),
+	('anti_spam_links_newbielinks', '0'),
+	('anti_spam_links_nofollowlinks', '0'),
+	('anti_spam_links_guests', '0')
 	;
 
 # --------------------------------------------------------

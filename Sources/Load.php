@@ -1130,7 +1130,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 	// Set things up to be used before hand.
 	$gendertxt = $profile['gender'] == 2 ? $txt['female'] : ($profile['gender'] == 1 ? $txt['male'] : '');
 	$profile['signature'] = str_replace(array("\n", "\r"), array('<br />', ''), $profile['signature']);
-	$profile['signature'] = parse_bbc($profile['signature'], true, 'sig' . $profile['id_member']);
+	$profile['signature'] = parse_bbc($profile['signature'], true, 'sig' . $profile['id_member'], NULL, $profile['id_member'], $profile['posts']);
 
 	$profile['is_online'] = (!empty($profile['show_online']) || allowedTo('moderate_forum')) && $profile['is_online'] > 0;
 	$profile['stars'] = empty($profile['stars']) ? array('', '') : explode('#', $profile['stars']);

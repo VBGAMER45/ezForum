@@ -997,4 +997,24 @@ $txt['scheduled_task_desc_geoIP'] = 'Attempts to retrieve and install the latest
 $txt['scheduled_task_geoIP'] = 'geoIP Database Update';
 $txt['cannot_geoIP_view'] = 'Sorry, you are not allowed to view the Whos Online Map.';
 
+
+global $boardurl;
+$txt['anti_spam_links'] = 'Anti-Spam-Links Mod Settings';
+$txt['error_anti_spam_links_nolinks_guest'] = 'Sorry, guests are not allowed to post external links.';
+$txt['error_anti_spam_links_nolinks_member'] = 'Sorry, you are not allowed to post external links.';
+$txt['anti_spam_links_newbielink'] = ' newbielink:';
+$txt['anti_spam_links_nonactive'] = '[nonactive]';
+$txt['anti_spam_links_newbielinks_info'] = 'To curb spam posts, external links are [nonactive] until %1$s posts';
+$txt['anti_spam_links_nofollowlinks_info'] = 'To curb spam posts, external links are set [nofollow] (which means no pagerank) until %1$s posts';
+$txt['anti_spam_links_nofollow'] = '[nofollow]';
+$txt['anti_spam_links_nolinks'] = 'Post count under which members cannot post external links';
+$txt['anti_spam_links_newbielinks'] = 'Post count under which members external links are shown [nonactive] and without http://';
+$txt['anti_spam_links_nofollowlinks'] = 'Post count under which members external links are set [nofollow]';
+$txt['anti_spam_links_zero_disable'] = '[Excludes any ' . $boardurl . ' links]<br />(Use 0 to disable)';
+$txt['anti_spam_links_guests'] = 'Guests... ';
+$txt['anti_spam_links_guests_opt0'] = '(disable mod for guests)';
+$txt['anti_spam_links_guests_opt1'] = 'can not post links';
+$txt['anti_spam_links_guests_opt2'] = 'links are shown [nonactive]';
+$txt['anti_spam_links_guests_opt3'] = 'links are set [nofollow]';
+
 ?>

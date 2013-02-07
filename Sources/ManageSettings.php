@@ -741,6 +741,16 @@ function ModifySpamSettings($return_config = false)
 				'pm1' => array('int', 'max_pm_recipients'),
 				'pm2' => array('int', 'pm_posts_verification'),
 				'pm3' => array('int', 'pm_posts_per_hour'),
+				'',
+				$txt['anti_spam_links'],
+				array('int', 'anti_spam_links_nolinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
+				array('int', 'anti_spam_links_newbielinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
+				array('int', 'anti_spam_links_nofollowlinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
+				array('select', 'anti_spam_links_guests', array(&$txt['anti_spam_links_guests_opt0'], &$txt['anti_spam_links_guests_opt1'], &$txt['anti_spam_links_guests_opt2'], &$txt['anti_spam_links_guests_opt3'])),
+				'',	
+						
+						
+				
 			// Visual verification.
 			array('title', 'configure_verification_means'),
 			array('desc', 'configure_verification_means_desc'),
@@ -841,6 +851,7 @@ function ModifySpamSettings($return_config = false)
 	{
 		checkSession();
 
+
 		// Fix PM settings.
 		$_POST['pm_spam_settings'] = (int) $_POST['max_pm_recipients'] . ',' . (int) $_POST['pm_posts_verification'] . ',' . (int) $_POST['pm_posts_per_hour'];
 
@@ -852,6 +863,19 @@ function ModifySpamSettings($return_config = false)
 		unset($save_vars['pm1'], $save_vars['pm2'], $save_vars['pm3'], $save_vars['guest_verify']);
 
 		$save_vars[] = array('text', 'pm_spam_settings');
+		
+		
+		// Start of Anti-Spam-Links mod
+
+		// Nofollow links will not apply if its less than newbie links. So we need to fix it.
+		if (!empty($save_vars['anti_spam_links_newbielinks']) && !empty($save_vars['anti_spam_links_nofollowlinks']))
+			if ((int) $save_vars['anti_spam_links_newbielinks'] >= (int) $save_vars['anti_spam_links_nofollowlinks'])
+				(int) $save_vars['anti_spam_links_nofollowlinks'] = (int) $save_vars['anti_spam_links_newbielinks'] + 1;
+
+		// End of Anti-Spam-Links mod
+		
+		
+		
 
 		// Handle verification questions.
 		$questionInserts = array();
