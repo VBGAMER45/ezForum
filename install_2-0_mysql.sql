@@ -718,7 +718,7 @@ CREATE TABLE {$db_prefix}geoip_blocks (
   country char(2) NOT NULL,
   region char(2) NOT NULL,
   city varchar(255) NOT NULL,
-  postalcode` char(5) NOT NULL,
+  postalcode char(5) NOT NULL,
   latitude float NOT NULL,
   longitude float NOT NULL,
   dmacode int(10) unsigned NOT NULL,
@@ -1790,7 +1790,7 @@ VALUES
 	(9, 0, 0, 1, 'w', 0, 'weekly_maintenance'),
 	(10, 0, 120, 1, 'd', 1, 'paid_subscriptions'),
 	(11, 0, 0, 15, 'm', 0, 'apmt_prunetopics_task'),
-	(12,1317434580, 97380, 5, 'w', 0, 'geoIP'),;
+	(12,1317434580, 97380, 5, 'w', 0, 'geoIP');
 	
 
 # --------------------------------------------------------
