@@ -708,6 +708,63 @@ CREATE TABLE {$db_prefix}custom_fields (
   UNIQUE col_name (col_name)
 ) ENGINE=MyISAM;
 
+
+#
+# Table structure for table `geoip_blocks`
+#
+
+CREATE TABLE {$db_prefix}geoip_blocks (
+  locid int(10) unsigned NOT NULL,
+  country char(2) NOT NULL,
+  region char(2) NOT NULL,
+  city varchar(255) NOT NULL,
+  postalcode` char(5) NOT NULL,
+  latitude float NOT NULL,
+  longitude float NOT NULL,
+  dmacode int(10) unsigned NOT NULL,
+  areacode int(10) unsigned NOT NULL,
+  PRIMARY KEY (locid)
+) ENGINE=MyISAM;
+
+
+#
+# Table structure for table `geoip_countries`
+#
+
+CREATE TABLE {$db_prefix}geoip_countries (
+  ci tinyint(2) unsigned NOT NULL AUTO_INCREMENT,
+  cc char(2) NOT NULL,
+  cn varchar(255) NOT NULL,
+  PRIMARY KEY (ci),
+  KEY cc (cc)
+) ENGINE=MyISAM;
+
+
+#
+# Table structure for table `geoip_ip`
+#
+
+CREATE TABLE {$db_prefix}geoip_ip (
+  start int(10) unsigned NOT NULL,
+  end int(10) unsigned NOT NULL,
+  locid int(10) unsigned NOT NULL,
+  KEY end (end)
+) ENGINE=MyISAM;
+
+
+#
+# Table structure for table `geoip_regions`
+#
+
+CREATE TABLE {$db_prefix}geoip_regions (
+  cc char(2) NOT NULL,
+  rc char(2) NOT NULL,
+  rn varchar(255) NOT NULL,
+  KEY rc (rc),
+  KEY cc (cc)
+) ENGINE=MyISAM;
+
+
 #
 # Table structure for table `group_moderators`
 #
@@ -919,6 +976,11 @@ CREATE TABLE {$db_prefix}log_online (
   id_spider smallint(5) unsigned NOT NULL default '0',
   ip int(10) unsigned NOT NULL default '0',
   url text NOT NULL,
+  longitude decimal(18,15) DEFAULT '0.000000000000000',
+  latitude decimal(18,15) DEFAULT '0.000000000000000',
+  country varchar(255) NOT NULL,
+  city varchar(255) NOT NULL,
+  cc char(2) NOT NULL,
   PRIMARY KEY (session),
   KEY log_time (log_time),
   KEY id_member (id_member)
@@ -1727,7 +1789,8 @@ VALUES
 	(8, 0, 0, 1, 'd', 1, 'birthdayemails'),
 	(9, 0, 0, 1, 'w', 0, 'weekly_maintenance'),
 	(10, 0, 120, 1, 'd', 1, 'paid_subscriptions'),
-	(11, 0, 0, 15, 'm', 0, 'apmt_prunetopics_task');
+	(11, 0, 0, 15, 'm', 0, 'apmt_prunetopics_task'),
+	(12,1317434580, 97380, 5, 'w', 0, 'geoIP'),;
 	
 
 # --------------------------------------------------------
