@@ -1655,4 +1655,23 @@ function scheduled_apmt_prunetopics_task()
 	return scheduled_apmt_prunetopics();
 }
 
+// Spuds
+function scheduled_geoIP()
+{
+	global $txt, $sourcedir, $modSettings;
+	
+	require_once($sourcedir . '/geoIPAdmin.php');
+	
+	// Need to do this so we have some basic $txt available.
+	loadEssentialThemeData();
+	loadLanguage('Admin+geoIP');
+	
+	// Call the update function based on which database is installed
+	if ($modSettings['geoIP_db'] == 1)
+		$result = geoIPFull();
+	elseif ($modSettings['geoIP_db'] == 2)
+		$result = geoIPLite();
+
+	return $result;
+}
 ?>

@@ -4,7 +4,7 @@
 function template_main()
 {
 	global $context, $scripturl, $modSettings, $txt, $settings;
-	
+
 	if (isset($_GET['saved']))
 	echo '
 				<span class="upperframe"><span></span></span>
@@ -20,11 +20,11 @@ function template_main()
 						<span class="align_left">', $txt['geoIP'], '</span>
 					</h4>
 				</div>
-				
+
 				<div class="windowbg2">
 					<span class="topslice"><span></span></span>
 					<div class="content">';
-	echo '			
+	echo '
 				<br class="clear" />
 				<form action="', $scripturl, '?action=admin;area=geoIP;sa=main" method="post" name="geoip" id="geoip" accept-charset="', $context['character_set'], '" enctype="multipart/form-data">';
 	echo '
@@ -52,7 +52,7 @@ function template_main()
 	foreach($context['geoIP_db_option'] as $desc)
 		echo '
 							<span id="option_desc_', $desc['id'], '" style="display:none">', $desc['desc'], '</span>';
-		
+
 	echo '
 						</dd>
 						<dt>
@@ -62,11 +62,11 @@ function template_main()
 						<dd>';
 	// database status
 	if (!empty($context['geoIP_count']))
-		echo 
+		echo
 							$txt['geoIP_isinstalled'], ' ', number_format($context['geoIP_count']), ' ', $txt['geoIP_entries'], '<br />',
 							$txt['geoIP_date'], (!empty($modSettings['geoIP_date']) ? $modSettings['geoIP_date'] : '?');
 	else
-		echo 
+		echo
 							$txt['geoIP_notinstalled'];
 	// ajax divs for status info
 	echo '
@@ -78,24 +78,24 @@ function template_main()
 							</div>';
 	echo '
 						</dd>
-					</dl>						
+					</dl>
 					<hr class="hrcolor" />
 					<div class="righttext">';
 	if (!empty($context['geoIP_prereq_sql']))
 		echo '
 						<input class="button_submit" name="load_database" value="', $txt['geoIP_update'], '" tabindex="', $context['tabindex']++, '" onclick="geoip_init()" />';
 	else
-		echo '			
+		echo '
 						<img align="top" border="0" src="' . $settings['images_url'] . '/warning_mute.gif" alt="" />&nbsp;' . $txt['geoIP_prereq_sql'];
 	if (empty($context['geoIP_prereq_zip']))
-		echo '			
+		echo '
 						<span id="warn"><br /><img align="top" border="0" src="' . $settings['images_url'] . '/warn.gif" alt="" />&nbsp;' . $txt['geoIP_prereq_zip'] . '</span>';
 	echo '
 					</div>
 					</div>
 					<span class="lowerframe"><span></span></span>
-				</fieldset>';					
-					
+				</fieldset>';
+
 	// The checkbox settings
 	echo '		<fieldset style="border-width: 1px 0px 0px 0px; padding: 5px;">
 					<legend>', $txt['geoIP_basic_settings'], '</legend>
@@ -109,7 +109,7 @@ function template_main()
 						<dd>
 							<input type="checkbox" name="geoIP_enablemap" id="geoIP_enablemap" ', empty($modSettings['geoIP_enablemap']) ? '' : 'checked="checked"', ' />
 						</dd>
-						
+
 						<dt>
 							<label for="geoIP_enablepinid">', $txt['geoIP_enablepinid'], '</label>:<br />
 							<span class="smalltext">', $txt['geoIP_enablepinid_desc'], '</span>
@@ -117,7 +117,7 @@ function template_main()
 						<dd>
 							<input type="checkbox" name="geoIP_enablepinid" id="geoIP_enablepinid" ', empty($modSettings['geoIP_enablepinid']) ? '' : 'checked="checked"', ' />
 						</dd>
-						
+
 						<dt>
 							<label for="geoIP_enablereg">', $txt['geoIP_enablereg'], '</label>:<br />
 							<span class="smalltext">', $txt['geoIP_enablereg_desc'], '</span>
@@ -125,7 +125,7 @@ function template_main()
 						<dd>
 							<input type="checkbox" name="geoIP_enablereg" id="geoIP_enablereg" ', empty($modSettings['geoIP_enablereg']) ? '' : 'checked="checked"', ' />
 						</dd>
-						
+
 						<dt>
 							<label for="geoIP_enableflags">', $txt['geoIP_enableflags'], '</label>:<br />
 							<span class="smalltext">', $txt['geoIP_enableflags_desc'], '</span>
@@ -143,14 +143,14 @@ function template_main()
 					<span class="lowerframe"><span></span></span>
 				</fieldset>
 				</form>';
-	
+
 	// Done
 	echo '
 					</div>
 					<span class="botslice"><span></span></span>
 				</div>
 				<br class="clear" />';
-			
+
 	// Some javascript to make the form interactive
 	echo '
 				<script type="text/javascript"><!-- // --><![CDATA[
@@ -163,7 +163,7 @@ function template_main()
 function template_geoIP()
 {
 	global $context, $modSettings, $scripturl, $txt, $settings;
-	
+
 	if (!empty($modSettings['geoIP_enablemap']))
 	{
 		echo '
@@ -172,7 +172,7 @@ function template_geoIP()
 							<span class="align_left">', $txt['geoIP'], '</span>
 						</h4>
 					</div>
-					
+
 					<div class="windowbg2">
 						<span class="topslice"><span></span></span>
 						<div class="content">';
@@ -204,7 +204,7 @@ function template_geoIP()
 										<div id="gooSidebar" class="geoIPLegend" align="left"></div>
 									</td>';
 
-		// close this table 
+		// close this table
 		echo '
 								</tr>
 							</table>';
@@ -225,7 +225,7 @@ function template_geoIP()
 function template_geoIPreg()
 {
 	global $context, $txt, $scripturl, $settings, $modSettings;
-	
+
 	echo '
 		<form action="', $context['post_url'], '" method="post" name="geoIP" id="geoIP" accept-charset="', $context['character_set'], '"enctype="multipart/form-data">';
 	echo '
@@ -243,7 +243,7 @@ function template_geoIPreg()
 					<span class="upperframe"><span></span></span>
 					<div class="roundframe">
 					<dl class="settings">
-		
+
 						<dt>
 							<label for="geoIP_cc_block">', $txt['geoIP_cc_block'], '</label>:<br />
 							<span class="smalltext">', $txt['geoIP_cc_block_desc'], '</span>
@@ -255,7 +255,7 @@ function template_geoIPreg()
 					</div>
 					<span class="lowerframe"><span></span></span>
 				</fieldset>';
-	// all the countries and the flags .... 
+	// all the countries and the flags ....
 	echo '
 				<fieldset id="countrycode" style="padding: 5px;">
 					<legend>', $txt['geoIPCCToUse_select'], '</legend>
@@ -268,8 +268,8 @@ function template_geoIPreg()
 		foreach ($geoCC_Column as $cc)
 			echo '
 							<li class="floatleft" style="width:33%;">
-								<input type="checkbox" name="geoIPCC[]" id="geoIPCC_', $cc['cc'], '" value="', $cc['cc'], '"',  'class="input_check"', ($cc['checked'] ? 'checked="checked"' : '') ,' /> 
-								<label for="geoIPCC_', $cc['cc'], '"><img src="' , $settings['default_images_url'] , '/ISO_3166_Flags/' , $cc['cc'] . '.gif"  height="12" width="18" border="0" alt="[ * ]" title="' . $cc['cn'] . '"/>&nbsp;', $cc['cn'], '</label>
+								<input type="checkbox" name="geoIPCC[]" id="geoIPCC_', $cc['cc'], '" value="', $cc['cc'], '"',  'class="input_check"', ($cc['checked'] ? 'checked="checked"' : '') ,' />
+								<label for="geoIPCC_', $cc['cc'], '"><img src="' , $settings['default_images_url'] , '/flags/' , $cc['cc'] . '.png"  height="16" width="11" border="0" alt="[ * ]" title="' . $cc['cn'] . '"/>&nbsp;', $cc['cn'], '</label>
 							</li>';
 	}
 	echo '				</ul>

@@ -18,7 +18,7 @@
 // The only template in the file.
 function template_main()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Display the table header and linktree.
 	echo '
@@ -70,7 +70,7 @@ function template_main()
 			echo '
 								<span class="contact_info floatright">
 									', $context['can_send_pm'] ? '<a href="' . $member['online']['href'] . '" title="' . $member['online']['label'] . '">' : '', $settings['use_image_buttons'] ? '<img src="' . $member['online']['image_href'] . '" alt="' . $member['online']['text'] . '" align="bottom" />' : $member['online']['text'], $context['can_send_pm'] ? '</a>' : '', '
-									', isset($context['disabled_fields']['icq']) ? '' : $member['icq']['link'] , ' ', isset($context['disabled_fields']['msn']) ? '' : $member['msn']['link'], ' ', isset($context['disabled_fields']['yim']) ? '' : $member['yim']['link'], ' ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], ' ', isset($context['disabled_fields']['skype']) ? '' : $member['skype']['link'], '  ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], ' 
+									', isset($context['disabled_fields']['icq']) ? '' : $member['icq']['link'] , ' ', isset($context['disabled_fields']['msn']) ? '' : $member['msn']['link'], ' ', isset($context['disabled_fields']['yim']) ? '' : $member['yim']['link'], ' ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], ' ', isset($context['disabled_fields']['skype']) ? '' : $member['skype']['link'], '  ', isset($context['disabled_fields']['aim']) ? '' : $member['aim']['link'], '
 									', isset($context['disabled_fields']['facebook']) ? '' : $member['facebook']['link'], ' ', isset($context['disabled_fields']['myspace']) ? '' : $member['myspace']['link'], ' ', isset($context['disabled_fields']['twitter']) ? '' : $member['twitter']['link'], ' ', isset($context['disabled_fields']['googleplus']) ? '' : $member['googleplus']['link'], ' ', isset($context['disabled_fields']['linkedin']) ? '' : $member['linkedin']['link'], ' ', isset($context['disabled_fields']['youtube']) ? '' : $member['youtube']['link'], ' ', isset($context['disabled_fields']['deviantart']) ? '' : $member['deviantart']['link'], ' ', isset($context['disabled_fields']['pinterest']) ? '' : $member['pinterest']['link'], '
 
 
@@ -78,8 +78,8 @@ function template_main()
 		}
 
 		echo '
-								<span class="member', $member['is_hidden'] ? ' hidden' : '', '">
-									', $member['is_guest'] ? $member['name'] : '<a href="' . $member['href'] . '" title="' . $txt['profile_of'] . ' ' . $member['name'] . '"' . (empty($member['color']) ? '' : ' style="color: ' . $member['color'] . '"') . '>' . $member['name'] . '</a>', '
+								<span class="member', $member['is_hidden'] ? ' hidden' : '', '">',
+									(!empty($modSettings['geoIP_enableflags']) ? '<img src="' . $settings['default_images_url'] . '/flags/' . (!empty($member['cc']) ? $member['cc'] : 'BLANK') . '.png"  height="16" width="11" border="0" alt="[ * ]" title="' . (!empty($member['country']) ? $member['country'] : '') . '"/>&nbsp;' : ''), $member['is_guest'] ? $member['name'] : '<a href="' . $member['href'] . '" title="' . $txt['profile_of'] . ' ' . $member['name'] . '"' . (empty($member['color']) ? '' : ' style="color: ' . $member['color'] . '"') . '>' . $member['name'] . '</a>', '
 								</span>';
 
 		if (!empty($member['ip']))
@@ -128,7 +128,11 @@ function template_main()
 					</noscript>
 				</div>
 			</div>
-		</form>
+		</form>';
+
+	if (!empty($context['can_see_onlinemap']))
+		echo '<a href="' . $scripturl . '?action=geoIP">[' . $txt['geoIPOnlineMap'] . ']</a>';
+	echo '
 	</div>';
 }
 

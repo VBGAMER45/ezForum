@@ -431,7 +431,7 @@ function template_info_center()
 	if (!empty($bracketList))
 		echo ' (' . implode(', ', $bracketList) . ')';
 
-	echo $context['show_who'] ? '</a>' : '', '
+	echo $context['show_who'] ? '</a>' : '', (!empty($context['can_see_onlinemap']) ? '<a href="' . $scripturl . '?action=geoIP">, [' . $txt['geoIPOnlineMap'] . ']</a>' : ''), '
 			</p>
 			<p class="inline smalltext">';
 

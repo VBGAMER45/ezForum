@@ -169,7 +169,7 @@ function Who()
 		SELECT
 			lo.log_time, lo.id_member, lo.url, INET_NTOA(lo.ip) AS ip, mem.real_name,
 			lo.session, mg.online_color, IFNULL(mem.show_online, 1) AS show_online,
-			lo.id_spider
+			lo.id_spider, lo.cc, lo.country 
 		FROM {db_prefix}log_online AS lo
 			LEFT JOIN {db_prefix}members AS mem ON (lo.id_member = mem.id_member)
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = CASE WHEN mem.id_group = {int:regular_member} THEN mem.id_post_group ELSE mem.id_group END)' . (!empty($conditions) ? '
@@ -203,6 +203,8 @@ function Who()
 			'query' => $actions,
 			'is_hidden' => $row['show_online'] == 0,
 			'id_spider' => $row['id_spider'],
+			'cc' => $row['cc'],
+			'country' => $row['country'],
 			'color' => empty($row['online_color']) ? '' : $row['online_color']
 		);
 

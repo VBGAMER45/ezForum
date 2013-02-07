@@ -2669,13 +2669,28 @@ function writeLog($force = false)
 				)
 			);
 
-		$smcFunc['db_insert']($do_delete ? 'ignore' : 'replace',
-			'{db_prefix}log_online',
-			array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'raw', 'url' => 'string'),
-			array($session_id, $user_info['id'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), 'IFNULL(INET_ATON(\'' . $user_info['ip'] . '\'), 0)', $serialized),
-			array('session')
+	   // some geoIP for the map and online list when they first login
+		$geoIP = array();
+		if (!empty($modSettings['who_enabled']) && !empty($modSettings['geoIP_db']) && (!empty($modSettings['geoIP_enablemap']) || !empty($modSettings['geoIP_enableflags'])) && !empty($user_info['ip']))
+		{
+			// do a lookup, but database only, don't want the slowness of a network call here.
+			include_once($sourcedir . '/geoIP.php');
+			$geoIP = ($modSettings['geoIP_db'] == 2) ? geo_search_lite($user_info['ip'], false) : geo_search($user_info['ip'], false);
+		}
+		if (!empty($geoIP[0]))
+			$smcFunc['db_insert']($do_delete ? 'ignore' : 'replace',
+				'{db_prefix}log_online',
+				array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'raw', 'url' => 'string', 'latitude' => 'float', 'longitude' => 'float', 'country' => 'string', 'city' => 'string', 'cc' => 'string'),
+				array($session_id, $user_info['id'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), 'IFNULL(INET_ATON(\'' . $user_info['ip'] . '\'), 0)', $serialized, $geoIP[0]['latitude'], $geoIP[0]['longitude'], $geoIP[0]['country'], $geoIP[0]['city'], $geoIP[0]['cc']),
+				array('session')
 		);
-	}
+		else
+			$smcFunc['db_insert']($do_delete ? 'ignore' : 'replace',
+				'{db_prefix}log_online',
+				array('session' => 'string', 'id_member' => 'int', 'id_spider' => 'int', 'log_time' => 'int', 'ip' => 'raw', 'url' => 'string'),
+				array($session_id, $user_info['id'], empty($_SESSION['id_robot']) ? 0 : $_SESSION['id_robot'], time(), 'IFNULL(INET_ATON(\'' . $user_info['ip'] . '\'), 0)', $serialized),
+				array('session')
+			);	}
 
 	// Mark your session as being logged.
 	$_SESSION['log_time'] = time();

@@ -62,6 +62,23 @@ function Register($reg_errors = array())
 	// You are not a guest, so you are a member - and members don't get to register twice!
 	elseif (empty($user_info['is_guest']))
 		redirectexit();
+  // geoIP check to see if this is from an allowed country
+	if (!empty($modSettings['geoIP_enablereg']) && !empty($modSettings['geoIPCC']) && !allowedTo('moderate_forum') && !empty($modSettings['geoIP_db']))
+	{
+		include_once($sourcedir . '/geoIP.php');
+		$check = ($modSettings['geoIP_db'] == 2) ? geo_search_lite($user_info['ip']) : geo_search($user_info['ip']);
+		if ($check && count($check))
+		{
+			// we know (well have a very good idea) of where they are ...
+			$country = $check[0]['cc'];
+			$cc_found = strpos($modSettings['geoIPCC'],$country);
+
+			// country code is in list and we are blocking -OR- county code is not in list and we are only allowing
+			if (($cc_found !== false && !empty($modSettings['geoIP_cc_block'])) || ($cc_found === false && empty($modSettings['geoIP_cc_block'])))
+				fatal_lang_error('registration_disabled', false);
+		}
+	}
+        
 
 	loadLanguage('Login');
 	loadTemplate('Register');

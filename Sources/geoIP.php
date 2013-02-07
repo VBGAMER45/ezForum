@@ -351,7 +351,7 @@ function geoMapsXML()
 					$datablurb .= ', ' . $memberIPData[$marker['id']]['region'];
 				$datablurb .=  '<br />';
 				if (!empty($memberIPData[$marker['id']]['country']))
-					$datablurb .= '<img src="' . $settings['default_images_url'] . '/ISO_3166_Flags/' . $memberIPData[$marker['id']]['cc'] . '.gif"  height="12" width="18" border="0" alt="[ * ]" title="' . $memberIPData[$marker['id']]['country'] . '"/><br />';
+					$datablurb .= '<img src="' . $settings['default_images_url'] . '/flags/' . $memberIPData[$marker['id']]['cc'] . '.png"  height="16" width="11" border="0" alt="[ * ]" title="' . $memberIPData[$marker['id']]['country'] . '"/><br />';
 				$datablurb .= '
 				</td>
 			</tr>
