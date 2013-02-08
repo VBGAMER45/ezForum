@@ -906,7 +906,7 @@ $txt['users_mass_action_ban_name'] = 'Name of the ban list to be used for mass b
 $txt['oasl_title'] = 'OneAll Social Login';
 $txt['oasl_config'] = 'Configuration';
 $txt['oasl_settings_descr'] = 'OneAll Social Login Settings';
-
+$txt['oasl_user_does_not_exist'] = "<strong>This social network has not yet been linked to an account.</strong><br /><br />Please use the registration form to create a new account. If you already have an account, open your profile settings to connect the social network to it.";
 
 // Added by Related Topics
 $txt['admin_related_topic'] = 'Related Topics';

@@ -22,6 +22,116 @@ if (!defined('SMF'))
 }
 
 /**
+ * Form to gather additional data
+ */
+function oneall_social_login_registration ()
+{
+	// Setup global forum vars.
+	global $txt, $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
+
+	// Include the OneAll SDK.
+	require_once($sourcedir . '/OneallSocialLogin.sdk.php');
+
+	// User Action
+	$sa = !empty($_REQUEST['sa']) ? $_REQUEST['sa'] : '';
+
+	// Check if we come from a valid session.
+	if (isset($_SESSION) && !empty($_SESSION ['oasl_session_open']) && !empty($_SESSION ['oasl_social_data']))
+	{
+		// Restore data.
+		$data = @unserialize($_SESSION ['oasl_social_data']);
+
+		// Check format.
+		if (is_array($data))
+		{
+			// Load language file.
+			loadLanguage('OneallSocialLogin');
+
+			// Load template.
+			loadtemplate('OneallSocialLogin.registration');
+
+			// Set sub template.
+			$context['sub_template'] = 'oneall_social_login_registration';
+
+			// Set page title.
+			$context['page_title'] = $txt['oasl_register_title'];
+
+			//Provider name for template
+			$modSettings['oasl_provider'] = $data['identity_provider'];
+
+			// Formular submitted.
+			if ($sa == 'confirm')
+			{
+				// Security Check.
+				checkSession('post');
+
+				// Read form values.
+				$oasl_user_email = !empty($_POST['email_address']) ? trim(strtolower($_POST['email_address'])) : '';
+				$oasl_user_email_public = !empty($_POST['public_email_address']) ? 1 : 0;
+
+				//Restore for form.
+				$modSettings['email_address'] = !empty($_POST['email_address']) ? $_POST['email_address'] : '';
+				$modSettings['public_email_address'] = !empty($_POST['public_email_address']) ? 1 : 0;
+
+				//Error Container
+				$context['oasl_registration_errors'] = array();
+
+				// The email address is empty.
+				if (strlen ($oasl_user_email) == 0)
+				{
+					$context['oasl_registration_errors'][] = $txt['oasl_register_email_empty'];
+				}
+				// The email address is already taken.
+				elseif (oneall_social_login_get_id_member_for_email_address ($oasl_user_email) !== false)
+				{
+					$context['oasl_registration_errors'][] = $txt['oasl_register_email_exists'];
+				}
+				// The email address is invalid.
+				elseif ( ! preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $oasl_user_email))
+				{
+					$context['oasl_registration_errors'][] = $txt['oasl_register_email_invalid'];
+				}
+				// The email address is not empty and unique.
+				else
+				{
+					//Use email to create account
+					$data['user_email'] = $oasl_user_email;
+					$data['hide_email'] = empty ($oasl_user_email_public) ? 1 : 0;
+
+					// Create a new account.
+					$id_member = oneall_social_login_create_user ($data);
+					if (!empty ($id_member) AND oneall_social_login_login_user ($id_member))
+					{
+						// Remove plugin session data
+						oneall_social_login_clear_session();
+
+						//Redirect to forum index
+						redirectexit ();
+					}
+				}
+			}
+			//First call of the page
+			else
+			{
+				//Restore for form.
+				$modSettings['email_address'] = !empty($data['user_email']) ? $data['user_email'] : '';
+				$modSettings['public_email_address'] = 1;
+			}
+		}
+	}
+	//No open Social Login session
+	else
+	{
+		// Remove plugin session data
+		oneall_social_login_clear_session();
+
+		//Redirect to forum index
+		redirectexit ();
+	}
+}
+
+
+/**
  * Administration Area
  */
 function oneall_social_login_config ()
@@ -47,6 +157,7 @@ function oneall_social_login_config ()
 			break;
 	}
 }
+
 
 /**
  * Autodetect API Connection Handler
@@ -142,7 +253,9 @@ function oneall_social_login_verify_api_settings ()
 
 	// Full domain entered.
 	if (preg_match("/([a-z0-9\-]+)\.api\.oneall\.com/i", $oasl_api_subdomain, $matches))
+	{
 		$oasl_api_subdomain = $matches[1];
+	}
 
 	// Update Settings.
 	$values = array();
@@ -153,7 +266,9 @@ function oneall_social_login_verify_api_settings ()
 
 	//Check if all fields have been filled out
 	if (empty($oasl_api_key) || empty($oasl_api_secret) || empty($oasl_api_subdomain))
+	{
 		$status = 'error_not_all_fields_filled_out';
+	}
 	else
 	{
 		// Read settings.
@@ -162,17 +277,22 @@ function oneall_social_login_verify_api_settings ()
 
 		// Check connection handler.
 		if ($oasl_api_connection_handler == 'fsockopen')
+		{
 			$status = !oneall_social_login_check_fsockopen($oasl_api_connection_use_https) ? 'error_selected_handler_faulty' : '';
+		}
 		else
+		{
 			$status = !oneall_social_login_check_curl($oasl_api_connection_use_https) ? 'error_selected_handler_faulty' : '';
-
+		}
 
 		//If we have a status then we have a problem
 		if (empty($status))
 		{
 			//Check subdomain format
 			if (!preg_match("/^[a-z0-9\-]+$/i", $oasl_api_subdomain))
+			{
 				$status = 'error_subdomain_wrong_syntax';
+			}
 			else
 			{
 				//Domain
@@ -233,7 +353,7 @@ function oneall_social_login_config_show ()
 	loadLanguage('OneallSocialLogin');
 
 	// Load template.
-	loadtemplate('OneallSocialLogin', array('OneallSocialLogin'));
+	loadtemplate('OneallSocialLogin.admin', array('OneallSocialLogin.admin'));
 
 	// Set sub template.
 	$context['sub_template'] = 'oneall_social_login_config';
@@ -244,7 +364,7 @@ function oneall_social_login_config_show ()
 	// Set page headers.
 	$context['html_headers'] .= '
 		<script type="text/javascript">
-			function oasl_init ()
+			function oasl_config_init ()
 			{
 				var oasl_button, oasl_form, oasl_sa;
 
@@ -263,7 +383,6 @@ function oneall_social_login_config_show ()
 					oasl_form.submit();
 				};
 			}
-			window.setTimeout(\'oasl_init();\', 1);
 		</script>';
 
 	//Add page.
@@ -273,9 +392,13 @@ function oneall_social_login_config_show ()
 	$modSettings['oasl_api_handler'] = (!empty($modSettings['oasl_api_handler']) && $modSettings['oasl_api_handler'] == 'fsockopen') ? 'fsockopen' : 'curl';
 	$modSettings['oasl_api_port'] = (!empty($modSettings['oasl_api_port']) && $modSettings['oasl_api_port'] == 80) ? 80 : 443;
 
-	foreach (array ('action', 'status', 'api_subdomain', 'api_key', 'api_secret', 'settings_login_caption', 'settings_registration_caption', 'settings_profile_caption', 'settings_profile_desc') AS $field)
+	foreach (array ('action', 'status', 'api_subdomain', 'api_key', 'api_secret', 'settings_login_caption', 'settings_ask_for_email', 'settings_registration_caption', 'settings_profile_caption', 'settings_profile_desc') AS $field)
+	{
 		if (!isset ($modSettings['oasl_'.$field]))
+		{
 			$modSettings['oasl_'.$field] = '';
+		}
+	}
 
 	// Setup available providers
 	$available_providers = array();
@@ -283,8 +406,12 @@ function oneall_social_login_config_show ()
 	{
 		$providers = explode(',', trim($modSettings['oasl_providers']));
 		foreach ($providers AS $provider)
+		{
 			if (strlen(trim($provider)) > 0)
+			{
 				$available_providers[] = strtolower($provider);
+			}
+		}
 	}
 	$modSettings['oasl_providers'] = $available_providers;
 
@@ -294,8 +421,12 @@ function oneall_social_login_config_show ()
 	{
 		$providers = explode(',', trim($modSettings['oasl_enabled_providers']));
 		foreach ($providers AS $provider)
+		{
 			if (in_array($provider, $available_providers))
+			{
 				$enabled_providers[] = strtolower($provider);
+			}
+		}
 	}
 	$modSettings['oasl_enabled_providers'] = $enabled_providers;
 
@@ -335,16 +466,23 @@ function oneall_social_login_config_save ()
 	$oasl_settings_profile_desc =  !empty($_POST['oasl_settings_profile_desc']) ? trim($_POST['oasl_settings_profile_desc']) : '';
 	$oasl_settings_link_accounts = !empty($_POST['oasl_settings_link_accounts']) ? 1 : 0;
 	$oasl_settings_use_avatars = !empty($_POST['oasl_settings_use_avatars']) ? 1 : 0;
+	$oasl_settings_ask_for_email = !empty($_POST['oasl_settings_ask_for_email']) ? 1 : 0;
 
 	// Full domain entered.
 	if (preg_match("/([a-z0-9\-]+)\.api\.oneall\.com/i", $oasl_api_subdomain, $matches))
+	{
 		$oasl_api_subdomain = $matches[1];
+	}
 
 	// Enabled Providers.
 	$oasl_enabled_providers = array();
 	if (isset($_POST['oasl_enabled_providers']) && is_array($_POST['oasl_enabled_providers']))
+	{
 		foreach ($_POST['oasl_enabled_providers'] AS $provider)
+		{
 			$oasl_enabled_providers[] = trim(strtolower($provider));
+		}
+	}
 
 	// API Settings.
 	$values = array();
@@ -361,6 +499,7 @@ function oneall_social_login_config_save ()
 	$values['oasl_settings_registration_caption'] = $oasl_settings_registration_caption;
 	$values['oasl_settings_link_accounts'] = $oasl_settings_link_accounts;
 	$values['oasl_settings_use_avatars'] = $oasl_settings_use_avatars;
+	$values['oasl_settings_ask_for_email'] = $oasl_settings_ask_for_email;
 
 	// Enabled Providers.
 	$values['oasl_enabled_providers'] = implode(',', $oasl_enabled_providers);

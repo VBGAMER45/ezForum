@@ -17,13 +17,303 @@
  */
 
 if (!defined('SMF'))
+{
 	die('You are not allowed to access this file directly');
+}
 
 //OneAll Social Login Version
-define('OASL_VERSION', '1.5');
+define('OASL_VERSION', '2.1');
+
 
 /**
- * Links the user/identity tokens to an id_member
+ * Removes any session data stored by the plugin.
+ */
+function oneall_social_login_clear_session()
+{
+	foreach (array('session_open', 'session_time', 'social_data', 'origin') AS $key)
+	{
+		$key = 'oasl_' . $key;
+
+		if (isset($_SESSION [$key]))
+		{
+			unset($_SESSION [$key]);
+		}
+	}
+}
+
+
+/**
+ * Extracts the social network data from a result-set returned by the OneAll API.
+ */
+function oneall_social_login_extract_social_network_profile ($social_data)
+{
+	// Check API result.
+	if (is_object ($social_data) && property_exists ($social_data, 'http_code') && $social_data->http_code == 200 && property_exists ($social_data, 'http_data'))
+	{
+		// Decode the social network profile Data.
+		$social_data = json_decode ($social_data->http_data);
+
+		// Make sur that the data has beeen decoded properly
+		if (is_object ($social_data))
+		{
+			// Container for user data
+			$data = array();
+
+			// Save the social network data in a session.
+			$_SESSION ['oasl_session_open'] = 1;
+			$_SESSION ['oasl_session_time'] = time();
+			$_SESSION ['oasl_social_data'] = serialize($social_data);
+
+			// Parse Social Profile Data.
+			$identity = $social_data->response->result->data->user->identity;
+
+			$data['identity_token'] = $identity->identity_token;
+			$data['identity_provider'] = $identity->source->name;
+
+			$data['user_token'] = $social_data->response->result->data->user->user_token;
+			$data['user_first_name'] = !empty ($identity->name->givenName) ? $identity->name->givenName : '';
+			$data['user_last_name'] = !empty ($identity->name->familyName) ? $identity->name->familyName : '';
+			$data['user_location'] = !empty ($identity->currentLocation) ? $identity->currentLocation : '';
+			$data['user_constructed_name'] = trim ($data['user_first_name'] . ' ' . $data['user_last_name']);
+			$data['user_picture'] = !empty ($identity->pictureUrl) ? $identity->pictureUrl : '';
+			$data['user_thumbnail'] = !empty ($identity->thumbnailUrl) ? $identity->thumbnailUrl : '';
+			$data['user_about_me'] = !empty ($identity->aboutMe) ? $identity->aboutMe : '';
+
+			// Birthdate - SMF expects YYYY-DD-MM
+			if ( ! empty ($identity->birthday) && preg_match ('/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/', $identity->birthday, $matches))
+			{
+				$data['user_birthdate'] =  str_pad($matches[3], 4, '0', STR_PAD_LEFT);
+				$data['user_birthdate'] .= '-'. str_pad ($matches[2], 2, '0' , STR_PAD_LEFT);
+				$data['user_birthdate'] .= '-'. str_pad ($matches[1], 2, '0' , STR_PAD_LEFT);
+			}
+			else
+			{
+				$data['user_birthdate'] = '0001-01-01';
+			}
+
+			// Fullname.
+			if (!empty ($identity->name->formatted))
+			{
+				$data['user_full_name'] = $identity->name->formatted;
+			}
+			elseif (!empty ($identity->name->displayName))
+			{
+				$data['user_full_name'] = $identity->name->displayName;
+			}
+			else
+			{
+				$data['user_full_name'] = $data['user_constructed_name'];
+			}
+
+			// Preferred Username.
+			if (!empty ($identity->preferredUsername))
+			{
+				$data['user_login'] = $identity->preferredUsername;
+			}
+			elseif (!empty ($identity->displayName))
+			{
+				$data['user_login'] = $identity->displayName;
+			}
+			else
+			{
+				$data['user_login'] = $data['user_full_name'];
+			}
+
+			// Email Address.
+			$data['user_email'] = '';
+			if (property_exists ($identity, 'emails') && is_array ($identity->emails))
+			{
+				$data['user_email_is_verified'] = false;
+				while ($data['user_email_is_verified'] !== true && (list(, $obj) = each ($identity->emails)))
+				{
+					$data['user_email'] = $obj->value;
+					$data['user_email_is_verified'] = !empty ($obj->is_verified);
+				}
+			}
+
+			// Website/Homepage.
+			$data['user_website'] = '';
+			if (!empty ($identity->profileUrl))
+			{
+				$data['user_website'] = $identity->profileUrl;
+			}
+			elseif (!empty ($identity->urls [0]->value))
+			{
+				$data['user_website'] = $identity->urls [0]->value;
+			}
+
+			// Gender
+			$data['user_gender'] = 0;
+			if (!empty ($identity->gender))
+			{
+				switch ($identity->gender)
+				{
+					case 'male':
+						$data['user_gender'] = 1;
+						break;
+
+					case 'female':
+						$data['user_gender'] = 2;
+						break;
+				}
+			}
+
+			return $data;
+		}
+	}
+	return false;
+}
+
+
+/**
+ * Logs a given user in.
+ */
+function oneall_social_login_login_user ($id_member)
+{
+	// Setup global forum vars.
+	global $txt, $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
+
+	// Check identifier.
+	if (is_numeric ($id_member) AND $id_member > 0)
+	{
+		// Read user data.
+		$request = $smcFunc ['db_query'] ('', '
+			SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, openid_uri, passwd_flood
+			FROM {db_prefix}members
+			WHERE id_member = {int:id_member} LIMIT 1',
+				array (
+						'id_member' => intval ($id_member)
+				)
+		);
+		$user_settings = $smcFunc ['db_fetch_assoc'] ($request);
+		$smcFunc ['db_free_result'] ($request);
+
+		// Do we have a valid member here?
+		if (!empty ($user_settings ['id_member']))
+		{
+			// Login.
+			require_once($sourcedir . '/LogInOut.php');
+			DoLogin ();
+
+			//Done
+			return true;
+		}
+	}
+
+	//Error
+	return false;
+}
+
+/**
+ * Creates a new user based on the given data.
+ */
+function oneall_social_login_create_user (Array $data)
+{
+	if (is_array ($data) && ! empty ($data['user_token']) && ! empty ($data['identity_token']))
+	{
+		// Global vars.
+		global $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
+
+		// Registration functions.
+		require_once($sourcedir . '/Subs-Members.php');
+
+		// Build User fields.
+		$regOptions = array ();
+		$regOptions ['password'] = substr (md5 (mt_rand ()), 0, 8);
+		$regOptions ['password_check'] = $regOptions ['password'];
+		$regOptions ['auth_method'] = 'password';
+		$regOptions ['interface'] = 'guest';
+
+		// Email address is provided.
+		if (!empty ($data['user_email']))
+		{
+			$regOptions ['email'] = $data['user_email'];
+			$regOptions ['hide_email'] = ! isset ($data['hide_email']) ? 0 : $data['hide_email'];
+		}
+		// Email address is not provided.
+		else
+		{
+			$regOptions ['email'] = oneall_social_login_create_rand_email_address ();
+			$regOptions ['hide_email'] = 1;
+		}
+
+		// We need a unique email address.
+		while (oneall_social_login_get_id_member_for_email_address ($regOptions ['email']) !== false)
+		{
+			$regOptions ['email'] = oneall_social_login_create_rand_email_address ();
+			$regOptions ['hide_email'] = 1;
+		}
+
+		// Additional user fields.
+		$regOptions ['extra_register_vars'] ['website_url'] = $data['user_website'];
+		$regOptions ['extra_register_vars'] ['gender'] = $data['user_gender'];
+		$regOptions ['extra_register_vars'] ['location'] = $data['user_location'];
+		$regOptions ['extra_register_vars'] ['real_name'] = (! empty ($data['user_full_name']) ? $data['user_full_name'] : $data['user_login']);
+		$regOptions ['extra_register_vars'] ['personal_text'] = $data['user_about_me'];
+
+
+		$regOptions ['extra_register_vars'] ['birthdate'] = $data['user_birthdate'];
+
+		// Social Network Avatar
+		if (!empty ($modSettings ['oasl_settings_use_avatars']) && !empty ($data['user_picture']))
+		{
+			$regOptions ['extra_register_vars'] ['avatar'] = $data['user_picture'];
+		}
+
+		// We don't need activation.
+		$regOptions ['require'] = 'nothing';
+
+		// Do not check the password strength.
+		$regOptions ['check_password_strength'] = false;
+
+		// Compute a unique username.
+		$regOptions ['username'] = $data['user_login'];
+		if (isReservedName ($regOptions ['username']))
+		{
+			$i = 1;
+			do
+			{
+				$tmp = $regOptions ['username'] . ($i++);
+			}
+			while (isReservedName ($tmp));
+			$regOptions ['username'] = $tmp;
+		}
+
+		// Cut if username is too long.
+		$regOptions ['username'] = substr ($regOptions ['username'], 0, 25);
+
+		// Encode.
+		if (!$context['utf8'])
+		{
+			$regOptions ['extra_register_vars'] ['location'] = utf8_decode($regOptions ['extra_register_vars'] ['location']);
+			$regOptions ['extra_register_vars'] ['real_name'] = utf8_decode($regOptions ['extra_register_vars'] ['real_name']);
+			$regOptions ['extra_register_vars'] ['personal_text'] = utf8_decode($regOptions ['extra_register_vars'] ['personal_text']);
+			$regOptions ['username'] = utf8_decode($regOptions ['username']);
+		}
+
+		//Other settings
+		$modSettings ['disableRegisterCheck'] = true;
+		$user_info ['is_guest'] = true;
+
+		// Create a new user account.
+		$id_member = registerMember ($regOptions);
+		if (is_numeric ($id_member))
+		{
+			// Tie the tokens to the newly created member.
+			oneall_social_login_link_tokens_to_id_member ($id_member, $data['user_token'], $data['identity_token']);
+		}
+
+		//Done
+		return $id_member;
+	}
+
+	//Error
+	return false;
+}
+
+
+/**
+ * Links the user/identity tokens to an id_member.
  */
 function oneall_social_login_link_tokens_to_id_member ($id_member, $user_token, $identity_token)
 {
@@ -99,9 +389,6 @@ function oneall_social_login_link_tokens_to_id_member ($id_member, $user_token, 
 }
 
 
-
-
-
 /**
  * UnLinks the identity from an id_member
  */
@@ -121,6 +408,12 @@ function oneall_social_login_unlink_identity_token ($identity_token)
 function oneall_social_login_get_user_token_for_id_member ($id_member)
 {
 	global $smcFunc;
+
+	// Check if not empty.
+	if ( ! is_numeric ($id_member) || $id_member < 1)
+	{
+		return false;
+	}
 
 	//Get the user_token for a given id_member.
 	$request = $smcFunc['db_query']('', 'SELECT user_token FROM {db_prefix}oasl_users WHERE id_member = {int:id_member} LIMIT 1', array('id_member' => $id_member));
@@ -174,6 +467,12 @@ function oneall_social_login_get_id_member_for_user_token ($user_token)
 function oneall_social_login_get_id_member_for_email_address ($email_address)
 {
 	global $smcFunc;
+
+	// Check if not empty.
+	if (strlen (trim ($email_address)) == 0)
+	{
+		return false;
+	}
 
 	// Check if the user account exists.
 	$request = $smcFunc['db_query']('', 'SELECT id_member FROM {db_prefix}members WHERE email_address = {string:email_address} LIMIT 1', array('email_address' => $email_address));
@@ -253,7 +552,9 @@ function oneall_social_login_curl_request ($url, $options = array(), $timeout = 
 
 	// BASIC AUTH?
 	if (isset($options['api_key']) && isset($options['api_secret']))
+	{
 		curl_setopt($curl, CURLOPT_USERPWD, $options['api_key'] . ":" . $options['api_secret']);
+	}
 
 	//Make request
 	if (($http_data = curl_exec($curl)) !== false)
@@ -343,33 +644,68 @@ function oneall_social_login_fsockopen_request ($url, $options = array(), $timeo
 
 	// BASIC AUTH?
 	if (isset($options['api_key']) && isset($options['api_secret']))
+	{
 		$defaults['Authorization'] = 'Authorization: Basic ' . base64_encode($options['api_key'] . ":" . $options['api_secret']);
+	}
 
 	//Build and send request
 	$request = 'GET ' . $path . " HTTP/1.0\r\n";
 	$request .= implode("\r\n", $defaults);
 	$request .= "\r\n\r\n";
-	fwrite($fp, $request);
 
-	//Fetch response
-	$response = '';
-	while (!feof($fp))
-		$response .= fread($fp, 1024);
+	if (fwrite($fp, $request))
+	{
+		//Set timeout and blocking
+		stream_set_blocking ($fp, false);
+		stream_set_timeout ($fp, $timeout);
 
-	// Close connection.
-	fclose($fp);
+		//Check for timeout
+		$fp_info = stream_get_meta_data ($fp);
 
-	// Parse response.
-	list($response_header, $response_body) = explode("\r\n\r\n", $response, 2);
-	$result->http_data = $response_body;
+		//Fetch response
+		$response = '';
+		while (!$fp_info['timed_out'] && !feof($fp))
+		{
+			// Read data.
+			$response .= fread($fp, 1024);
 
-	// Parse header.
-	$response_header = preg_split("/\r\n|\n|\r/", $response_header);
-	list($header_protocol, $header_code, $header_status_message) = explode(' ', trim(array_shift($response_header)), 3);
-	$result->http_code = $header_code;
+			// Get meta data (which has timeout info).
+			$fp_info = stream_get_meta_data ($fp);
+		}
 
-	// Return result.
-	return $result;
+		// Close connection.
+		fclose($fp);
+
+		//Timed out?
+		if ( !$fp_info['timed_out'])
+		{
+			// Parse response.
+			list($response_header, $response_body) = explode("\r\n\r\n", $response, 2);
+			$result->http_data = $response_body;
+
+			// Parse header.
+			$response_header = preg_split("/\r\n|\n|\r/", $response_header);
+			list($header_protocol, $header_code, $header_status_message) = explode(' ', trim(array_shift($response_header)), 3);
+			$result->http_code = $header_code;
+
+			// Return result.
+			return $result;
+		}
+		else
+		{
+			$result->http_code = -1;
+			$result->http_data = null;
+			$result->http_error = 'request_timed_out';
+			return $result;
+		}
+	}
+	else
+	{
+		$result->http_code = -1;
+		$result->http_data = null;
+		$result->http_error = 'request_blocked';
+		return $result;
+	}
 }
 
 ?>

@@ -349,23 +349,35 @@ function template_resend()
 // OneAll Social Login (https://docs.oneall.com/plugins/)
 function template_oneall_social_login()
 {
-	global $modSettings, $boardurl;
+	global $txt, $modSettings, $boardurl;
+	
 	if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
 	{		
-		//Extract providers
+		// Extract the chosen providers.
 		$providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
 		
-		//Random integer
+		// Create Random integer to prevent id collision.
 		$rand = mt_rand (99999, 9999999);
-		
-		echo '
-			<hr />';		
 
+		// Separe from the traditional login.
+		echo '<hr />';		
+				
+		// Display error messages if there are any.		
+		if ( ! empty ($_REQUEST['oasl_err']))
+		{
+			if ($_REQUEST['oasl_err'] == 'user_does_not_exist')
+			{
+				echo '<p class="error">'.$txt['oasl_user_does_not_exist'].'</p>';
+			}
+		}
+		
 		if ( ! empty ($modSettings['oasl_settings_login_caption']))		
+		{
 			echo '
 				<p style="text-align:left;">
 					<strong>', $modSettings['oasl_settings_login_caption'], '</strong>
 				</p>';		
+		}	
 		
 		echo '
 			<p style="text-align:left;">

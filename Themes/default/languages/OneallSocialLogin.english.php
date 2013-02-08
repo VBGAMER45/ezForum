@@ -16,7 +16,6 @@
  *
  */
 
-
 // OneAll Social Login (https://docs.oneall.com/plugins/)
 $txt['oasl_default'] = 'Default';
 $txt['oasl_follow_twitter'] = '<a href="http://www.twitter.com/oneall" target="_blank">Follow us on Twitter</a> to stay informed about updates';
@@ -65,6 +64,20 @@ $txt['oasl_settings_social_avatar_yes'] = 'Yes, use the social network pictures 
 $txt['oasl_settings_social_link'] = 'Try to link new social network accounts to existing user accounts?';
 $txt['oasl_settings_social_link_desc'] = 'For security reasons this only works with social networks that provide a <strong>verified</strong> email address.';
 $txt['oasl_settings_social_link_yes'] = 'Yes, try to link accounts by using the email addresses.';
+$txt['oasl_settings_ask_for_email'] = 'Ask new users to enter their email address manually if it is not provided by the social network?';
+$txt['oasl_settings_ask_for_email_desc'] = 'Some social networks (i.e Twitter) do not provide their user\'s email addresses. In this case the plugin can either ask the user to enter the email address manually, or create a placeholder email.';
+$txt['oasl_settings_ask_for_email_no'] = 'No, do not ask and create a placeholder email address to simplify the registration';
+$txt['oasl_settings_ask_for_email_yes'] = 'Yes, ask the user to enter his email address manually';
+$txt['oasl_register_title'] = 'Review and complete your account information';
+$txt['oasl_register_connected'] = 'You have successfully connected with <strong>{provider}</strong>!';
+$txt['oasl_register_complete_profile'] = 'Please take a minute to review and complete your account information. Once your account has been created, you can use <strong>{provider}</strong> to sign in with one click.';
+$txt['oasl_register_email'] = 'Email Address';
+$txt['oasl_register_email_public'] = 'Allow users to email me';
+$txt['oasl_register_confirm'] = 'Continue';
+$txt['oasl_register_errors'] = 'The following errors were detected. Please correct them to continue';
+$txt['oasl_register_email_empty'] = 'Please enter your email address';
+$txt['oasl_register_email_exists'] = 'The specified email address is already used by another user';
+$txt['oasl_register_email_invalid'] = 'The specified email address is invalid';
 $txt['oasl_save_settings'] = 'Save Settings';
 
 ?>

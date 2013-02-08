@@ -15,9 +15,10 @@
  * under the License.
  *
  */
-
 if (!defined('SMF'))
+{
 	die('You are not allowed to access this file directly');
+}
 
 /**
  * Display the settings in the administraton area
@@ -27,7 +28,7 @@ function template_oneall_social_login_config ()
 	global $txt, $context, $scripturl, $modSettings;
 
 	?>
-	
+		
 		<form method="post" name="creator" id="creator" action="<?php echo $scripturl; ?>?action=oasl" accept-charset="<?php echo $context['character_set']; ?>">
 			<div class="cat_bar" id="oasl_api_connection_handler">
 				<h3 class="catbg">
@@ -250,6 +251,21 @@ function template_oneall_social_login_config ()
 							<label for="oasl_settings_link_accounts"><?php echo $txt['oasl_settings_social_link_yes']; ?></label>
 						</dd>
 					</dl>
+
+					<hr class="hrcolor clear" />
+					<dl>
+						<dt>
+							<strong><?php echo $txt['oasl_settings_ask_for_email']; ?></strong><br />
+							<span class="smalltext"><?php echo $txt['oasl_settings_ask_for_email_desc']; ?></span>
+						</dt>
+						<dd>
+							<select id="oasl_settings_ask_for_email" name="oasl_settings_ask_for_email">
+								<option value="0"<?php echo (empty($modSettings['oasl_settings_ask_for_email']) ? ' selected="selected"' : ''); ?>><?php echo $txt['oasl_settings_ask_for_email_no']; ?></option>
+								<option value="1"<?php echo (!empty($modSettings['oasl_settings_ask_for_email']) ? ' selected="selected"' : ''); ?>><?php echo $txt['oasl_settings_ask_for_email_yes']; ?></option>
+							</select>
+						</dd>
+					</dl>
+
 				</div>
 				<span class="botslice"><span></span></span>
 			</div>
@@ -260,6 +276,11 @@ function template_oneall_social_login_config ()
 				<input type="hidden" id="oasl_sa" name="sa" value="save" />
 			</div>
 		</form>
+		<script type="text/javascript">
+			<!--
+				oasl_config_init ();
+			//-->
+		</script>
  	<?php
 }
 

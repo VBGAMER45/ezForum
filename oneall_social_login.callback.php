@@ -16,13 +16,17 @@
  *
  */
 
+// Allow Guests
 $ssi_guest_access = true;
 // Security Check.
 if (file_exists (dirname (__FILE__) . '/SSI.php') && !defined ('SMF'))
+{
 	require_once(dirname (__FILE__) . '/SSI.php');
+}
 elseif (!defined ('SMF'))
+{
 	die ('<strong>Unable to execute:</strong> Please make sure that you have installed Social Login correctly.');
-
+}
 
 /**
  * Social Link Callback Handler
@@ -66,15 +70,17 @@ function oneall_social_login_link_callback ()
 				$social_data = json_decode ($result->http_data);
 				if (is_object ($social_data))
 				{
-					//Extract data
+					// Extract the social network profile data data.
 					$data = $social_data->response->result->data;
 
 					// Check for plugin status.
 					if (is_object ($data) && property_exists ($data, 'plugin') && $data->plugin->key == 'social_link' && $data->plugin->data->status == 'success')
 					{
+						// Identity.
 						$identity = $data->user->identity;
 						$identity_token = $identity->identity_token;
 
+						// User.
 						$user = $data->user;
 						$user_token = $user->user_token;
 
@@ -175,6 +181,9 @@ function oneall_social_login_login_callback ()
 		// Include the OneAll Toolbox.
 		require_once($sourcedir . '/OneallSocialLogin.sdk.php');
 
+		//Source
+		$oasl_source = ! empty ($_REQUEST ['oasl_source']) ? $_REQUEST ['oasl_source'] : null;
+
 		// API Connection Handler.
 		$oasl_api_handler = (!empty ($modSettings ['oasl_api_handler']) && $modSettings ['oasl_api_handler'] == 'fsockopen') ? 'fsockopen' : 'curl';
 		$oasl_api_port = (!empty ($modSettings ['oasl_api_port']) && $modSettings ['oasl_api_port'] == 80) ? 80 : 443;
@@ -190,236 +199,93 @@ function oneall_social_login_login_callback ()
 		// Get the connection details.
 		$result = oneall_social_login_do_api_request ($oasl_api_handler, $oasl_api_resource_url, array ('api_key' => $oasl_api_key, 'api_secret' => $oasl_api_secret), 15);
 
-		// Check API result.
-		if (is_object ($result) && property_exists ($result, 'http_code') && $result->http_code == 200 && property_exists ($result, 'http_data'))
+		//Extract Data
+		if (is_array (($data = oneall_social_login_extract_social_network_profile ($result))))
 		{
-			// Decode the Social Profile Data.
-			$social_data = json_decode ($result->http_data);
-			if (is_object ($social_data))
+			// Save the social network data in a session.
+			$_SESSION ['oasl_session_open'] = 1;
+			$_SESSION ['oasl_session_time'] = time();
+			$_SESSION ['oasl_social_data'] = serialize($data);
+
+			// Get the user identifier for a given token.
+			$id_member_tmp = oneall_social_login_get_id_member_for_user_token ($data['user_token']);
+
+			// This user already exists.
+			if (is_numeric ($id_member_tmp))
 			{
-				$identity = $social_data->response->result->data->user->identity;
-				$identity_token = $identity->identity_token;
-
-				$user = $social_data->response->result->data->user;
-				$user_token = $user->user_token;
-
-				// Parse Social Profile Data.
-				$user_first_name = !empty ($identity->name->givenName) ? $identity->name->givenName : '';
-				$user_last_name = !empty ($identity->name->familyName) ? $identity->name->familyName : '';
-				$user_location = !empty ($identity->currentLocation) ? $identity->currentLocation : '';
-				$user_constructed_name = trim ($user_first_name . ' ' . $user_last_name);
-				$user_picture = !empty ($identity->pictureUrl) ? $identity->pictureUrl : '';
-				$user_thumbnail = !empty ($identity->thumbnailUrl) ? $identity->thumbnailUrl : '';
-				$user_about_me = !empty ($identity->aboutMe) ? $identity->aboutMe : '';
-
-				// Fullname.
-				if (!empty ($identity->name->formatted))
-					$user_full_name = $identity->name->formatted;
-				elseif (!empty ($identity->name->displayName))
-					$user_full_name = $identity->name->displayName;
-				else
-					$user_full_name = $user_constructed_name;
-
-				// Preferred Username.
-				if (!empty ($identity->preferredUsername))
-					$user_login = $identity->preferredUsername;
-				elseif (!empty ($identity->displayName))
-					$user_login = $identity->displayName;
-				else
-					$user_login = $user_full_name;
-
-				// Email Address.
-				$user_email = '';
-				if (property_exists ($identity, 'emails') && is_array ($identity->emails))
+				$id_member = $id_member_tmp;
+			}
+			// This is a new user.
+			else
+			{
+				// Account linking is enabled.
+				if (!empty ($modSettings ['oasl_settings_link_accounts']))
 				{
-					$user_email_is_verified = false;
-					while ($user_email_is_verified !== true && (list(, $email) = each ($identity->emails)))
+					// Account linking only works if the email address has been verified.
+					if (!empty ($data['user_email']) && $data['user_email_is_verified'] === true)
 					{
-						$user_email = $email->value;
-						$user_email_is_verified = ($email->is_verified == '1');
-					}
-				}
-
-				// Website/Homepage.
-				if (!empty ($identity->profileUrl))
-					$user_website = $identity->profileUrl;
-				elseif (!empty ($identity->urls [0]->value))
-					$user_website = $identity->urls [0]->value;
-				else
-					$user_website = '';
-
-				// Gender
-				$user_gender = 0;
-				if (!empty ($identity->gender))
-				{
-					switch ($identity->gender)
-					{
-						case 'male':
-							$user_gender = 1;
-							break;
-
-						case 'female':
-							$user_gender = 2;
-							break;
-					}
-				}
-
-				// Get the user identifier for a given token.
-				$id_member_tmp = oneall_social_login_get_id_member_for_user_token ($user_token);
-
-				// This user already exists.
-				if (is_numeric ($id_member_tmp))
-					$id_member = $id_member_tmp;
-				// This is a new user.
-				else
-				{
-					// Account linking is enabled.
-					if (!empty ($modSettings ['oasl_settings_link_accounts']))
-					{
-						// Account linking only works if the email address has been verified
-						if (!empty ($user_email) && $user_email_is_verified === true)
+						// Try to read the existing user account
+						if (($id_member_tmp = oneall_social_login_get_id_member_for_email_address ($data['user_email'])) !== false)
 						{
-							// Try to read the existing user account
-							if (($id_member_tmp = oneall_social_login_get_id_member_for_email_address ($user_email)) !== false)
+							// Tie the user_token to the newly created member.
+							if (oneall_social_login_link_tokens_to_id_member ($id_member_tmp, $data['user_token'], $data['identity_token']) === true)
 							{
-								// Tie the user_token to the newly created member.
-								if (oneall_social_login_link_tokens_to_id_member ($id_member_tmp, $user_token, $identity_token) === true)
-								{
-									$id_member = $id_member_tmp;
-								}
+								$id_member = $id_member_tmp;
 							}
 						}
 					}
 				}
-
-				// Login the user.
-				if (!empty ($id_member))
-				{
-					// What is being done?
-					$action = 'login';
-				}
-				//Create a new account.
-				else
-				{
-					// What is being done?
-					$action = 'register';
-
-					// Registration functions.
-					require_once($sourcedir . '/Subs-Members.php');
-
-					// Build User fields.
-					$regOptions = array ();
-					$regOptions ['password'] = substr (md5 (mt_rand ()), 0, 8);
-					$regOptions ['password_check'] = $regOptions ['password'];
-					$regOptions ['auth_method'] = 'password';
-					$regOptions ['interface'] = 'guest';
-
-					// Email address is provided.
-					if (!empty ($user_email))
-					{
-						$regOptions ['email'] = $user_email;
-						$regOptions ['hide_email'] = 0;
-					}
-					// Email address is not provided.
-					else
-					{
-						$regOptions ['email'] = oneall_social_login_create_rand_email_address ();
-						$regOptions ['hide_email'] = 1;
-					}
-
-					// We need a unique email address.
-					while (oneall_social_login_get_id_member_for_email_address ($regOptions ['email']) !== false)
-					{
-						$regOptions ['email'] = oneall_social_login_create_rand_email_address ();
-						$regOptions ['hide_email'] = 1;
-					}
-
-					// Additional user fields.
-					$regOptions ['extra_register_vars'] ['website_url'] = $user_website;
-					$regOptions ['extra_register_vars'] ['gender'] = $user_gender;
-					$regOptions ['extra_register_vars'] ['location'] = $user_location;
-					$regOptions ['extra_register_vars'] ['real_name'] = $user_full_name;
-					$regOptions ['extra_register_vars'] ['personal_text'] = $user_about_me;
-
-					// Social Network Avatar
-					if (!empty ($modSettings ['oasl_settings_use_avatars']) && !empty ($user_picture))
-						$regOptions ['extra_register_vars'] ['avatar'] = $user_picture;
-
-					// We don't need activation.
-					$regOptions ['require'] = 'nothing';
-
-					// Do not check the password strength.
-					$regOptions ['check_password_strength'] = false;
-
-					// Compute a unique username.
-					$regOptions ['username'] = $user_login;
-					if (isReservedName ($regOptions ['username']))
-					{
-						$i = 1;
-						do
-						{
-							$user_login_tmp = $regOptions ['username'] . ($i++);
-						}
-						while (isReservedName ($user_login_tmp));
-						$regOptions ['username'] = $user_login_tmp;
-					}
-
-					// Cut if username is too long.
-					$regOptions ['username'] = substr ($regOptions ['username'], 0, 25);
-
-					// Encode.
-					if (!$context['utf8'])
-					{
-						$regOptions ['extra_register_vars'] ['location'] = utf8_decode($regOptions ['extra_register_vars'] ['location']);
-						$regOptions ['extra_register_vars'] ['real_name'] = utf8_decode($regOptions ['extra_register_vars'] ['real_name']);
-						$regOptions ['extra_register_vars'] ['personal_text'] = utf8_decode($regOptions ['extra_register_vars'] ['personal_text']);
-						$regOptions ['username'] = utf8_decode($regOptions ['username']);
-					}
-
-					//Other settings
-					$modSettings ['disableRegisterCheck'] = true;
-					$user_info ['is_guest'] = true;
-
-					// Create a new user account.
-					$id_member = registerMember ($regOptions);
-					if (is_numeric ($id_member))
-					{
-						// Tie the tokens to the newly created member.
-						oneall_social_login_link_tokens_to_id_member ($id_member, $user_token, $identity_token);
-					}
-				}
-
-
-				// Login.
-				if (!empty ($id_member))
-				{
-					// Read user data.
-					$request = $smcFunc ['db_query'] ('', '
-						SELECT passwd, id_member, id_group, lngfile, is_activated, email_address, additional_groups, member_name, password_salt, openid_uri, passwd_flood
-						FROM {db_prefix}members
-						WHERE id_member = {int:id_member} LIMIT 1',
-						array (
-							'id_member' => $id_member,
-						)
-					);
-					$user_settings = $smcFunc ['db_fetch_assoc'] ($request);
-					$smcFunc ['db_free_result'] ($request);
-
-					if (!empty ($user_settings ['id_member']))
-					{
-						// Login.
-						require_once($sourcedir . '/LogInOut.php');
-						DoLogin ();
-
-						//Redirect
-						if ($action == 'login')
-							redirectexit ();
-						else
-							redirectexit ('action=profile');
-					}
-				}
 			}
 
+			// The account already exists.
+			if (!empty ($id_member))
+			{
+				// What is being done?
+				$action = 'login';
+			}
+			// Create a user new account.
+			else
+			{
+				// Prevent registration through login form.
+				if ($oasl_source == 'login')
+				{
+					redirectexit ('action=login;oasl_err=user_does_not_exist');
+				}
+
+				// What is being done?
+				$action = 'register';
+
+				// Either the social network provides no email address at all, or it's a duplicate and we don't have account linking enabled.
+				if (empty ($data['user_email']) || oneall_social_login_get_id_member_for_email_address ($data ['user_email']) !== false)
+				{
+					// Create a bogus email address.
+					if (empty ($modSettings ['oasl_settings_ask_for_email']))
+					{
+						$data ['user_email'] = oneall_social_login_create_rand_email_address ();
+					}
+					// Ask the user to enter his real email address.
+					else
+					{
+						redirectexit ('action=oasl_registration');
+					}
+				}
+
+				// Create a new account.
+				$id_member = oneall_social_login_create_user ($data);
+			}
+
+			// Login.
+			if (!empty ($id_member) AND oneall_social_login_login_user ($id_member))
+			{
+				if ($action == 'login')
+				{
+					redirectexit ();
+				}
+				else
+				{
+					redirectexit ('action=profile');
+				}
+			}
 		}
 	}
 
@@ -427,8 +293,12 @@ function oneall_social_login_login_callback ()
 	redirectexit ();
 }
 
-// Launch callback handler.
-if (defined ('SMF') && !empty ($_POST ['oa_action']) && !empty ($_POST ['connection_token']))
+
+
+/**
+ * Launch callback handler.
+ */
+if (!empty ($_POST ['oa_action']) && !empty ($_POST ['connection_token']))
 {
 	if ($_POST ['oa_action'] == 'social_login')
 	{
@@ -444,5 +314,4 @@ if (defined ('SMF') && !empty ($_POST ['oa_action']) && !empty ($_POST ['connect
 
 // The url has likely been called directly
 redirectexit ();
-
 ?>
