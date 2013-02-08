@@ -385,10 +385,10 @@ function template_oneall_social_login()
 				<script type="text/javascript">
 					oneall.api.plugins.social_login.build("oneall_social_login_providers_', $rand, '", {
 						"providers": [\'', implode ("', '", $providers), '\'], 
-						"callback_uri": \'', $boardurl, '/oneall_social_login.callback.php?oasl_source=login\',
+						"callback_uri": \'', $boardurl, '/index.php?action=oasl_callback;oasl_source=login\',
 					});
 				</script>
-				<!-- OneAll.com / Social Login -->				
+				<!-- OneAll.com / Social Login for SMF -->				
 			</p>';
 	}
 }

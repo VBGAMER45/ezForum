@@ -1398,12 +1398,12 @@ function template_edit_options()
 								oneall.api.plugins.social_link.build("oneall_social_login_providers_'.$rand.'", {
 									"providers": [\''.implode ("', '", $oasl_enabled_providers).'\'], 
 									"user_token": \''.$oasl_user_token.'\',
-									"callback_uri": \''.$boardurl.'/oneall_social_login.callback.php?oasl_source=profile;oasl_uid='.$context['user']['id'].'\'
+									"callback_uri": \''.$boardurl.'/index.php?action=oasl_callback;oasl_source=profile;oasl_uid='.$context['user']['id'].'\'
 								});
 							</script>
-							<!-- OneAll.com / Social Login -->
+							<!-- OneAll.com / Social Login for SMF -->
 					</dd>
-				</dl>';		
+				</dl>';			
 		}
 	 }
      

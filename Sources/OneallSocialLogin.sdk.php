@@ -22,7 +22,7 @@ if (!defined('SMF'))
 }
 
 //OneAll Social Login Version
-define('OASL_VERSION', '2.1');
+define('OASL_VERSION', '2.2');
 
 
 /**
@@ -396,7 +396,13 @@ function oneall_social_login_unlink_identity_token ($identity_token)
 {
 	global $smcFunc;
 
-	// Drop the user_identities entry.
+	// Make sure it is not empty.
+	if (strlen (trim ($identity_token)) == 0)
+	{
+		return false;
+	}
+
+	// Drop the identity entry.
 	$smcFunc['db_query']('', 'DELETE FROM {db_prefix}oasl_identities WHERE identity_token = {string:identity_token}', array('identity_token' => $identity_token));
 	return ($smcFunc['db_affected_rows'] () > 0) ;
 }
@@ -409,7 +415,7 @@ function oneall_social_login_get_user_token_for_id_member ($id_member)
 {
 	global $smcFunc;
 
-	// Check if not empty.
+	// Make sure it is not empty.
 	if ( ! is_numeric ($id_member) || $id_member < 1)
 	{
 		return false;
@@ -432,12 +438,18 @@ function oneall_social_login_get_id_member_for_user_token ($user_token)
 {
 	global $smcFunc;
 
+	// Make sure it is not empty.
+	if (strlen (trim ($user_token)) == 0)
+	{
+		return false;
+	}
+
 	//Get the user identifier for a given token
 	$request = $smcFunc['db_query']('', 'SELECT id_oasl_user, id_member FROM {db_prefix}oasl_users WHERE user_token = {string:user_token} LIMIT 1', array('user_token' => $user_token));
 	$row_oasl_user = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
 
-	// We have found an entry
+	// We have found an entry.
 	if (!empty($row_oasl_user['id_oasl_user']))
 	{
 		// Check if the user account exists.
@@ -447,7 +459,9 @@ function oneall_social_login_get_id_member_for_user_token ($user_token)
 
 		// The user account exists, return it's identifier.
 		if (!empty($row_member['id_member']))
+		{
 			return $row_member['id_member'];
+		}
 
 		//Delete the wrongly linked user_token.
 		$smcFunc['db_query']('', 'DELETE FROM {db_prefix}oasl_users WHERE id_oasl_user = {int:id_oasl_user}', array('id_oasl_user' => $row_oasl_user['id_oasl_user']));
@@ -468,7 +482,7 @@ function oneall_social_login_get_id_member_for_email_address ($email_address)
 {
 	global $smcFunc;
 
-	// Check if not empty.
+	// Make sure it is not empty.
 	if (strlen (trim ($email_address)) == 0)
 	{
 		return false;

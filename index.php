@@ -309,6 +309,7 @@ function smf_main()
 		'openidreturn' => array('Subs-OpenID.php', 'smf_openID_return'),
         'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
        	'oasl_registration' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_registration'),
+        'oasl_callback' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_callback'),
 		'pm' => array('PersonalMessage.php', 'MessageMain'),
 		'post' => array('Post.php', 'Post'),
 		'post2' => array('Post.php', 'Post2'),
