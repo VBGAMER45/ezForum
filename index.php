@@ -283,6 +283,7 @@ function smf_main()
 		'editpoll2' => array('Poll.php', 'EditPoll2'),
 		'emailuser' => array('SendTopic.php', 'EmailUser'),
 		'findmember' => array('Subs-Auth.php', 'JSMembers'),
+		'geoIP' => array('geoIP.php', 'geoIP'),
 		'groups' => array('Groups.php', 'Groups'),
 		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),

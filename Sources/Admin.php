@@ -212,6 +212,18 @@ function AdminMain()
 					'custom_url' => $scripturl . '?action=admin;area=pretty',
 				),
 				
+				'geoIP' => array(
+						'label' => $txt['geoIP'],
+						'file' => 'geoIPAdmin.php',
+						'function' => 'geoIPEntry',
+						'icon' => 'geoip.gif',
+						'permission' => array('admin_forum'),
+						'subsections' => array(
+							'main' => array($txt['geoIPMain']),
+							'settings' => array($txt['geoIPSettings']),
+							'map' => array($txt['geoIPMap']),
+						)
+				),
 				'modsettings' => array(
 					'label' => $txt['admin_modifications'],
 					'file' => 'ManageSettings.php',
@@ -241,6 +253,7 @@ function AdminMain()
 				)	
 			)
 		),
+		
         
 		'layout' => array(
 			'title' => $txt['layout_controls'],

@@ -334,6 +334,14 @@ function ModifyProfile($post_errors = array())
 		),
 	);
 
+
+	// Lets be sure to have geoIP information available when in the profile area.
+	$ip = (isset($_GET['searchip'])) ? $_GET['searchip'] : $context['member']['ip'];
+	include_once($sourcedir . '/geoIP.php');
+	if (isset($modSettings['geoIP_db']))
+		$context['geoIP'] =	($modSettings['geoIP_db'] == 1) ? geo_search($ip) : geo_search_lite($ip, true);
+
+
 	// Let them modify profile areas easily.
 	call_integration_hook('integrate_profile_areas', array(&$profile_areas));
 
@@ -474,7 +482,7 @@ function ModifyProfile($post_errors = array())
 
 	// All the subactions that require a user password in order to validate.
 	$check_password = $context['user']['is_owner'] && in_array($profile_include_data['current_area'], $context['password_areas']);
-    
+
     // OneAll Social Login (https://docs.oneall.com/plugins/)
     /**
      * Copyright 2012 OneAll, LLC.
@@ -494,12 +502,12 @@ function ModifyProfile($post_errors = array())
      */
     // OneAll Social Login : The user has no password to login, so disable it.
 	$request = $smcFunc['db_query']('', 'SELECT user_token FROM {db_prefix}oasl_users WHERE id_member = {int:id_member} LIMIT 1', array ('id_member' => $memID));
-	$userRow = $smcFunc['db_fetch_assoc']($request);		
-	$smcFunc['db_free_result']($request);		
-	if (!empty($userRow['user_token']))	
-		$check_password =  false;	
+	$userRow = $smcFunc['db_fetch_assoc']($request);
+	$smcFunc['db_free_result']($request);
+	if (!empty($userRow['user_token']))
+		$check_password =  false;
 	$context['require_password'] = $check_password && empty($user_settings['openid_uri']);
-    // End OneAll Social Login 
+    // End OneAll Social Login
 
 	// If we're in wireless then we have a cut down template...
 	if (WIRELESS && $context['sub_template'] == 'summary' && WIRELESS_PROTOCOL != 'wap')

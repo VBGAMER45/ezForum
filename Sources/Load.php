@@ -973,7 +973,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login,
-			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype, 
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype,
 			mem.karma_good, mem.id_post_group, mem.karma_bad, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mem.buddy_list, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank_string}) AS member_group,
 			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.is_activated, mem.warning,
@@ -992,7 +992,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.openid_uri, mem.birthdate, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login, mem.karma_good,
-			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype, 
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype,
 			mem.karma_bad, mem.member_ip, mem.member_ip2, mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list,
 			mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from, mem.time_offset' . (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '') . ',
 			mem.time_format, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
@@ -1206,13 +1206,13 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'href' => 'skype:'.$profile['skype'].'?userinfo',
 			'link' => '<a href="skype:'.$profile['skype'].'?userinfo" target="_blank" title="' . $txt['smi_skype_title'] . ' - ' . $profile['skype'] . '"><img src="' . $settings['images_url'] . '/skype.gif" alt="Skype" border="0" /></a>',
 			'link_text' => '<a href="skype:'.$profile['skype'].'?userinfo" target="_blank" title="' . $txt['smi_skype_title'] . ' - ' . $profile['skype'] . '">' . $profile['skype'] . '</a>'
-		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),	
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'facebook' => $profile['facebook'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['facebook'],
 			'href' => 'http://www.facebook.com/'.$profile['facebook'],
 			'link' => '<a href="http://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '"><img src="' . $settings['images_url'] . '/facebook.png" alt="Facebook" border="0" /></a>',
 			'link_text' => '<a href="http://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '">' . $profile['facebook'] . '</a>'
-		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),		
+		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'myspace' => $profile['myspace'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['myspace'],
 			'href' => 'http://www.myspace.com/'.$profile['myspace'],
@@ -1632,14 +1632,14 @@ function loadTheme($id_theme = 0, $initialize = true)
 	// Some basic information...
 	if (!isset($context['html_headers']))
 		$context['html_headers'] = '';
-        
+
     // OneAll Social Login (https://docs.oneall.com/plugins/)
 	if ( ! empty ($modSettings['oasl_api_subdomain']))
 	{
 		$context['html_headers'] .= "\n<!-- OneAll.com / Social Login //-->\n";
 		$context['html_headers'] .= '<script type="text/javascript" src="//' . htmlspecialchars ($modSettings['oasl_api_subdomain']) . '.api.oneall.com/socialize/library.js"></script>';
 	}
-        
+
 
 	$context['menu_separator'] = !empty($settings['use_image_buttons']) ? ' ' : ' | ';
 	$context['session_var'] = $_SESSION['session_var'];
@@ -1804,6 +1804,9 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	// This allows us to change the way things look for the admin.
 	$context['admin_features'] = isset($modSettings['admin_features']) ? explode(',', $modSettings['admin_features']) : array('cd,cp,k,w,rg,ml,pm');
+
+	// Some people can't see the online map button, enabled, full database and perms are needed
+	$context['can_see_onlinemap'] = !empty($modSettings['geoIP_enablemap']) && allowedTo('geoIP_view') && (isset($modSettings['geoIP_db']) && $modSettings['geoIP_db'] == 1);
 
 	// If we think we have mail to send, let's offer up some possibilities... robots get pain (Now with scheduled task support!)
 	if ((!empty($modSettings['mail_next_send']) && $modSettings['mail_next_send'] < time() && empty($modSettings['mail_queue_use_cron'])) || empty($modSettings['next_task_time']) || $modSettings['next_task_time'] < time())

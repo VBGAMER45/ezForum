@@ -1496,6 +1496,8 @@ function loadAllPermissions($loadType = 'classic')
 			'profile_server_avatar' => array(false, 'profile', 'use_avatar'),
 			'profile_upload_avatar' => array(false, 'profile', 'use_avatar'),
 			'profile_remote_avatar' => array(false, 'profile', 'use_avatar'),
+			'geoIP_view' => array(false, 'general', 'view_basic_info'),
+			'geoIP_viewdetail' => array(false, 'general', 'view_basic_info')
 		),
 		'board' => array(
 			'moderate_board' => array(false, 'general_board', 'moderate'),
