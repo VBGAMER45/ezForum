@@ -498,7 +498,13 @@ function AdminMain()
 					'select' => 'maintain',
 					'hidden' => true,
 				),
-			),
+                'toolbox' => array(
+            		'label' => $txt['toolbox_title'],
+            		'file' => 'AdminToolbox.php',
+            		'icon' => 'toolbox.gif',
+            		'function' => 'AdminToolbox',
+                ),
+            ),
 		),
 	);
 

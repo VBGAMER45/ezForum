@@ -650,4 +650,7 @@ $txt['theme_quick_change'] = 'Theme quick change';
 $txt['theme_quick_change_select'] = 'Select theme';
 
 
+$txt['toolbox_title']  = 'Admin Toolbox';
+
+
 ?>
