@@ -856,7 +856,7 @@ $txt['ls_send_mail_failed_login'] = 'Send email on failed login attempt';
 
 $txt['ls_current_ip_address'] = 'Current IP Address: ';
 $txt['ls_ip_address_protection'] = 'IP Address Account Protection';
-$txt['ls_ip_address_protection_note'] = 'You can allow multiple ips by seperating them with a comma';
+$txt['ls_ip_address_protection_note'] = 'You can allow multiple ips by separating them with a comma';
 
 // END  Login Security Text Strings
 
@@ -917,8 +917,7 @@ $txt['admin_related_topics_methods'] = 'Methods';
 $txt['related_topics_admin_title'] = 'Related Topics';
 $txt['related_topics_admin_desc'] = '';
 
-$txt['related_latest_news'] = 'Latest News';
-$txt['related_news_unable_to_connect'] = 'Unable to connect to <a href="http://www.smfarcade.info">SMFArcade.info</a> for latest news...';
+
 $txt['related_version_info'] = 'Version Information';
 $txt['related_installed_version'] = 'Installed Version';
 $txt['related_latest_version'] = 'Latest Version';
