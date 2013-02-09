@@ -1058,4 +1058,7 @@ $txt['custom_action_url'] = 'Action URL';
 $txt['custom_action_settings_code'] = 'Action Code:';
 $txt['custom_action_menu'] = 'Show Menu Button';
 
+
+$txt['tags_menu_btn'] = 'Tags';
+
 ?>

@@ -572,6 +572,17 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
 			'topics' => $topics,
 		)
 	);
+    
+    //  Tagging System
+	$smcFunc['db_query']('', '
+		DELETE FROM {db_prefix}tags_topic
+		WHERE id_topic IN ({array_int:topics})',
+		array(
+			'topics' => $topics,
+		)
+	);
+
+    
 
 	// Update the totals...
 	updateStats('message');

@@ -653,4 +653,10 @@ $txt['theme_quick_change_select'] = 'Select theme';
 $txt['toolbox_title']  = 'Admin Toolbox';
 
 
+// Tagging System
+$txt['tags_admin_title'] = 'Tagging System';
+$txt['tags_admin_title_main'] = 'General Configuration';
+$txt['tags_admin_list_cloud_title'] = 'List and cloud Tags';
+
+
 ?>

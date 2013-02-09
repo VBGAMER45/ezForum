@@ -4139,6 +4139,13 @@ function setupMenuContext()
 				),
 				'icon' => $settings['images_url'] . '/menu_icons/group.png',
 			),
+            'tags' => array(
+					'title' => $txt['tags_menu_btn'],
+					'href' => $scripturl . '?action=tags',
+					'show' => true,
+					'sub_buttons' => array(
+					)
+			),
 			'login' => array(
 				'title' => $txt['login'],
 				'href' => $scripturl . '?action=login',

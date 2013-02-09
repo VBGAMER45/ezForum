@@ -845,6 +845,10 @@ function Post()
 			$context['name'] = htmlspecialchars($row['poster_name']);
 			$context['email'] = htmlspecialchars($row['poster_email']);
 		}
+        
+        // Tagging System:
+		if (!empty($modSettings['tag_enabled']))
+			$context['editTags'] = editTags($topic);
 
 		// Set the destinaton.
 		$context['destination'] = 'post2;start=' . $_REQUEST['start'] . ';msg=' . $_REQUEST['msg'] . ';' . $context['session_var'] . '=' . $context['session_id'] . (isset($_REQUEST['poll']) ? ';poll' : '');
@@ -1606,6 +1610,21 @@ function Post2()
 			$_SESSION['guest_email'] = $_POST['email'];
 		}
 	}
+    
+    // TaggingSystem Errors Checks
+	if (!empty($modSettings['tag_enabled']) && (empty($topic) || isset($_REQUEST['msg'])))
+	{
+		$context['tagserror'] = false;
+		$errorsTags = errorsTags();
+		if (!empty($errorsTags))
+		{
+			foreach ($errorsTags as $er)
+				$post_errors[] = $er;
+
+			$context['tagserror'] = true;
+		}
+	}
+    
 
 	// Check the subject and message.
 	if (!isset($_POST['subject']) || $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) === '')
@@ -2062,6 +2081,14 @@ function Post2()
 			unset($msgOptions['approved']);
 
 		modifyPost($msgOptions, $topicOptions, $posterOptions);
+        
+        //Tagging System:
+		if (!empty($modSettings['tag_enabled']))
+		{
+			deleteTagsTopics($topic);
+			postTags();
+		}
+        
 	}
 	// This is a new topic or an already existing one. Save it.
 	else
@@ -2070,6 +2097,11 @@ function Post2()
 
 		if (isset($topicOptions['id']))
 			$topic = $topicOptions['id'];
+            
+            
+        // Tagging System
+		if (!empty($modSettings['tag_enabled']) && !empty($newTopic))
+			postTags();
 	}
 
 	// Editing or posting an event?

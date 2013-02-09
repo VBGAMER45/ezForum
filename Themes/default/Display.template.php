@@ -662,6 +662,27 @@ function template_main()
 				</div>
 				<hr class="post_separator" />';
 	}
+    
+        //Tagging System
+		if (($message['id'] == $context['first_message']) && !empty($context['tagsinfo']))
+		{
+			echo '
+				<div class="cat_bar">
+					<h3 class="catbg">'.$txt['tags_topic'].'</h3>
+				</div>
+				<div class="windowbg2" style="overflow: auto;">
+					<div class="content_tags">';
+					foreach ($context['tagsinfo'] as $tag)
+						echo '
+						<div class="content_tags">
+							<span><a href="'.$scripturl .'?action=tags;sa=search;id_tag='.$tag['id_tag'].'">'.$tag['tag'].'</a></span>
+						</div>';
+					echo '
+					</div>
+				</div>';
+		}
+		//Tagging System END
+    
 
 	echo '
 				</form>
@@ -701,6 +722,45 @@ function template_main()
 	// Show the jumpto box, or actually...let Javascript do it.
 	echo '
 			<div class="plainbox" id="display_jump_to">&nbsp;</div>';
+            
+//Tagging System
+	if (!empty($context['tagsrelated']) && !empty($modSettings['tag_enabled_related_topics']) && !empty($modSettings['tag_enabled']))
+	{
+		echo '
+			<div class="cat_bar">
+				<h3 class="catbg">'.$txt['tags_related_title'].'</h3>
+			</div>
+			<div class="tborder topic_table" id="messageindex">
+				<table class="table_grid" cellspacing="0">
+					<thead>
+						<tr class="catbg">
+							<th scope="col" class="smalltext first_th">'.$txt['subject'].'</th>
+							<th scope="col" class="smalltext last_th" width="14%">'.$txt['replies'].'</th>
+						</tr>
+					</thead>
+					<tbody>';
+		foreach ($context['tagsrelated'] as $rtags)
+		{
+			echo '		<tr class="windowbg">
+							<td class="subject">
+								<div>
+									<a href="'.$rtags['topic_href'].'">'.$rtags['subject'].'</a>
+								</div>
+								<a href="'.$rtags['board_href'].'">'.$rtags['board_name'].'</a> <span style="font-size:0.8em;">'.$txt['started_by'].' <a href="'.$rtags['member_href'].'">'.$rtags['real_name'].'</a></span>
+							</td>
+							<td class="stats">
+								'.$rtags['num_replies'].' '.$txt['replies'].'
+								<br />
+								'.$rtags['num_views'].' '.$txt['views'].'
+							</td>
+						</tr>';
+		}
+		echo '		</tbody>
+				</table>
+			</div>';
+	}
+	//Tagging System END      
+            
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 	{
@@ -868,6 +928,8 @@ function template_main()
 			</div><br />';
 	}
 
+        
+        
         
 
 	if ($context['show_spellchecking'])

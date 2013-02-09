@@ -1839,6 +1839,33 @@ function loadTheme($id_theme = 0, $initialize = true)
 		}
 	}
 
+	global $context, $settings, $modSettings, $scripturl;
+
+	$context['html_headers'] .='<link rel="stylesheet" type="text/css" href="'. $settings['default_theme_url']. '/css/tags.css" />';
+	$_REQUEST['action'] = !empty($_REQUEST['action']) ? $_REQUEST['action'] : '';
+	if (($_REQUEST['action'] == 'post' || $_REQUEST['action'] == 'post2') && (!empty($_REQUEST['board']) || !empty($_REQUEST['msg'])))
+	{
+		$tag_max_per_topic = !empty($modSettings['tag_max_per_topic']) ? $modSettings['tag_max_per_topic'] - 1 : 5;
+		$max = !empty($modSettings['tag_max_length']) ? $modSettings['tag_max_length'] : 15;
+		$min = !empty($modSettings['tag_min_length']) ? $modSettings['tag_min_length'] : 2;
+
+		$context['html_headers'] .= '
+		<script type="text/javascript">window.jQuery || document.write(unescape(\'%3Cscript src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"%3E%3C/script%3E\'))</script>
+		<script type="text/javascript" src="'. $settings['default_theme_url']. '/scripts/tags.js"></script>
+		<script type="text/javascript"><!-- // --><![CDATA[
+			var tg = jQuery.noConflict();
+			tg(document).ready(function(){
+				tg(\'#consulta\').sugerir({
+					\'limite\' : '.$tag_max_per_topic.',
+					\'max\' : '.$max.',
+					\'min\' : '.$min.',
+					\'ajaxSuggestUrl\' : "'.$scripturl.'?action=tags;sa=suggest",
+				});
+				tg(\'#consulta\').teclear();
+            });
+        // ]]></script>';
+	}
+
 	// Any files to include at this point?
 	if (!empty($modSettings['integrate_theme_include']))
 	{

@@ -407,6 +407,27 @@ function template_main()
 
 	echo '
 					', template_control_richedit($context['post_box_name'], 'smileyBox_message', 'bbcBox_message');
+                    
+    //Tagging System
+                if (empty($context['editTags']))
+                    $context['editTags'] = implode(' ', $_REQUEST['tags_news']);
+                else
+                    $context['editTags'] = $context['editTags'] .  implode(' ', $_REQUEST['tags_news']);
+				$exclude = !empty($modSettings['tag_board_disabled']) ? $modSettings['tag_board_disabled'] : '';
+				$exclude_boards = explode(',',$exclude);
+				if (($context['is_new_topic'] || (!empty($_REQUEST['msg']) && !empty($context['is_first_post']))) && $modSettings['tag_enabled'] && (!in_array($context['current_board'],$exclude_boards)))
+					echo '
+					<span style="font-weight: bold;" ',(isset($context['tagserror']))? ' class="error"' : '',' id="caption_tags">', $txt['tags_menu_btn'], ':</span>
+					<div id="searcher_tags">
+						<div class="tag_selection"></div>
+						<div class="tag_selectable">
+							<label>
+								<input id="consulta" type="text" value="', !empty($context['editTags']) ? $context['editTags'] : '','" />
+								<span class="tag_suggest"></span>
+							</label>
+						</div>
+					</div>';
+	//Tagging System END!     
 
 	// If this message has been edited in the past - display when it was.
 	if (isset($context['last_modified']))

@@ -1122,6 +1122,13 @@ function Display()
 		$context['wireless_more'] = $context['can_sticky'] || $context['can_lock'] || allowedTo('modify_any');
 		$context['wireless_moderate'] = isset($_GET['moderate']) ? ';moderate' : '';
 	}
+    
+    // Tagging System
+	$exclude = !empty($modSettings['tag_board_disabled']) ? $modSettings['tag_board_disabled'] : '';
+	$exclude_boards = explode(',',$exclude);
+	if ($modSettings['tag_enabled'] && (!in_array($context['current_board'],$exclude_boards)))
+		taggingRelated();
+
 
 	// Load up the "double post" sequencing magic.
 	if (!empty($options['display_quick_reply']))

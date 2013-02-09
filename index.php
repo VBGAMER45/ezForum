@@ -338,6 +338,7 @@ function smf_main()
 		'splittopics' => array('SplitTopics.php', 'SplitTopics'),
 		'stats' => array('Stats.php', 'DisplayStats'),
 		'sticky' => array('LockTopic.php', 'Sticky'),
+        'tags' => array('TaggingSystem.php', 'TaggingSystemMain'),
 		'theme' => array('Themes.php', 'ThemesMain'),
 		'trackip' => array('Profile-View.php', 'trackIP'),
 		'unread' => array('Recent.php', 'UnreadTopics'),

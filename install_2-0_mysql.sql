@@ -2065,7 +2065,37 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('anti_spam_links_guests', '0'),
 	('ca_enabled', '1'),
 	('ca_cache', ''),
-	('ca_menu_cache', 'a:0:{}')
+	('ca_menu_cache', 'a:0:{}'),
+	('tag_enabled', '1'),
+	('tag_required', '1'),
+	('tag_board_disabled', ''),
+	('tag_max_per_topic', '8'),
+	('tag_min_length', '3'),
+	('tag_max_length', '15'),
+	('tag_max_suggested', '4'),
+	('tag_enabled_related_topics', '1'),
+	('tag_max_related_topics', '5'),
+	('tag_cloud_enabled', '1'),
+	('tag_cloud_limit', '30'),
+	('tag_cloud_smallest_color', ''),
+	('tag_cloud_smallest_opacity', ''),
+	('tag_cloud_smallest_fontsize', ''),
+	('tag_cloud_small_color', ''),
+	('tag_cloud_small_opacity', ''),
+	('tag_cloud_small_fontsize', ''),
+	('tag_cloud_medium_color', ''),
+	('tag_cloud_medium_opacity', ''),
+	('tag_cloud_medium_fontsize', ''),
+	('tag_cloud_large_color', ''),
+	('tag_cloud_large_opacity', ''),
+	('tag_cloud_large_fontsize', ''),
+	('tag_cloud_largest_color', ''),
+	('tag_cloud_largest_opacity', ''),
+	('tag_cloud_largest_fontsize', ''),
+	('tag_list_enabled', '1'),
+	('tag_list_show_count', '1'),
+	('tag_search_paginate_limit', '15')
+	
 	;
 
 # --------------------------------------------------------
@@ -2184,6 +2214,27 @@ CREATE TABLE {$db_prefix}subscriptions(
   email_complete text NOT NULL,
   PRIMARY KEY (id_subscribe),
   KEY active (active)
+) ENGINE=MyISAM;
+
+#
+# Table structure for table `tags`
+#
+
+CREATE TABLE {$db_prefix}tags (
+  id_tag mediumint(8) NOT NULL auto_increment,
+  tag tinytext NOT NULL,
+  PRIMARY KEY  (id_tag)
+) ENGINE=MyISAM;
+
+#
+# Table structure for table `tags_topic`
+#
+
+CREATE TABLE {$db_prefix}tags_topic (
+  id mediumint(8) NOT NULL auto_increment,
+  id_tag mediumint(8) NOT NULL default '0',
+  id_topic mediumint(8) NOT NULL default '0',
+  PRIMARY KEY  (id)
 ) ENGINE=MyISAM;
 
 #
