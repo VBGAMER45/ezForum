@@ -678,24 +678,26 @@ function template_trackActivity()
 	global $context, $settings, $options, $scripturl, $txt;
     
     // Supds
-    if (count($context['geoIP']))
-		// This shows the geoIP information for this IP.
-		echo '
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['geoIP_info'], ': ', $context['ip'], '</h3>
-		</div>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
-			<div class="padding">',
-				$context['geoIP'][0]['city'], (!empty($context['geoIP'][0]['city']) ? '<br />' : ''), 
-				$context['geoIP'][0]['region'], (!empty($context['geoIP'][0]['region']) ? '<br />' : ''),
-				$context['geoIP'][0]['country'], (!empty($context['geoIP'][0]['country']) ? '<br />' : ''), 
-				'<img src="' , $settings['default_images_url'] , '/flags/' , $context['geoIP'][0]['cc'] . '.png"  height="16" width="11" border="0" alt="[ * ]" title="' . $context['geoIP'][0]['country'] . '"/>&nbsp;', $context['geoIP'][0]['cc'], '
-			</div>
-			<span class="botslice"><span></span></span>
-		</div>
-		<br />';
-    
+    if (isset($modSettings['geoIP_db']))
+    {
+        if (count($context['geoIP']))
+    		// This shows the geoIP information for this IP.
+    		echo '
+    		<div class="cat_bar">
+    			<h3 class="catbg">', $txt['geoIP_info'], ': ', $context['ip'], '</h3>
+    		</div>
+    		<div class="windowbg2">
+    			<span class="topslice"><span></span></span>
+    			<div class="padding">',
+    				$context['geoIP'][0]['city'], (!empty($context['geoIP'][0]['city']) ? '<br />' : ''), 
+    				$context['geoIP'][0]['region'], (!empty($context['geoIP'][0]['region']) ? '<br />' : ''),
+    				$context['geoIP'][0]['country'], (!empty($context['geoIP'][0]['country']) ? '<br />' : ''), 
+    				'<img src="' , $settings['default_images_url'] , '/flags/' , $context['geoIP'][0]['cc'] . '.png"  height="16" width="11" border="0" alt="[ * ]" title="' . $context['geoIP'][0]['country'] . '"/>&nbsp;', $context['geoIP'][0]['cc'], '
+    			</div>
+    			<span class="botslice"><span></span></span>
+    		</div>
+    		<br />';
+     }   
 
 	// The first table shows IP information about the user.
 	echo '
