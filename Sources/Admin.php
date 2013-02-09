@@ -184,6 +184,7 @@ function AdminMain()
 						'settings' => array($txt['admin_related_topics_settings']),
 						'methods' => array($txt['admin_related_topics_methods']),
 					),
+                    'icon' => 'server.gif'
 				),
 				'current_theme' => array(
 					'label' => $txt['theme_current_settings'],
@@ -210,6 +211,7 @@ function AdminMain()
 					'file' => 'PrettyUrls.php',
 					'function' => 'PrettyInterface',
 					'custom_url' => $scripturl . '?action=admin;area=pretty',
+                    'icon' => 'server.gif'
 				),
 				
 				'geoIP' => array(
@@ -232,7 +234,6 @@ function AdminMain()
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
 						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
-                        'related' => array($txt['admin_related_topic']),
 						// 'shout' => array($txt['shout']),
 						// Note the comma!! The setting with automatically appear with the first mod to be added.
 					),

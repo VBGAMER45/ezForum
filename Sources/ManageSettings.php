@@ -748,22 +748,17 @@ function ModifySpamSettings($return_config = false)
 				'pm2' => array('int', 'pm_posts_verification'),
 				'pm3' => array('int', 'pm_posts_per_hour'),
 				'',
-				$txt['anti_spam_links'],
 				array('int', 'anti_spam_links_nolinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
 				array('int', 'anti_spam_links_newbielinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
 				array('int', 'anti_spam_links_nofollowlinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
 				array('select', 'anti_spam_links_guests', array(&$txt['anti_spam_links_guests_opt0'], &$txt['anti_spam_links_guests_opt1'], &$txt['anti_spam_links_guests_opt2'], &$txt['anti_spam_links_guests_opt3'])),
 				'',	
 						
-						
-				
 			// Visual verification.
 			array('title', 'configure_verification_means'),
 			array('desc', 'configure_verification_means_desc'),
 				'vv' => array('select', 'visual_verification_type', array($txt['setting_image_verification_off'], $txt['setting_image_verification_vsimple'], $txt['setting_image_verification_simple'], $txt['setting_image_verification_medium'], $txt['setting_image_verification_high'], $txt['setting_image_verification_extreme']), 'subtext'=> $txt['setting_visual_verification_type_desc'], 'onchange' => $context['use_graphic_library'] ? 'refreshImages();' : ''),
 				array('int', 'qa_verification_number', 'subtext' => $txt['setting_qa_verification_number_desc']),
-
-
 
 			// Clever Thomas, who is looking sheepy now? Not I, the mighty sword swinger did say.
 			array('title', 'setup_verification_questions'),
@@ -879,10 +874,7 @@ function ModifySpamSettings($return_config = false)
 				(int) $save_vars['anti_spam_links_nofollowlinks'] = (int) $save_vars['anti_spam_links_newbielinks'] + 1;
 
 		// End of Anti-Spam-Links mod
-		
-		
-		
-
+	
 		// Handle verification questions.
 		$questionInserts = array();
 		$count_questions = 0;
