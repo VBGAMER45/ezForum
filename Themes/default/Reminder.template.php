@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -33,6 +33,21 @@ function template_main()
 					<dt>', $txt['user_email'], ':</dt>
 					<dd><input type="text" name="user" size="30" class="input_text" /></dd>
 				</dl>
+				';
+	/* Captcha on Reminder mod
+     By Suki
+     Mozilla Public License Version 1.1 (the "License"); You may obtain a copy of the License at
+     http://www.mozilla.org/MPL/
+    
+     */
+	if ($context['visual_verification'])
+	{
+		echo '
+		<dl>
+					<dt><b>', $txt['verification'], ':</b></dt>
+			<dd>', template_control_verification($context['visual_verification_id'], 'all'), '</dd>
+		</dl>';
+	} echo '
 				<p class="centertext"><input type="submit" value="', $txt['reminder_continue'], '" class="button_submit" /></p>
 			</div>
 			<span class="lowerframe"><span></span></span>

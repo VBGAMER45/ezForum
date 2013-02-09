@@ -45,10 +45,32 @@ if (!defined('SMF'))
 // Forgot 'yer password?
 function RemindMe()
 {
-	global $txt, $context;
+	global $txt, $context, $sourcedir, $modSettings;
+
+
+
+	/* Captcha on Reminder mod
+     By Suki
+     Mozilla Public License Version 1.1 (the "License"); You may obtain a copy of the License at
+     http://www.mozilla.org/MPL/
+    
+     */
+	// This generate the captcha - Captcha on Reminder - by NIBOGO
+		if (!empty($modSettings['reg_verification']) && $context['user']['is_guest'])
+		{
+			require_once($sourcedir . '/Subs-Editor.php');
+			$verificationOptions = array(
+				'id' => 'register',
+			);
+			$context['visual_verification'] = create_control_verification($verificationOptions);
+			$context['visual_verification_id'] = $verificationOptions['id'];
+		}
+		// Otherwise we have nothing to show.
+		else
+			$context['visual_verification'] = false;
 
 	loadLanguage('Profile');
-	loadTemplate('Reminder');
+	loadTemplate('Reminder', 'login');
 
 	$context['page_title'] = $txt['authentication_reminder'];
 	$context['robot_no_index'] = true;
@@ -69,9 +91,33 @@ function RemindMe()
 // Pick a reminder type.
 function RemindPick()
 {
-	global $context, $txt, $scripturl, $sourcedir, $user_info, $webmaster_email, $smcFunc, $language, $modSettings;
+    global $context, $txt, $scripturl, $sourcedir, $user_info, $webmaster_email, $smcFunc, $language, $modSettings;
+
+	/* Captcha on Reminder mod
+     By Suki
+     Mozilla Public License Version 1.1 (the "License"); You may obtain a copy of the License at
+     http://www.mozilla.org/MPL/
+    
+     */
 
 	checkSession();
+
+	// Check whether the visual verification code was entered correctly.
+		if (!empty($modSettings['reg_verification']) && $context['user']['is_guest'])
+		{
+			require_once($sourcedir . '/Subs-Editor.php');
+			$verificationOptions = array(
+				'id' => 'register',
+			);
+			$context['visual_verification'] = create_control_verification($verificationOptions, true);
+
+			if (is_array($context['visual_verification']))
+			{
+				loadLanguage('Errors');
+				foreach ($context['visual_verification'] as $error)
+					fatal_error($txt['error_' . $error], false);
+			}
+		}
 
 	// Coming with a known ID?
 	if (!empty($_REQUEST['uid']))
