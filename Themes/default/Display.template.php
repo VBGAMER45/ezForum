@@ -661,9 +661,8 @@ function template_main()
 					<span class="botslice"><span></span></span>
 				</div>
 				<hr class="post_separator" />';
-	}
-    
-        //Tagging System
+		
+       //Tagging System
 		if (($message['id'] == $context['first_message']) && !empty($context['tagsinfo']))
 		{
 			echo '
@@ -682,6 +681,10 @@ function template_main()
 				</div>';
 		}
 		//Tagging System END
+		
+	}
+    
+ 
     
 
 	echo '
