@@ -2453,8 +2453,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		$messages_columns['body'] = $msgOptions['body'];
 
-		if (!empty($modSettings['search_custom_index_config']))
-		{
+	
 			$request = $smcFunc['db_query']('', '
 				SELECT body, modified_name, modified_time, poster_name, poster_time
 				FROM {db_prefix}messages
@@ -2489,7 +2488,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				unset($old_body);
 			unset($ph_modify_name, $ph_modify_time, $ph_poster_name, $ph_poster_time);
 			// END Post History
-		}
+		
 	}
 	if (!empty($msgOptions['modify_time']))
 	{
