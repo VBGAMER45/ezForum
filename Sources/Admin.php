@@ -255,15 +255,7 @@ function AdminMain()
 			)
 		),
 		
-        'taggingsystem' => array(
-		'label' => $txt['tags_admin_title'],
-		'file' => 'TaggingSystem.php',
-		'function' => 'TaggingSystemAdmin',
-		'icon' => 'package_ops.gif',
-		'subsections' => array(
-			'main' => array($txt['tags_admin_title_main']),
-			'list_cloud' => array($txt['tags_admin_list_cloud_title']),
-		),
+        
         
 		'layout' => array(
 			'title' => $txt['layout_controls'],
@@ -346,6 +338,17 @@ function AdminMain()
 						'maintenance' => array($txt['attachment_manager_maintenance']),
 					),
 				),
+				'taggingsystem' => array(
+					'label' => $txt['tags_admin_title'],
+					'file' => 'TaggingSystem.php',
+					'function' => 'TaggingSystemAdmin',
+					'icon' => 'package_ops.gif',
+					'subsections' => array(
+						'main' => array($txt['tags_admin_title_main']),
+						'list_cloud' => array($txt['tags_admin_list_cloud_title']),
+					),
+				),
+				
 			),
 		),
 		'members' => array(
@@ -507,13 +510,14 @@ function AdminMain()
 					'select' => 'maintain',
 					'hidden' => true,
 				),
+				
                 'toolbox' => array(
             		'label' => $txt['toolbox_title'],
             		'file' => 'AdminToolbox.php',
             		'icon' => 'toolbox.gif',
             		'function' => 'AdminToolbox',
-                ),
-            ),
+        		),
+        	),	
 		),
 	);
 
