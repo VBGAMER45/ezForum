@@ -660,5 +660,6 @@ $txt['tags_admin_title'] = 'Tagging System';
 $txt['tags_admin_title_main'] = 'General Configuration';
 $txt['tags_admin_list_cloud_title'] = 'List and cloud Tags';
 
+$txt['pretty_board_url_title'] = 'Pretty URLs for: ';
 
 ?>
