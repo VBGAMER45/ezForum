@@ -1,7 +1,7 @@
 <?php
 // Version: 2.0; index
 
-global $forum_copyright, $forum_version, $webmaster_email, $scripturl, $context, $boardurl;
+global $forum_copyright, $forum_version, $webmaster_email, $scripturl, $context, $boardurl, $modSettings;
 
 // Locale (strftime, pspell_new) and spelling. (pspell_new, can be left as '' normally.)
 // For more information see:
@@ -997,7 +997,7 @@ $txt['scheduled_task_geoIP'] = 'geoIP Database Update';
 $txt['cannot_geoIP_view'] = 'Sorry, you are not allowed to view the Whos Online Map.';
 
 
-global $boardurl;
+
 $txt['anti_spam_links'] = 'Anti-Spam-Links Mod Settings';
 $txt['error_anti_spam_links_nolinks_guest'] = 'Sorry, guests are not allowed to post external links.';
 $txt['error_anti_spam_links_nolinks_member'] = 'Sorry, you are not allowed to post external links.';
