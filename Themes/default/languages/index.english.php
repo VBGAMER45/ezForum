@@ -1058,7 +1058,23 @@ $txt['custom_action_url'] = 'Action URL';
 $txt['custom_action_settings_code'] = 'Action Code:';
 $txt['custom_action_menu'] = 'Show Menu Button';
 
-
+// Tagging system
 $txt['tags_menu_btn'] = 'Tags';
+//List&Cloud
+$txt['tags_list_title'] = 'All Tags';
+$txt['tags_list_title_total'] = 'Total: ';
+$txt['tags_cloud_title'] = 'Tag Cloud';
+$txt['tags_search_title'] = 'Search';
+$txt['tags_delete_tag'] = 'delete tag';
+$txt['tags_delete_tag_confirmation'] = 'Are you sure that you want delete this tag?';
+$txt['tags_no_tags'] = 'No tags to display';
+//errors:
+$txt['error_tags_exceeded'] = 'Maximum of tags exceeded, the limit is: '.$modSettings['tag_max_per_topic'].'';
+$txt['error_tags_required'] = 'Tags are required';
+$txt['error_tags_max_length'] = 'One of your new tags exceeded the maximum length: '.$modSettings['tag_max_length'].'';
+$txt['error_tags_min_length'] = 'One of your new tags have less than '.$modSettings['tag_max_length'].' letters';
+//Display:
+$txt['tags_topic'] = 'Tags for this topic:';
+$txt['tags_related_title'] = 'Topics Releated By Tags';
 
 ?>
