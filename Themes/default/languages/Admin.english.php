@@ -622,6 +622,8 @@ $txt['pretty_urls'] = 'Pretty URLs';
 // Auto-Prune-Moved-Topics - emanuele45
 $txt['scheduled_task_apmt_prunetopics'] = 'Auto Prune old Moved topics notices';
 $txt['scheduled_task_desc_apmt_prunetopics'] = 'Automatically delete old moved topics notices from boards. - Mod: Auto Prune Moved Topics';
+$txt['scheduled_task_apmt_prunetopics_task'] = 'Auto Prune old Moved topics notices';
+$txt['scheduled_task_desc_apmt_prunetopics_task'] = 'Automatically delete old moved topics notices from boards. - Mod: Auto Prune Moved Topics';
 
 $txt['apmt_taskFrequency'] = 'Frequency of the scheduled task automatic pruning of [MOVED] notices (in minutes)';
 $txt['apmt_numberOfBoards'] = 'Number of boards to process at a time by the scheduled task automatic pruning of [MOVED] notices';
