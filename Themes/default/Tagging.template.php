@@ -1,4 +1,10 @@
 <?php
+/*
+This SMF modification is subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this SMF modification except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+*/
 /*---------------------------------------------------------------------------------
 *	SMFSIMPLE Bookmarks														 	  *
 *	Author: SSimple Team - 4KSTORE										          *
@@ -98,8 +104,6 @@ function template_main()
 	
 	if (empty($modSettings['tag_list_enabled']) && empty($modSettings['tag_cloud_enabled']))
 		redirectexit('');
-	else
-		echo'<div style="text-align: center; padding-top: 10px; font-size: 0.9em;"><a href="http://www.smfsimple.com" target="_blank">Tagging System by SMFSIMPLE</a></div>';
 }
 
 function template_tag_search()
@@ -140,9 +144,7 @@ function template_tag_search()
 				echo '				
 			</div>			
 		</div>
-		<div style="text-align: center; padding-top: 10px; font-size: 0.9em;">
-			<a href="http://www.smfsimple.com" target="_blank">Tagging System by SMFSIMPLE</a>
-		</div>';
+		';
 	}
 	else
 		redirectexit('');

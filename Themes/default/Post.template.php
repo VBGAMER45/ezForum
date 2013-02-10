@@ -409,11 +409,14 @@ function template_main()
 					', template_control_richedit($context['post_box_name'], 'smileyBox_message', 'bbcBox_message');
                     
     //Tagging System
+    if (isset($_REQUEST['tags_news']))
+    {
                 if (empty($context['editTags']))
                     $context['editTags'] = implode(' ', $_REQUEST['tags_news']);
                 else
                     $context['editTags'] = $context['editTags'] .  implode(' ', $_REQUEST['tags_news']);
-				$exclude = !empty($modSettings['tag_board_disabled']) ? $modSettings['tag_board_disabled'] : '';
+    }
+                 $exclude = !empty($modSettings['tag_board_disabled']) ? $modSettings['tag_board_disabled'] : '';
 				$exclude_boards = explode(',',$exclude);
 				if (($context['is_new_topic'] || (!empty($_REQUEST['msg']) && !empty($context['is_first_post']))) && $modSettings['tag_enabled'] && (!in_array($context['current_board'],$exclude_boards)))
 					echo '

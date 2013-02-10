@@ -284,6 +284,9 @@ function reloadSettings()
 		foreach ($integration_settings as $hook => $function)
 			add_integration_function($hook, $function, false);
 	}
+	
+	// Tagging System
+	require_once($sourcedir . "/TaggingSystem.php");
 
 	// Any files to pre include?
 	if (!empty($modSettings['integrate_pre_include']))
