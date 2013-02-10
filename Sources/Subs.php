@@ -4144,7 +4144,8 @@ function setupMenuContext()
 					'href' => $scripturl . '?action=tags',
 					'show' => true,
 					'sub_buttons' => array(
-					)
+					),
+					'icon' => $settings['images_url'] . '/menu_icons/tag_blue.png',
 			),
 			'login' => array(
 				'title' => $txt['login'],

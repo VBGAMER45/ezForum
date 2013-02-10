@@ -213,7 +213,6 @@ function AdminMain()
 					'custom_url' => $scripturl . '?action=admin;area=pretty',
                     'icon' => 'server.gif'
 				),
-				
 				'geoIP' => array(
 						'label' => $txt['geoIP'],
 						'file' => 'geoIPAdmin.php',
@@ -240,7 +239,7 @@ function AdminMain()
 				),
 			),
 		),
-  // OneAll Social Login (https://docs.oneall.com/plugins/)
+  		// OneAll Social Login (https://docs.oneall.com/plugins/)
 		'oasl' => array(
 			'title' => $txt['oasl_title'],
 			'permission' => array('admin_forum'),
@@ -254,9 +253,6 @@ function AdminMain()
 				)	
 			)
 		),
-		
-        
-        
 		'layout' => array(
 			'title' => $txt['layout_controls'],
 			'permission' => array('manage_boards', 'admin_forum', 'manage_smileys', 'manage_attachments', 'moderate_forum'),
