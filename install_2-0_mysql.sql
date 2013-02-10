@@ -697,6 +697,7 @@ CREATE TABLE {$db_prefix}custom_actions (
   menu tinyint(4) NOT NULL DEFAULT '0',
   header text NOT NULL,
   body mediumtext NOT NULL,
+  icon varchar(255),
   PRIMARY KEY (id_action),
   KEY url (url)
 ) ENGINE=MyISAM;
