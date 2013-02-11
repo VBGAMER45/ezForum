@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -410,9 +410,19 @@ function template_extract_package()
 				', $context['redirect_text'], '<br /><br />
 				<a href="', $context['redirect_url'], '">', $txt['package_installed_redirect_go_now'], '</a> | <a href="', $scripturl, '?action=admin;area=packages;sa=browse">', $txt['package_installed_redirect_cancel'], '</a>';
 	}
+
+    
+ /*
+Install & Uninstall Mods Quickly 
+By: joker
+This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+*/
+   
 	elseif ($context['uninstalling'])
 		echo '
-				', $txt['package_uninstall_done'];
+				', $txt['package_uninstall_done']
+				, ' <br /><br /><a href="', $scripturl, '?action=admin;area=packages;sa=install;package=', $_REQUEST['package'], '"><strong>',$txt['click'], $txt['reinstall'], $txt['mod'],'</strong></a>
+				<br /><a href="', $scripturl, '?action=admin;area=packages;sa=remove;package=', $_REQUEST['package'], ';', $context['session_var'], '=', $context['session_id'], '"', $package['is_installed'] && $package['is_current'] ? ' onclick="return confirm(\'' . $txt['package_delete_bad'] . '\');"' : '', '><strong>[ ', $txt['click'], $txt['package_delete'], $txt['mod'], ' ]</strong></a>';
 	elseif ($context['install_finished'])
 	{
 		if ($context['extract_type'] == 'avatar')
@@ -423,8 +433,11 @@ function template_extract_package()
 				', $txt['language_extracted'];
 		else
 			echo '
-				', $txt['package_installed_done'];
-	}
+				', $txt['package_installed_done']
+				, ' <br /><a href="', $scripturl, '?action=admin;area=packages;sa=uninstall;package=', $_REQUEST['package'], '"><strong>',$txt['click'], $txt['uninstall'], $txt['mod'],'</strong></a>';
+	/* Install & Uninstall Mods Quickly */
+    
+    }
 	else
 		echo '
 				', $txt['corrupt_compatible'];
