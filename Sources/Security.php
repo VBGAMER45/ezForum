@@ -549,6 +549,9 @@ function banPermissions()
 		require_once($sourcedir . '/Subs-Auth.php');
 		rebuildModCache();
 	}
+    
+    require_once($sourcedir . '/ModerationCenter.php');
+	Posttoapprove();
 
 	// Now that we have the mod cache taken care of lets setup a cache for the number of mod reports still open
 	if (isset($_SESSION['rc']) && $_SESSION['rc']['time'] > $modSettings['last_mod_report_action'] && $_SESSION['rc']['id'] == $user_info['id'])

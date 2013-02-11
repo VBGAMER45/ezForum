@@ -749,6 +749,59 @@ function recountOpenReports()
 	$context['open_mod_reports'] = $open_reports;
 }
 
+
+/*
+Number of Unapproved Posts and Topics in Header
+By: joker
+This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+*/
+// Count how many post and topics are there to be approved
+function Posttoapprove()
+{
+	global $context, $smcFunc;
+
+	$approve_boards = boardsAllowedTo('approve_posts');
+
+	if ($approve_boards == array(0))
+		$approve_query = '';
+	elseif (!empty($approve_boards))
+		$approve_query = ' AND m.id_board IN (' . implode(',', $approve_boards) . ')';
+	else
+		$approve_query = ' AND 0';
+		
+	$request = $smcFunc['db_query']('', '
+		SELECT COUNT(m.id_topic)
+		FROM {db_prefix}topics AS m
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = m.id_board)
+		WHERE m.approved = {int:not_approved}
+			AND {query_see_board}
+			' . $approve_query,
+		array(
+			'not_approved' => 0,
+		)
+	);
+	list ($totalUnapprovedTopics) = $smcFunc['db_fetch_row']($request);
+	$smcFunc['db_free_result']($request);
+	$context['total_unapproved_topics'] = $totalUnapprovedTopics;
+	
+	
+	$request = $smcFunc['db_query']('', '
+		SELECT COUNT(*)
+		FROM {db_prefix}messages AS m
+			INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic AND t.id_first_msg != m.id_msg)
+			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
+		WHERE m.approved = {int:not_approved}
+			AND {query_see_board}
+			' . $approve_query,
+		array(
+			'not_approved' => 0,
+		)
+	);
+	list ($totalUnapprovedPosts) = $smcFunc['db_fetch_row']($request);
+	$smcFunc['db_free_result']($request);
+	$context['total_unapproved_posts'] = $totalUnapprovedPosts;
+}
+
 function ModReport()
 {
 	global $user_info, $context, $sourcedir, $scripturl, $txt, $smcFunc;

@@ -1077,4 +1077,9 @@ $txt['error_tags_min_length'] = 'One of your new tags have less than '.$modSetti
 $txt['tags_topic'] = 'Tags for this topic:';
 $txt['tags_related_title'] = 'Topics Releated By Tags';
 
+
+// Header Unapproved.
+$txt['total_unapproved_topics'] = 'Total Unapproved Topics';
+$txt['total_unapproved_posts'] = 'Total Unapproved Posts';
+
 ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -213,6 +213,22 @@ function template_body_above()
 		if (!empty($context['open_mod_reports']) && $context['show_open_reports'])
 			echo '
 					<li><a href="', $scripturl, '?action=moderate;area=reports">', sprintf($txt['mod_reports_waiting'], $context['open_mod_reports']), '</a></li>';
+                    
+                    
+        /*
+        Number of Unapproved Posts and Topics in Header
+        By: joker
+        This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+        */           
+        if (!empty($context['total_unapproved_topics']) && allowedTo('approve_posts'))
+				echo '
+					<li><a href="', $scripturl, '?action=moderate;area=postmod;sa=topics">', $txt['total_unapproved_topics'], ': ', $context['total_unapproved_topics'], '</a></li>';
+
+		if (!empty($context['total_unapproved_posts']) && allowedTo('approve_posts'))
+				echo '
+					<li><a href="', $scripturl, '?action=moderate;area=postmod;sa=posts">', $txt['total_unapproved_posts'], ': ', $context['total_unapproved_posts'], '</a></li>';                 
+        // End Number of Unapproved Posts and Topics in Header
+
 
 		echo '
 					<li>', $context['current_time'], '</li>
