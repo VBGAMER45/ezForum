@@ -2095,7 +2095,8 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('tag_cloud_largest_fontsize', ''),
 	('tag_list_enabled', '1'),
 	('tag_list_show_count', '1'),
-	('tag_search_paginate_limit', '15')
+	('tag_search_paginate_limit', '15'),
+	('search_min_char', '2')
 	
 	;
 

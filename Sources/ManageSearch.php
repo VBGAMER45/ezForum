@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -130,6 +130,8 @@ function EditSearchSettings($return_config = false)
 		'',
 			// Some limitations.
 			array('int', 'search_floodcontrol_time', 'subtext' => $txt['search_floodcontrol_time_desc']),
+			'',
+			array('int', 'search_min_char', 'subtext' => $txt['default_search_min_char']), // By Joker
 	);
 
 	// Perhaps the search method wants to add some settings?
