@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -131,6 +131,28 @@ function MembergroupIndex()
 			),
 		),
 		'columns' => array(
+/*
+Membergroup ID with Group Name
+By: joker
+This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+*/
+            'id' => array(
+				'header' => array(
+					'value' => $txt['membergroups_id'],
+				),
+				'data' => array(
+					'function' => create_function('$rowData', '
+						global $scripturl;
+						$group_id = \' (\' . $rowData[\'id_group\'] . \')\';
+						return $group_id;
+					'),
+					'style' => 'text-align: center',
+				),			
+					'sort' => array(
+					'default' => 'id_group',
+					'reverse' => 'id_group DESC',
+				),
+			),
 			'name' => array(
 				'header' => array(
 					'value' => $txt['membergroups_name'],
@@ -252,6 +274,28 @@ function MembergroupIndex()
 			),
 		),
 		'columns' => array(
+        /*
+        Membergroup ID with Group Name
+        By: joker
+        This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+        */
+            'id' => array(
+				'header' => array(
+					'value' => $txt['membergroups_id'],
+				),
+				'data' => array(
+					'function' => create_function('$rowData', '
+						global $scripturl;
+						$group_id = \' (\' . $rowData[\'id_group\'] . \')\';
+						return $group_id;
+					'),
+					'style' => 'text-align: center',
+				),			
+					'sort' => array(
+					'default' => 'id_group',
+					'reverse' => 'id_group DESC',
+				),
+			),
 			'name' => array(
 				'header' => array(
 					'value' => $txt['membergroups_name'],
