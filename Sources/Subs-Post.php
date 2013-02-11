@@ -685,7 +685,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	list (, $subject) = mimespecialchars($subject, true, $hotmail_fix, $line_break);
 
 	// Construct the mail headers...
-	$headers = 'From: "' . $from_name . '" <' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . '>' . $line_break;
+	$headers = 'From: ' . $from_name . ' <' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . '>' . $line_break;
 	$headers .= $from !== null ? 'Reply-To: <' . $from . '>' . $line_break : '';
 	$headers .= 'Return-Path: ' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . $line_break;
 	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $line_break;
@@ -2122,7 +2122,7 @@ function createAttachment(&$attachmentOptions)
 
 	if(!isset($attachmentOptions['errors']));
 		$attachmentOptions['errors'] = array();
-        
+
 	if (!isset($attachmentOptions['post']))
 		$attachmentOptions['post'] = 0;
 	if (!isset($attachmentOptions['approved']))
@@ -2453,7 +2453,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		$messages_columns['body'] = $msgOptions['body'];
 
-	
+
 			$request = $smcFunc['db_query']('', '
 				SELECT body, modified_name, modified_time, poster_name, poster_time
 				FROM {db_prefix}messages
@@ -2488,7 +2488,7 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 				unset($old_body);
 			unset($ph_modify_name, $ph_modify_time, $ph_poster_name, $ph_poster_time);
 			// END Post History
-		
+
 	}
 	if (!empty($msgOptions['modify_time']))
 	{
