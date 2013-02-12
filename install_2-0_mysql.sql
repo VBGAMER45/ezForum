@@ -1771,6 +1771,17 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}related_subjects (
 );
 
 #
+# Table structure for table `restrict_posts`
+#
+
+CREATE TABLE {$db_prefix}restrict_posts (
+  id_board smallint(5) unsigned NOT NULL,
+  id_group smallint(5) NOT NULL,
+  max_posts_allowed int(10) unsigned NOT NULL default '0',
+  timespan int(10) unsigned NOT NULL default '1'
+) ENGINE=MyISAM;
+
+#
 # Table structure for table `scheduled_tasks`
 #
 

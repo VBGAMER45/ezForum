@@ -665,6 +665,10 @@ $txt['pretty_board_url_title'] = 'Pretty URLs for: ';
 
 $txt['membergroups_id'] = 'ID';
 
+$txt['rp_menu'] = 'Restrict Posts Per Board';
+
+
+
 /*
 Allow Deny Board Permission
 By: Joker
