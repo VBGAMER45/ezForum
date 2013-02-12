@@ -685,7 +685,7 @@ function PlushSearch2()
 			unset($searchArray[$index]);
 		}
 		// Don't allow very, very short words.
-		elseif ($smcFunc['strlen']($value) < 2)
+		elseif ($smcFunc['strlen']($value) < (!empty($modSettings['search_min_char']) ? $modSettings['search_min_char'] : 2)) // Joker
 		{
 			$context['search_errors']['search_string_small_words'] = true;
 			unset($searchArray[$index]);

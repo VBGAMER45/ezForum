@@ -92,6 +92,28 @@ function Post()
 	global $sourcedir, $options, $smcFunc, $language;
 
 	loadLanguage('Post');
+	
+	
+	/*
+	Restrict Boards per post 
+	By: Joker
+	 * This SMF Modification is subject to the Mozilla Public License Version
+	 * 1.1 (the "License"); you may not use this SMF modification except in compliance with
+	 * the License. You may obtain a copy of the License at
+	 * http://www.mozilla.org/MPL/
+	
+	*/
+	if(isset($modSettings['rp_mod_enable']) && !empty($modSettings['rp_mod_enable'])) 
+	{
+		require_once($sourcedir . '/RestrictPosts.php');
+		
+		if(!isAllowedToPost() && !isset($_REQUEST['calendar']) && empty($topic)) 
+		{
+			loadLanguage('RestrictPosts');
+			fatal_lang_error('rp_limit_reached', false);
+		}
+	}
+
 
 	// You can't reply with a poll... hacker.
 	if (isset($_REQUEST['poll']) && !empty($topic) && !isset($_REQUEST['msg']))
@@ -341,6 +363,24 @@ function Post()
 
 			// Get a list of boards they can post in.
 			$boards = boardsAllowedTo('post_new');
+			
+			/*
+			Restrict Boards per post 
+			By: Joker
+			 * This SMF Modification is subject to the Mozilla Public License Version
+			 * 1.1 (the "License"); you may not use this SMF modification except in compliance with
+			 * the License. You may obtain a copy of the License at
+			 * http://www.mozilla.org/MPL/
+			
+			*/
+			if(isset($modSettings['rp_mod_enable']) && !empty($modSettings['rp_mod_enable']) && isset($modSettings['rp_mod_enable_calendar']) && !empty($modSettings['rp_mod_enable_calendar'])) 
+			{
+				require_once($sourcedir . '/RestrictPosts.php');
+				$boards_to_exclude = isAllowedToPostEvents();
+				$boards = array_merge(array_diff($boards, $boards_to_exclude), array_diff($boards_to_exclude, $boards));
+			}
+			
+			
 			if (empty($boards))
 				fatal_lang_error('cannot_post_new', 'user');
 
