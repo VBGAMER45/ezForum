@@ -156,4 +156,14 @@ $txt['spider_stats_select_month'] = 'Jump To Month';
 $txt['spider_stats_page_hits'] = 'Page Hits';
 $txt['spider_stats_no_entries'] = 'There are currently no spider statistics available.';
 
+
+// Minimum Characters for Search
+/*
+Minimum Characters for Search
+By Joker
+Licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
+*/
+$txt['search_min_char'] = 'Number of minimum characters required for search';
+$txt['default_search_min_char'] = '(By default minimum characters required are 2)';
+
 ?>

@@ -237,6 +237,13 @@ function AdminMain()
 						// Note the comma!! The setting with automatically appear with the first mod to be added.
 					),
 				),
+				'restrictposts' => array(
+					'label' => $txt['rp_menu'],
+					'file' => 'RestrictPosts.php',
+					'function' => 'ModifyRestrictPostsSettings',
+					'icon' => 'administration.gif',
+					'subsections' => array(),
+				),
 			),
 		),
   		// OneAll Social Login (https://docs.oneall.com/plugins/)

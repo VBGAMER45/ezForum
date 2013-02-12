@@ -133,13 +133,36 @@ function template_new_group()
 								<legend>', $txt['membergroups_new_board_desc'], '</legend>';
 	foreach ($context['boards'] as $board)
 		echo '
-								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked" disabled="disabled"' : '', ' class="input_check" /> <label for="boardaccess_', $board['id'], '">', $board['name'], '</label></div>';
+								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked" disabled="disabled"' : '', ' class="input_check" ', !empty($modSettings['enable_allow_deny']) ? 'onclick="check_deny_allow('. $board['id']. ', this);"' : '', ' /> <label for="boardaccess_', $board['id'], '">', $board['name'], '</label></div>';
 
 	echo '
 								<br />
 								<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boardaccess\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
 							</fieldset>
-						</dd>
+						</dd>';
+
+	if (!empty($modSettings['enable_allow_deny']))
+	{
+		echo '
+						<dt>
+							<strong>', $txt['membergroups_deny_board'], ':</strong>
+						</dt>
+						<dd>
+							<fieldset id="deny_boards">
+								<legend>', $txt['membergroups_deny_board_desc'], '</legend>';
+
+		foreach ($context['boards'] as $board)
+		echo '
+								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boarddeny[]" id="boarddeny_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked" disabled="disabled"' : '', ' class="input_check"  onclick="check_deny_allow('. $board['id']. ', this);" /> <label for="boarddeny_', $board['id'], '">', $board['name'], '</label></div>';
+
+		echo '
+								<br />
+								<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boarddeny\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
+							</fieldset>
+						</dd>';
+	}
+
+	echo '
 					</dl>
 					<div class="righttext">
 						<input type="submit" value="', $txt['membergroups_add_group'], '" class="button_submit" />
@@ -150,6 +173,19 @@ function template_new_group()
 	if ($context['undefined_group'])
 	{
 		echo '
+		<script type="text/javascript"><!-- // -->','
+				function check_deny_allow(board_var, id)
+				{
+					if ((id == document.getElementById("boardaccess_"+board_var)) && (id.checked == true))
+					{
+						document.getElementById("boarddeny_"+board_var).checked = false;
+					}
+					if ((id == document.getElementById("boarddeny_"+board_var)) && (id.checked == true))
+					{
+						document.getElementById("boardaccess_"+board_var).checked = false;
+					}
+				}
+			// ]]','></script>
 			<script type="text/javascript"><!-- // --><![CDATA[
 				function swapPostGroup(isChecked)
 				{
@@ -169,7 +205,7 @@ function template_new_group()
 
 function template_edit_group()
 {
-	global $context, $settings, $options, $scripturl, $txt;
+	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	echo '
 	<div id="admincenter">
@@ -347,7 +383,7 @@ function template_edit_group()
 								<legend><a href="javascript:void(0);" onclick="document.getElementById(\'visible_boards\').style.display = \'none\';document.getElementById(\'visible_boards_link\').style.display = \'block\'; return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
 		foreach ($context['boards'] as $board)
 			echo '
-								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" /> <label for="boardaccess_', $board['id'], '">', $board['name'], '</label></div>';
+								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" ', !empty($modSettings['enable_allow_deny']) ? 'onclick="check_deny_allow('. $board['id']. ', this);"' : '', ' /> <label for="boardaccess_', $board['id'], '">', $board['name'], '</label></div>';
 
 		echo '
 								<br />
@@ -359,6 +395,31 @@ function template_edit_group()
 								document.getElementById("visible_boards").style.display = "none";
 							// ]]></script>
 						</dd>';
+
+		if (!empty($modSettings['enable_allow_deny']))
+		{
+			echo '
+						<dt>
+							<strong>', $txt['membergroups_deny_board'], ':</strong>
+						</dt>
+						<dd>
+							<fieldset id="deny_boards" style="width: 95%;">
+								<legend><a href="javascript:void(0);" onclick="document.getElementById(\'deny_boards\').style.display = \'none\';document.getElementById(\'deny_boards_link\').style.display = \'block\'; return false;">', $txt['membergroups_deny_board_desc'], '</a></legend>';
+			foreach ($context['deny_boards'] as $board)
+			echo '
+								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boarddeny[]" id="boarddeny_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" onclick="check_deny_allow('. $board['id']. ', this);" /> <label for="boarddeny_', $board['id'], '">', $board['name'], '</label></div>';
+
+			echo '
+								<br />
+								<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boarddeny\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
+							</fieldset>
+							<a href="javascript:void(0);" onclick="document.getElementById(\'deny_boards\').style.display = \'block\'; document.getElementById(\'deny_boards_link\').style.display = \'none\'; return false;" id="deny_boards_link" style="display: none;">[ ', $txt['membergroups_select_visible_boards'], ' ]</a>
+							<script type="text/javascript"><!-- // -->','
+								document.getElementById("deny_boards_link").style.display = "";
+								document.getElementById("deny_boards").style.display = "none";
+							// ]]','></script>
+						</dd>';
+		}
 	}
 	echo '
 					</dl>
@@ -374,6 +435,19 @@ function template_edit_group()
 	</div>
 	<br class="clear" />
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/suggest.js?fin20"></script>
+		<script type="text/javascript"><!-- // -->','
+			function check_deny_allow(board_var, id)
+			{
+				if ((id == document.getElementById("boardaccess_"+board_var)) && (id.checked == true))
+				{
+					document.getElementById("boarddeny_"+board_var).checked = false;
+				}
+				if ((id == document.getElementById("boarddeny_"+board_var)) && (id.checked == true))
+				{
+					document.getElementById("boardaccess_"+board_var).checked = false;
+				}
+			}
+		// ]]','></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
 			var oModeratorSuggest = new smc_AutoSuggest({
 				sSelf: \'oModeratorSuggest\',

@@ -397,6 +397,7 @@ function EditBoard()
 		// Some things that need to be setup for a new board.
 		$curBoard = array(
 			'member_groups' => array(0, -1),
+			'member_groups_deny' => array(),
 			'category' => (int) $_REQUEST['cat']
 		);
 		$context['board_order'] = array();
@@ -441,12 +442,14 @@ function EditBoard()
 			'id' => '-1',
 			'name' => $txt['parent_guests_only'],
 			'checked' => in_array('-1', $curBoard['member_groups']),
+			'deny' => !empty($curBoard['member_groups_deny']) ? in_array('-1', $curBoard['member_groups_deny']) : '',
 			'is_post_group' => false,
 		),
 		0 => array(
 			'id' => '0',
 			'name' => $txt['parent_members_only'],
 			'checked' => in_array('0', $curBoard['member_groups']),
+			'deny' => !empty($curBoard['member_groups_deny']) ? in_array('0', $curBoard['member_groups_deny']) : '',
 			'is_post_group' => false,
 		)
 	);
@@ -471,6 +474,7 @@ function EditBoard()
 			'id' => $row['id_group'],
 			'name' => trim($row['group_name']),
 			'checked' => in_array($row['id_group'], $curBoard['member_groups']),
+			'deny' => !empty($curBoard['member_groups_deny']) ? in_array($row['id_group'], $curBoard['member_groups_deny']) : '',
 			'is_post_group' => $row['min_posts'] != -1,
 		);
 	}
@@ -609,6 +613,11 @@ function EditBoard2()
 		if (!empty($_POST['groups']))
 			foreach ($_POST['groups'] as $group)
 				$boardOptions['access_groups'][] = (int) $group;
+				
+		$boardOptions['groups_deny'] = array();
+		if (!empty($_POST['groups_deny']))
+			foreach ($_POST['groups_deny'] as $group)
+				$boardOptions['groups_deny'][] = (int) $group;
 
 		// Change '1 & 2' to '1 &amp; 2', but not '&amp;' to '&amp;amp;'...
 		$boardOptions['board_name'] = preg_replace('~[&]([^;]{8}|[^;]{0,8}$)~', '&amp;$1', $_POST['board_name']);
@@ -730,6 +739,7 @@ function EditBoardSettings($return_config = false)
 			array('check', 'recycle_enable', 'onclick' => 'document.getElementById(\'recycle_board\').disabled = !this.checked;'),
 			array('select', 'recycle_board', $recycle_boards),
 			array('check', 'allow_ignore_boards'),
+			array('check', 'enable_allow_deny', 'subtext' => $txt['desc_enable_allow_deny']),
             array('text', 'apmt_taskFrequency'),
             array('text', 'apmt_numberOfBoards')
 	);

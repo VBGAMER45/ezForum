@@ -580,6 +580,38 @@ function AddMembergroup()
 					'comma_group' => ',' . $id_group,
 				)
 			);
+			
+			
+		/*
+		Allow Deny Board Permission
+		By: Joker
+		
+		Mozilla Public License Version 1.1 
+		(the "License"); you may not use this SMF modification except in compliance with
+		the License. You may obtain a copy of the License at
+		http://www.mozilla.org/MPL/
+		
+		*/	
+		if (!empty($modSettings['enable_allow_deny']))
+		{
+			$_POST['boarddeny'] = empty($_POST['boarddeny']) || !is_array($_POST['boarddeny']) ? array() : $_POST['boarddeny'];
+			foreach ($_POST['boarddeny'] as $key => $value)
+				$_POST['boarddeny'][$key] = (int) $value;
+
+			if (!empty($_POST['boarddeny']))
+				$smcFunc['db_query']('', '
+					UPDATE {db_prefix}boards
+					SET member_groups_deny = CASE WHEN member_groups_deny = {string:blank_string} THEN {string:group_id_string} ELSE CONCAT(member_groups_deny, {string:comma_group}) END
+					WHERE id_board IN ({array_int:board_list})',
+					array(
+						'board_list' => $_POST['boarddeny'],
+						'blank_string' => '',
+						'group_id_string' => (string) $id_group,
+						'comma_group' => ',' . $id_group,
+					)
+				);
+		}
+		// End Allow Deny Board Permission
 
 		// If this is joinable then set it to show group membership in people's profiles.
 		if (empty($modSettings['show_group_membership']) && $_POST['group_type'] > 1)
@@ -799,6 +831,64 @@ function EditMembergroup()
 						'comma_group' => ',' . $_REQUEST['group'],
 					)
 				);
+				
+			/*
+			Allow Deny Board Permission
+			By: Joker
+			
+			Mozilla Public License Version 1.1 
+			(the "License"); you may not use this SMF modification except in compliance with
+			the License. You may obtain a copy of the License at
+			http://www.mozilla.org/MPL/
+			
+			*/	
+			if (!empty($modSettings['enable_allow_deny']))
+			{
+				$_POST['boarddeny'] = empty($_POST['boarddeny']) || !is_array($_POST['boarddeny']) ? array() : $_POST['boarddeny'];
+				foreach ($_POST['boarddeny'] as $key => $value)
+					$_POST['boarddeny'][$key] = (int) $value;
+
+				$request = $smcFunc['db_query']('', '
+					SELECT id_board, member_groups_deny
+					FROM {db_prefix}boards
+					WHERE FIND_IN_SET({string:current_group}, member_groups_deny) != 0' . (empty($_POST['boarddeny']) ? '' : '
+						AND id_board NOT IN ({array_int:board_deny_list})'),
+					array(
+						'current_group' => (int) $_REQUEST['group'],
+						'board_deny_list' => $_POST['boarddeny'],
+					)
+				);
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+					$smcFunc['db_query']('', '
+						UPDATE {db_prefix}boards
+						SET member_groups_deny = {string:member_groups_deny}
+						WHERE id_board = {int:current_board}',
+						array(
+							'current_board' => $row['id_board'],
+							'member_groups_deny' => implode(',', array_diff(explode(',', $row['member_groups_deny']), array($_REQUEST['group']))),
+						)
+					);
+				$smcFunc['db_free_result']($request);
+
+				if (!empty($_POST['boarddeny']))
+					$smcFunc['db_query']('', '
+						UPDATE {db_prefix}boards
+						SET member_groups_deny = CASE WHEN member_groups_deny = {string:blank_string} THEN {string:group_id_string} ELSE CONCAT(member_groups_deny, {string:comma_group}) END
+						WHERE id_board IN ({array_int:board_list})
+						AND FIND_IN_SET({int:current_group}, member_groups_deny) = 0',
+						array(
+							'board_list' => $_POST['boarddeny'],
+							'blank_string' => '',
+							'current_group' => (int) $_REQUEST['group'],
+							'group_id_string' => (string) (int) $_REQUEST['group'],
+							'comma_group' => ',' . $_REQUEST['group'],
+						)
+					);
+			}
+			// End Allow Deny Board Permission				
+				
+				
+				
 		}
 
 		// Remove everyone from this group!
@@ -1040,6 +1130,38 @@ function EditMembergroup()
 	if (!empty($context['group']['moderators']))
 		list ($context['group']['last_moderator_id']) = array_slice(array_keys($context['group']['moderators']), -1);
 
+	/*
+	Allow Deny Board Permission
+	By: Joker
+	
+	Mozilla Public License Version 1.1 
+	(the "License"); you may not use this SMF modification except in compliance with
+	the License. You may obtain a copy of the License at
+	http://www.mozilla.org/MPL/
+	
+	*/
+	$context['deny_boards'] = array();
+	if ($_REQUEST['group'] == 2 || $_REQUEST['group'] > 3)
+	{
+		$result = $smcFunc['db_query']('', '
+			SELECT id_board, name, child_level, FIND_IN_SET({string:current_group}, member_groups_deny) != 0 AS cant_access
+			FROM {db_prefix}boards
+			ORDER BY board_order',
+			array(
+				'current_group' => (int) $_REQUEST['group'],
+			)
+		);
+		while ($row = $smcFunc['db_fetch_assoc']($result))
+			$context['deny_boards'][] = array(
+				'id' => $row['id_board'],
+				'name' => $row['name'],
+				'child_level' => $row['child_level'],
+				'selected' => !(empty($row['cant_access']) || $row['cant_access'] == 'f'),
+			);
+		$smcFunc['db_free_result']($result);
+	}
+	// End Allow Deny Board Permission	
+		
 	// Get a list of boards this membergroup is allowed to see.
 	$context['boards'] = array();
 	if ($_REQUEST['group'] == 2 || $_REQUEST['group'] > 3)

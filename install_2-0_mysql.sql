@@ -499,6 +499,7 @@ CREATE TABLE {$db_prefix}boards (
   show_rssicon tinyint(1) unsigned NOT NULL default '0',
   last_pruned int(10) unsigned NOT NULL default '0',
   prune_frequency int(10) unsigned NOT NULL default '0',
+  member_groups_deny varchar(255) NOT NULL default '',
   PRIMARY KEY (id_board),
   UNIQUE categories (id_cat, id_board),
   KEY id_parent (id_parent),
@@ -559,7 +560,6 @@ VALUES ('New Year\'s', '0004-01-01'),
 	('Earth Day', '0004-04-22'),
 	('United Nations Day', '0004-10-24'),
 	('Halloween', '0004-10-31'),
-	('Mother\'s Day', '2012-05-13'),
 	('Mother\'s Day', '2013-05-12'),
 	('Mother\'s Day', '2014-05-11'),
 	('Mother\'s Day', '2015-05-10'),
@@ -577,7 +577,6 @@ VALUES ('New Year\'s', '0004-01-01'),
 	('Father\'s Day', '2018-06-17'),
 	('Father\'s Day', '2019-06-16'),
 	('Father\'s Day', '2020-06-21'),
-	('Summer Solstice', '2012-06-20'),
 	('Summer Solstice', '2013-06-21'),
 	('Summer Solstice', '2014-06-21'),
 	('Summer Solstice', '2015-06-21'),
@@ -586,7 +585,6 @@ VALUES ('New Year\'s', '0004-01-01'),
 	('Summer Solstice', '2018-06-21'),
 	('Summer Solstice', '2019-06-21'),
 	('Summer Solstice', '2020-06-20'),
-	('Vernal Equinox', '2012-03-20'),
 	('Vernal Equinox', '2013-03-20'),
 	('Vernal Equinox', '2014-03-20'),
 	('Vernal Equinox', '2015-03-20'),
@@ -595,7 +593,6 @@ VALUES ('New Year\'s', '0004-01-01'),
 	('Vernal Equinox', '2018-03-20'),
 	('Vernal Equinox', '2019-03-20'),
 	('Vernal Equinox', '2020-03-19'),
-	('Winter Solstice', '2012-12-21'),
 	('Winter Solstice', '2013-12-21'),
 	('Winter Solstice', '2014-12-21'),
 	('Winter Solstice', '2015-12-21'),
@@ -604,7 +601,6 @@ VALUES ('New Year\'s', '0004-01-01'),
 	('Winter Solstice', '2018-12-21'),
 	('Winter Solstice', '2019-12-21'),
 	('Winter Solstice', '2020-12-21'),
-	('Autumnal Equinox', '2012-09-22'),
 	('Autumnal Equinox', '2013-09-22'),
 	('Autumnal Equinox', '2014-09-22'),
 	('Autumnal Equinox', '2015-09-23'),
@@ -621,7 +617,6 @@ VALUES ('Independence Day', '0004-07-04'),
 	('Flag Day', '0004-06-14'),
 	('Veterans Day', '0004-11-11'),
 	('Groundhog Day', '0004-02-02'),
-	('Thanksgiving', '2012-11-22'),
 	('Thanksgiving', '2013-11-21'),
 	('Thanksgiving', '2014-11-20'),
 	('Thanksgiving', '2015-11-26'),
@@ -630,7 +625,6 @@ VALUES ('Independence Day', '0004-07-04'),
 	('Thanksgiving', '2018-11-22'),
 	('Thanksgiving', '2019-11-21'),
 	('Thanksgiving', '2020-11-26'),
-	('Memorial Day', '2012-05-28'),
 	('Memorial Day', '2013-05-27'),
 	('Memorial Day', '2014-05-26'),
 	('Memorial Day', '2015-05-25'),
@@ -639,7 +633,6 @@ VALUES ('Independence Day', '0004-07-04'),
 	('Memorial Day', '2018-05-28'),
 	('Memorial Day', '2019-05-27'),
 	('Memorial Day', '2020-05-25'),
-	('Labor Day', '2012-09-03'),
 	('Labor Day', '2013-09-09'),
 	('Labor Day', '2014-09-08'),
 	('Labor Day', '2015-09-07'),
@@ -1778,6 +1771,17 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}related_subjects (
 );
 
 #
+# Table structure for table `restrict_posts`
+#
+
+CREATE TABLE {$db_prefix}restrict_posts (
+  id_board smallint(5) unsigned NOT NULL,
+  id_group smallint(5) NOT NULL,
+  max_posts_allowed int(10) unsigned NOT NULL default '0',
+  timespan int(10) unsigned NOT NULL default '1'
+) ENGINE=MyISAM;
+
+#
 # Table structure for table `scheduled_tasks`
 #
 
@@ -2095,8 +2099,11 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('tag_cloud_largest_fontsize', ''),
 	('tag_list_enabled', '1'),
 	('tag_list_show_count', '1'),
-	('tag_search_paginate_limit', '15')
-	
+	('tag_search_paginate_limit', '15'),
+	('search_min_char', '2'),
+	('enable_allow_deny', '1'),
+	('rp_mod_enable', '0'),
+	('rp_mod_enable_calendar', '0')
 	;
 
 # --------------------------------------------------------
