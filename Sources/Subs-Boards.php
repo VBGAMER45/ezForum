@@ -620,10 +620,10 @@ function modifyBoard($board_id, &$boardOptions)
 	}
 
 	// Who's allowed to access this board.
-	if (isset($boardOptions['access_groups']))
+	if (isset($boardOptions['groups_deny']))
 	{
-		$boardUpdates[] = 'member_groups = {string:member_groups}';
-		$boardUpdateParameters['member_groups'] = implode(',', $boardOptions['access_groups']);
+		$boardUpdates[] = 'member_groups_deny = {string:member_groups_deny}';
+		$boardUpdateParameters['member_groups_deny'] = implode(',', $boardOptions['groups_deny']);
 	}
 
 	if (isset($boardOptions['board_name']))
@@ -1092,7 +1092,7 @@ function getBoardTree()
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			IFNULL(b.id_board, 0) AS id_board, b.id_parent, b.name AS board_name, b.description, b.child_level,
-			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.override_theme, b.id_profile, b.redirect,
+			b.board_order, b.count_posts, b.member_groups, b.id_theme, b.override_theme, b.id_profile, b.redirect, b.member_groups_deny, 
 			b.num_posts, b.num_topics, c.id_cat, c.name AS cat_name, c.cat_order, c.can_collapse, b.prune_frequency 
 		FROM {db_prefix}categories AS c
 			LEFT JOIN {db_prefix}boards AS b ON (b.id_cat = c.id_cat)
@@ -1135,6 +1135,7 @@ function getBoardTree()
 				'order' => $row['board_order'],
 				'name' => $row['board_name'],
 				'member_groups' => explode(',', $row['member_groups']),
+				'member_groups_deny' => explode(',', $row['member_groups_deny']),
 				'description' => $row['description'],
 				'count_posts' => empty($row['count_posts']),
 				'posts' => $row['num_posts'],

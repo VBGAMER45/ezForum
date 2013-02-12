@@ -665,4 +665,21 @@ $txt['pretty_board_url_title'] = 'Pretty URLs for: ';
 
 $txt['membergroups_id'] = 'ID';
 
+/*
+Allow Deny Board Permission
+By: Joker
+
+Mozilla Public License Version 1.1 
+(the "License"); you may not use this SMF modification except in compliance with
+the License. You may obtain a copy of the License at
+http://www.mozilla.org/MPL/
+
+*/
+$txt['enable_allow_deny'] = 'Enable allow/deny mod';
+$txt['desc_enable_allow_deny'] = 'With the help of this mod you can deny the access to boards to any member group.';
+$txt['deny_groups'] = 'Deny groups';
+$txt['deny_groups_desc'] = 'Groups not allowed to access this board.';
+$txt['membergroups_deny_board'] = 'Deny Boards';
+$txt['membergroups_deny_board_desc'] = 'Boards the membergroup can\'t see';
+
 ?>

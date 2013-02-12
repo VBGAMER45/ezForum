@@ -499,6 +499,7 @@ CREATE TABLE {$db_prefix}boards (
   show_rssicon tinyint(1) unsigned NOT NULL default '0',
   last_pruned int(10) unsigned NOT NULL default '0',
   prune_frequency int(10) unsigned NOT NULL default '0',
+  member_groups_deny varchar(255) NOT NULL default '',
   PRIMARY KEY (id_board),
   UNIQUE categories (id_cat, id_board),
   KEY id_parent (id_parent),
@@ -2096,7 +2097,8 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('tag_list_enabled', '1'),
 	('tag_list_show_count', '1'),
 	('tag_search_paginate_limit', '15'),
-	('search_min_char', '2')
+	('search_min_char', '2'),
+	('enable_allow_deny', '1')
 	
 	;
 

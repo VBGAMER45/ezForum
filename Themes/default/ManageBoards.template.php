@@ -366,7 +366,7 @@ function template_modify_board()
 	foreach ($context['groups'] as $group)
 		echo '
 							<label for="groups_', $group['id'], '">
-								<input type="checkbox" name="groups[]" value="', $group['id'], '" id="groups_', $group['id'], '"', $group['checked'] ? ' checked="checked"' : '', ' class="input_check" />
+								<input type="checkbox" name="groups[]" value="', $group['id'], '" id="groups_', $group['id'], '"', $group['checked'] ? ' checked="checked"' : '', ' class="input_check" ', !empty($modSettings['enable_allow_deny']) ? 'onclick="check_deny_allow('. $group['id']. ', this);"' : '', ' />
 								<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
 									', $group['name'], '
 								</span>
@@ -375,6 +375,29 @@ function template_modify_board()
 							<em>', $txt['check_all'], '</em> <input type="checkbox" class="input_check" onclick="invertAll(this, this.form, \'groups[]\');" /><br />
 							<br />
 						</dd>';
+
+	if (!empty($modSettings['enable_allow_deny']))
+	{
+		echo'
+						<dt>
+							<strong>', $txt['deny_groups'], ':</strong><br />
+							<span class="smalltext">', $txt['deny_groups_desc'], '</span>
+						</dt>
+						<dd>';
+
+		foreach ($context['groups'] as $group)
+		echo '
+							<label for="groups_deny_', $group['id'], '">
+								<input type="checkbox" name="groups_deny[]" value="', $group['id'], '" id="groups_deny_', $group['id'], '"', $group['deny'] ? ' checked="checked"' : '', ' class="input_check" onclick="check_deny_allow('. $group['id']. ', this);" />
+								<span', $group['is_post_group'] ? ' class="post_group" title="' . $txt['mboards_groups_post_group'] . '"' : '', $group['id'] == 0 ? ' class="regular_members" title="' . $txt['mboards_groups_regular_members'] . '"' : '', '>
+									', $group['name'], '
+								</span>
+							</label><br />';
+		echo '
+							<em>', $txt['check_all'], '</em> <input type="checkbox" class="input_check" onclick="invertAll(this, this.form, \'groups_deny[]\');" /><br />
+							<br />
+						</dd>';
+	}
 
 	// Options to choose moderators, specifiy as announcement board and choose whether to count posts here.
 	echo '
@@ -574,6 +597,21 @@ function template_modify_board()
 // ]]></script>';
 
 	// Javascript for deciding what to show.
+	echo '
+	<script type="text/javascript"><!-- // -->','
+	function check_deny_allow(group_var, id)
+	{
+		if ((id == document.getElementById("groups_"+group_var)) && (id.checked == true))
+		{
+			document.getElementById("groups_deny_"+group_var).checked = false;
+		}
+		if ((id == document.getElementById("groups_deny_"+group_var)) && (id.checked == true))
+		{
+			document.getElementById("groups_"+group_var).checked = false;
+		}
+	}
+// ]]','></script>';
+
 	echo '
 	<script type="text/javascript"><!-- // --><![CDATA[
 		function refreshOptions()
