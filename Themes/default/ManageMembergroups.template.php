@@ -289,16 +289,45 @@ function template_edit_group()
 						</dt>
 						<dd>
 							<input type="text" name="star_count" id="star_count_input" value="', $context['group']['star_count'], '" size="4" onkeyup="if (this.value.length > 2) this.value = 99;" onkeydown="this.onkeyup();" onchange="if (this.value != 0) this.form.star_image.onchange();" class="input_text" />
-						</dd>
-						<dt>
-							<label for="star_image_input"><strong>', $txt['membergroups_star_image'], ':</strong></label><br />
-							<span class="smalltext">', $txt['membergroups_star_image_note'], '</span>
-						</dt>
-						<dd>
-							', $txt['membergroups_images_url'], '
-							<input type="text" name="star_image" id="star_image_input" value="', $context['group']['star_image'], '" onchange="if (this.value &amp;&amp; this.form.star_count.value == 0) this.form.star_count.value = 1; else if (!this.value) this.form.star_count.value = 0; document.getElementById(\'star_preview\').src = smf_images_url + \'/\' + (this.value &amp;&amp; this.form.star_count.value > 0 ? this.value.replace(/\$language/g, \'', $context['user']['language'], '\') : \'blank.gif\');" size="20" class="input_text" />
-							<img id="star_preview" src="', $settings['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '" alt="*" />
-						</dd>
+						</dd>';
+                        /*
+                        Rank Image Drop Down 
+                        By: Yoshi2889
+                        Licensed under a BSD 3-Clause license.
+                        */
+        
+                        // Do we have any possible stars to select from?
+                       	if (!empty($context['possibleStars']))
+                       	{
+                       		echo '
+                						<dt>
+                							<label for="star_image_input"><strong>', $txt['membergroups_star_image'], ':</strong></label><br />
+                							<span class="smalltext">', $txt['membergroups_star_image_note'], '</span>
+                						</dt>
+                						<dd>
+                							', $txt['membergroups_images_url'], '
+                							<select name="star_image" id="star_image_input">';
+                
+                		// For every possible star, create an option.
+                		foreach ($context['possibleStars'] as $star)
+                		{
+                			echo '
+                								<option value="', $star, '"', $context['group']['star_image'] == $star ? ' selected="selected"' : '', '>', $star, '</option>';
+                		}
+                	
+                		echo '
+                							</select>
+                							<img id="star_preview" src="', $settings['images_url'], '/', $context['group']['star_image'] == '' ? 'blank.gif' : $context['group']['star_image'], '" alt="*" />
+                						</dd>';
+                	}
+	
+	// No? Hide the entire control.
+	else
+		echo '
+						<input type="hidden" name="star_image" value="" />';
+                        // End Rank Image Drop Down 
+						
+	echo '
 						<dt>
 							<label for="max_messages_input"><strong>', $txt['membergroups_max_messages'], ':</strong></label><br />
 							<span class="smalltext">', $txt['membergroups_max_messages_note'], '</span>
