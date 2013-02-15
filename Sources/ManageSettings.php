@@ -183,7 +183,7 @@ function ModifySecuritySettings()
 // This my friend, is for all the mod authors out there. They're like builders without the ass crack - with the possible exception of... /cut short
 function ModifyModSettings()
 {
-	global $context, $txt, $scripturl, $modSettings, $settings;
+	global $context, $txt, $scripturl, $modSettings, $settings, $sourcedir;
 
 	$context['page_title'] = $txt['admin_modifications'];
 
@@ -191,6 +191,12 @@ function ModifyModSettings()
 		'general' => 'ModifyGeneralModSettings',
 		// Mod authors, once again, if you have a whole section to add do it AFTER this line, and keep a comma at the end.
 	);
+
+
+	require_once($sourcedir . '/Subs-IntegrationHooks.php');
+
+	$subActions['hooks'] = 'list_integration_hooks';
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['hooks'] = array();
 
 	// Make it easier for mods to add new areas.
 	call_integration_hook('integrate_modify_modifications', array(&$subActions));
@@ -752,8 +758,8 @@ function ModifySpamSettings($return_config = false)
 				array('int', 'anti_spam_links_newbielinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
 				array('int', 'anti_spam_links_nofollowlinks', 'subtext' => $txt['anti_spam_links_zero_disable']),
 				array('select', 'anti_spam_links_guests', array(&$txt['anti_spam_links_guests_opt0'], &$txt['anti_spam_links_guests_opt1'], &$txt['anti_spam_links_guests_opt2'], &$txt['anti_spam_links_guests_opt3'])),
-				'',	
-						
+				'',
+
 			// Visual verification.
 			array('title', 'configure_verification_means'),
 			array('desc', 'configure_verification_means_desc'),
@@ -864,8 +870,8 @@ function ModifySpamSettings($return_config = false)
 		unset($save_vars['pm1'], $save_vars['pm2'], $save_vars['pm3'], $save_vars['guest_verify']);
 
 		$save_vars[] = array('text', 'pm_spam_settings');
-		
-		
+
+
 		// Start of Anti-Spam-Links mod
 
 		// Nofollow links will not apply if its less than newbie links. So we need to fix it.
@@ -874,7 +880,7 @@ function ModifySpamSettings($return_config = false)
 				(int) $save_vars['anti_spam_links_nofollowlinks'] = (int) $save_vars['anti_spam_links_newbielinks'] + 1;
 
 		// End of Anti-Spam-Links mod
-	
+
 		// Handle verification questions.
 		$questionInserts = array();
 		$count_questions = 0;

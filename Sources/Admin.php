@@ -232,6 +232,7 @@ function AdminMain()
 					'icon' => 'modifications.gif',
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
+						'hooks' => array($txt['hooks_title_list']),
 						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
 						// 'shout' => array($txt['shout']),
 						// Note the comma!! The setting with automatically appear with the first mod to be added.
@@ -256,8 +257,8 @@ function AdminMain()
 					'file' => 'Subs-OneallSocialLogin.php',
 					'function' => 'oneall_social_login_config',
 					'custom_url' => $scripturl . '?action=admin;area=oasl;sa=settings;sesc=' . $sc,
-					'icon' => 'server.gif'	
-				)	
+					'icon' => 'server.gif'
+				)
 			)
 		),
 		'layout' => array(
@@ -351,7 +352,7 @@ function AdminMain()
 						'list_cloud' => array($txt['tags_admin_list_cloud_title']),
 					),
 				),
-				
+
 			),
 		),
 		'members' => array(
@@ -513,14 +514,14 @@ function AdminMain()
 					'select' => 'maintain',
 					'hidden' => true,
 				),
-				
+
                 'toolbox' => array(
             		'label' => $txt['toolbox_title'],
             		'file' => 'AdminToolbox.php',
             		'icon' => 'toolbox.gif',
             		'function' => 'AdminToolbox',
         		),
-        	),	
+        	),
 		),
 	);
 
@@ -1090,7 +1091,7 @@ function AdminLogs()
 function themeImageUpload($folder = 'all', $redirect_to = 'action=admin;area=theme;sa=admin#uploader')
 {
 	global $txt, $context, $scripturl, $settings, $sourcedir;
-	
+
 	if(!allowedTo('admin_forum'))
 		return;
 
@@ -1109,7 +1110,7 @@ function themeImageUpload($folder = 'all', $redirect_to = 'action=admin;area=the
 	if (!isset($_POST['upload']))
 	{
 		$context['redirect_to'] = $redirect_to;
-		
+
 		if ($folder == 'all')
 		{
 			// Lets see which folders are in this theme?
@@ -1173,7 +1174,7 @@ function themeImageUpload($folder = 'all', $redirect_to = 'action=admin;area=the
 					$errors[] = $_FILES['imageUpload']['name'][$n] . ': ' . $txt['file_not_image'];
 					@unlink($_FILES['imageUpload']['tmp_name'][$n]);
 				}
-				else	
+				else
 					// Only .jpg, .gif, .png are allowed
 					if (!in_array($sizes[2], array(1,2,3)))
 					{
@@ -1204,7 +1205,7 @@ function themeImageUpload($folder = 'all', $redirect_to = 'action=admin;area=the
 		if (!empty($error))
 			$_SESSION['upload_message'] = '<div class="error">' . $error . '</div>';
 		if (!empty($errors))
-			$_SESSION['upload_message'] .= (!empty($success) ? '<hr />' : '') . $txt['upload_fail'] . '<ul><li>' . implode('</li><li>', $errors) . '</li></ul>';			
+			$_SESSION['upload_message'] .= (!empty($success) ? '<hr />' : '') . $txt['upload_fail'] . '<ul><li>' . implode('</li><li>', $errors) . '</li></ul>';
 
 		redirectexit($_POST['redirect_to']);
 	}
