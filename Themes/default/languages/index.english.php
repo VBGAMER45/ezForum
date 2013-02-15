@@ -1082,4 +1082,7 @@ $txt['tags_related_title'] = 'Topics Releated By Tags';
 $txt['total_unapproved_topics'] = 'Total Unapproved Topics';
 $txt['total_unapproved_posts'] = 'Total Unapproved Posts';
 
+// Make PM unread emanuele BSD
+$txt['mark_unread_all'] = 'Mark Conversation unread';
+
 ?>

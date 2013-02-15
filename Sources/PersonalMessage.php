@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -2382,11 +2382,14 @@ function MessageActionsApply()
 
 	$to_delete = array();
 	$to_label = array();
+    $to_markunread = array();
 	$label_type = array();
 	foreach ($_REQUEST['pm_actions'] as $pm => $action)
 	{
 		if ($action === 'delete')
 			$to_delete[] = (int) $pm;
+        elseif ($action === 'markunread')
+			$to_markunread[] = (int) $pm;
 		else
 		{
 			if (substr($action, 0, 4) == 'add_')
@@ -2413,6 +2416,43 @@ function MessageActionsApply()
 	// Deleting, it looks like?
 	if (!empty($to_delete))
 		deleteMessages($to_delete, $context['display_mode'] == 2 ? null : $context['folder']);
+
+    /**
+    * Mark PM Unread (MPMU)
+    *
+    * @package MPMU
+    * @author emanuele
+    * @copyright 2012 emanuele, Simple Machines
+    * @license http://www.simplemachines.org/about/smf/license.php BSD
+    *
+    * @version 0.1.0
+    */
+    // Are we marking unread anything?
+	if (!empty($to_markunread))
+	{
+		markMessages($to_markunread, null, null, false);
+
+		$request = $smcFunc['db_query']('', '
+			SELECT id_pm
+			FROM {db_prefix}pm_recipients
+			WHERE id_member = {int:id_member}
+				AND FIND_IN_SET({string:label}, labels) != 0
+			ORDER BY id_pm DESC
+			LIMIT 1',
+			array(
+				'id_member' => $user_info['id'],
+				'label' => $context['current_label_id'],
+		));
+		list($lastPM) = $smcFunc['db_fetch_row']($request);
+		$smcFunc['db_free_result']($request);
+		if (in_array($lastPM, $to_markunread))
+		{
+			if ($context['current_label_id'] == -1)
+				redirectexit();
+			else
+				redirectexit('action=pm');
+		}
+	}
 
 	// Are we labeling anything?
 	if (!empty($to_label) && $context['folder'] == 'inbox')
@@ -2713,26 +2753,37 @@ function deleteMessages($personal_messages, $folder = null, $owner = null)
 }
 
 // Mark personal messages read.
-function markMessages($personal_messages = null, $label = null, $owner = null)
+function markMessages($personal_messages = null, $label = null, $owner = null, $markread = true)
 {
 	global $user_info, $context, $smcFunc;
 
 	if ($owner === null)
 		$owner = $user_info['id'];
 
+/**
+* Mark PM Unread (MPMU)
+*
+* @package MPMU
+* @author emanuele
+* @copyright 2012 emanuele, Simple Machines
+* @license http://www.simplemachines.org/about/smf/license.php BSD
+*
+* @version 0.1.0
+*/
 	$smcFunc['db_query']('', '
-		UPDATE {db_prefix}pm_recipients
-		SET is_read = is_read | 1
-		WHERE id_member = {int:id_member}
-			AND NOT (is_read & 1 >= 1)' . ($label === null ? '' : '
-			AND FIND_IN_SET({string:label}, labels) != 0') . ($personal_messages !== null ? '
-			AND id_pm IN ({array_int:personal_messages})' : ''),
-		array(
-			'personal_messages' => $personal_messages,
-			'id_member' => $owner,
-			'label' => $label,
-		)
-	);
+ 		UPDATE {db_prefix}pm_recipients
+		SET is_read = {raw:markread}
+		WHERE id_member = {int:id_member}' .
+			($markread ? ' AND NOT (is_read & 1 >= 1)' : '') . ($label === null ? '' : '
+ 			AND FIND_IN_SET({string:label}, labels) != 0') . ($personal_messages !== null ? '
+ 			AND id_pm IN ({array_int:personal_messages})' : ''),
+ 		array(
+ 			'personal_messages' => $personal_messages,
+ 			'id_member' => $owner,
+ 			'label' => $label,
+			'markread' => ($markread ? 'is_read | 1' : '0'),
+ 		)
+ 	);
 
 	// If something wasn't marked as read, get the number of unread messages remaining.
 	if ($smcFunc['db_affected_rows']() > 0)

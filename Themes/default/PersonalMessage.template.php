@@ -166,6 +166,18 @@ function template_folder()
 			// Build the normal button array.
 			$conversation_buttons = array(
 				'reply' => array('text' => 'reply_to_all', 'image' => 'reply.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=send;f=' . $context['folder'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';pmsg=' . $context['current_pm'] . ';u=all', 'active' => true),
+                /**
+                * Mark PM Unread (MPMU)
+                *
+                * @package MPMU
+                * @author emanuele
+                * @copyright 2012 emanuele, Simple Machines
+                * @license http://www.simplemachines.org/about/smf/license.php BSD
+                *
+                * @version 0.1.0
+                */
+                'mark_unread' => array('text' => 'mark_unread_all', 'image' => 'mark_unread.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=pmactions;pm_actions[' . $context['current_pm'] . ']=markunread;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_lable_id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id']),
+                
 				'delete' => array('text' => 'delete_conversation', 'image' => 'delete.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=pmactions;pm_actions[' . $context['current_pm'] . ']=delete;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'], 'custom' => 'onclick="return confirm(\'' . addslashes($txt['remove_message']) . '?\');"'),
 			);
 
@@ -420,6 +432,22 @@ function template_folder()
 					echo '
 					<li class="forward_button"><a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $txt['reply_quote'], '</a></li>';
 			}
+            
+            
+            /**
+            * Mark PM Unread (MPMU)
+            *
+            * @package MPMU
+            * @author emanuele
+            * @copyright 2012 emanuele, Simple Machines
+            * @license http://www.simplemachines.org/about/smf/license.php BSD
+            *
+            * @version 0.1.0
+            */
+            if ($message['member']['name'] != $context['user']['name'])
+				echo '
+					<li class="notify_button"><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions[', $message['id'], ']=markunread;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '">', $txt['mark_unread'], '</a></li>';
+            
 			echo '
 					<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions[', $message['id'], ']=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(\'', addslashes($txt['remove_message']), '?\');">', $txt['delete'], '</a></li>';
 
