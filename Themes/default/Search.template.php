@@ -29,7 +29,7 @@ function template_main()
 
 	if (!empty($context['search_errors']))
 		echo '
-		<p id="search_error" class="error">', implode('<br />', $context['search_errors']['messages']) , (!empty($modSettings['search_min_char']) ? $modSettings['search_min_char'] : 2) . '</p>';
+		<p id="search_error" class="error">', implode('<br />', $context['search_errors']['messages']) , '</p>';
 
 	// Simple Search?
 	if ($context['simple_search'])
