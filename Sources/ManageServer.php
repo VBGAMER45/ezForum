@@ -242,6 +242,8 @@ function ModifyGeneralSettings($return_config = false)
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
+	   $config_vars['db_show_debug'] = (!empty($_POST['db_show_debug'])) ? 'true' : 'false';
+       
 		saveSettings($config_vars);
 		redirectexit('action=admin;area=serversettings;sa=general;' . $context['session_var'] . '=' . $context['session_id']);
 	}
