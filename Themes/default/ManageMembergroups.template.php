@@ -130,11 +130,44 @@ function template_new_group()
 						</dt>
 						<dd>
 							<fieldset id="visible_boards">
-								<legend>', $txt['membergroups_new_board_desc'], '</legend>';
-	foreach ($context['boards'] as $board)
-		echo '
-								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked" disabled="disabled"' : '', ' class="input_check" ', !empty($modSettings['enable_allow_deny']) ? 'onclick="check_deny_allow('. $board['id']. ', this);"' : '', ' /> <label for="boardaccess_', $board['id'], '">', $board['name'], '</label></div>';
+								<legend>', $txt['membergroups_new_board_desc'], '</legend>
+								<ul class="ignoreboards floatleft">';
 
+	foreach ($context['categories'] as $category)
+	{
+		echo '
+									<li class="category">
+										<a href="javascript:void(0);" onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
+									<ul>';
+
+		foreach ($category['boards'] as $board)
+		{
+			echo '
+										<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em;">
+											<input type="checkbox" name="boardaccess[]" id="brd', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked" disabled="disabled"' : '', ' class="input_check" /> <label for="brd', $board['id'], '">', $board['name'], '</label>
+										</li>';
+		}
+
+		echo '
+									</ul>
+								</li>';
+	}
+
+	echo '
+							</ul>
+							<script type="text/javascript"><!-- // --><![CD', 'ATA[
+								function selectBoards(ids)
+								{
+									var toggle = true;
+
+									for (i = 0; i < ids.length; i++)
+										toggle = toggle & document.getElementById(["brd" + ids[i]]).checked;
+
+									for (i = 0; i < ids.length; i++)
+										document.getElementById(["brd" + ids[i]]).checked = !toggle;
+								}
+							// ]', ']></script>
+							<br class="clear" />';
 	echo '
 								<br />
 								<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boardaccess\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
@@ -371,7 +404,7 @@ function template_edit_group()
 						<dd>
 							<input type="text" name="max_messages" id="max_messages_input" value="', $context['group']['id'] == 1 ? 0 : $context['group']['max_messages'], '" size="6"', $context['group']['id'] == 1 ? ' disabled="disabled"' : '', ' class="input_text" />
 						</dd>';
-	if (!empty($context['boards']))
+	if (!empty($context['categories']))
 	{
 		echo '
 						<dt>
@@ -380,11 +413,44 @@ function template_edit_group()
 						</dt>
 						<dd>
 							<fieldset id="visible_boards" style="width: 95%;">
-								<legend><a href="javascript:void(0);" onclick="document.getElementById(\'visible_boards\').style.display = \'none\';document.getElementById(\'visible_boards_link\').style.display = \'block\'; return false;">', $txt['membergroups_new_board_desc'], '</a></legend>';
-		foreach ($context['boards'] as $board)
-			echo '
-								<div style="margin-left: ', $board['child_level'], 'em;"><input type="checkbox" name="boardaccess[]" id="boardaccess_', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" ', !empty($modSettings['enable_allow_deny']) ? 'onclick="check_deny_allow('. $board['id']. ', this);"' : '', ' /> <label for="boardaccess_', $board['id'], '">', $board['name'], '</label></div>';
+								<legend><a href="javascript:void(0);" onclick="document.getElementById(\'visible_boards\').style.display = \'none\';document.getElementById(\'visible_boards_link\').style.display = \'block\'; return false;">', $txt['membergroups_new_board_desc'], '</a></legend>
+								<ul class="ignoreboards floatleft">';
 
+		foreach ($context['categories'] as $category)
+		{
+			echo '
+									<li class="category">
+										<a href="javascript:void(0);" onclick="selectBoards([', implode(', ', $category['child_ids']), ']); return false;">', $category['name'], '</a>
+										<ul>';
+
+			foreach ($category['boards'] as $board)
+			{
+				echo '
+											<li class="board" style="margin-', $context['right_to_left'] ? 'right' : 'left', ': ', $board['child_level'], 'em;">
+												<input type="checkbox" name="boardaccess[]" id="brd', $board['id'], '" value="', $board['id'], '" ', $board['selected'] ? ' checked="checked"' : '', ' class="input_check" /> <label for="brd', $board['id'], '">', $board['name'], '</label>
+											</li>';
+			}
+
+			echo '
+										</ul>
+									</li>';
+		}
+
+		echo '
+								</ul>
+								<script type="text/javascript"><!-- // --><![CD', 'ATA[
+									function selectBoards(ids)
+									{
+										var toggle = true;
+
+										for (i = 0; i < ids.length; i++)
+											toggle = toggle & document.getElementById(["brd" + ids[i]]).checked;
+
+										for (i = 0; i < ids.length; i++)
+											document.getElementById(["brd" + ids[i]]).checked = !toggle;
+									}
+								// ]', ']></script>
+								<br class="clear" />';
 		echo '
 								<br />
 								<input type="checkbox" id="checkall_check" class="input_check" onclick="invertAll(this, this.form, \'boardaccess\');" /> <label for="checkall_check"><em>', $txt['check_all'], '</em></label>
