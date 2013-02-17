@@ -2103,7 +2103,8 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('search_min_char', '2'),
 	('enable_allow_deny', '1'),
 	('rp_mod_enable', '0'),
-	('rp_mod_enable_calendar', '0')
+	('rp_mod_enable_calendar', '0'),
+	('guests_sendtopic_require_captcha','1')
 	;
 
 # --------------------------------------------------------

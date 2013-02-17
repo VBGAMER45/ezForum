@@ -1085,4 +1085,6 @@ $txt['total_unapproved_posts'] = 'Total Unapproved Posts';
 // Make PM unread emanuele BSD
 $txt['mark_unread_all'] = 'Mark Conversation unread';
 
+$txt['guests_sendtopic_require_captcha'] = 'Guests must pass verification when sending a topic';
+
 ?>

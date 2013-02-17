@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -56,7 +56,23 @@ function template_main()
 			</div>
 			<div class="windowbg2">
 			<span class="topslice"><span></span></span>
-				<div class="content">
+				<div class="content">';
+	if (!empty($context['post_errors']))
+	{
+		echo '
+					<div class="errorbox">
+						<ul class="reset">';
+
+		foreach ($context['post_errors'] as $error)
+			echo '
+							<li class="error">', $error, '</li>';
+
+		echo '
+						</ul>
+					</div>';
+	}
+
+	echo '
 					<fieldset id="sender" class="send_topic">
 						<dl class="settings send_topic">
 							<dt>
@@ -78,7 +94,24 @@ function template_main()
 								<input type="text" id="comment" name="comment" size="30" maxlength="100" class="input_text" />
 							</dd>
 						</dl>
-					</fieldset>
+					</fieldset>';
+
+	if ($context['require_verification'])
+	{
+		echo '
+					<fieldset id="verification" class="send_topic">
+						<dl class="settings send_topic">
+							<dt>
+								<strong>', $txt['verification'], '</strong>:
+							</dt>
+							<dd>
+								', template_control_verification($context['visual_verification_id'], 'all'), '
+							</dd>
+						</dl>
+					</fieldset>';
+	}
+
+	echo '
 					<fieldset id="recipient" class="send_topic">
 						<dl class="settings send_topic">
 							<dt>

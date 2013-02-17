@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -75,7 +75,7 @@ function EmailUser()
 // Send a topic to a friend.
 function SendTopic()
 {
-	global $topic, $txt, $context, $scripturl, $sourcedir, $smcFunc, $modSettings;
+	global $topic, $txt, $context, $scripturl, $sourcedir, $smcFunc, $modSettings, $user_info;
 
 	// Check permissions...
 	isAllowedTo('send_topic');
@@ -108,12 +108,51 @@ function SendTopic()
 	censorText($row['subject']);
 
 	// Sending yet, or just getting prepped?
-	if (empty($_POST['send']))
+	if (empty($_POST['send']) || !empty($context['post_errors']))
 	{
 		$context['page_title'] = sprintf($txt['sendtopic_title'], $row['subject']);
 		$context['start'] = $_REQUEST['start'];
+		
+		// Do we need to show the send topic visual verification image?
+		$context['require_verification'] = $user_info['is_guest'] && !empty($modSettings['guests_sendtopic_require_captcha']);
+		if ($context['require_verification'])
+		{
+			require_once($sourcedir . '/Subs-Editor.php');
+			$verificationOptions = array(
+				'id' => 'sendtopic',
+			);
+			$context['require_verification'] = create_control_verification($verificationOptions);
+			$context['visual_verification_id'] = $verificationOptions['id'];
+		}
 
 		return;
+	}
+	
+// No errors, yet.
+	$post_errors = array();
+
+	// Could they get the right send topic verification code?
+	if ($user_info['is_guest'] && !empty($modSettings['guests_sendtopic_require_captcha']))
+	{
+		require_once($sourcedir . '/Subs-Editor.php');
+		$verificationOptions = array(
+			'id' => 'sendtopic',
+		);
+		$context['require_verification'] = create_control_verification($verificationOptions, true);
+		if (is_array($context['require_verification']))
+			$post_errors = array_merge($post_errors, $context['require_verification']);
+	}
+
+	// Any errors?
+	if (!empty($post_errors))
+	{
+		loadLanguage('Errors');
+
+		$context['post_errors'] = array();
+		foreach ($post_errors as $post_error)
+			$context['post_errors'][] = $txt['error_' . $post_error];
+
+		return SendTopic();
 	}
 
 	// Actually send the message...
