@@ -242,7 +242,7 @@ function ModifyGeneralSettings($return_config = false)
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
-	   $config_vars['db_show_debug'] = (!empty($_POST['db_show_debug'])) ? 'true' : 'false';
+ 
        
 		saveSettings($config_vars);
 		redirectexit('action=admin;area=serversettings;sa=general;' . $context['session_var'] . '=' . $context['session_id']);
@@ -1996,7 +1996,8 @@ function saveSettings(&$config_vars)
 		if (substr($_POST['boardurl'], 0, 7) != 'http://' && substr($_POST['boardurl'], 0, 7) != 'file://' && substr($_POST['boardurl'], 0, 8) != 'https://')
 			$_POST['boardurl'] = 'http://' . $_POST['boardurl'];
 	}
-
+    
+    
 	// Any passwords?
 	$config_passwords = array(
 		'db_passwd',
@@ -2018,11 +2019,20 @@ function saveSettings(&$config_vars)
 	// All the checkboxes.
 	$config_bools = array(
 		'db_persist', 'db_error_send',
-		'maintenance', 'db_show_debug'
+		'maintenance'
 	);
 
 	// Now sort everything into a big array, and figure out arrays and etc.
 	$new_settings = array();
+    
+    if (isset($_POST['db_show_debug']))
+	{
+        $new_settings['db_show_debug'] = (!empty($_POST['db_show_debug'])) ? 'true' : 'false';
+    }
+    else
+        $new_settings['$db_show_debug'] = 'false';
+  
+    
 	foreach ($config_passwords as $config_var)
 	{
 		if (isset($_POST[$config_var][1]) && $_POST[$config_var][0] == $_POST[$config_var][1])
