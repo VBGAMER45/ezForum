@@ -15,6 +15,7 @@
  *
  * @version 2.0
  */
+ini_set("max_execution_time",5000);
 
 $GLOBALS['current_smf_version'] = '2.0';
 $GLOBALS['db_script_version'] = '2-0';
