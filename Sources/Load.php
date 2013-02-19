@@ -323,9 +323,12 @@ function loadUserSettings()
         *
         * @version 0.2.2
         */
-	require_once($sourcedir . "/Subs-MobileDetect.php");
-	setThemeForMobileDevices();
-	/* End Mobile Device Detect */
+    if (isset($modSettings['mobile_theme_id']))
+    {
+	   require_once($sourcedir . "/Subs-MobileDetect.php");
+	   setThemeForMobileDevices();
+	}
+    /* End Mobile Device Detect */
 
 
 	// Check first the integration, then the cookie, and last the session.
