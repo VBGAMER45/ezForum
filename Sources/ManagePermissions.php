@@ -1533,6 +1533,7 @@ function loadAllPermissions($loadType = 'classic')
 			'post_attachment' => array(false, 'attachment', 'attach'),
 			'posthistory_view' => array(true, 'post', 'moderate', 'moderate'),
 			'posthistory_restore' => array(true, 'post', 'moderate', 'moderate'),
+            'disable_title_convert_url' => array(false, 'topic', 'moderate'),
 		),
 	);
 

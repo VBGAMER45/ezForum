@@ -342,4 +342,8 @@ $txt['auto_approve_topics'] = 'Post new topics, without requiring approval';
 $txt['auto_approve_replies'] = 'Post replies to topics, without requiring approval';
 $txt['auto_approve_attachments'] = 'Post attachments, without requiring approval';
 
+// Spuds
+$txt['permissionname_disable_title_convert_url'] = 'Allow disabling of descriptive link titles';
+$txt['permissionhelp_disable_title_convert_url'] = 'Allows the member to disable the automatic updating of links in a post to the page title.';
+
 ?>

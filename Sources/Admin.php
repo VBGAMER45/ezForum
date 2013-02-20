@@ -233,6 +233,7 @@ function AdminMain()
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
 						'hooks' => array($txt['hooks_title_list']),
+                        'dlinks' => array($txt['mods_cat_modifications_dlinks']),
 						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
 						// 'shout' => array($txt['shout']),
 						// Note the comma!! The setting with automatically appear with the first mod to be added.

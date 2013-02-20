@@ -196,6 +196,7 @@ function ModifyModSettings()
 	require_once($sourcedir . '/Subs-IntegrationHooks.php');
 
 	$subActions['hooks'] = 'list_integration_hooks';
+    $sub_actions['dlinks'] = 'ModifydlinksSettings';
 	$context[$context['admin_menu_name']]['tab_data']['tabs']['hooks'] = array();
 
 	// Make it easier for mods to add new areas.
@@ -2714,6 +2715,48 @@ function recacheCustomActions()
 	cache_put_data('menu_buttons-' . implode('_', $user_info['groups']) . '-' . $user_info['language'], null);
 }
 
+/*
+Spuds 
+Mozilla Public License version 2.0 (the "License"). You can obtain a copy of the License at http://mozilla.org/MPL/2.0/.
+*/
 
+function ModifydlinksSettings($return_config = false)
+{
+	global $txt, $scripturl, $context, $smcFunc, $sourcedir;
+
+	$context[$context['admin_menu_name']]['tab_data']['tabs']['dlinks']['description'] = $txt['descriptivelinks_desc'];
+	$config_vars = array(
+		array('check', 'descriptivelinks_enabled'),
+		array('check', 'descriptivelinks_title_url'),
+		array('check', 'descriptivelinks_title_internal'),
+		array('check', 'descriptivelinks_title_bbcurl'),
+		array('int', 'descriptivelinks_title_url_count', 'subtext' => $txt['descriptivelinks_title_url_count_sub'], 'postinput' => $txt['descriptivelinks_title_url_count_urls']),
+		array('int', 'descriptivelinks_title_url_length'),
+		array('text','descriptivelinks_title_url_generic', 60, 'subtext' => $txt['descriptivelinks_title_url_generic_sub']),		
+	);
+
+	if ($return_config)
+		return $config_vars;
+
+	if (isset($_GET['save']))
+	{
+		checkSession();
+		saveDBSettings($config_vars);
+
+		// enabling the mod then lets have the main file available, otherwise lets not ;)
+		if (isset($_POST['descriptivelinks_enabled']))
+			add_integration_function('integrate_pre_include', '$sourcedir/Subs-DescriptiveLinks.php');
+		else
+			remove_integration_function('integrate_pre_include', '$sourcedir/Subs-DescriptiveLinks.php');
+
+		writeLog();
+		redirectexit('action=admin;area=modsettings;sa=dlinks');
+	}
+
+	$context['post_url'] = $scripturl . '?action=admin;area=modsettings;save;sa=dlinks';
+	$context['settings_title'] = $txt['mods_cat_modifications_dlinks'];
+
+	prepareDBSettingContext($config_vars);
+}
 
 ?>

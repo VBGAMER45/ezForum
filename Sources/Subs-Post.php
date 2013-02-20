@@ -162,7 +162,7 @@ if (!defined('SMF'))
 // Parses some bbc before sending into the database...
 function preparsecode(&$message, $previewing = false)
 {
-	global $user_info, $modSettings, $smcFunc, $context;
+	global $user_info, $modSettings, $smcFunc, $context, $sourcedir;
 
 	// This line makes all languages *theoretically* work even with the wrong charset ;).
 	$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
@@ -175,6 +175,13 @@ function preparsecode(&$message, $previewing = false)
 
 	// You won't believe this - but too many periods upsets apache it seems!
 	$message = preg_replace('~\.{100,}~', '...', $message);
+    
+    // Descriptive links, If asked, lets create a nice title for the link [url=ddd]great title[/url]
+	if (!empty($modSettings['descriptivelinks_enabled']) && !$previewing && !empty($modSettings['descriptivelinks_title_url']) && empty($_POST['disable_title_convert_url']) && empty($_REQUEST['nt'])) 
+	{
+	    require_once($sourcedir . '/Subs-DescriptiveLinks.php');
+    	Add_title_to_link($message);
+    }
 
 	// Trim off trailing quotes - these often happen by accident.
 	while (substr($message, -7) == '[quote]')

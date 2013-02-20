@@ -604,4 +604,6 @@ $helptxt['custom_mask'] = 'The input mask is important for your forum\'s securit
  // Added by the Theme Image Uploader
 $helptxt['theme_image_uploader'] = 'Upload image files directly to the images directory and sub-directorys of the current theme. Only JPEG, GIF and PNG image types are allowed.<br /><br />Note: Due to the fact that this is designed to replace existing images. There is no overwrite protect or warning if an existing image is overwritten.';
 
+// Spuds
+$helptxt['descriptivelinks_title_url'] = 'Enable this to convert links posted in topics to show the descriptive page title. This mod will also convert internal topic, page and board links to show the topic or message subject or the board name.<br />If a user posts a link outside of a [url] [/url] tag (and optionally inside this tag), the mod will find it, look up the webpage, get its title, and replace the link with a properly structured bbc url using the found webpages title<br />http://www.mysitehere.com<br />will be transformed into<br />[url=http://www.mysitehere.com]My Website Title[/url]<br />If the page or title cannot be found, the URL in the post is not changed.<br />This edit is made when the post is created or edited, it is not done on the fly, as it could cause lags in load time.';
 ?>

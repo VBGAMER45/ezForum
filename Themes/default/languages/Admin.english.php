@@ -717,4 +717,24 @@ $txt['hooks_disable_legend_missing'] = 'the hook has not been found';
 $txt['hooks_reset_filter'] = 'Reset filter';
 
 
+/*
+Spuds 
+Mozilla Public License version 2.0 (the "License"). You can obtain a copy of the License at http://mozilla.org/MPL/2.0/.
+*/
+
+$txt['mods_cat_modifications_dlinks'] = 'DLinks';
+$txt['descriptivelinks_desc'] = 'Changes links so they display the page title of the linked resource';
+$txt['descriptivelinks_enabled'] = 'Enable the Descriptive Links Modification';
+$txt['descriptivelinks_title_url'] = 'Show links as their page title';
+$txt['descriptivelinks_title_internal'] = 'Convert internal (topic/message/board) links to show their title (post or board)';
+$txt['descriptivelinks_title_bbcurl'] = 'Convert links inside of [url] tags';
+$txt['descriptivelinks_title_url_length'] = 'Maximum allowable length for converted title';
+$txt['descriptivelinks_title_url_generic'] = 'Don\'t convert links to these generic titles (as a comma separated list)';
+$txt['descriptivelinks_title_url_generic_sub'] = 'Defaults: home,index,page&nbsp;title,default,login,logon,welcome,ebay';
+$txt['descriptivelinks_title_url_count'] = 'Maximum number of links in a post to convert';
+$txt['descriptivelinks_title_url_count_sub'] = 'higher values can cause delays in posting as each link needs to be looked up, use 0 for no max';
+$txt['descriptivelinks_title_url_count_urls'] = 'URL\'s';
+$txt['disable_title_convert_url'] = 'Do not auto title the links in this post';
+
+
 ?>
