@@ -342,8 +342,22 @@ $txt['auto_approve_topics'] = 'Post new topics, without requiring approval';
 $txt['auto_approve_replies'] = 'Post replies to topics, without requiring approval';
 $txt['auto_approve_attachments'] = 'Post attachments, without requiring approval';
 
+
+
+
+$txt['permissiongroup_profile_comments'] = 'Ajax Profile Comments';
+$txt['permissiongroup_simple_profile_comments'] = ' Ajax Profile Comments';
+$txt['permissionname_pc_can_comment'] = 'Allowed to post new comments:';
+$txt['permissionname_pc_can_modify'] = 'Allowed to modify:';
+$txt['permissionname_pc_can_delete'] = 'Allowed to delete:';
+$txt['permissionname_pc_can_modify_own'] = 'Own Comment';
+$txt['permissionname_pc_can_modify_any'] = 'Any Comment';
+$txt['permissionname_pc_can_delete_own'] = 'Own Comment';
+$txt['permissionname_pc_can_delete_any'] = 'Any Comment';
+
 // Spuds
 $txt['permissionname_disable_title_convert_url'] = 'Allow disabling of descriptive link titles';
 $txt['permissionhelp_disable_title_convert_url'] = 'Allows the member to disable the automatic updating of links in a post to the page title.';
+
 
 ?>

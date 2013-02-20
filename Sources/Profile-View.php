@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -246,6 +246,50 @@ function summary($memID)
 	}
 
 	loadCustomFields($memID);
+	
+	loadTemplate('ProfileComments');
+	
+	global $memberContext;
+	$q =$smcFunc['db_query']('', '
+		SELECT comment_id, comment_poster_id, comment_poster, comment_title, comment_body
+		FROM {db_prefix}profile_comments
+		WHERE comment_profile= {int:profile_id}
+		ORDER BY comment_id DESC
+		LIMIT 20',
+		array ('profile_id' => $memID)
+	);
+	
+	while ($row = $smcFunc['db_fetch_assoc']($q))
+	{
+		if (!isset($memberContext[$row['comment_poster_id']]))
+		{
+			loadMemberData(array($row['comment_poster_id']), false, 'normal');
+			loadMemberContext($row['comment_poster_id']);
+		}
+		$context['profile_comments'][] = array(
+			'id' => $row['comment_id'],
+			'poster_id' => $row['comment_poster_id'],
+			'poster_name' => $row['comment_poster'],
+			'poster_avatar' => !empty($memberContext[$row['comment_poster_id']]['avatar']['href']) ? $memberContext[$row['comment_poster_id']]['avatar']['href'] : 'http://www.gravatar.com/avatar/' . md5(strtolower($context['user']['email'])) . '?r=G&d=mm&s=85',
+			'title' => $row['comment_title'],
+			'body' => parse_bbc($row['comment_body']),
+			'can_modify' => allowedTo('pc_can_modify_any') || (($context['user']['id'] == $row['comment_poster_id']) && (allowedTo('pc_can_modify_own'))) ? true : false,
+			'can_delete' => allowedTo('pc_can_delete_any') || (($context['user']['id'] == $row['comment_poster_id']) && (allowedTo('pc_can_delete_own'))) ? true : false
+		);
+	}
+	
+	$counting_query = $smcFunc['db_query']('', '
+		SELECT comment_id
+		FROM {db_prefix}profile_comments
+		WHERE comment_profile= {int:profile_id}',
+		array ('profile_id' => $memID)
+	);
+	
+	$context['total_comments'] = $smcFunc['db_num_rows']($counting_query);
+	$context['most_recent'] = isset($context['profile_comments'][0]['id']) ? $context['profile_comments'][0]['id'] : 0;
+	$context['oldest_shown'] = !empty($context['profile_comments']) ? end($context['profile_comments']) : '';
+	$context['profile_id'] = $memID;
+	
 }
 
 // !!! This function needs to be split up properly.

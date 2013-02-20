@@ -23,6 +23,10 @@ function template_profile_above()
 	echo '
 	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/profile.js"></script>';
 
+		// <ChineseModifications mod="Ajax Profile Comments">
+	if (function_exists('template_include_javascript'))
+		template_include_javascript();
+
 	// Prevent Chrome from auto completing fields when viewing/editing other members profiles
 	if ($context['browser']['is_chrome'] && !$context['user']['is_owner'])
 		echo '
@@ -351,7 +355,14 @@ function template_summary()
 			<span class="botslice"><span></span></span>
 		</div>
 	</div>
-<div class="clear"></div>
+<div class="clear"></div>';
+
+	// <ChineseModifications mod="Ajax Profile Comments">
+	if (function_exists('template_profile_comments'))
+		template_profile_comments();
+	// </ChineseModifications>
+	
+	echo '
 </div>';
 }
 

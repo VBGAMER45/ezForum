@@ -468,4 +468,11 @@ $txt['trackEdit_action_email_address'] = 'Email Address';
 $txt['trackEdit_action_id_group'] = 'Primary Membergroup';
 $txt['trackEdit_action_additional_groups'] = 'Additional Membergroups';
 
+
+$txt['pc_title'] = 'Profile Comments';
+$txt['pc_reply'] = 'Post Comment';
+$txt['pc_submit'] = 'Submit';
+$txt['pc_cancel'] = 'Cancel';
+$txt['pc_show_more'] = 'Show More';
+
 ?>
