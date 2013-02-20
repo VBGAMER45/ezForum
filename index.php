@@ -243,7 +243,7 @@ function smf_main()
 		require_once($sourcedir . '/Subs-Auth.php');
 		return 'KickGuest';
 	}
-	elseif (empty($_REQUEST['action']))
+	elseif (empty($_REQUEST['action']) && empty($_GET['profile_ajax']))
 	{
 		// Action and board are both empty... BoardIndex!
 		if (empty($board) && empty($topic))
@@ -264,6 +264,13 @@ function smf_main()
 			return 'Display';
 		}
 	}
+	
+
+	if (!empty($_GET['profile_ajax']))
+	{
+		require_once($sourcedir . '/ClassProfileComments.php');
+	}
+
 
 	// Here's the monstrous $_REQUEST['action'] array - $_REQUEST['action'] => array($file, $function).
 	$actionArray = array(

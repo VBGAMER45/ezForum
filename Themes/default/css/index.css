@@ -3629,3 +3629,126 @@ span.hidelink
 {
 	margin: 0 auto !important;
 }
+
+.nodisplay_comment
+{
+	display: none;
+}
+
+#comment_loader
+{
+	display: none;
+	float: right;
+	margin: 6px 0 0 0;
+}
+#comment_success, #comment_error
+{
+	float: right;
+	display: none;
+	margin: 6px 0 0 0; 
+}
+
+#profile_comments
+{
+	margin: 5px 0 0 0;
+	float: right;
+	width: 79.5%;
+}
+#main_admsection #profile_comments
+{
+	width: 100%;
+}
+#form_container
+{
+	display: none;
+	padding: 5px 0 0 0;
+}
+#show_reply_button
+{
+	position: relative;
+	float: right;
+	padding: 6px;
+	margin: 3px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+#show_reply_button img
+{
+	position: relative;
+	top: 3px;
+}
+	
+#input_title, .modify_title
+{
+	display: block;
+	width: 98%;
+	margin: 2px auto;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+#input_body, .modify_body
+{
+	display: block;
+	width: 98%;
+	height: 7em;
+	margin: 2px auto;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+#input_submit, #input_cancel, .modify_submit, .modify_cancel
+{
+	display: block;
+	float: right;
+	padding: 6px;
+	margin: 5px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+#show_more_button
+{
+	position: relative;
+	float: right;
+	padding: 6px;
+	margin: 5px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.comment_container
+{
+	margin: 5px 0 0 0;
+}
+
+.comment_user_info
+{
+	width: 12em;
+	float: left;
+	text-align: center;
+}
+.comment_avatar
+{
+	display: block;
+	margin: 6px auto 0 auto;
+	max-width: 55px;
+	max-height: 55px;
+}
+
+.comment_body
+{
+	margin: 0 0 0 13em;
+	padding: 5px;
+	min-height: 80px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+}
+.comment_delete, .comment_modify
+{
+	float: right;
+	margin: 0 2px;
+}

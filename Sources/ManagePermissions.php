@@ -1416,6 +1416,7 @@ function loadAllPermissions($loadType = 'classic')
 	$permissionGroups = array(
 		'membergroup' => array(
 			'simple' => array(
+				'profile_comments',
 				'view_basic_info',
 				'use_pm_system',
 				'post_calendar',
@@ -1426,6 +1427,7 @@ function loadAllPermissions($loadType = 'classic')
 				'administrate',
 			),
 			'classic' => array(
+				'profile_comments',
 				'general',
 				'pm',
 				'calendar',
@@ -1466,6 +1468,9 @@ function loadAllPermissions($loadType = 'classic')
 	*/
 	$permissionList = array(
 		'membergroup' => array(
+			'pc_can_comment' => array(false, 'profile_comments', 'profile_comments'),
+			'pc_can_modify' => array(true, 'profile_comments', 'profile_comments'),
+			'pc_can_delete' => array(true, 'profile_comments', 'profile_comments'),
 			'view_stats' => array(false, 'general', 'view_basic_info'),
 			'view_mlist' => array(false, 'general', 'view_basic_info'),
 			'who_view' => array(false, 'general', 'view_basic_info'),

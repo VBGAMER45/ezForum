@@ -1748,6 +1748,21 @@ PRIMARY KEY (url_id)) ENGINE=MyISAM;
 
 
 #
+# Table structure for table `profile_comments`
+#
+
+CREATE TABLE {$db_prefix}profile_comments (
+  comment_id int(11) unsigned NOT NULL auto_increment,
+  comment_profile int(11) unsigned NOT NULL,
+  comment_poster_id int(11) unsigned NOT NULL,
+  comment_poster varchar(50) NOT NULL,
+  comment_title varchar(60) NOT NULL,
+  comment_body text NOT NULL,
+  PRIMARY KEY  (comment_id)
+) ENGINE=MyISAM;
+
+
+#
 # Table structure for table `related_topics`
 #
 
