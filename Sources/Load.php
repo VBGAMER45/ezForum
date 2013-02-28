@@ -1377,27 +1377,48 @@ function detectBrowser()
 		'is_firefox1' => preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/1\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
 		'is_firefox2' => preg_match('~(?:Firefox|Ice[wW]easel|IceCat)/2\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
 		'is_firefox3' => preg_match('~(?:Firefox|Ice[wW]easel|IceCat|Shiretoko|Minefield)/3\\.~', $_SERVER['HTTP_USER_AGENT']) === 1,
-		'is_iphone' => strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false,
-		'is_android' => strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false,
+		'is_iphone' => (strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPod') !== false) && strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') === false,
+		'is_ipad' => strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') !== false,
+		'is_ie_mobile' => strpos($_SERVER['HTTP_USER_AGENT'], 'PocketIE') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'IEMobile') !== false,
+		'is_ie_tablet' => strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'Touch') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'IEMobile') === false,
+		'is_android_phone' => strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') !== false,
+		'is_android_tablet' => strpos($_SERVER['HTTP_USER_AGENT'], 'Android') !== false && strpos($_SERVER['HTTP_USER_AGENT'], 'Mobile') === false,
+		'is_blackberry' => strpos($_SERVER['HTTP_USER_AGENT'], 'BlackBerry') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'PlayBook') !== false,
+		'is_symbian' => strpos($_SERVER['HTTP_USER_AGENT'], 'SymbianOS') !== false,
+		'is_netfront' => strpos($_SERVER['HTTP_USER_AGENT'], 'NetFront') !== false,
+		'is_palm' => strpos($_SERVER['HTTP_USER_AGENT'], 'Palm') !== false,
+		'is_web_os' => strpos($_SERVER['HTTP_USER_AGENT'], 'Web OS') !== false,
+		'is_opera_mobi' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mobi') !== false,
+		'is_opera_mini' => strpos($_SERVER['HTTP_USER_AGENT'], 'Opera Mini') !== false,
+		'is_fennec' => strpos($_SERVER['HTTP_USER_AGENT'], 'Fennec') !== false,
 	);
 
 	$context['browser']['is_chrome'] = $context['browser']['is_webkit'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
 	$context['browser']['is_safari'] = !$context['browser']['is_chrome'] && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') !== false;
 	$context['browser']['is_gecko'] = strpos($_SERVER['HTTP_USER_AGENT'], 'Gecko') !== false && !$context['browser']['is_webkit'] && !$context['browser']['is_konqueror'];
 
-	// Internet Explorer 5 and 6 are often "emulated".
+	// Internet Explorer 5 and 6 are often "emulated". Updated to include versions to IE11, just for a bit of future proofing.
+	$context['browser']['is_ie11'] = strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 11') !== false && !$context['browser']['is_opera'] && !$context['browser']['is_gecko'];
+	$context['browser']['is_ie10'] = strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 10') !== false && !$context['browser']['is_opera'] && !$context['browser']['is_gecko'];
+	$context['browser']['is_ie9'] = strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 9') !== false && !$context['browser']['is_opera'] && !$context['browser']['is_gecko'];
 	$context['browser']['is_ie8'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 8') !== false;
 	$context['browser']['is_ie7'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7') !== false && !$context['browser']['is_ie8'];
 	$context['browser']['is_ie6'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false && !$context['browser']['is_ie8'] && !$context['browser']['is_ie7'];
 	$context['browser']['is_ie5.5'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.5') !== false;
 	$context['browser']['is_ie5'] = !$context['browser']['is_opera'] && !$context['browser']['is_gecko'] && !$context['browser']['is_web_tv'] && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 5.0') !== false;
 
-	$context['browser']['is_ie'] = $context['browser']['is_ie4'] || $context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ie8'];
+	$context['browser']['is_ie'] = $context['browser']['is_ie4'] || $context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie6'] || $context['browser']['is_ie7'] || $context['browser']['is_ie8'] || $context['browser']['is_ie9'] || $context['browser']['is_ie10'] || $context['browser']['is_ie11'];
+
 	// Before IE8 we need to fix IE... lots!
-	$context['browser']['ie_standards_fix'] = !$context['browser']['is_ie8'];
+	$context['browser']['ie_standards_fix'] = $context['browser']['is_ie6'] || $context['browser']['is_ie7'];
 
-	$context['browser']['needs_size_fix'] = ($context['browser']['is_ie5'] || $context['browser']['is_ie5.5'] || $context['browser']['is_ie4'] || $context['browser']['is_opera6']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Mac') === false;
+	// Browsers affected by this are long dead, so just set to false.
+	$context['browser']['needs_size_fix'] = false;
 
+	// Add phone and tablet $context, just in case people want it.
+	$context['browser']['is_mobile'] = $context['browser']['is_iphone'] || $context['browser']['is_ie_mobile'] || $context['browser']['is_android_phone'] || $context['browser']['is_blackberry'] || $context['browser']['is_symbian'] || $context['browser']['is_netfront'] || $context['browser']['is_palm'] || $context['browser']['is_web_os'] || $context['browser']['is_opera_mobi'] || $context['browser']['is_opera_mini'] || $context['browser']['is_fennec'];
+	$context['browser']['is_tablet'] = $context['browser']['is_ipad'] || $context['browser']['is_android_tablet'] || $context['browser']['is_ie_tablet'];
+    
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);
 
