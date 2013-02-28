@@ -2685,7 +2685,7 @@ tr.titlebg td
 	position: relative;
 	left: 0;
 	right: 0;
-	overflow: hidden;
+	overflow: auto;
 }
 
 tr.windowbg td, tr.windowbg2 td, tr.approvebg td, tr.highlight2 td
@@ -3400,11 +3400,19 @@ dl.addrules dt.floatleft
 	background-color: #fff;
 }
 
+#calendar
+{
+	overflow: auto;
+}
 #month_grid
 {
 	width: 200px;
 	text-align: center;
 	float: left;
+}
+#main_grid
+{
+	margin: 0 0 0 220px;
 }
 #month_grid div.cat_bar
 {
