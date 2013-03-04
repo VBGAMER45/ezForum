@@ -870,8 +870,6 @@ function initialize_inputs()
 		@unlink(__FILE__);
 
 		// And the extra little files ;).
-		@unlink(dirname(__FILE__) . '/upgrade_1-0.sql');
-		@unlink(dirname(__FILE__) . '/upgrade_1-1.sql');
 		@unlink(dirname(__FILE__) . '/webinstall.php');
 
 		$dh = opendir(dirname(__FILE__));
@@ -932,11 +930,6 @@ function WelcomeLogin()
 		&& @file_exists($sourcedir . '/Subs-Db-' . $db_type . '.php')
 		&& @file_exists(dirname(__FILE__) . '/upgrade_2-0_' . $db_type . '.sql');
 
-	// Need legacy scripts?
-	if (!isset($modSettings['smfVersion']) || $modSettings['smfVersion'] < 2.0)
-		$check &= @file_exists(dirname(__FILE__) . '/upgrade_1-1.sql');
-	if (!isset($modSettings['smfVersion']) || $modSettings['smfVersion'] < 1.1)
-		$check &= @file_exists(dirname(__FILE__) . '/upgrade_1-0.sql');
 
 	if (!$check)
 		// Don't tell them what files exactly because it's a spot check - just like teachers don't tell which problems they are spot checking, that's dumb.
@@ -954,10 +947,10 @@ function WelcomeLogin()
 		return throw_error('The ' . $databases[$db_type]['name'] . ' user you have set in Settings.php does not have proper privileges.<br /><br />Please ask your host to give this user the ALTER, CREATE, and DROP privileges.');
 
 	// Do a quick version spot check.
-	$temp = substr(@implode('', @file($boarddir . '/index.php')), 0, 4096);
-	preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $temp, $match);
-	if (empty($match[1]) || $match[1] != EZFORUM_VERSION)
-		return throw_error('The upgrader found some old or outdated files.<br /><br />Please make certain you uploaded the new versions of all the files included in the package.');
+	//$temp = substr(@implode('', @file($boarddir . '/index.php')), 0, 4096);
+	//preg_match('~\*\s@version\s+(.+)[\s]{2}~i', $temp, $match);
+	//if (empty($match[1]) || $match[1] != EZFORUM_VERSION)
+	//	return throw_error('The upgrader found some old or outdated files.<br /><br />Please make certain you uploaded the new versions of all the files included in the package.');
 
 	// What absolutely needs to be writable?
 	$writable_files = array(
@@ -3669,6 +3662,9 @@ function template_database_changes()
 	// If javascript allows we want to do this using XML.
 	if ($support_js)
 	{
+		if (emtpy($upcontext['current_debug_item_num']))
+			$upcontext['current_debug_item_num'] = 0;
+
 		echo '
 		<script type="text/javascript"><!-- // --><![CDATA[
 			var lastItem = ', $upcontext['current_debug_item_num'], ';

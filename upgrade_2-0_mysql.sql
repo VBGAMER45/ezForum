@@ -223,16 +223,14 @@ VALUES
 	('enable_allow_deny', '1'),
 	('rp_mod_enable', '0'),
 	('rp_mod_enable_calendar', '0'),
-	('guests_sendtopic_require_captcha','1')
+	('guests_sendtopic_require_captcha','1'),
 	('descriptivelinks_enabled', '0'),
 	('descriptivelinks_title_url', '1'),
 	('descriptivelinks_title_internal', '1'),
-	('descriptivelinks_title_bbcurl', '1),
+	('descriptivelinks_title_bbcurl', '1'),
 	('descriptivelinks_title_url_count', 5'),
 	('descriptivelinks_title_url_generic', 'home,index,page title,default,login,logon,welcome'),
-	('descriptivelinks_title_url_length', '80')
-	
-	;
+	('descriptivelinks_title_url_length', '80');
 ---#
 
 ---# Adjusting calendar maximum year...
@@ -650,7 +648,7 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}tags_topic (
 ---  Final Theme Options...
 /******************************************************************************/
 
----# Settingup Final Theme Options
+---# Setting up Final Theme Options
 INSERT IGNORE INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'display_quick_reply', '2');
 INSERT IGNORE  INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'posts_apply_ignore_list', '1');
 INSERT IGNORE  INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'copy_to_outbox', '1');
