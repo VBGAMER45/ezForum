@@ -2123,7 +2123,7 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('descriptivelinks_enabled', '0'),
 	('descriptivelinks_title_url', '1'),
 	('descriptivelinks_title_internal', '1'),
-	('descriptivelinks_title_bbcurl', '1),
+	('descriptivelinks_title_bbcurl', '1'),
 	('descriptivelinks_title_url_count', 5'),
 	('descriptivelinks_title_url_generic', 'home,index,page title,default,login,logon,welcome'),
 	('descriptivelinks_title_url_length', '80')
