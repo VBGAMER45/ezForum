@@ -19,6 +19,8 @@
 // Version information...
 define('EZFORUM_VERSION', '3.0');
 define('SMF_LANG_VERSION', '2.0');
+define('SMF', 1);
+define('EZF', 1);
 
 $GLOBALS['required_php_version'] = '5.0';
 $GLOBALS['required_mysql_version'] = '4.0.18';
