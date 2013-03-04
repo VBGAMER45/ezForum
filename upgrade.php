@@ -3662,8 +3662,6 @@ function template_database_changes()
 	// If javascript allows we want to do this using XML.
 	if ($support_js)
 	{
-		if (emtpy($upcontext['current_debug_item_num']))
-			$upcontext['current_debug_item_num'] = 0;
 
 		echo '
 		<script type="text/javascript"><!-- // --><![CDATA[

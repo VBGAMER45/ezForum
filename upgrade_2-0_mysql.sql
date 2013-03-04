@@ -228,7 +228,7 @@ VALUES
 	('descriptivelinks_title_url', '1'),
 	('descriptivelinks_title_internal', '1'),
 	('descriptivelinks_title_bbcurl', '1'),
-	('descriptivelinks_title_url_count', 5'),
+	('descriptivelinks_title_url_count', '5'),
 	('descriptivelinks_title_url_generic', 'home,index,page title,default,login,logon,welcome'),
 	('descriptivelinks_title_url_length', '80');
 ---#
@@ -287,7 +287,7 @@ CHANGE ip_high4 ip_high4 smallint(255) unsigned NOT NULL DEFAULT '0';
 
 ---# Populating Scheduled Task Table...
 INSERT IGNORE INTO {$db_prefix}scheduled_tasks
-	(next_time, time_offset, time_regularity, time_unit, disabled, task)
+	(id_task, next_time, time_offset, time_regularity, time_unit, disabled, task)
 VALUES
 	(1, 0, 0, 2, 'h', 0, 'approval_notification'),
 	(2, 0, 0, 7, 'd', 0, 'auto_optimize'),
@@ -309,13 +309,14 @@ VALUES
 
 
 ---#
+---{
 // Update the name of the default theme in the database.
 		upgrade_query("
 			UPDATE {$db_prefix}themes
 			SET value = 'ezForum Default Theme - Curve'
 			WHERE id_theme = 1
 				AND variable = 'name'");
-
+---}
 ---#
 
 
@@ -551,7 +552,7 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}oasl_identities (
 /******************************************************************************/
 
 ---# Table structure for table `pretty_topic_urls`
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS {$db_prefix}pretty_topic_urls
+CREATE TABLE IF NOT EXISTS  {$db_prefix}pretty_topic_urls
 (
 id_topic mediumint NOT NULL ,
 pretty_url varchar(80) NOT NULL ,
@@ -561,7 +562,7 @@ ENGINE=MyISAM{$db_collation};
 ---#
 
 ---# Table structure for table `pretty_urls_cache`
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS {$db_prefix}pretty_urls_cache
+CREATE TABLE IF NOT EXISTS  {$db_prefix}pretty_urls_cache
 (
 url_id varchar(255) NOT NULL ,
 replacement varchar(255) NOT NULL ,
@@ -589,7 +590,7 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}profile_comments (
 /******************************************************************************/
 
 ---# Table structure for table `related_topics`
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS {$db_prefix}related_topics (
+CREATE TABLE IF NOT EXISTS  {$db_prefix}related_topics (
   id_topic_first int(10) unsigned NOT NULL,
   id_topic_second int(10) unsigned NOT NULL,
   score float unsigned NOT NULL,
@@ -599,7 +600,7 @@ CREATE TABLE IF NOT EXISTS IF NOT EXISTS {$db_prefix}related_topics (
 
 
 ---# Table structure for table `related_subjects`
-CREATE TABLE IF NOT EXISTS IF NOT EXISTS {$db_prefix}related_subjects (
+CREATE TABLE IF NOT EXISTS  {$db_prefix}related_subjects (
   id_topic int(10) unsigned NOT NULL,
   subject tinytext NOT NULL,
   score float unsigned NOT NULL,
