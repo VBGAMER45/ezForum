@@ -2119,12 +2119,12 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('enable_allow_deny', '1'),
 	('rp_mod_enable', '0'),
 	('rp_mod_enable_calendar', '0'),
-	('guests_sendtopic_require_captcha','1')
+	('guests_sendtopic_require_captcha','1'),
 	('descriptivelinks_enabled', '0'),
 	('descriptivelinks_title_url', '1'),
 	('descriptivelinks_title_internal', '1'),
-	('descriptivelinks_title_bbcurl', '1),
-	('descriptivelinks_title_url_count', 5'),
+	('descriptivelinks_title_bbcurl', '1'),
+	('descriptivelinks_title_url_count', '5'),
 	('descriptivelinks_title_url_generic', 'home,index,page title,default,login,logon,welcome'),
 	('descriptivelinks_title_url_length', '80')
 	
