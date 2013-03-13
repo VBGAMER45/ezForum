@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -1111,6 +1111,42 @@ function parsePackageInfo(&$packageXML, $testing_only = true, $method = 'install
 		$script = $this_method;
 		break;
 	}
+    
+    // Old SMF version
+    if ($script == false)
+    {
+        
+        $the_version = 'SMF 2.0';
+    
+    	// Get all the versions of this method and find the right one.
+    	$these_methods = $packageXML->set($method);
+    	foreach ($these_methods as $this_method)
+    	{
+    		// They specified certain versions this part is for.
+    		if ($this_method->exists('@for'))
+    		{
+    			// Don't keep going if this won't work for this version of ezForum.
+    			if (!matchPackageVersion($the_version, $this_method->fetch('@for')))
+    				continue;
+    		}
+    
+    		// Upgrades may go from a certain old version of the mod.
+    		if ($method == 'upgrade' && $this_method->exists('@from'))
+    		{
+    			// Well, this is for the wrong old version...
+    			if (!matchPackageVersion($previous_version, $this_method->fetch('@from')))
+    				continue;
+    		}
+    
+    		// We've found it!
+    		$script = $this_method;
+    		break;
+	}
+        
+    }
+    
+    
+    
 
 	// Bad news, a matching script wasn't found!
 	if ($script === false)
