@@ -27,7 +27,7 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'ezForum 3.0 Alpha 1.5';
+$forum_version = 'ezForum 3.0 Beta 1';
 
 // Get everything started up...
 define('SMF', 1);
@@ -52,7 +52,7 @@ require_once(dirname(__FILE__) . '/Settings.php');
 // Make absolutely sure the cache directory is defined.
 if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
 	$cachedir = $boarddir . '/cache';
-	
+
 if (empty($librarydir))
 	$librarydir = dirname(__FILE__) . '/Libraries';
 
@@ -264,7 +264,7 @@ function smf_main()
 			return 'Display';
 		}
 	}
-	
+
 
 	if (!empty($_GET['profile_ajax']))
 	{
