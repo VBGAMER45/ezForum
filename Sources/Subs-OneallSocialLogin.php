@@ -32,7 +32,7 @@ if (!defined('SMF'))
 function oneall_social_login_link_callback ()
 {
 	// Nothing to do if these haven't been set.
-	if (!empty ($_POST ['connection_token']) AND !empty ($_POST ['oa_action']) && $_POST ['oa_action'] == 'social_link')
+	if (!empty ($_POST ['connection_token']) && !empty ($_POST ['oa_action']) && $_POST ['oa_action'] == 'social_link')
 	{
 		// Global vars.
 		global $boarddir, $sourcedir, $user_settings, $context, $modSettings, $smcFunc;
@@ -325,7 +325,7 @@ function oneall_social_login_callback ()
  */
 function oneall_social_login_registration ()
 {
-	// Makw sure we have a social network profile in the session.
+	// Make sure we have a social network profile in the session.
 	if (isset($_SESSION) && !empty($_SESSION ['oasl_session_open']) && !empty($_SESSION ['oasl_social_data']))
 	{
 		// Setup global forum vars.
@@ -813,5 +813,3 @@ function oneall_social_login_config_save ()
 	// Redirect to the administration area.
 	redirectexit('action=admin;area=oasl;sa=settings;oasl_action=saved');
 }
-
-?>
