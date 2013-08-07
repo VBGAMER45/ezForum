@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -531,7 +531,7 @@ function SendMailing($clean_only = false)
 		foreach ($addressed as $curmem)
 		{
 			$curmem = trim($curmem);
-			if ($curmem != '')
+			if ($curmem != '' && preg_match('~^[0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $curmem) !== 0)
 				$context['recipients']['emails'][$curmem] = $curmem;
 		}
 	}

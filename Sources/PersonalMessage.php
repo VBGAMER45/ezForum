@@ -280,8 +280,11 @@ function MessageMain()
 	);
 
 	if (!isset($_REQUEST['sa']) || !isset($subActions[$_REQUEST['sa']]))
-		MessageFolder();
-	else
+    {
+		$_REQUEST['sa'] = '';
+        MessageFolder();
+	}
+    else
 	{
 		messageIndexBar($_REQUEST['sa']);
 		$subActions[$_REQUEST['sa']]();
