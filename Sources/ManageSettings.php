@@ -946,7 +946,7 @@ function ModifySpamSettings($return_config = false)
 				$questionInserts,
 				array('id_comment')
 			);
-			$count_questions++;
+			$count_questions += count($questionInserts);
 		}
 
 		if (empty($count_questions) || $_POST['qa_verification_number'] > $count_questions)

@@ -119,6 +119,16 @@ if (!empty($modSettings['enableCompressedOutput']) && !headers_sent())
 	}
 }
 
+// Emit some headers for some modicum of protection against nasties.
+if (!headers_sent())
+{
+	// Future versions will make some of this configurable. This is primarily a 'safe' configuration for most cases for now.
+	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1; mode=block');
+	header('X-Content-Type-Options: nosniff');
+}
+
+
 // Register an error handler.
 set_error_handler('error_handler');
 

@@ -330,7 +330,7 @@ function Register2($verifiedOpenID = false)
 	// Validation... even if we're not a mall.
 	if (isset($_POST['real_name']) && (!empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum')))
 	{
-		$_POST['real_name'] = trim(preg_replace('~[\s]~' . ($context['utf8'] ? 'u' : ''), ' ', $_POST['real_name']));
+		$_POST['real_name'] = trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? ($context['server']['complex_preg_chars'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $_POST['real_name']));
 		if (trim($_POST['real_name']) != '' && !isReservedName($_POST['real_name']) && $smcFunc['strlen']($_POST['real_name']) < 60)
 			$possible_strings[] = 'real_name';
 	}
@@ -363,6 +363,32 @@ function Register2($verifiedOpenID = false)
 	}
 	else
 		unset($_POST['lngfile']);
+
+// Some of these fields we may not want.
+	if (!empty($modSettings['registration_fields']))
+	{
+		// But we might want some of them if the admin asks for them.
+		$standard_fields = array('icq', 'msn', 'aim', 'yim', 'location', 'gender');
+		$reg_fields = explode(',', $modSettings['registration_fields']);
+
+		$exclude_fields = array_diff($standard_fields, $reg_fields);
+
+		// Website is a little different
+		if (!in_array('website', $reg_fields))
+			$exclude_fields = array_merge($exclude_fields, array('website_url', 'website_title'));
+
+		// We used to accept signature on registration but it's being abused by spammers these days, so no more.
+		$exclude_fields[] = 'signature';
+	}
+	else
+		$exclude_fields = array('signature', 'icq', 'msn', 'aim', 'yim', 'location', 'gender', 'website_url', 'website_title');
+
+	$possible_strings = array_diff($possible_strings, $exclude_fields);
+	$possible_ints = array_diff($possible_ints, $exclude_fields);
+	$possible_floats = array_diff($possible_floats, $exclude_fields);
+	$possible_bools = array_diff($possible_bools, $exclude_fields);
+		
+		
 
 	// Set the options needed for registration.
 	$regOptions = array(
@@ -881,7 +907,7 @@ function RegisterCheckUsername()
 	$context['valid_username'] = true;
 
 	// Clean it up like mother would.
-	$context['checked_username'] = preg_replace('~[\t\n\r\x0B\0' . ($context['utf8'] ? ($context['server']['complex_preg_chars'] ? '\x{A0}' : "\xC2\xA0") : '\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $context['checked_username']);
+	$context['checked_username'] = preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? ($context['server']['complex_preg_chars'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $context['checked_username']);
 	if ($smcFunc['strlen']($context['checked_username']) > 25)
 		$context['checked_username'] = $smcFunc['htmltrim']($smcFunc['substr']($context['checked_username'], 0, 25));
 
