@@ -657,3 +657,11 @@ INSERT IGNORE  INTO {$db_prefix}themes (id_member, id_theme, variable, value) VA
 INSERT IGNORE  INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'return_to_post', '1');
 INSERT IGNORE  INTO {$db_prefix}themes (id_member, id_theme, variable, value) VALUES (-1, 1, 'display_quick_mod', '1');
 ---#
+
+/******************************************************************************/
+--- Cleaning up integration hooks
+/******************************************************************************/
+---# Deleting integration hooks
+DELETE FROM {$db_prefix}settings
+WHERE variable LIKE 'integrate_%';
+---#
