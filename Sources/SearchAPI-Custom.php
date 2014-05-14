@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -41,7 +41,7 @@ class custom_search
 	// What is the minimum word length?
 	protected $min_word_length = null;
 	// What databases support the custom index?
-	protected $supported_databases = array('mysql', 'postgresql', 'sqlite');
+	protected $supported_databases = array('mysql', 'mysqli', 'postgresql', 'sqlite');
 
 	public function __construct()
 	{

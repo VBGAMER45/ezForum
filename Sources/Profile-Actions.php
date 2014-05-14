@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -56,6 +56,9 @@ function activateAccount($memID)
 
 		// Let the integrations know of the activation.
 		call_integration_hook('integrate_activate', array($user_profile[$memID]['member_name']));
+
+		// We need to log that we're doing something.
+		logAction('approve_member', array('member' => $memID), 'admin');
 
 		// Actually update this member now, as it guarantees the unapproved count can't get corrupted.
 		updateMemberData($context['id_member'], array('is_activated' => $user_profile[$memID]['is_activated'] >= 10 ? 11 : 1, 'validation_code' => ''));

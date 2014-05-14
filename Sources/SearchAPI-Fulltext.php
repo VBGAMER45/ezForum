@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -30,8 +30,8 @@ class fulltext_search
 {
 	// This is the last version of ezForum that this was tested on, to protect against API changes.
 	public $version_compatible = 'ezForum 3.0';
-	// This won't work with versions of SMF less than this.
-	public $min_smf_version = 'ezForum 3.0 Beta 2';
+	// This won't work with versions of ezForum less than this.
+	public $min_smf_version = 'ezForum 3.0';
 	// Is it supported?
 	public $is_supported = true;
 
@@ -42,7 +42,7 @@ class fulltext_search
 	// What is the minimum word length?
 	protected $min_word_length = 4;
 	// What databases support the fulltext index?
-	protected $supported_databases = array('mysql');
+	protected $supported_databases = array('mysql','mysqli');
 
 	public function __construct()
 	{

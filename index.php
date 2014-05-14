@@ -121,6 +121,16 @@ if (!empty($modSettings['enableCompressedOutput']) && !headers_sent())
 	}
 }
 
+// Emit some headers for some modicum of protection against nasties.
+if (!headers_sent())
+{
+	// Future versions will make some of this configurable. This is primarily a 'safe' configuration for most cases for now.
+	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1; mode=block');
+	header('X-Content-Type-Options: nosniff');
+}
+
+
 // Register an error handler.
 set_error_handler('error_handler');
 
@@ -240,7 +250,7 @@ function smf_main()
 		}
 	}
 	// If guest access is off, a guest can only do one of the very few following actions.
-	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'help', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
+	elseif (empty($modSettings['allow_guestAccess']) && $user_info['is_guest'] && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('oasl_registration', 'oasl_callback','coppa', 'login', 'login2', 'register', 'register2', 'reminder', 'activate', 'help', 'smstats', 'mailq', 'verificationcode', 'openidreturn'))))
 	{
 		require_once($sourcedir . '/Subs-Auth.php');
 		return 'KickGuest';

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2012 ezForum
+ * Copyright 2011-2013 ezForum
  * License: BSD
  *
  * Based on:
@@ -219,7 +219,7 @@ class paypal_payment
 			$this->_findSubscription();
 
 		// Verify the currency!
-		if (strtolower($_POST['mc_currency']) != $modSettings['paid_currency_code'])
+		if (strtolower($_POST['mc_currency']) != strtolower($modSettings['paid_currency_code']))
 			exit;
 
 		// Can't exist if it doesn't contain anything.

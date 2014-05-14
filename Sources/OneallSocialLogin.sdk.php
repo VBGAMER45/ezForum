@@ -409,7 +409,7 @@ function oneall_social_login_unlink_identity_token ($identity_token)
 
 
 /**
- * Get the user_token for a given id_member
+ * Returns the user_token for a given id_member.
  */
 function oneall_social_login_get_user_token_for_id_member ($id_member)
 {
@@ -432,7 +432,7 @@ function oneall_social_login_get_user_token_for_id_member ($id_member)
 
 
 /**
- * Get the user identifier for a given token
+ * Returns the id_member for a given user_token.
  */
 function oneall_social_login_get_id_member_for_user_token ($user_token)
 {
@@ -476,7 +476,7 @@ function oneall_social_login_get_id_member_for_user_token ($user_token)
 
 
 /**
- * Get the user identifier for a given email address
+ * Returns the id_member for a given email address.
  */
 function oneall_social_login_get_id_member_for_email_address ($email_address)
 {
@@ -499,7 +499,7 @@ function oneall_social_login_get_id_member_for_email_address ($email_address)
 
 
 /**
- * Create a random email
+ * Create a random and unique email address.
  */
 function oneall_social_login_create_rand_email_address ()
 {
@@ -513,7 +513,7 @@ function oneall_social_login_create_rand_email_address ()
 
 
 /**
- * Send an API request by using the given handler
+ * Sends an API request by using the given handler.
  */
 function oneall_social_login_do_api_request ($handler, $url, $options = array(), $timeout = 15)
 {
@@ -530,7 +530,7 @@ function oneall_social_login_do_api_request ($handler, $url, $options = array(),
 
 
 /**
- * Check if CURL can be used to communicate with the OneAll API
+ * Checks if CURL can be used to communicate with the OneAll API.
  */
 function oneall_social_login_check_curl ($secure = true)
 {
@@ -546,9 +546,9 @@ function oneall_social_login_check_curl ($secure = true)
 
 
 /**
- * Send a CURL request to the OneAll API
+ * Sends a CURL request to the OneAll API.
  */
-function oneall_social_login_curl_request ($url, $options = array(), $timeout = 10)
+function oneall_social_login_curl_request ($url, $options = array(), $timeout = 15)
 {
 	//Store the result
 	$result = new stdClass();
@@ -721,5 +721,3 @@ function oneall_social_login_fsockopen_request ($url, $options = array(), $timeo
 		return $result;
 	}
 }
-
-?>

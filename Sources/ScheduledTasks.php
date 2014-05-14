@@ -470,7 +470,7 @@ function scheduled_daily_maintenance()
 
 	// Check the database version - for some buggy MySQL version.
 	$server_version = $smcFunc['db_server_info']();
-	if ($db_type == 'mysql' && in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51')))
+	if (($db_type == 'mysql' || $db_type == 'mysqli') && in_array(substr($server_version, 0, 6), array('5.0.50', '5.0.51'))) 
 		updateSettings(array('db_mysql_group_by_fix' => '1'));
 	elseif (!empty($modSettings['db_mysql_group_by_fix']))
 		$smcFunc['db_query']('', '
@@ -1027,8 +1027,8 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		if ($modSettings['mail_failed_attempts'] > 5)
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}settings
-				SET value = {string:mail_next_send}
-				WHERE variable = {string:next_mail_send}
+				SET value = {string:next_mail_send}
+				WHERE variable = {string:mail_next_send}
 					AND value = {string:last_send}',
 				array(
 					'next_mail_send' => time() + 60,
