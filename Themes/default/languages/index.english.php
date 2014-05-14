@@ -1087,4 +1087,10 @@ $txt['mark_unread_all'] = 'Mark Conversation unread';
 
 $txt['guests_sendtopic_require_captcha'] = 'Guests must pass verification when sending a topic';
 
+
+// Mentions System
+$txt['mentions'] = 'Mentions';
+$txt['scheduled_task_removeMentions'] = 'Remove seen mentions';
+$txt['scheduled_task_desc_removeMentions'] = 'Automatically removes seen mentions older than the specified days';
+
 ?>

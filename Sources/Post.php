@@ -92,27 +92,32 @@ function Post()
 	global $sourcedir, $options, $smcFunc, $language;
 
 	loadLanguage('Post');
-	
-	
+
+
 	/*
-	Restrict Boards per post 
+	Restrict Boards per post
 	By: Joker
 	 * This SMF Modification is subject to the Mozilla Public License Version
 	 * 1.1 (the "License"); you may not use this SMF modification except in compliance with
 	 * the License. You may obtain a copy of the License at
 	 * http://www.mozilla.org/MPL/
-	
+
 	*/
-	if(isset($modSettings['rp_mod_enable']) && !empty($modSettings['rp_mod_enable'])) 
+	if(isset($modSettings['rp_mod_enable']) && !empty($modSettings['rp_mod_enable']))
 	{
 		require_once($sourcedir . '/RestrictPosts.php');
-		
-		if(!isAllowedToPost() && !isset($_REQUEST['calendar']) && empty($topic)) 
+
+		if(!isAllowedToPost() && !isset($_REQUEST['calendar']) && empty($topic))
 		{
 			loadLanguage('RestrictPosts');
 			fatal_lang_error('rp_limit_reached', false);
 		}
 	}
+
+
+	global $sourcedir;
+    require_once($sourcedir . '/Mentions.php');
+	mentions_post_scripts();
 
 
 	// You can't reply with a poll... hacker.
@@ -240,10 +245,10 @@ function Post()
 	// You can only announce topics that will get approved...
 	$context['can_announce'] = allowedTo('announce_topic') && $context['becomes_approved'];
 	$context['locked'] = !empty($locked) || !empty($_REQUEST['lock']);
-    
+
     // Can this person turn of link titles?
 	$context['can_disable_title_convert_url'] = allowedTo('disable_title_convert_url');
-    
+
 	$context['can_quote'] = empty($modSettings['disabledBBC']) || !in_array('quote', explode(',', $modSettings['disabledBBC']));
 
 	// Generally don't show the approval box... (Assume we want things approved)
@@ -367,24 +372,24 @@ function Post()
 
 			// Get a list of boards they can post in.
 			$boards = boardsAllowedTo('post_new');
-			
+
 			/*
-			Restrict Boards per post 
+			Restrict Boards per post
 			By: Joker
 			 * This SMF Modification is subject to the Mozilla Public License Version
 			 * 1.1 (the "License"); you may not use this SMF modification except in compliance with
 			 * the License. You may obtain a copy of the License at
 			 * http://www.mozilla.org/MPL/
-			
+
 			*/
-			if(isset($modSettings['rp_mod_enable']) && !empty($modSettings['rp_mod_enable']) && isset($modSettings['rp_mod_enable_calendar']) && !empty($modSettings['rp_mod_enable_calendar'])) 
+			if(isset($modSettings['rp_mod_enable']) && !empty($modSettings['rp_mod_enable']) && isset($modSettings['rp_mod_enable_calendar']) && !empty($modSettings['rp_mod_enable_calendar']))
 			{
 				require_once($sourcedir . '/RestrictPosts.php');
 				$boards_to_exclude = isAllowedToPostEvents();
 				$boards = array_merge(array_diff($boards, $boards_to_exclude), array_diff($boards_to_exclude, $boards));
 			}
-			
-			
+
+
 			if (empty($boards))
 				fatal_lang_error('cannot_post_new', 'user');
 
@@ -540,8 +545,8 @@ function Post()
 		// Have we inadvertently trimmed off the subject of useful information?
 		if ($smcFunc['htmltrim']($form_subject) === '')
 			$context['post_error']['no_subject'] = true;
-			
-			
+
+
 		// Start of Anti-Spam-Links mod
 
 		// Previewing and modifying an existing post we need the original posters post count.
@@ -889,7 +894,7 @@ function Post()
 			$context['name'] = htmlspecialchars($row['poster_name']);
 			$context['email'] = htmlspecialchars($row['poster_email']);
 		}
-        
+
         // Tagging System:
 		if (!empty($modSettings['tag_enabled']))
 			$context['editTags'] = editTags($topic);
@@ -1171,7 +1176,7 @@ function Post()
 					if (@move_uploaded_file($_FILES['attachment']['tmp_name'][$n], $destName))
 					{
 						@chmod($destName, 0644);
-						
+
 						$_SESSION['temp_attachments'][$attachID] = basename($_FILES['attachment']['name'][$n]);
 						$context['current_attachments'][] = array(
 							'name' => htmlspecialchars(basename($_FILES['attachment']['name'][$n])),
@@ -1189,13 +1194,13 @@ function Post()
 				if (!empty($errors))
 				{
 					@unlink($_FILES['attachment']['tmp_name'][$n]);
-					
+
 					if (!isset($attach_errors))
 					{
 						$attach_errors = true;
 						$context['post_error']['messages'][] = '<hr />' . $txt['attachment_error'];
 					}
-					
+
 					// Add to the message errors
 					foreach ($errors as $error)
 						$context['post_error']['messages'][] = '<strong>' . $_FILES['attachment']['name'][$n] . ':</strong> ' . $error;
@@ -1654,7 +1659,7 @@ function Post2()
 			$_SESSION['guest_email'] = $_POST['email'];
 		}
 	}
-    
+
     // TaggingSystem Errors Checks
 	if (!empty($modSettings['tag_enabled']) && (empty($topic) || isset($_REQUEST['msg'])))
 	{
@@ -1668,7 +1673,7 @@ function Post2()
 			$context['tagserror'] = true;
 		}
 	}
-    
+
 
 	// Check the subject and message.
 	if (!isset($_POST['subject']) || $smcFunc['htmltrim']($smcFunc['htmlspecialchars']($_POST['subject'])) === '')
@@ -1739,7 +1744,7 @@ function Post2()
 		$_POST['guestname'] = $user_info['username'];
 		$_POST['email'] = $user_info['email'];
 	}
-	
+
 // Start of Anti-Spam-Links mod
 
 	$poster_id = empty($row['id_member']) ? 0 : (int) $row['id_member'] ;
@@ -1783,7 +1788,7 @@ function Post2()
 
 	// End of Anti-Spam-Links mod
 
-	
+
 
 	// Any mistakes?
 	if (!empty($post_errors))
@@ -1976,7 +1981,7 @@ function Post2()
 				if (empty($errors))
 					$errors[] = 'attach_php_error';
 			}
-			
+
 			if (empty($errors))
 			{
 				// Have we reached the maximum number of files we are allowed?
@@ -2023,7 +2028,7 @@ function Post2()
 				foreach ($attachmentOptions['errors'] as $error)
 				{
 					if (is_array($error))
-					{				
+					{
 						$attach_errors[] = '<strong>' . $_FILES['attachment']['name'][$n] . ':</strong> ' . vsprintf($txt[$error[0]], $error[1]);
 						if (in_array($error[0], $log_these))
 							log_error($_FILES['attachment']['name'][$n] . ': ' . vsprintf($txt[$error[0]], $error[1]), 'critical');
@@ -2125,14 +2130,14 @@ function Post2()
 			unset($msgOptions['approved']);
 
 		modifyPost($msgOptions, $topicOptions, $posterOptions);
-        
+
         //Tagging System:
 		if (!empty($modSettings['tag_enabled']))
 		{
 			deleteTagsTopics($topic);
 			postTags();
 		}
-        
+
 	}
 	// This is a new topic or an already existing one. Save it.
 	else
@@ -2141,8 +2146,8 @@ function Post2()
 
 		if (isset($topicOptions['id']))
 			$topic = $topicOptions['id'];
-            
-            
+
+
         // Tagging System
 		if (!empty($modSettings['tag_enabled']) && !empty($newTopic))
 			postTags();
@@ -2336,7 +2341,7 @@ function Post2()
 		loadTemplate('Errors');
 		$context['sub_template'] = 'attachment_errors';
 		checkSubmitOnce();
-		
+
 		$context['error_message'] = implode('<br />', $attach_errors);
 		$context['page_title'] = $txt['error_occured'];
 
@@ -2350,7 +2355,7 @@ function Post2()
 			$context['redirect_link'] = '?topic=' . $topic . '.msg' . $_REQUEST['msg'] . '#msg' . $_REQUEST['msg'];
 		else
 			$context['redirect_link'] = '?topic=' . $topic . '.new#new';
-			
+
 		$context['modify_link'] = '?action=post;msg=' . $msgOptions['id'] . ';topic=' . $topic;
 
 		obExit(null, true);
@@ -2753,8 +2758,8 @@ function getTopic()
 
 	// If you're modifying, get only those posts before the current one. (otherwise get all.)
 	$request = $smcFunc['db_query']('', '
-		SELECT 
-			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time, 
+		SELECT
+			IFNULL(mem.real_name, m.poster_name) AS poster_name, m.poster_time,
 			m.body, m.smileys_enabled, m.id_msg, IFNULL(mem.posts, 0) AS postcount, IFNULL(m.id_member, 0) AS poster_id, m.id_member
 		FROM {db_prefix}messages AS m
 			LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = m.id_member)
@@ -3001,7 +3006,7 @@ function JavaScriptModify()
 				$post_errors[] = 'no_message';
 				unset($_POST['message']);
 			}
-			
+
 // Start of Anti-Spam-Links mod
 
 			if (isset($_POST['message']))
@@ -3051,9 +3056,9 @@ function JavaScriptModify()
 
 			// End of Anti-Spam-Links mod
 
-			
-			
-			
+
+
+
 		}
 	}
 

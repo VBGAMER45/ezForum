@@ -323,7 +323,7 @@ function ModifyProfile($post_errors = array())
 				'activateaccount' => array(
 					'file' => 'Profile-Actions.php',
 					'function' => 'activateAccount',
-					'sc' => 'get',				
+					'sc' => 'get',
 					'permission' => array(
 						'own' => array(),
 						'any' => array('moderate_forum'),
@@ -343,6 +343,10 @@ function ModifyProfile($post_errors = array())
 
 	// Let them modify profile areas easily.
 	call_integration_hook('integrate_profile_areas', array(&$profile_areas));
+
+    global $sourcedir ;
+    require_once($sourcedir . '/Mentions.php');
+    mentions_profile_areas(&$profile_areas);
 
 	// Do some cleaning ready for the menu function.
 	$context['password_areas'] = array();

@@ -71,6 +71,10 @@ function Display()
 	global $options, $sourcedir, $user_info, $board_info, $topic, $board;
 	global $attachments, $messages_request, $topicinfo, $language, $smcFunc;
 
+	global $sourcedir;
+    require_once($sourcedir . '/Mentions.php');
+	mentions_post_scripts();
+
 	// What are you gonna display if these are empty?!
 	if (empty($topic))
 		fatal_lang_error('no_board', false);
@@ -214,14 +218,14 @@ function Display()
 		fatal_lang_error('not_a_topic', false);
 	$topicinfo = $smcFunc['db_fetch_assoc']($request);
 	$smcFunc['db_free_result']($request);
-    
+
     // Added by Related Topics
 	if (!empty($modSettings['relatedTopicsEnabled']))
 	{
 		require_once($sourcedir . '/Subs-Related.php');
 		loadRelated($topic);
 	}
-    
+
 
 	$context['real_num_replies'] = $context['num_replies'] = $topicinfo['num_replies'];
 	$context['topic_first_message'] = $topicinfo['id_first_msg'];
@@ -956,7 +960,7 @@ function Display()
 	// If there _are_ messages here... (probably an error otherwise :!)
 	if (!empty($messages))
 	{
-	   
+
         // Get edited posts for Post History
 		if (!empty($modSettings['posthistoryEnabled']) && (allowedTo('posthistory_view_any') || allowedTo('posthistory_view_own')))
 		{
@@ -968,15 +972,15 @@ function Display()
 					'message_list' => $messages,
 				)
 			);
-			
+
 			$context['post_history'] = array();
-			
+
 			while ($row = $smcFunc['db_fetch_assoc']($request))
 				$context['post_history'][$row['id_msg']] = $row['id_msg'];
 
 			$smcFunc['db_free_result']($request);
 		}
-        
+
 		// Fetch attachments.
 		if (!empty($modSettings['attachmentEnable']) && allowedTo('view_attachments'))
 		{
@@ -1122,7 +1126,7 @@ function Display()
 		$context['wireless_more'] = $context['can_sticky'] || $context['can_lock'] || allowedTo('modify_any');
 		$context['wireless_moderate'] = isset($_GET['moderate']) ? ';moderate' : '';
 	}
-    
+
     // Tagging System
 	$exclude = !empty($modSettings['tag_board_disabled']) ? $modSettings['tag_board_disabled'] : '';
 	$exclude_boards = explode(',',$exclude);
@@ -1255,7 +1259,7 @@ function prepareDisplayContext($reset = false)
 		'can_modify' => (!$context['is_locked'] || allowedTo('moderate_board')) && (allowedTo('modify_any') || (allowedTo('modify_replies') && $context['user']['started']) || (allowedTo('modify_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || !$message['approved'] || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time()))),
 		'can_remove' => allowedTo('delete_any') || (allowedTo('delete_replies') && $context['user']['started']) || (allowedTo('delete_own') && $message['id_member'] == $user_info['id'] && (empty($modSettings['edit_disable_time']) || $message['poster_time'] + $modSettings['edit_disable_time'] * 60 > time())),
 		'can_see_history' => !empty($modSettings['posthistoryEnabled']) && (allowedTo('posthistory_view_any') || (allowedTo('posthistory_view_own') && $message['id_member'] == $user_info['id'] && !empty($user_info['id']))),
-		'has_history' => isset($context['post_history'][$message['id_msg']]),	
+		'has_history' => isset($context['post_history'][$message['id_msg']]),
         'can_see_ip' => allowedTo('moderate_forum') || ($message['id_member'] == $user_info['id'] && !empty($user_info['id'])),
 	);
 

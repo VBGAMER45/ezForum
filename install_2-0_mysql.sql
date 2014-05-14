@@ -968,6 +968,20 @@ CREATE TABLE {$db_prefix}log_member_notices (
   PRIMARY KEY (id_notice)
 ) ENGINE=MyISAM;
 
+
+#
+# Table structure for table `log_mentions`
+#
+CREATE TABLE {$db_prefix}log_mentions (
+  `id_post` int(11) NOT NULL,
+  `id_member` int(11) NOT NULL,
+  `id_mentioned` int(11) NOT NULL,
+  `time` int(11) NOT NULL DEFAULT '0',
+  `unseen` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id_post`,`id_member`,`id_mentioned`)
+) ENGINE=MyISAM;
+
+
 #
 # Table structure for table `log_notify`
 #
@@ -1363,6 +1377,8 @@ CREATE TABLE {$db_prefix}members (
   pm_receive_from tinyint(4) unsigned NOT NULL default '1',
   passwd_expiredate int(10) unsigned NOT NULL default '0',
   email_bounced tinyint(4) NOT NULL default '0',
+  email_mentions tinyint(4) NOT NULL DEFAULT '0',
+  unread_mentions int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (id_member),
   KEY member_name (member_name),
   KEY real_name (real_name),
@@ -2126,8 +2142,9 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('descriptivelinks_title_bbcurl', '1'),
 	('descriptivelinks_title_url_count', '5'),
 	('descriptivelinks_title_url_generic', 'home,index,page title,default,login,logon,welcome'),
-	('descriptivelinks_title_url_length', '80')
-	
+	('descriptivelinks_title_url_length', '80'),
+	('mentions_email_default', '1'),
+	('mentions_remove_days', '7')
 	;
 
 # --------------------------------------------------------

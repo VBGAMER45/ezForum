@@ -692,7 +692,7 @@ function sendmail($to, $subject, $message, $from = null, $message_id = null, $se
 	list (, $subject) = mimespecialchars($subject, true, $hotmail_fix, $line_break);
 
 	// Construct the mail headers...
-	$headers = 'From: ' . $from_name . ' <' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . '>' . $line_break;
+	$headers = 'From: "' . $from_name . '" <' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . '>' . $line_break;
 	$headers .= $from !== null ? 'Reply-To: <' . $from . '>' . $line_break : '';
 	$headers .= 'Return-Path: ' . (empty($modSettings['mail_from']) ? $webmaster_email : $modSettings['mail_from']) . $line_break;
 	$headers .= 'Date: ' . gmdate('D, d M Y H:i:s') . ' -0000' . $line_break;
@@ -1823,6 +1823,11 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 			$posterOptions['email'] = $user_info['email'];
 		}
 	}
+    
+    global $sourcedir;
+	require_once($sourcedir . '/Mentions.php');
+	mentions_process_post($msgOptions, $topicOptions, $posterOptions);
+
 
 	// It's do or die time: forget any user aborts!
 	$previous_ignore_user_abort = ignore_user_abort(true);
@@ -2522,6 +2527,13 @@ function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 	if (empty($messages_columns))
 		return true;
 
+
+    require_once($sourcedir . '/Mentions.php');
+	mentions_process_post($msgOptions, $topicOptions, $posterOptions);
+	if (!empty($msgOptions['mentions']))
+		mentions_process_store($msgOptions['mentions'], $msgOptions['id'], $msgOptions['subject'], $msgOptions['approved']);
+
+
 	// Change the post.
 	$smcFunc['db_query']('', '
 		UPDATE {db_prefix}messages
@@ -2863,6 +2875,10 @@ function approvePosts($msgs, $approve = true)
 
 	// Update the last messages on the boards...
 	updateLastMessages(array_keys($board_changes));
+    
+    
+	require_once($sourcedir . '/Mentions.php');
+	mentions_process_approved($msgs);
 
 	// Post count for the members?
 	if (!empty($member_post_changes))

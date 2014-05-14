@@ -749,13 +749,13 @@ function comma_format($number, $override_decimal_count = false)
 
 /**
  * Format a time to make it look purdy.
- * 
+ *
  * - returns a pretty formated version of time based on the user's format in $user_info['time_format'].
  * - applies all necessary time offsets to the timestamp, unless offset_type is set.
  * - if todayMod is set and show_today was not not specified or true, an
  *   alternate format string is used to show the date with something to show it is "today" or "yesterday".
  * - performs localization (more than just strftime would do alone.)
- * 
+ *
  * @param int $log_time
  * @param bool $show_today = true
  * @param string $offset_type = false
@@ -851,12 +851,12 @@ function un_htmlspecialchars($string)
 
 /**
  * Shorten a subject + internationalization concerns.
- * 
+ *
  * - shortens a subject so that it is either shorter than length, or that length plus an ellipsis.
  * - respects internationalization characters and entities as one character.
  * - avoids trailing entities.
  * - returns the shortened string.
- * 
+ *
  * @param string $subject
  * @param int $len
  */
@@ -1620,6 +1620,12 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 
 		// Let mods add new BBC without hassle.
 		call_integration_hook('integrate_bbc_codes', array(&$codes));
+
+        $codes[] = array(
+		'tag' => 'member',
+		'type' => 'unparsed_equals',
+		'before' => '<a href="' . $scripturl . '?action=profile;u=$1" class="mention">@',
+		'after' => '</a>',
 
 		// This is mainly for the bbc manager, so it's easy to add tags above.  Custom BBC should be added above this line.
 		if ($message === false)
@@ -2435,7 +2441,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 	// Cleanup whitespace.
 	$message = strtr($message, array('  ' => ' &nbsp;', "\r" => '', "\n" => '<br />', '<br /> ' => '<br />&nbsp;', '&#13;' => "\n"));
 
-	
+
 	// Start of Anti-Spam-Links mod
 	global $boardurl;
 
@@ -2448,7 +2454,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		$message = preg_replace('~(<a)( href="(?!' . preg_quote($boardurl) . ')(?:[^"]*?)"(?:[^>]*?)\>(?:.*?)</a>)~i', '$1 rel="nofollow"$2 <span class="alert smalltext" title="' . sprintf($txt['anti_spam_links_nofollowlinks_info'], $modSettings['anti_spam_links_nofollowlinks']) . '">' . $txt['anti_spam_links_nofollow'] . '</span>', $message);
 
 	// End of Anti-Spam-Links mod
-	
+
 	// Cache the output if it took some time...
 	if (isset($cache_key, $cache_t) && array_sum(explode(' ', microtime())) - array_sum(explode(' ', $cache_t)) > 0.05)
 		cache_put_data($cache_key, $message, 240);
@@ -2777,7 +2783,7 @@ function redirectexit($setLocation = '', $refresh = false)
 		$setLocation = str_replace("\x12", '\'', $setLocation);
 		$setLocation = preg_replace(array('~;+|=;~', '~\?;~', '~\?#|;#|=#~', '~\?$|;$|#$|=$~'), array(';', '?', '#', ''), $setLocation);
 	}
-	
+
 	// Maybe integrations want to change where we are heading?
 	call_integration_hook('integrate_redirect', array(&$setLocation, &$refresh));
 
@@ -4175,6 +4181,10 @@ function setupMenuContext()
 			),
 		);
 
+        global $sourcedir;
+		require_once($sourcedir . '/Mentions.php');
+		mentions_menu( &$menu_buttons);
+
 		// Allow editing menu buttons easily.
 		call_integration_hook('integrate_menu_buttons', array(&$buttons));
 
@@ -4393,52 +4403,52 @@ function remove_integration_function($hook, $function)
 
 function CheckSpam_StopForumSpam($ip = '', $email = '', $username = '')
 {
-	global $sourcedir;	
+	global $sourcedir;
 
 	/*
 	Uses the stopforumspam.com api to check if the information passed is a spammer.
 	*/
-	
+
 	require_once($sourcedir . '/Subs-Package.php');
-	
+
 	$spamOptions = '';
 
 	if (!empty($ip))
 		$spamOptions .= 'ip=' . $ip;
-		
+
 	if (!empty($email))
 	{
 		if (!empty($spamOptions))
-			$spamOptions .= '&';	
-	
-		$spamOptions .= 'email=' . $email;	
-	}		
-	
+			$spamOptions .= '&';
+
+		$spamOptions .= 'email=' . $email;
+	}
+
 	if (!empty($username))
 	{
 		if (!empty($spamOptions))
-			$spamOptions .= '&';	
-	
-		$spamOptions .= 'username=' . $username;	
-	
-	}		
-	
-	
-	
+			$spamOptions .= '&';
+
+		$spamOptions .= 'username=' . $username;
+
+	}
+
+
+
 	if (!empty($spamOptions))
 	{
 		$data = fetch_web_data('http://www.stopforumspam.com/api?' . $spamOptions);
-		
+
 		if (strpos($data, '<appears>yes</appears>') > 0)
 			return true;
-		else 
-			return false;	
+		else
+			return false;
 	}
-	else 
+	else
 		return false;
-	
 
-	
+
+
 }
 
 ?>

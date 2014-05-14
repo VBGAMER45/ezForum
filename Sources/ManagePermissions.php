@@ -1592,6 +1592,11 @@ function loadAllPermissions($loadType = 'classic')
 	// Provide a practical way to modify permissions.
 	call_integration_hook('integrate_load_permissions', array(&$permissionGroups, &$permissionList, &$leftPermissionGroups, &$hiddenPermissions, &$relabelPermissions));
 
+    global $sourcedir ;
+    require_once($sourcedir . '/Mentions.php');
+    mentions_permissions(&$permissionGroups, &$permissionList,  &$leftPermissionGroups,  &$hiddenPermissions,  &$relabelPermissions);
+
+
 	$context['permissions'] = array();
 	$context['hidden_permissions'] = array();
 	foreach ($permissionList as $permissionType => $permissionList)

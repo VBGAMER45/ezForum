@@ -384,31 +384,31 @@ function deleteMembers($users, $check_not_admin = false)
      * under the License.
      *
      */
-    // OneAll Social Login : Remove linked social network accounts.		
+    // OneAll Social Login : Remove linked social network accounts.
 	$request = $smcFunc['db_query']('', '
-		SELECT id_oasl_user 
-		FROM {db_prefix}oasl_users 
-		WHERE id_member IN ({array_int:users})', 
+		SELECT id_oasl_user
+		FROM {db_prefix}oasl_users
+		WHERE id_member IN ({array_int:users})',
 		array(
 			'users' => $users,
 		)
 	);
-	
+
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Remove user_token.
 		$smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}oasl_users	
-			WHERE id_oasl_user = {int:id_oasl_user}', 
+			DELETE FROM {db_prefix}oasl_users
+			WHERE id_oasl_user = {int:id_oasl_user}',
 			array(
 				'id_oasl_user' => $row['id_oasl_user'],
 			)
 		);
-		
-		// Remove identity_token.		
+
+		// Remove identity_token.
 		$smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}oasl_identities 
-			WHERE id_oasl_user = {int:id_oasl_user}', 
+			DELETE FROM {db_prefix}oasl_identities
+			WHERE id_oasl_user = {int:id_oasl_user}',
 			array(
 				'id_oasl_user' => $row['id_oasl_user'],
 			)
@@ -795,6 +795,9 @@ function registerMember(&$regOptions, $return_errors = false)
 	if (!empty($regOptions['theme_vars']))
 		foreach ($regOptions['theme_vars'] as $var => $value)
 			$theme_vars[$var] = $value;
+
+
+	$regOptions['register_vars']['email_mentions'] = !empty($modSettings['mentions_email_default']) ? 1 : 0;
 
 	// Call an optional function to validate the users' input.
 	call_integration_hook('integrate_register', array(&$regOptions, &$theme_vars));
@@ -1271,7 +1274,7 @@ function list_getMembers($start, $items_per_page, $sort, $where, $where_params =
 	$request = $smcFunc['db_query']('', '
 		SELECT
 			mem.id_member, mem.member_name, mem.real_name, mem.email_address, mem.icq, mem.aim, mem.yim, mem.msn, mem.member_ip, mem.member_ip2, mem.last_login,
-			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.googleplus, mem.linkedin, mem.youtube, mem.deviantart, mem.pinterest, mem.skype, 
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.googleplus, mem.linkedin, mem.youtube, mem.deviantart, mem.pinterest, mem.skype,
 			mem.posts, mem.is_activated, mem.date_registered, mem.id_group, mem.additional_groups, mg.group_name
 		FROM {db_prefix}members AS mem
 			LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = mem.id_group)
