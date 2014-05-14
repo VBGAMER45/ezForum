@@ -29,6 +29,8 @@
 
 $forum_version = 'ezForum 3.0 Beta 1';
 
+@ini_set('memory_limit', '128M');
+
 // Get everything started up...
 define('SMF', 1);
 define('EZF', 1);
