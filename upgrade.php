@@ -879,7 +879,7 @@ function initialize_inputs()
 	if (isset($_GET['delete']))
 	{
 		@unlink(__FILE__);
-        $type = ($db_type == 'mysqli') ? 'mysql' : $db_type; 
+        $type = ($db_type == 'mysqli') ? 'mysql' : $db_type;
 
 		// And the extra little files ;).
 		@unlink(dirname(__FILE__) . '/webinstall.php');
@@ -935,7 +935,7 @@ function WelcomeLogin()
 	global $smcFunc, $db_type, $databases, $txt;
 
 	$upcontext['sub_template'] = 'welcome_message';
-    
+
     $type = ($db_type == 'mysqli') ? 'mysql' : $db_type;
 
 	// Check for some key files - one template, one language, and a new and an old source file.
@@ -1044,7 +1044,7 @@ function checkLogin()
 
 		// Before 2.0 these column names were different!
 		$oldDB = false;
-		if (empty($db_type) || $db_type == 'mysql' || $db_type == 'mysqli') 
+		if (empty($db_type) || $db_type == 'mysql' || $db_type == 'mysqli')
 		{
 			$request = $smcFunc['db_query']('', '
 				SHOW COLUMNS
@@ -1443,8 +1443,8 @@ function DatabaseChanges()
 
 	$upcontext['sub_template'] = isset($_GET['xml']) ? 'database_xml' : 'database_changes';
 	$upcontext['page_title'] = 'Database Changes';
-    
-    $type = ($db_type == 'mysqli') ? 'mysql' : $db_type; 
+
+    $type = ($db_type == 'mysqli') ? 'mysql' : $db_type;
 
 	// All possible files.
 	// Name, <version, insert_on_complete
@@ -2191,7 +2191,7 @@ function upgrade_query($string, $unbuffered = false)
 	// If MySQL we do something more clever.
 	if ($db_type == 'mysql' || $db_type == 'mysqli')
 	{
-		$mysql_errno = ($db_type == 'mysqli') ? mysqli_errno($db_connection) : mysql_errno($db_connection); 
+		$mysql_errno = ($db_type == 'mysqli') ? mysqli_errno($db_connection) : mysql_errno($db_connection);
 		$error_query = in_array(substr(trim($string), 0, 11), array('INSERT INTO', 'UPDATE IGNO', 'ALTER TABLE', 'DROP TABLE ', 'ALTER IGNOR'));
 
 		// Error numbers:
@@ -2223,7 +2223,7 @@ function upgrade_query($string, $unbuffered = false)
                     }
                     if ($result !== false)
                       return $result;
-      } 
+      }
 		}
 		elseif ($mysql_errno == 2013)
 		{
@@ -2246,9 +2246,9 @@ function upgrade_query($string, $unbuffered = false)
                   $result = mysqli_query($db_connection, $string);
                   if ($result !== false)
                     return $result;
-                } 
+                }
               }
-                
+
 		}
 		// Duplicate column name... should be okay ;).
 		elseif (in_array($mysql_errno, array(1060, 1061, 1068, 1091)))
@@ -3269,7 +3269,7 @@ function template_upgrade_below()
 		</div>
 	</div></div>
 	<div id="footer_section"><div class="frame" style="height: 40px;">
-		<div class="smalltext"><a href="http://www.ezforum.com" title="Free Forum Software" target="_blank" class="new_win">ezForum &copy;2013</a></div>
+		<div class="smalltext"><a href="http://www.ezforum.com" title="Free Forum Software" target="_blank" class="new_win">ezForum &copy;2014</a></div>
 	</div></div>
 	</body>
 </html>';
@@ -3537,7 +3537,7 @@ function template_upgrade_options()
 				<table cellpadding="1" cellspacing="0">
 					<tr valign="top">
 						<td width="2%">
-							<input type="checkbox" name="backup" id="backup" value="1"', $db_type != 'mysql' && $db_type != 'mysqli' && $db_type != 'postgresql' ? ' disabled="disabled"' : '', ' class="input_check" /> 
+							<input type="checkbox" name="backup" id="backup" value="1"', $db_type != 'mysql' && $db_type != 'mysqli' && $db_type != 'postgresql' ? ' disabled="disabled"' : '', ' class="input_check" />
 						<td width="100%">
 							<label for="backup">Backup tables in your database with the prefix &quot;backup_' . $db_prefix . '&quot;.</label>', isset($modSettings['smfVersion']) ? '' : ' (recommended!)', '
 						</td>

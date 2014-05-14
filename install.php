@@ -211,7 +211,7 @@ function initialize_inputs()
 			 {
                   $type = ($key == 'mysqli') ? 'mysql' : $key;
                   $ftp->unlink('install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql');
-            } 
+            }
 
 			$ftp->close();
 
@@ -226,7 +226,7 @@ function initialize_inputs()
 			 {
                $type = ($key == 'mysqli') ? 'mysql' : $key;
                 @unlink(dirname(__FILE__) . '/install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql');
-            } 
+            }
 		}
 
 		// Now just redirect to a blank.gif...
@@ -328,8 +328,8 @@ function load_database()
 	require(dirname(__FILE__) . '/Settings.php');
 	if (!defined('SMF'))
 		define('SMF', 1);
-		
-	if (!defined('EZF'))	
+
+	if (!defined('EZF'))
 		define('EZF', 1);
 	if (empty($smcFunc))
 		$smcFunc = array();
@@ -422,12 +422,12 @@ function Welcome()
 	{
 		if ($db['supported'])
 		{
-		    $type = ($key == 'mysqli') ? 'mysql' : $key;  
-			if (!file_exists(dirname(__FILE__) . '/install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql')) 
+		    $type = ($key == 'mysqli') ? 'mysql' : $key;
+			if (!file_exists(dirname(__FILE__) . '/install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql'))
 			{
 				$databases[$key]['supported'] = false;
 				$notFoundSQLFile = true;
-				$txt['error_db_script_missing'] = sprintf($txt['error_db_script_missing'], 'install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql'); 
+				$txt['error_db_script_missing'] = sprintf($txt['error_db_script_missing'], 'install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql');
 			}
 			else
 			{
@@ -1019,7 +1019,7 @@ function DatabasePopulation()
 
 	// Read in the SQL.  Turn this on and that off... internationalize... etc.
 	$type = ($db_type == 'mysqli') ? 'mysql' : $db_type;
-    $sql_lines = explode("\n", strtr(implode(' ', file(dirname(__FILE__) . '/install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql')), $replaces));  
+    $sql_lines = explode("\n", strtr(implode(' ', file(dirname(__FILE__) . '/install_' . $GLOBALS['db_script_version'] . '_' . $type . '.sql')), $replaces));
 
 	// Execute the SQL.
 	$current_statement = '';
@@ -1053,7 +1053,7 @@ function DatabasePopulation()
 		{
 			// Error 1050: Table already exists!
 			//!!! Needs to be made better!
-			if ((($db_type != 'mysql' && $db_type != 'mysqli') || mysql_errno($db_connection) === 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1) 
+			if ((($db_type != 'mysql' && $db_type != 'mysqli') || mysql_errno($db_connection) === 1050) && preg_match('~^\s*CREATE TABLE ([^\s\n\r]+?)~', $current_statement, $match) == 1)
 			{
 				$exists[] = $match[1];
 				$incontext['sql_results']['table_dups']++;
@@ -2098,7 +2098,7 @@ function template_install_below()
 		</div>
 	</div></div>
 	<div id="footer_section"><div class="frame" style="height: 40px;">
-		<div class="smalltext"><a href="http://www.ezforum.com" title="ezForum" target="_blank" class="new_win">ezForum &copy; 2013</a></div>
+		<div class="smalltext"><a href="http://www.ezforum.com" title="ezForum" target="_blank" class="new_win">ezForum &copy; 2014</a></div>
 	</div></div>
 	</body>
 </html>';
