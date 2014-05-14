@@ -118,6 +118,15 @@ ALTER TABLE {$db_prefix}members
 ADD COLUMN email_bounced tinyint(4) NOT NULL default '0';
 ---#
 
+---# Implementing email_mentions    
+ALTER TABLE {$db_prefix}members 
+ADD COLUMN email_mentions tinyint(4) NOT NULL default '0';
+---#
+
+---# Implementing unread_mentions    
+ALTER TABLE {$db_prefix}members 
+ADD COLUMN unread_mentions int(11) NOT NULL default '1';
+---#
 
 
 /******************************************************************************/
@@ -230,7 +239,9 @@ VALUES
 	('descriptivelinks_title_bbcurl', '1'),
 	('descriptivelinks_title_url_count', '5'),
 	('descriptivelinks_title_url_generic', 'home,index,page title,default,login,logon,welcome'),
-	('descriptivelinks_title_url_length', '80');
+	('descriptivelinks_title_url_length', '80'),
+	('mentions_email_default', '1'),
+	('mentions_remove_days', '7');
 ---#
 
 ---# Adjusting calendar maximum year...
@@ -504,21 +515,40 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}member_logins (
 ) ENGINE=MyISAM{$db_collation};
 ---#
 
+
+
 /******************************************************************************/
---- Post History tables...
+--- member_logins  tables...
 /******************************************************************************/
 
----# Table structure for table `messages_history`
-CREATE TABLE IF NOT EXISTS {$db_prefix}messages_history (
-  id_edit int(10) unsigned NOT NULL auto_increment,
-  id_msg int(10) unsigned default 0,
+---# Table structure for table `member_logins`
+CREATE TABLE IF NOT EXISTS {$db_prefix}member_logins (
+  id_login int(10) NOT NULL auto_increment,
   id_member mediumint(8) NOT NULL default '0',
-  modified_name varchar(255),
-  modified_time int(10) NOT NULL default '0',
-  body text,
-  PRIMARY KEY (id_edit),
-  KEY id_msg (id_msg)
+  time int(10) NOT NULL default '0',
+  ip varchar(255) NOT NULL default '0',
+  ip2 varchar(255) NOT NULL default '0',
+  PRIMARY KEY (id_login),
+  KEY id_member (id_member),
+  KEY time (time)
 ) ENGINE=MyISAM{$db_collation};
+---#
+
+
+/******************************************************************************/
+--- Mentions System tables...
+/******************************************************************************/
+
+---# Table structure for table `log_mentions`
+CREATE TABLE {$db_prefix}log_mentions (
+  `id_post` int(11) NOT NULL,
+  `id_member` int(11) NOT NULL,
+  `id_mentioned` int(11) NOT NULL,
+  `time` int(11) NOT NULL DEFAULT '0',
+  `unseen` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id_post`,`id_member`,`id_mentioned`)
+) ENGINE=MyISAM{$db_collation};
+
 ---#
 
 /******************************************************************************/
