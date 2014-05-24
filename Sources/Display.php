@@ -70,6 +70,7 @@ function Display()
 	global $scripturl, $txt, $modSettings, $context, $settings;
 	global $options, $sourcedir, $user_info, $board_info, $topic, $board;
 	global $attachments, $messages_request, $topicinfo, $language, $smcFunc;
+    global $mbname, $memberContext;
 
 	global $sourcedir;
     require_once($sourcedir . '/Mentions.php');
@@ -398,6 +399,28 @@ function Display()
 	// Censor the title...
 	censorText($topicinfo['subject']);
 	$context['page_title'] = $topicinfo['subject'];
+    
+    
+    // Social Media/SEO Headers
+	$context['html_headers'] .= '
+	<meta property="og:title" content="' . $topicinfo['subject'] . '"/ >
+    <meta property="og:site_name" content="' . $mbname . '"/ >';
+
+    if (!empty($topicinfo['id_member_started']))
+    {
+       
+        loadMemberData($topicinfo['id_member_started']);
+        loadMemberContext($topicinfo['id_member_started']);
+        $authorInfo = &$memberContext[$topicinfo['id_member_started']];
+
+        $context['html_headers'] .= '
+    	<link rel="author" href="' .$authorInfo['googleplus']['href'] .'" />';
+    }
+    
+    
+
+
+    
 
 	// Is this topic sticky, or can it even be?
 	$topicinfo['is_sticky'] = empty($modSettings['enableStickyTopics']) ? '0' : $topicinfo['is_sticky'];
