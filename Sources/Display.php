@@ -406,17 +406,20 @@ function Display()
 	<meta property="og:title" content="' . $topicinfo['subject'] . '"/ >
     <meta property="og:site_name" content="' . $mbname . '"/ >';
 
+
     if (!empty($topicinfo['id_member_started']))
     {
-       
-        loadMemberData($topicinfo['id_member_started']);
-        loadMemberContext($topicinfo['id_member_started']);
-        $authorInfo = &$memberContext[$topicinfo['id_member_started']];
-
-        $context['html_headers'] .= '
-    	<link rel="author" href="' .$authorInfo['googleplus']['href'] .'" />';
-    }
+        global $memberContext, $user_profile;
     
+    	if (empty($user_profile[$topicinfo['id_member_started']]))
+    		loadMemberData($topicinfo['id_member_started']);
+    
+    	loadMemberContext($topicinfo['id_member_started']);
+    
+       if (!empty($memberContext[$topicinfo['id_member_started']]['googleplus']['href']))
+            $context['html_headers'] .= '
+    	<link rel="author" href="' .$memberContext[$topicinfo['id_member_started']]['googleplus']['href'].'" />';
+    }
     
 
 
