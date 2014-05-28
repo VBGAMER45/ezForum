@@ -546,11 +546,8 @@ function banPermissions()
 		$user_info['mod_cache'] = $_SESSION['mc'];
 	else
 	{
-	   if (!$user_info['is_guest'])
-	   {
 		require_once($sourcedir . '/Subs-Auth.php');
 		rebuildModCache();
-       }
 	}
     
     require_once($sourcedir . '/ModerationCenter.php');

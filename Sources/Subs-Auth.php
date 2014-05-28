@@ -674,25 +674,26 @@ function rebuildModCache()
 	// What groups can they moderate?
 	$group_query = allowedTo('manage_membergroups') ? '1=1' : '0=1';
 
-	if ($group_query == '0=1')
+	if ($group_query == '0=1' && !$user_info['is_guest'])
 	{
-		$request = $smcFunc['db_query']('', '
-			SELECT id_group
-			FROM {db_prefix}group_moderators
-			WHERE id_member = {int:current_member}',
-			array(
-				'current_member' => $user_info['id'],
-			)
-		);
-		$groups = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$groups[] = $row['id_group'];
-		$smcFunc['db_free_result']($request);
-
-		if (empty($groups))
-			$group_query = '0=1';
-		else
-			$group_query = 'id_group IN (' . implode(',', $groups) . ')';
+    		$request = $smcFunc['db_query']('', '
+    			SELECT id_group
+    			FROM {db_prefix}group_moderators
+    			WHERE id_member = {int:current_member}',
+    			array(
+    				'current_member' => $user_info['id'],
+    			)
+    		);
+    		$groups = array();
+    		while ($row = $smcFunc['db_fetch_assoc']($request))
+    			$groups[] = $row['id_group'];
+    		$smcFunc['db_free_result']($request);
+    
+    		if (empty($groups))
+    			$group_query = '0=1';
+    		else
+    			$group_query = 'id_group IN (' . implode(',', $groups) . ')';
+            
 	}
 
 	// Then, same again, just the boards this time!
