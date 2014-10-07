@@ -351,7 +351,7 @@ function UpdateAllowedIPs($memberID, $allowedIPS)
 	SetupLoginSecurityTable($memberID);
 	
 	$allowedIPS = trim($allowedIPS);
-	htmlspecialchars($allowedIPS,ENT_QUOTES);
+	$allowedIPS = htmlspecialchars($allowedIPS,ENT_QUOTES);
 	 
 	$smcFunc['db_query']('', "
 	UPDATE {db_prefix}login_security 

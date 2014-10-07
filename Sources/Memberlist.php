@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -442,7 +442,22 @@ function MLSearch()
 	if (isset($_REQUEST['search']) && isset($_REQUEST['fields']))
 	{
 		$_POST['search'] = trim(isset($_GET['search']) ? $_GET['search'] : $_POST['search']);
-		$_POST['fields'] = isset($_GET['fields']) ? explode(',', $_GET['fields']) : $_POST['fields'];
+		
+		if (!get_magic_quotes_gpc())
+		{
+			// Escape things just in case...
+			if (isset($_GET['fields']))
+			{
+				$_POST['fields'] = explode(',', addslashes($_GET['fields']));
+			}
+			else
+			{
+				$temp = implode(',', $_POST['fields']);
+				$_POST['fields'] = explode(',', addslashes($temp));
+			}
+		}
+		else
+			$_POST['fields'] = isset($_GET['fields']) ? explode(',', $_GET['fields']) : $_POST['fields'];
 
 		$context['old_search'] = $_REQUEST['search'];
 		$context['old_search_value'] = urlencode($_REQUEST['search']);
@@ -458,24 +473,40 @@ function MLSearch()
 			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), array('_' => '\\_', '%' => '\\%', '*' => '%')) . '%',
 		);
 
+        $search_fields = array();
+
 		// Search for a name?
 		if (in_array('name', $_POST['fields']))
+		{
 			$fields = array('member_name', 'real_name');
+			$search_fields[] = 'name';
+		}
 		else
 			$fields = array();
 		// Search for messengers...
 		if (in_array('messenger', $_POST['fields']) && (!$user_info['is_guest'] || empty($modSettings['guest_hideContacts'])))
+		{
 			$fields += array(3 => 'msn', 'aim', 'icq', 'yim');
+			$search_fields[] = 'messenger';
+		}
 		// Search for websites.
 		if (in_array('website', $_POST['fields']))
+		{
 			$fields += array(7 => 'website_title', 'website_url');
+			$search_fields[] = 'website';
+		}
 		// Search for groups.
 		if (in_array('group', $_POST['fields']))
+		{
 			$fields += array(9 => 'IFNULL(group_name, {string:blank_string})');
+			$search_fields[] = 'group';
+		}
+
 		// Search for an email address?
 		if (in_array('email', $_POST['fields']))
 		{
 			$fields += array(2 => allowedTo('moderate_forum') ? 'email_address' : '(hide_email = 0 AND email_address');
+            $serach_fields[] = 'email';
 			$condition = allowedTo('moderate_forum') ? '' : ')';
 		}
 		else
@@ -492,9 +523,14 @@ function MLSearch()
 				$customJoin[] = 'LEFT JOIN {db_prefix}themes AS t' . $curField . ' ON (t' . $curField . '.variable = {string:t' . $curField . '} AND t' . $curField . '.id_theme = 1 AND t' . $curField . '.id_member = mem.id_member)';
 				$query_parameters['t' . $curField] = $curField;
 				$fields += array($customCount++ => 'IFNULL(t' . $curField . '.value, {string:blank_string})');
+                $search_fields[] = $field;
 			}
 		}
 
+        // No search fields? That means you're trying to hack things
+		if (empty($search_fields))
+			fatal_lang_error('invalid_search_string', false); 
+            
 		$query = $_POST['search'] == '' ? '= {string:blank_string}' : 'LIKE {string:search}';
 
 		$request = $smcFunc['db_query']('', '
@@ -510,7 +546,8 @@ function MLSearch()
 		list ($numResults) = $smcFunc['db_fetch_row']($request);
 		$smcFunc['db_free_result']($request);
 
-		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $_POST['fields']), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
+		$context['page_index'] = constructPageIndex($scripturl . '?action=mlist;sa=search;search=' . $_POST['search'] . ';fields=' . implode(',', $search_fields), $_REQUEST['start'], $numResults, $modSettings['defaultMaxMembers']);
+
 
 		// Find the members from the database.
 		// !!!SLOW This query is slow.
