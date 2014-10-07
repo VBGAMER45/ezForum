@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -1877,9 +1877,9 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				{
 					// This is done in a roundabout way because $breaker has "long words" :P.
 					$data = strtr($data, array($breaker => '< >', '&nbsp;' => $context['utf8'] ? "\xC2\xA0" : "\xA0"));
-					$data = preg_replace(
-						'~(?<=[>;:!? ' . $non_breaking_space . '\]()]|^)([\w' . ($context['utf8'] ? '\pL' : '') . '\.]{' . $modSettings['fixLongWords'] . ',})~e' . ($context['utf8'] ? 'u' : ''),
-						'preg_replace(\'/(.{' . ($modSettings['fixLongWords'] - 1) . '})/' . ($context['utf8'] ? 'u' : '') . '\', \'\\$1< >\', \'$1\')',
+					$data = preg_replace_callback(
+						'~(?<=[>;:!? ' . $non_breaking_space . '\]()]|^)([\w' . ($context['utf8'] ? '\pL' : '') . '\.]{' . $modSettings['fixLongWords'] . ',})~' . ($context['utf8'] ? 'u' : ''),
+						create_function('$m', 'return preg_replace(\'~(.{' . ($modSettings['fixLongWords'] - 1) . '})~' . ($context['utf8'] ? 'u' : '') . '\', \'$1< >\', "$m[1]");'),
 						$data);
 					$data = strtr($data, array('< >' => $breaker, $context['utf8'] ? "\xC2\xA0" : "\xA0" => '&nbsp;'));
 				}
@@ -2538,11 +2538,37 @@ function parsesmileys(&$message)
 			$searchParts[] = preg_quote(htmlspecialchars($smileysfrom[$i], ENT_QUOTES), '~');
 		}
 
-		$smileyPregSearch = '~(?<=[>:\?\.\s' . $non_breaking_space . '[\]()*\\\;]|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~e' . ($context['utf8'] ? 'u' : '');
+		$smileyPregSearch = '~(?<=[>:\?\.\s' . $non_breaking_space . '[\]()*\\\;]|^)(' . implode('|', $searchParts) . ')(?=[^[:alpha:]0-9]|$)~' . ($context['utf8'] ? 'u' : '');
 	}
 
 	// Replace away!
-	$message = preg_replace($smileyPregSearch, 'isset($smileyPregReplacements[\'$1\']) ? $smileyPregReplacements[\'$1\'] : \'\'', $message);
+
+	// TODO: When SMF supports only PHP 5.3+, we can change this to "uses" keyword and simplify this.
+	$callback = pregReplaceCurry('smielyPregReplaceCallback', 2);
+	$message = preg_replace_callback($smileyPregSearch, $callback($smileyPregReplacements), $message);
+}
+
+// This allows use to do delayed argument binding and bring in the replacement variables for some preg replacements.
+function pregReplaceCurry($func, $arity)
+{
+	return create_function('', "
+		\$args = func_get_args();
+		if(count(\$args) >= $arity)
+			return call_user_func_array('$func', \$args);
+		\$args = var_export(\$args, 1);
+		return create_function('','
+			\$a = func_get_args();
+			\$z = ' . \$args . ';
+			\$a = array_merge(\$z,\$a);
+			return call_user_func_array(\'$func\', \$a);
+		');
+	");
+}
+
+// Our callback that does the actual smiley replacements.
+function smielyPregReplaceCallback($replacements, $matches)
+{
+    return $replacements[$matches[1]];
 }
 
 /**
@@ -2760,9 +2786,9 @@ function redirectexit($setLocation = '', $refresh = false)
 	if (!empty($modSettings['queryless_urls']) && (empty($context['server']['is_cgi']) || @ini_get('cgi.fix_pathinfo') == 1 || @get_cfg_var('cgi.fix_pathinfo') == 1) && (!empty($context['server']['is_apache']) || !empty($context['server']['is_lighttpd'])))
 	{
 		if (defined('SID') && SID != '')
-			$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#]+?)(#[^"]*?)?$/e', "\$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2?' . SID", $setLocation);
+			$setLocation = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#]+?)(#[^"]*?)?$~', create_function('$m', 'global $scripturl; return $scripturl . \'/\' . strtr("$m[1]", \'&;=\', \'//,\') . \'.html?\' . SID . (isset($m[2]) ? "$m[2]" : "");'), $setLocation);
 		else
-			$setLocation = preg_replace('/^' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?$/e', "\$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2'", $setLocation);
+			$setLocation = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?$~', create_function('$m', 'global $scripturl; return $scripturl . \'/\' . strtr("$m[1]", \'&;=\', \'//,\') . \'.html\' . (isset($m[2]) ? "$m[2]" : "");'), $setLocation);
 	}
 
 	//	Redirections should be pretty too
@@ -4400,6 +4426,99 @@ function remove_integration_function($hook, $function)
 	$functions = array_diff($functions, array($function));
 	$modSettings[$hook] = implode(',', $functions);
 }
+
+// Decode numeric html entities to their ascii or UTF8 equivalent character.
+function replaceEntities__callback($matches)
+{
+	global $context;
+
+	if (!isset($matches[2]))
+		return '';
+
+	$num = $matches[2][0] === 'x' ? hexdec(substr($matches[2], 1)) : (int) $matches[2];
+
+	// remove left to right / right to left overrides
+	if ($num === 0x202D || $num === 0x202E)
+		return '';
+
+	// Quote, Ampersand, Apostrophe, Less/Greater Than get html replaced
+	if (in_array($num, array(0x22, 0x26, 0x27, 0x3C, 0x3E)))
+		return '&#' . $num . ';';
+
+	if (empty($context['utf8']))
+	{
+		// no control characters
+		if ($num < 0x20)
+			return '';
+		// text is text
+		elseif ($num < 0x80)
+			return chr($num);
+		// all others get html-ised
+		else
+			return '&#' . $matches[2] . ';';
+	}
+	else
+	{
+		// <0x20 are control characters, 0x20 is a space, > 0x10FFFF is past the end of the utf8 character set
+		// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text)
+		if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF))
+			return '';
+		// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and puncuation
+		elseif ($num < 0x80)
+			return chr($num);
+		// <0x800 (2048)
+		elseif ($num < 0x800)
+			return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+		// < 0x10000 (65536)
+		elseif ($num < 0x10000)
+			return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+		// <= 0x10FFFF (1114111)
+		else
+			return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	}
+}
+
+// Converts html entities to utf8 equivalents.
+function fixchar__callback($matches)
+{
+	if (!isset($matches[1]))
+		return '';
+
+	$num = $matches[1][0] === 'x' ? hexdec(substr($matches[1], 1)) : (int) $matches[1];
+
+	// <0x20 are control characters, > 0x10FFFF is past the end of the utf8 character set
+	// 0xD800 >= $num <= 0xDFFF are surrogate markers (not valid for utf8 text), 0x202D-E are left to right overrides
+	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202D || $num === 0x202E)
+		return '';
+	// <0x80 (or less than 128) are standard ascii characters a-z A-Z 0-9 and puncuation
+	elseif ($num < 0x80)
+		return chr($num);
+	// <0x800 (2048)
+	elseif ($num < 0x800)
+		return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
+	// < 0x10000 (65536)
+	elseif ($num < 0x10000)
+		return chr(($num >> 12) + 224) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+	// <= 0x10FFFF (1114111)
+	else
+		return chr(($num >> 18) + 240) . chr((($num >> 12) & 63) + 128) . chr((($num >> 6) & 63) + 128) . chr(($num & 63) + 128);
+}
+
+// Strips out invalid html entities, replaces others with html style &#123; codes.
+function entity_fix__callback($matches)
+{
+	if (!isset($matches[2]))
+		return '';
+
+	$num = $matches[2][0] === 'x' ? hexdec(substr($matches[2], 1)) : (int) $matches[2];
+
+	// we don't allow control characters, characters out of range, byte markers, etc
+	if ($num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num == 0x202D || $num == 0x202E)
+		return '';
+	else
+		return '&#' . $num . ';';
+}
+
 
 function CheckSpam_StopForumSpam($ip = '', $email = '', $username = '')
 {

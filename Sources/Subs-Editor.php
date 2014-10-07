@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -136,9 +136,8 @@ function bbc_to_html($text)
 	);
 	$text = preg_replace(array_keys($working_html), array_values($working_html), $text);
 
-	// Parse unique ID's and disable javascript into the smileys - using the double space.
-	$i = 1;
-	$text = preg_replace('~(?:\s|&nbsp;)?<(img\ssrc="' . preg_quote($modSettings['smileys_url'], '~') . '/[^<>]+?/([^<>]+?)"\s*)[^<>]*?class="smiley" />~e', '\'<\' . ' . 'stripslashes(\'$1\') . \'alt="" title="" onresizestart="return false;" id="smiley_\' . ' . "\$" . 'i++ . \'_$2" style="padding: 0 3px 0 3px;" />\'', $text);
+    // Parse unique ID's and disable javascript into the smileys - using the double space.
+	$text = preg_replace_callback('~(?:\s|&nbsp;)?<(img\ssrc="' . preg_quote($modSettings['smileys_url'], '~') . '/[^<>]+?/([^<>]+?)"\s*)[^<>]*?class="smiley" />~', create_function('$m', 'static $i = 1; return \'<\' . ' . 'stripslashes($m[1]) . \'alt="" title="" onresizestart="return false;" id="smiley_\' . ' . "\$" . 'i++ . \'_\' . $m[2] . \'" style="padding: 0 3px 0 3px;" />\';'), $text);
 
 	return $text;
 }
@@ -798,8 +797,7 @@ function html_to_bbc($text)
 		'~<table(\s(.)*?)*?' . '>~i' => '[table]',
 		'~</table>~i' => '[/table]',
 		'~<tr(\s(.)*?)*?' . '>~i' => '[tr]',
-		'~</tr>~i' => '[/tr]',
-		'~<(td|th)\s[^<>]*?colspan="?(\d{1,2})"?.*?' . '>~ie' => 'str_repeat(\'[td][/td]\', $2 - 1) . \'[td]\'',
+        '~</tr>~i' => '[/tr]',
 		'~<(td|th)(\s(.)*?)*?' . '>~i' => '[td]',
 		'~</(td|th)>~i' => '[/td]',
 		'~<br(?:\s[^<>]*?)?' . '>~i' => "\n",
@@ -811,6 +809,7 @@ function html_to_bbc($text)
 		'~<ins(\s(.)*?)*?' . '>~i' => "&lt;ins&gt;",
 		'~</ins>~i' => "&lt;/ins&gt;",
 	);
+	$text = preg_replace_callback('~<(td|th)\s[^<>]*?colspan="?(\d{1,2})"?.*?' . '>~i', create_function('$m', 'return str_repeat(\'[td][/td]\', $m[2] - 1) . \'[td]\';'), $text);
 	$text = preg_replace(array_keys($tags), array_values($tags), $text);
 
 	// Please give us just a little more time.

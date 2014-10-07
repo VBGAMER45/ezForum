@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -213,6 +213,13 @@ function Login2()
 	{
 		$context['login_errors'] = array($txt['error_invalid_characters_username']);
 		return;
+	}
+
+// And if it's too long, trim it back.
+	if ($smcFunc['strlen']($_POST['user']) > 80)
+	{
+		$_POST['user'] = $smcFunc['substr']($_POST['user'], 0, 79);
+		$context['default_username'] = preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_POST['user']));
 	}
 
 	// Are we using any sort of integration to validate the login?

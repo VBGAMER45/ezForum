@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -174,8 +174,8 @@ function reloadSettings()
 
 	// Set a list of common functions.
 	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
-	$ent_check = empty($modSettings['disableEntityCheck']) ? array('preg_replace(\'~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~e\', \'$smcFunc[\\\'entity_fix\\\'](\\\'\\2\\\')\', ', ')') : array('', '');
-
+	$ent_check = empty($modSettings['disableEntityCheck']) ? array('preg_replace_callback(\'~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~\', \'entity_fix__callback\', ', ')') : array('', '');
+    
 	// Preg_replace can handle complex characters only for higher PHP versions.
 	$space_chars = $utf8 ? (@version_compare(PHP_VERSION, '4.3.3') != -1 ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0';
 
@@ -2773,22 +2773,31 @@ function cache_put_data($key, $value, $ttl = 120)
 		else
 		{
 			$cache_data = '<' . '?' . 'php if (!defined(\'SMF\')) die; if (' . (time() + $ttl) . ' < time()) $expired = true; else{$expired = false; $value = \'' . addcslashes($value, '\\\'') . '\';}' . '?' . '>';
-			$fh = @fopen($cachedir . '/data_' . $key . '.php', 'w');
-			if ($fh)
-			{
 				// Write the file.
-				set_file_buffer($fh, 0);
-				flock($fh, LOCK_EX);
-				$cache_bytes = fwrite($fh, $cache_data);
-				flock($fh, LOCK_UN);
-				fclose($fh);
+				if (function_exists('file_put_contents'))
+				{
+					$cache_bytes = @file_put_contents($cachedir . '/data_' . $key . '.php', $cache_data, LOCK_EX);
+					if ($cache_bytes != strlen($cache_data))
+						@unlink($cachedir . '/data_' . $key . '.php');
+				}
+				else
+				{
+					$fh = @fopen($cachedir . '/data_' . $key . '.php', 'w');
+					if ($fh)
+					{
+						// Write the file.
+						set_file_buffer($fh, 0);
+						flock($fh, LOCK_EX);
+						$cache_bytes = fwrite($fh, $cache_data);
+						flock($fh, LOCK_UN);
+						fclose($fh);
 
-				// Check that the cache write was successful; all the data should be written
-				// If it fails due to low diskspace, remove the cache file
-				if ($cache_bytes != strlen($cache_data))
-					@unlink($cachedir . '/data_' . $key . '.php');
-			}
-		}
+						// Check that the cache write was successful; all the data should be written
+						// If it fails due to low diskspace, remove the cache file
+						if ($cache_bytes != strlen($cache_data))
+							@unlink($cachedir . '/data_' . $key . '.php');
+					}
+				}
 	}
 
 	if (isset($db_show_debug) && $db_show_debug === true)
@@ -2840,7 +2849,7 @@ function cache_get_data($key, $ttl = 120)
 	// Otherwise it's ezForum data!
 	elseif (file_exists($cachedir . '/data_' . $key . '.php') && filesize($cachedir . '/data_' . $key . '.php') > 10)
 	{
-		require($cachedir . '/data_' . $key . '.php');
+		@include($cachedir . '/data_' . $key . '.php');
 		if (!empty($expired) && isset($value))
 		{
 			@unlink($cachedir . '/data_' . $key . '.php');

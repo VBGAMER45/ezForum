@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -927,7 +927,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 
 	// Now we know how many we're sending, let's send them.
 	$request = $smcFunc['db_query']('', '
-		SELECT /*!40001 SQL_NO_CACHE */ id_mail, recipient, body, subject, headers, send_html
+		SELECT /*!40001 SQL_NO_CACHE */ id_mail, recipient, body, subject, headers, send_html, time_sent, private
 		FROM {db_prefix}mail_queue
 		ORDER BY priority ASC, id_mail ASC
 		LIMIT ' . $number,
@@ -944,8 +944,10 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			'to' => $row['recipient'],
 			'body' => $row['body'],
 			'subject' => $row['subject'],
-			'headers' => $row['headers'],
+            'headers' => $row['headers'],
 			'send_html' => $row['send_html'],
+			'time_sent' => $row['time_sent'],
+			'private' => $row['private'],
 		);
 	}
 	$smcFunc['db_free_result']($request);
@@ -1009,7 +1011,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 
 		// Hopefully it sent?
 		if (!$result)
-			$failed_emails[] = array($email['to'], $email['body'], $email['subject'], $email['headers'], $email['send_html']);
+			$failed_emails[] = array($email['to'], $email['body'], $email['subject'], $email['headers'], $email['send_html'], $email['time_sent'], $email['private']);
 	}
 
 	// Any emails that didn't send?
@@ -1039,7 +1041,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 		// Add our email back to the queue, manually.
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}mail_queue',
-			array('recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string'),
+			array('recipient' => 'string', 'body' => 'string', 'subject' => 'string', 'headers' => 'string', 'send_html' => 'string', 'time_sent' => 'string', 'private' => 'int'),
 			$failed_emails,
 			array('id_mail')
 		);
@@ -1472,12 +1474,16 @@ function scheduled_weekly_maintenance()
 
 			// This one is more complex then the other logs.  First we need to figure out which reports are too old.
 			$reports = array();
-			$result = $smcFunc['db_query']('', '
+            $result = $smcFunc['db_query']('', '
 				SELECT id_report
 				FROM {db_prefix}log_reported
-				WHERE time_started < {int:time_started}',
+				WHERE time_started < {int:time_started}
+					AND closed = {int:not_closed}
+					AND ignore_all = {int:not_ignored}',
 				array(
 					'time_started' => $t,
+					'not_closed' => 0,
+					'not_ignored' => 0,
 				)
 			);
 

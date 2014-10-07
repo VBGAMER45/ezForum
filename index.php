@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -27,7 +27,7 @@
 	with the URL index.php?action=action-in-url.  Relatively simple, no?
 */
 
-$forum_version = 'ezForum 3.0 Beta 1';
+$forum_version = 'ezForum 3.0 Beta 2';
 
 @ini_set('memory_limit', '128M');
 
@@ -126,7 +126,7 @@ if (!headers_sent())
 {
 	// Future versions will make some of this configurable. This is primarily a 'safe' configuration for most cases for now.
 	header('X-Frame-Options: SAMEORIGIN');
-	header('X-XSS-Protection: 1; mode=block');
+	header('X-XSS-Protection: 1');
 	header('X-Content-Type-Options: nosniff');
 }
 

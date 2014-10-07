@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -766,7 +766,7 @@ function EditMembergroup()
 		checkSession();
 
 		// Can they really inherit from this group?
-		if ($_POST['group_inherit'] != -2 && !allowedTo('admin_forum'))
+		if ($_REQUEST['group'] > 1 && $_REQUEST['group'] != 3 && isset($_POST['group_inherit']) && $_POST['group_inherit'] != -2 && !allowedTo('admin_forum'))
 		{
 			$request = $smcFunc['db_query']('', '
 				SELECT group_type

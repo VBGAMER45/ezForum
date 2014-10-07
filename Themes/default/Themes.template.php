@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -767,9 +767,8 @@ function template_pick()
 		{
 			echo '
 			<script type="text/javascript"><!-- // --><![CDATA[
-			var sBaseUseUrl = smf_prepareScriptUrl(smf_scripturl) + \'action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '\';
-			var sBasePreviewUrl = smf_prepareScriptUrl(smf_scripturl) + \'action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '\';
-			var oThumbnails', $theme['id'], ' = {';
+            var sBaseUseUrl', $theme['id'], ' = smf_prepareScriptUrl(smf_scripturl) + \'action=theme;sa=pick;u=', $context['current_member'], ';th=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '\';
+			var sBasePreviewUrl', $theme['id'], ' = smf_prepareScriptUrl(smf_scripturl) + \'action=theme;sa=pick;u=', $context['current_member'], ';theme=', $theme['id'], ';', $context['session_var'], '=', $context['session_id'], '\';			var oThumbnails', $theme['id'], ' = {';
 
 			// All the variant thumbnails.
 			$count = 1;
@@ -786,9 +785,9 @@ function template_pick()
 			function changeVariant', $theme['id'], '(sVariant)
 			{
 				document.getElementById(\'theme_thumb_', $theme['id'], '\').src = oThumbnails', $theme['id'], '[sVariant];
-				document.getElementById(\'theme_use_', $theme['id'], '\').href = sBaseUseUrl + \';vrt=\' + sVariant;
-				document.getElementById(\'theme_thumb_preview_', $theme['id'], '\').href = sBasePreviewUrl + \';vrt=\' + sVariant + \';variant=\' + sVariant;
-				document.getElementById(\'theme_preview_', $theme['id'], '\').href = sBasePreviewUrl + \';vrt=\' + sVariant + \';variant=\' + sVariant;
+				document.getElementById(\'theme_use_', $theme['id'], '\').href = sBaseUseUrl', $theme['id'], ' + \';vrt=\' + sVariant;
+				document.getElementById(\'theme_thumb_preview_', $theme['id'], '\').href = sBasePreviewUrl', $theme['id'], ' + \';vrt=\' + sVariant + \';variant=\' + sVariant;
+				document.getElementById(\'theme_preview_', $theme['id'], '\').href = sBasePreviewUrl', $theme['id'], ' + \';vrt=\' + sVariant + \';variant=\' + sVariant;
 			}
 			// ]]></script>';
 		}

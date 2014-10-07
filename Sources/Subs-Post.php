@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -168,8 +168,8 @@ function preparsecode(&$message, $previewing = false)
 	$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
 
 	// Clean up after nobbc ;).
-	$message = preg_replace('~\[nobbc\](.+?)\[/nobbc\]~ie', '\'[nobbc]\' . strtr(\'$1\', array(\'[\' => \'&#91;\', \']\' => \'&#93;\', \':\' => \'&#58;\', \'@\' => \'&#64;\')) . \'[/nobbc]\'', $message);
-
+	$message = preg_replace_callback('~\[nobbc\](.+?)\[/nobbc\]~i', create_function('$m', ' return "[nobbc]" . strtr("$m[1]", array("[" => "&#91;", "]" => "&#93;", ":" => "&#58;", "@" => "&#64;")) . "[/nobbc]";'), $message);
+    
 	// Remove \r's... they're evil!
 	$message = strtr($message, array("\r" => ''));
 
@@ -244,8 +244,13 @@ function preparsecode(&$message, $previewing = false)
 
 			if (!$previewing && strpos($parts[$i], '[html]') !== false)
 			{
-				if (allowedTo('admin_forum'))
-					$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ise', '\'[html]\' . strtr(un_htmlspecialchars(\'$1\'), array("\n" => \'&#13;\', \'  \' => \' &#32;\', \'[\' => \'&#91;\', \']\' => \'&#93;\')) . \'[/html]\'', $parts[$i]);
+                if (allowedTo('admin_forum'))
+				{
+					static $htmlfunc = null;
+					if ($htmlfunc === null)
+						$htmlfunc = create_function('$m', 'return \'[html]\' . strtr(un_htmlspecialchars("$m[1]"), array("\n" => \'&#13;\', \'  \' => \' &#32;\', \'[\' => \'&#91;\', \']\' => \'&#93;\')) . \'[/html]\';');
+					$parts[$i] = preg_replace_callback('~\[html\](.+?)\[/html\]~is', $htmlfunc, $parts[$i]);
+				}
 
 				// We should edit them out, or else if an admin edits the message they will get shown...
 				else
@@ -256,14 +261,14 @@ function preparsecode(&$message, $previewing = false)
 			}
 
 			// Let's look at the time tags...
-			$parts[$i] = preg_replace('~\[time(?:=(absolute))*\](.+?)\[/time\]~ie', '\'[time]\' . (is_numeric(\'$2\') || @strtotime(\'$2\') == 0 ? \'$2\' : strtotime(\'$2\') - (\'$1\' == \'absolute\' ? 0 : (($modSettings[\'time_offset\'] + $user_info[\'time_offset\']) * 3600))) . \'[/time]\'', $parts[$i]);
-
+			$parts[$i] = preg_replace_callback('~\[time(?:=(absolute))*\](.+?)\[/time\]~i', create_function('$m', 'global $modSettings, $user_info; return "[time]" . (is_numeric("$m[2]") || @strtotime("$m[2]") == 0 ? "$m[2]" : strtotime("$m[2]") - ("$m[1]" == "absolute" ? 0 : (($modSettings["time_offset"] + $user_info["time_offset"]) * 3600))) . "[/time]";'), $parts[$i]);
+            
 			// Change the color specific tags to [color=the color].
 			$parts[$i] = preg_replace('~\[(black|blue|green|red|white)\]~', '[color=$1]', $parts[$i]);  // First do the opening tags.
 			$parts[$i] = preg_replace('~\[/(black|blue|green|red|white)\]~', '[/color]', $parts[$i]);   // And now do the closing tags
 
 			// Make sure all tags are lowercase.
-			$parts[$i] = preg_replace('~\[([/]?)(list|li|table|tr|td)((\s[^\]]+)*)\]~ie', '\'[$1\' . strtolower(\'$2\') . \'$3]\'', $parts[$i]);
+			$parts[$i] = preg_replace_callback('~\[([/]?)(list|li|table|tr|td)((\s[^\]]+)*)\]~i', create_function('$m', ' return "[$m[1]" . strtolower("$m[2]") . "$m[3]]";'), $parts[$i]);
 
 			$list_open = substr_count($parts[$i], '[list]') + substr_count($parts[$i], '[list ');
 			$list_close = substr_count($parts[$i], '[/list]');
@@ -399,11 +404,10 @@ function un_preparsecode($message)
 		// If $i is a multiple of four (0, 4, 8, ...) then it's not a code section...
 		if ($i % 4 == 0)
 		{
-			$parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ie', '\'[html]\' . strtr(htmlspecialchars(\'$1\', ENT_QUOTES), array(\'\\&quot;\' => \'&quot;\', \'&amp;#13;\' => \'<br />\', \'&amp;#32;\' => \' \', \'&amp;#91;\' => \'[\', \'&amp;#93;\' => \']\')) . \'[/html]\'', $parts[$i]);
-			// $parts[$i] = preg_replace('~\[html\](.+?)\[/html\]~ie', '\'[html]\' . strtr(htmlspecialchars(\'$1\', ENT_QUOTES), array(\'\\&quot;\' => \'&quot;\', \'&amp;#13;\' => \'<br />\', \'&amp;#32;\' => \' \', \'&amp;#38;\' => \'&#38;\', \'&amp;#91;\' => \'[\', \'&amp;#93;\' => \']\')) . \'[/html]\'', $parts[$i]);
-
+			$parts[$i] = preg_replace_callback('~\[html\](.+?)\[/html\]~i', create_function('$m', 'return "[html]" . strtr(htmlspecialchars("$m[1]", ENT_QUOTES), array("\\&quot;" => "&quot;", "&amp;#13;" => "<br />", "&amp;#32;" => " ", "&amp;#91;" => "[", "&amp;#93;" => "]")) . "[/html]";'), $parts[$i]);
+            
 			// Attempt to un-parse the time to something less awful.
-			$parts[$i] = preg_replace('~\[time\](\d{0,10})\[/time\]~ie', '\'[time]\' . timeformat(\'$1\', false) . \'[/time]\'', $parts[$i]);
+			$parts[$i] = preg_replace_callback('~\[time\](\d{0,10})\[/time\]~i', create_function('$m', ' return "[time]" . timeformat("$m[1]", false) . "[/time]";'), $parts[$i]);
 		}
 	}
 
@@ -485,7 +489,7 @@ function fixTags(&$message)
 		fixTag($message, $param['tag'], $param['protocols'], $param['embeddedUrl'], $param['hasEqualSign'], !empty($param['hasExtra']));
 
 	// Now fix possible security problems with images loading links automatically...
-	$message = preg_replace('~(\[img.*?\])(.+?)\[/img\]~eis', '\'$1\' . preg_replace(\'~action(=|%3d)(?!dlattach)~i\', \'action-\', \'$2\') . \'[/img]\'', $message);
+	$message = preg_replace_callback('~(\[img.*?\])(.+?)\[/img\]~is', create_function('$m', 'return "$m[1]" . preg_replace("~action(=|%3d)(?!dlattach)~i", "action-", "$m[2]") . "[/img]";'), $message);
 
 	// Limit the size of images posted?
 	if (!empty($modSettings['max_image_width']) || !empty($modSettings['max_image_height']))
@@ -1246,8 +1250,8 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 				$simple = false;
 		unset($matches);
 
-		if ($simple)
-			$string = preg_replace('~&#(\d{3,8});~e', 'chr(\'$1\')', $string);
+        if ($simple)
+			$string = preg_replace_callback('~&#(\d{3,8});~', create_function('$m', ' return chr("$m[1]");'), $string);
 		else
 		{
 			// Try to convert the string to UTF-8.
@@ -1268,7 +1272,7 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 				else
 					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);');
 
-			$string = preg_replace('~&#(\d{3,8});~e', '$fixchar(\'$1\')', $string);
+			$string = preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $string);
 
 			// Unicode, baby.
 			$charset = 'UTF-8';
@@ -1297,8 +1301,24 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 			else
 				return "";');
 
+		$entityConvert = create_function('$m', '
+			$c = $m[1];
+			if (strlen($c) === 1 && ord($c[0]) <= 0x7F)
+				return $c;
+			elseif (strlen($c) === 2 && ord($c[0]) >= 0xC0 && ord($c[0]) <= 0xDF)
+				return "&#" . (((ord($c[0]) ^ 0xC0) << 6) + (ord($c[1]) ^ 0x80)) . ";";
+			elseif (strlen($c) === 3 && ord($c[0]) >= 0xE0 && ord($c[0]) <= 0xEF)
+				return "&#" . (((ord($c[0]) ^ 0xE0) << 12) + ((ord($c[1]) ^ 0x80) << 6) + (ord($c[2]) ^ 0x80)) . ";";
+			elseif (strlen($c) === 4 && ord($c[0]) >= 0xF0 && ord($c[0]) <= 0xF7)
+				return "&#" . (((ord($c[0]) ^ 0xF0) << 18) + ((ord($c[1]) ^ 0x80) << 12) + ((ord($c[2]) ^ 0x80) << 6) + (ord($c[3]) ^ 0x80)) . ";";
+			else
+				return "";');
+
 		// Convert all 'special' characters to HTML entities.
-		return array($charset, preg_replace('~([\x80-' . ($context['server']['complex_preg_chars'] ? '\x{10FFFF}' : "\xF7\xBF\xBF\xBF") . '])~eu', '$entityConvert(\'\1\')', $string), '7bit');
+		return array($charset, preg_replace_callback('~([\x80-\x{10FFFF}])~u', $entityConvert, $string), '7bit');
+
+
+
 	}
 
 	// We don't need to mess with the subject line if no special characters were in it..
@@ -2183,6 +2203,14 @@ function createAttachment(&$attachmentOptions)
 		}
 	}
 
+	// It is possible we might have a MIME type that isn't actually an image but still have a size.
+	// For example, Shockwave files will be able to return size but be 'application/shockwave' or similar.
+	if (!empty($attachmentOptions['mime_type']) && strpos($attachmentOptions['mime_type'], 'image/') !== 0)
+	{
+		$attachmentOptions['width'] = 0;
+		$attachmentOptions['height'] = 0;
+	}
+
 	// Get the hash if no hash has been given yet.
 	if (empty($attachmentOptions['file_hash']))
 		$attachmentOptions['file_hash'] = getAttachmentFilename($attachmentOptions['name'], false, null, true);
@@ -2318,6 +2346,14 @@ function createAttachment(&$attachmentOptions)
 				$attachmentOptions['mime_type'] = $size['mime'];
 			elseif (isset($validImageTypes[$size[2]]))
 				$attachmentOptions['mime_type'] = 'image/' . $validImageTypes[$size[2]];
+		}
+
+		// It is possible we might have a MIME type that isn't actually an image but still have a size.
+		// For example, Shockwave files will be able to return size but be 'application/shockwave' or similar.
+		if (!empty($attachmentOptions['mime_type']) && strpos($attachmentOptions['mime_type'], 'image/') !== 0)
+		{
+			$attachmentOptions['width'] = 0;
+			$attachmentOptions['height'] = 0;
 		}
 
 		if (!empty($attachmentOptions['width']) && !empty($attachmentOptions['height']))
