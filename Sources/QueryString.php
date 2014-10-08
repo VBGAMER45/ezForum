@@ -668,9 +668,9 @@ function ob_sessrewrite($buffer)
 	{
 		// Let's do something special for session ids!
 		if (defined('SID') && SID != '')
-			$buffer = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#"]+?)(#[^"]*?)?"~', create_function('$m', 'global $scripturl; return \'"\' . $scripturl . "/" . strtr("$m[1]", \'&;=\', \'//,\') . ".html?" . SID . (isset($m[2]) ? $m[2] : "") . \'"\';'), $buffer);
+			$buffer = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#"]+?)(#[^"]*?)?"~', 'sid_insert__preg_callback', $buffer);
 		else
-			$buffer = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?"~', create_function('$m', 'global $scripturl; return \'"\' . $scripturl . "/" . strtr("$m[1]", \'&;=\', \'//,\') . ".html" . (isset($m[2]) ? $m[2] : "") . \'"\';'), $buffer);
+			$buffer = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?"~', 'pathinfo_insert__preg_callback', $buffer);
 	}
 
 ***/
@@ -696,6 +696,19 @@ function ob_sessrewrite($buffer)
 	
 	// Return the changed buffer.
 	return $buffer;
+}
+
+
+function sid_insert__preg_callback($matches)
+{
+	global $scripturl;
+	return '"' . $scripturl . "/" . strtr($matches[1], '&;=', '//,') . ".html?" . SID . (isset($matches[2]) ? $matches[2] : "") . '"';
+}
+
+function pathinfo_insert__preg_callback($matches)
+{
+	global $scripturl;
+	return '"' . $scripturl . "/" . strtr($matches[1], '&;=', '//,') . ".html" . (isset($matches[2]) ? $matches[2] : "") . '"';
 }
 
 ?>

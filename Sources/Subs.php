@@ -1879,7 +1879,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 					$data = strtr($data, array($breaker => '< >', '&nbsp;' => $context['utf8'] ? "\xC2\xA0" : "\xA0"));
 					$data = preg_replace_callback(
 						'~(?<=[>;:!? ' . $non_breaking_space . '\]()]|^)([\w' . ($context['utf8'] ? '\pL' : '') . '\.]{' . $modSettings['fixLongWords'] . ',})~' . ($context['utf8'] ? 'u' : ''),
-						create_function('$m', 'return preg_replace(\'~(.{' . ($modSettings['fixLongWords'] - 1) . '})~' . ($context['utf8'] ? 'u' : '') . '\', \'$1< >\', "$m[1]");'),
+						'word_break__preg_callback',
 						$data);
 					$data = strtr($data, array('< >' => $breaker, $context['utf8'] ? "\xC2\xA0" : "\xA0" => '&nbsp;'));
 				}
@@ -2544,8 +2544,8 @@ function parsesmileys(&$message)
 	// Replace away!
 
 	// TODO: When SMF supports only PHP 5.3+, we can change this to "uses" keyword and simplify this.
-	$callback = pregReplaceCurry('smielyPregReplaceCallback', 2);
-	$message = preg_replace_callback($smileyPregSearch, $callback($smileyPregReplacements), $message);
+	$context['smiley_replacements'] = $smileyPregReplacements;
+	$message = preg_replace_callback($smileyPregSearch, 'smileyPregReplaceCallback', $message);
 }
 
 // This allows use to do delayed argument binding and bring in the replacement variables for some preg replacements.
@@ -2566,9 +2566,10 @@ function pregReplaceCurry($func, $arity)
 }
 
 // Our callback that does the actual smiley replacements.
-function smielyPregReplaceCallback($replacements, $matches)
+function smileyPregReplaceCallback($matches)
 {
-    return $replacements[$matches[1]];
+	global $context;
+    return $context['smiley_replacements'][$matches[1]];
 }
 
 /**
@@ -2786,9 +2787,9 @@ function redirectexit($setLocation = '', $refresh = false)
 	if (!empty($modSettings['queryless_urls']) && (empty($context['server']['is_cgi']) || @ini_get('cgi.fix_pathinfo') == 1 || @get_cfg_var('cgi.fix_pathinfo') == 1) && (!empty($context['server']['is_apache']) || !empty($context['server']['is_lighttpd'])))
 	{
 		if (defined('SID') && SID != '')
-			$setLocation = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#]+?)(#[^"]*?)?$~', create_function('$m', 'global $scripturl; return $scripturl . \'/\' . strtr("$m[1]", \'&;=\', \'//,\') . \'.html?\' . SID . (isset($m[2]) ? "$m[2]" : "");'), $setLocation);
+			$setLocation = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?(?:' . SID . '(?:;|&|&amp;))((?:board|topic)=[^#]+?)(#[^"]*?)?$~', 'fix_redirect_sid__preg_callback', $setLocation);
 		else
-			$setLocation = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?$~', create_function('$m', 'global $scripturl; return $scripturl . \'/\' . strtr("$m[1]", \'&;=\', \'//,\') . \'.html\' . (isset($m[2]) ? "$m[2]" : "");'), $setLocation);
+			$setLocation = preg_replace_callback('~"' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+?)(#[^"]*?)?$~', 'fix_redirect_path__preg_callback', $setLocation);
 	}
 
 	//	Redirections should be pretty too
@@ -4568,6 +4569,30 @@ function CheckSpam_StopForumSpam($ip = '', $email = '', $username = '')
 
 
 
+}
+
+
+function word_break__preg_callback($matches)
+{
+	global $modSettings, $context;
+	return preg_replace('~(.{' . ($modSettings['fixLongWords'] - 1) . '})~' . ($context['utf8'] ? 'u' : ''), '$1< >', $matches[1]);
+}
+
+function fix_redirect_sid__preg_callback($matches)
+{
+	global $scripturl;
+	return $scripturl . '/' . strtr($matches[1], '&;=', '//,') . '.html?' . SID . (isset($matches[2]) ? $matches[2] : '');
+}
+
+function fix_redirect_path__preg_callback($matches)
+{
+	global $scripturl;
+	return $scripturl . '/' . strtr($matches[1], '&;=', '//,') . '.html' . (isset($matches[2]) ? $matches[2] : '');
+}
+
+function return_chr__preg_callback($matches)
+{
+	return chr($matches[1]);
 }
 
 ?>

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -306,7 +306,29 @@ function smf_db_query($identifier, $db_string, $db_values = array(), $connection
 	);
 
 	// Decide which connection to use.
-	$connection = $connection === null ? $db_connection : $connection;
+	$connection = $connection == null ? $db_connection : $connection;
+
+	// Special queries that need processing.
+	$replacements = array(
+		'alter_table_boards' => array(
+			'~(.+)~' => '',
+		),
+		'boardindex_fetch_boards' => array(
+			'~(.)$~' => '$1 ORDER BY b.board_order',
+		),
+		'messageindex_fetch_boards' => array(
+			'~(.)$~' => '$1 ORDER BY b.board_order',
+		),
+		'order_by_board_order' => array(
+			'~(.)$~' => '$1 ORDER BY b.board_order',
+		),
+	);
+
+	if (isset($replacements[$identifier]))
+		$db_string = preg_replace(array_keys($replacements[$identifier]), array_values($replacements[$identifier]), $db_string);
+
+	if (trim($db_string) == '')
+		return false;
 
 	// Get a connection if we are shutting down, sometimes the link is closed before sessions are written
         if (!is_object($connection))

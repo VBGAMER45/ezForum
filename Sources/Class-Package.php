@@ -74,7 +74,7 @@ class xmlArray
 	public function __construct($data, $auto_trim = false, $level = null, $is_clone = false)
 	{
 		// If we're using this try to get some more memory.
-		@ini_set('memory_limit', '32M');
+		@ini_set('memory_limit', '128M');
 
 		// Set the debug level.
 		$this->debug_level = $level !== null ? $level : error_reporting();
@@ -578,7 +578,7 @@ class xmlArray
 		$trans_tbl = array_flip(get_html_translation_table(HTML_ENTITIES, ENT_QUOTES));
 
 		// Translate all the entities out.
-		$data = strtr(preg_replace_callback('~&#(\d{1,4});~', create_function('$m', 'return chr("$m[1]");'), $data), $trans_tbl);
+		$data = strtr(preg_replace_callback('~&#(\d{1,4});~', 'return_chr__preg_callback', $data), $trans_tbl);
 
 		return $this->trim ? trim($data) : $data;
 	}
