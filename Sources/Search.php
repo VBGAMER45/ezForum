@@ -1927,7 +1927,7 @@ function prepareSearchContext($reset = false)
 				$message['body'] = '';
 				foreach ($matches[0] as $index => $match)
 				{
-					$match = strtr(htmlspecialchars($match, ENT_QUOTES), array("\n" => '&nbsp;'));
+					$match = strtr($smcFunc['htmlspecialchars']($match, ENT_QUOTES), array("\n" => '&nbsp;'));
 					$message['body'] .= '<strong>......</strong>&nbsp;' . $match . '&nbsp;<strong>......</strong>';
 				}
 			}

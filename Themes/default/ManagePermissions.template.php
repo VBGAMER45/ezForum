@@ -1,7 +1,7 @@
 <?php
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -528,11 +528,14 @@ function template_modify_group()
 	else
 		template_modify_group_classic($context['permission_type']);
 
+echo '
+		</div>';
+
 	// If this is general permissions also show the default profile.
 	if ($context['permission_type'] == 'membergroup')
 	{
 		echo '
-			</div>
+
 			<br />
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['permissions_board'], '</h3>

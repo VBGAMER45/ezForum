@@ -473,6 +473,7 @@ function MLSearch()
 			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), array('_' => '\\_', '%' => '\\%', '*' => '%')) . '%',
 		);
 
+           
         $search_fields = array();
 
 		// Search for a name?
@@ -502,11 +503,12 @@ function MLSearch()
 			$search_fields[] = 'group';
 		}
 
+
 		// Search for an email address?
 		if (in_array('email', $_POST['fields']))
 		{
 			$fields += array(2 => allowedTo('moderate_forum') ? 'email_address' : '(hide_email = 0 AND email_address');
-            $serach_fields[] = 'email';
+            $search_fields[] = 'email';
 			$condition = allowedTo('moderate_forum') ? '' : ')';
 		}
 		else

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2012-2013 ezForum
+ * Copyright 2012-2014 ezForum
  * License: BSD
  *
  * Based on:

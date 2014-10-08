@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2014 ezForum
  * License: BSD
  *
  * Based on:
@@ -520,6 +520,9 @@ function loadInstalledPackages()
 
 		$found[] = $row['package_id'];
 
+		// Clean things up first...
+		$row = htmlspecialchars__recursive($row);
+
 		$installed[] = array(
 			'id' => $row['id_install'],
 			'name' => $row['name'],
@@ -567,8 +570,9 @@ function getPackageInfo($gzfilename)
 
 	$packageInfo = $packageInfo->path('package-info[0]');
 
-	$package = $packageInfo->to_array();
-	$package['xml'] = $packageInfo;
+    $package = $packageInfo->to_array();
+	$package = htmlspecialchars__recursive($package);
+	$package['xml'] = $packageInfo;	
 	$package['filename'] = $gzfilename;
 
 	if (!isset($package['type']))
