@@ -1,4 +1,4 @@
-Copyright 2012-2013 ezForum http://www.ezforum.com  All rights reserved.
+Copyright 2012-2015 ezForum http://www.ezforum.com  All rights reserved.
 Licensed under BSD.
 
 Makes use of the GeoLite data created by MaxMind, available from http://www.maxmind.com/  
