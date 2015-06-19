@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2015 ezForum
  * License: BSD
  *
  * Based on:
@@ -1007,7 +1007,8 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 				@apache_reset_timeout();
 		}
 		else
-			$result = smtp_mail(array($email['to']), $email['subject'], $email['body'], $email['send_html'] ? $email['headers'] : 'Mime-Version: 1.0' . "\r\n" . $email['headers']);
+			$result = smtp_mail(array($email['to']), $email['subject'], $email['body'], $email['headers']);
+
 
 		// Hopefully it sent?
 		if (!$result)
