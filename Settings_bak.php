@@ -31,7 +31,7 @@ $cookiename = 'ezfCookie11';		# Name of the cookie to set for authentication.
 
 ########## Database Info ##########
 $db_type = 'mysql';
-$db_server = 'localhost';
+$db_server = '127.0.0.1';
 $db_name = 'ezf';
 $db_user = 'root';
 $db_passwd = '';

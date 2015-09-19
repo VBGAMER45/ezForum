@@ -660,7 +660,7 @@ function DatabaseSettings()
 	$incontext['continue'] = 1;
 
 	// Set up the defaults.
-	$incontext['db']['server'] = 'localhost';
+	$incontext['db']['server'] = '127.0.0.1';
 	$incontext['db']['user'] = '';
 	$incontext['db']['name'] = '';
 	$incontext['db']['pass'] = '';
