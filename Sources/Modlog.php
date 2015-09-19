@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2015 ezForum
  * License: BSD
  *
  * Based on:
@@ -112,7 +112,7 @@ function ViewModlog()
 	if (!empty($_REQUEST['params']) && empty($_REQUEST['is_search']))
 	{
 		$search_params = base64_decode(strtr($_REQUEST['params'], array(' ' => '+')));
-		$search_params = @unserialize($search_params);
+		$search_params = safe_unserialize($search_params);
 	}
 
 	// This array houses all the valid search types.

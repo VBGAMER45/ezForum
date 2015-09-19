@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2015 ezForum
  * License: BSD
  *
  * Based on:
@@ -277,7 +277,7 @@ function smf_openID_return()
 		fatal_lang_error('openid_load_data');
 
 	// Any save fields to restore?
-	$context['openid_save_fields'] = isset($_GET['sf']) ? unserialize(base64_decode($_GET['sf'])) : array();
+	$context['openid_save_fields'] = isset($_GET['sf']) ? safe_unserialize(base64_decode($_GET['sf'])) : array();
 
 	// Is there a user with this OpenID_uri?
 	$result = $smcFunc['db_query']('', '

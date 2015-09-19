@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2015 ezForum
  * License: BSD
  *
  * Based on:
@@ -354,7 +354,7 @@ function loadUserSettings()
 		// Fix a security hole in PHP 4.3.9 and below...
 		if (preg_match('~^a:[34]:\{i:0;(i:\d{1,6}|s:[1-8]:"\d{1,8}");i:1;s:(0|40):"([a-fA-F0-9]{40})?";i:2;[id]:\d{1,14};(i:3;i:\d;)?\}$~i', $_COOKIE[$cookiename]) == 1)
 		{
-			list ($id_member, $password) = @unserialize($_COOKIE[$cookiename]);
+			list ($id_member, $password) = safe_unserialize($_COOKIE[$cookiename]);
 			$id_member = !empty($id_member) && strlen($password) > 0 ? (int) $id_member : 0;
 		}
 		else
@@ -363,7 +363,7 @@ function loadUserSettings()
 	elseif (empty($id_member) && isset($_SESSION['login_' . $cookiename]) && ($_SESSION['USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] || !empty($modSettings['disableCheckUA'])))
 	{
 		// !!! Perhaps we can do some more checking on this, such as on the first octet of the IP?
-		list ($id_member, $password, $login_span) = @unserialize($_SESSION['login_' . $cookiename]);
+		list ($id_member, $password, $login_span) = safe_unserialize($_SESSION['login_' . $cookiename]);
 		$id_member = !empty($id_member) && strlen($password) == 40 && $login_span > time() ? (int) $id_member : 0;
 	}
 

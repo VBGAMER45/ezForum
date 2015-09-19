@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2015 ezForum
  * License: BSD
  *
  * Based on:
@@ -378,7 +378,7 @@ function ViewMemberlist()
 	}
 
 	if ($context['sub_action'] == 'query' && !empty($_REQUEST['params']) && empty($_POST))
-		$_POST += @unserialize(base64_decode($_REQUEST['params']));
+		$_POST += safe_unserialize(base64_decode($_REQUEST['params']));
 
 	// Check input after a member search has been submitted.
 	if ($context['sub_action'] == 'query')

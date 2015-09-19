@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2015 ezForum
  * License: BSD
  *
  * Based on:
@@ -224,6 +224,9 @@ if (!defined('SMF'))
 	void remove_integration_function(string hook, string function)
 		- removes the given function from the given hook.
 		- does nothing if the functions is not available.
+		
+	array safe_unserialize(string data)
+		- sanitizes input before unserializing string.
 */
 
 // Update some basic statistics...
@@ -4593,6 +4596,14 @@ function fix_redirect_path__preg_callback($matches)
 function return_chr__preg_callback($matches)
 {
 	return chr($matches[1]);
+}
+
+function safe_unserialize($data)
+{
+	// There's no reason input should contain an object,
+	// user is up to no good...
+	if (preg_match('/(^|;|{|})O:([0-9]|\+|\-)+/', $data) === 0)
+		return @unserialize($data);
 }
 
 ?>

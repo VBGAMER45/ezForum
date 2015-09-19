@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2015 ezForum
  * License: BSD
  *
  * Based on:
@@ -113,9 +113,9 @@ function Login2()
 	if (isset($_GET['sa']) && $_GET['sa'] == 'salt' && !$user_info['is_guest'])
 	{
 		if (isset($_COOKIE[$cookiename]) && preg_match('~^a:[34]:\{i:0;(i:\d{1,6}|s:[1-8]:"\d{1,8}");i:1;s:(0|40):"([a-fA-F0-9]{40})?";i:2;[id]:\d{1,14};(i:3;i:\d;)?\}$~', $_COOKIE[$cookiename]) === 1)
-			list (, , $timeout) = @unserialize($_COOKIE[$cookiename]);
+			list (, , $timeout) = safe_unserialize($_COOKIE[$cookiename]);
 		elseif (isset($_SESSION['login_' . $cookiename]))
-			list (, , $timeout) = @unserialize($_SESSION['login_' . $cookiename]);
+			list (, , $timeout) = safe_unserialize($_SESSION['login_' . $cookiename]);
 		else
 			trigger_error('Login2(): Cannot be logged in without a session or cookie', E_USER_ERROR);
 
