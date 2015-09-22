@@ -1628,7 +1628,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 		'tag' => 'member',
 		'type' => 'unparsed_equals',
 		'before' => '<a href="' . $scripturl . '?action=profile;u=$1" class="mention">@',
-		'after' => '</a>',
+		'after' => '</a>');
 
 		// This is mainly for the bbc manager, so it's easy to add tags above.  Custom BBC should be added above this line.
 		if ($message === false)
@@ -4213,24 +4213,27 @@ function setupMenuContext()
 
         global $sourcedir;
 		require_once($sourcedir . '/Mentions.php');
-		mentions_menu( &$menu_buttons);
+		mentions_menu($buttons );
 
 		// Allow editing menu buttons easily.
 		call_integration_hook('integrate_menu_buttons', array(&$buttons));
 
 		// Any custom action buttons?
-		$ca_buttons = unserialize($modSettings['ca_menu_cache']);
-		foreach ($ca_buttons as $button)
-		{
-			$buttons[$button[0]] = array(
-				'title' => $button[1],
-				'href' => $scripturl . '?action=' . $button[0],
-				'show' => $button[2] ? allowedTo($button[2]) : true,
-				'sub_buttons' => array(
-				),
-				'is_last' => true,
-			);
-		}
+        if (!empty($modSettings['ca_menu_cache']))
+        {
+    		$ca_buttons = unserialize($modSettings['ca_menu_cache']);
+    		foreach ($ca_buttons as $button)
+    		{
+    			$buttons[$button[0]] = array(
+    				'title' => $button[1],
+    				'href' => $scripturl . '?action=' . $button[0],
+    				'show' => $button[2] ? allowedTo($button[2]) : true,
+    				'sub_buttons' => array(
+    				),
+    				'is_last' => true,
+    			);
+    		}
+      }
 
 		// Now we put the buttons in the context so the theme can use them.
 		$menu_buttons = array();

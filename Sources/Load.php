@@ -156,6 +156,12 @@ function reloadSettings()
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
 		$smcFunc['db_free_result']($request);
+        
+        if (empty($modSettings['pretty_action_array']))
+            $modSettings['pretty_action_array'] = serialize(array());
+            
+          if (empty($modSettings['pretty_board_urls']))
+            $modSettings['pretty_board_urls'] = serialize(array());
 
 		// Do a few things to protect against missing settings or settings with invalid values...
 		if (empty($modSettings['defaultMaxTopics']) || $modSettings['defaultMaxTopics'] <= 0 || $modSettings['defaultMaxTopics'] > 999)
