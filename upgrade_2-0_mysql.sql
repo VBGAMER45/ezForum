@@ -535,6 +535,26 @@ CREATE TABLE IF NOT EXISTS {$db_prefix}member_logins (
 ---#
 
 
+
+
+/******************************************************************************/
+--- Messages History tables...
+/******************************************************************************/
+
+---# Table structure for table `messages_history`
+CREATE TABLE {$db_prefix}messages_history (
+  id_edit int(10) unsigned NOT NULL auto_increment,
+  id_msg int(10) unsigned default 0,
+  id_member mediumint(8) NOT NULL default '0',
+  modified_name varchar(255),
+  modified_time int(10) NOT NULL default '0',
+  body text,
+  PRIMARY KEY (id_edit),
+  KEY id_msg (id_msg)
+) ENGINE=MyISAM{$db_collation};
+
+---#
+
 /******************************************************************************/
 --- Mentions System tables...
 /******************************************************************************/
