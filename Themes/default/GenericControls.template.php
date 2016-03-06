@@ -327,17 +327,17 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			{
 				require_once("$librarydir/recaptchalib.php");
 				
-				$format = '
-								 <script type="text/javascript">
-								 var RecaptchaOptions = {
-								    theme : \''. (empty($modSettings['recaptcha_theme']) ? 'white' : $modSettings['recaptcha_theme']) . '\',
-								    lang : \''. (empty($modSettings['recaptcha_lang']) ? 'en' : $modSettings['recaptcha_lang']) . '\'
-								 };
-								 </script>	
-		
-								<p>' .$txt['recaptcha_pleaseverify'] . '</p>';
-				
-				echo $format . recaptcha_get_html($modSettings['recaptcha_publickey']);
+				require("$librarydir/ralib/ReCaptchaToken.php");
+
+				$reconfig = array('site_key' => $modSettings['recaptcha_public_key'], 'site_secret' => $modSettings['recaptcha_private_key']);
+				$recaptchaToken = new \ReCaptchaSecureToken\ReCaptchaToken($reconfig);
+				$secureToken = $recaptchaToken->secureToken($context['session_id']);
+
+				echo '<div class="g-recaptcha" data-sitekey="', $modSettings['recaptcha_public_key'], '" data-stoken="' .  $secureToken  . '"></div>
+				            <script type="text/javascript"
+				                    src="https://www.google.com/recaptcha/api.js?hl=en">
+				            </script>
+				';
 				
 				
 			}

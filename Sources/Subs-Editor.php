@@ -2003,21 +2003,29 @@ function create_control_verification(&$verificationOptions, $do_test = false)
 		}
 		elseif (!empty($modSettings['recaptcha_enabled']) && ($modSettings['recaptcha_enabled'] == 1 && !empty($modSettings['recaptcha_publickey']) && !empty($modSettings['recaptcha_privatekey'])))
 		{
-			if (!empty($_POST['recaptcha_response_field']) && !empty($_POST['recaptcha_challenge_field']))
+			
+
+			require("$librarydir/ralib/autoload.php");
+
+			if (isset($_POST['g-recaptcha-response']))
 			{
-				require_once("$librarydir/recaptchalib.php");
+				$recaptcha = new \ReCaptcha\ReCaptcha($modSettings['recaptcha_private_key']);
+				$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
-				$resp = recaptcha_check_answer($modSettings['recaptcha_privatekey'], $_SERVER['REMOTE_ADDR'], $_REQUEST['recaptcha_challenge_field'], $_REQUEST['recaptcha_response_field']);
+				if ($resp->isSuccess() == false)
+				{
+					fatal_lang_error('error_wrong_verification_code', false);
+				}
 
-				if (!$resp->is_valid)
-					fatal_lang_error('error_wrong_recaptcha_verification', false);
+
+
 			}
 			else
-				fatal_lang_error('error_wrong_recaptcha_verification', false);
+				fatal_lang_error('error_wrong_verification_code', false);
+
+		
+				
 		}
-		
-		
-		
 		elseif ($thisVerification['show_visual'] && (empty($_REQUEST[$verificationOptions['id'] . '_vv']['code']) || empty($_SESSION[$verificationOptions['id'] . '_vv']['code']) || strtoupper($_REQUEST[$verificationOptions['id'] . '_vv']['code']) !== $_SESSION[$verificationOptions['id'] . '_vv']['code']))
 			$verification_errors[] = 'wrong_verification_code';
 		if ($thisVerification['number_questions'])
