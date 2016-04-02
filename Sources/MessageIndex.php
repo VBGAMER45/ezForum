@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -427,9 +427,6 @@ function MessageIndex()
 				$row['first_body'] = strip_tags(strtr(parse_bbc($row['first_body'], $row['first_smileys'], $row['id_first_msg']), array('<br />' => '&#10;')));
 				if ($smcFunc['strlen']($row['first_body']) > 128)
 					$row['first_body'] = $smcFunc['substr']($row['first_body'], 0, 128) . '...';
-				$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br />' => '&#10;')));
-				if ($smcFunc['strlen']($row['last_body']) > 128)
-					$row['last_body'] = $smcFunc['substr']($row['last_body'], 0, 128) . '...';
 
 				// Censor the subject and message preview.
 				censorText($row['first_subject']);
@@ -443,6 +440,11 @@ function MessageIndex()
 				}
 				else
 				{
+					
+					$row['last_body'] = strip_tags(strtr(parse_bbc($row['last_body'], $row['last_smileys'], $row['id_last_msg']), array('<br />' => '&#10;')));
+					if ($smcFunc['strlen']($row['last_body']) > 128)
+						$row['last_body'] = $smcFunc['substr']($row['last_body'], 0, 128) . '...';
+					
 					censorText($row['last_subject']);
 					censorText($row['last_body']);
 				}
