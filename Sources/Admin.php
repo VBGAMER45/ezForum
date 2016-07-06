@@ -65,7 +65,7 @@ function AdminMain()
 	require_once($sourcedir . '/Subs-Menu.php');
 
 	// Some preferences.
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? safe_unserialize($options['admin_preferences']) : array();
 
 	// Define all the menu structure - see Subs-Menu.php for details!
 	$admin_areas = array(

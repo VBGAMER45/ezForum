@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -1109,6 +1109,9 @@ function PickTheme()
 		// Change a specific member's theme.
 		else
 		{
+			if (isset($_GET['th']) && $_GET['th'] == 0)
+				$_GET['th'] = $modSettings['theme_guests'];
+
 			updateMemberData((int) $_REQUEST['u'], array('id_theme' => (int) $_GET['th']));
 
 			if (!empty($_GET['vrt']))
@@ -1558,7 +1561,7 @@ function ThemeInstall()
 				$explicit_images = true;
 			}
 			if (preg_match('~<extra>(?:<!\[CDATA\[)?(.+?)(?:\]\]>)?</extra>~', $theme_info, $match) == 1)
-				$install_info += unserialize($match[1]);
+				$install_info += safe_unserialize($match[1]);
 		}
 
 		if (isset($install_info['based_on']))
@@ -1723,7 +1726,7 @@ function SetJavaScript()
 	// If this is the admin preferences the passed value will just be an element of it.
 	if ($_GET['var'] == 'admin_preferences')
 	{
-		$options['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
+		$options['admin_preferences'] = !empty($options['admin_preferences']) ? safe_unserialize($options['admin_preferences']) : array();
 		// New thingy...
 		if (isset($_GET['admin_key']) && strlen($_GET['admin_key']) < 5)
 			$options['admin_preferences'][$_GET['admin_key']] = $_GET['val'];

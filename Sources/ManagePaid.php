@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2012 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -562,7 +562,7 @@ function ModifySubscription()
 			$context['sub'] = array(
 				'name' => $row['name'],
 				'desc' => $row['description'],
-				'cost' => @unserialize($row['cost']),
+				'cost' => safe_unserialize($row['cost']),
 				'span' => array(
 					'value' => $span_value,
 					'unit' => $span_unit,
@@ -1110,14 +1110,14 @@ function ModifyUserSubscription()
 		$context['pending_payments'] = array();
 		if (!empty($row['pending_details']))
 		{
-			$pending_details = @unserialize($row['pending_details']);
+			$pending_details = safe_unserialize($row['pending_details']);
 			foreach ($pending_details as $id => $pending)
 			{
 				// Only this type need be displayed.
 				if ($pending[3] == 'payback')
 				{
 					// Work out what the options were.
-					$costs = @unserialize($context['current_subscription']['real_cost']);
+					$costs = safe_unserialize($context['current_subscription']['real_cost']);
 
 					if ($context['current_subscription']['real_length'] == 'F')
 					{
@@ -1652,7 +1652,7 @@ function loadSubscriptions()
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
 		// Pick a cost.
-		$costs = @unserialize($row['cost']);
+		$costs = safe_unserialize($row['cost']);
 
 		if ($row['length'] != 'F' && !empty($modSettings['paid_currency_symbol']) && !empty($costs['fixed']))
 			$cost = sprintf($modSettings['paid_currency_symbol'], $costs['fixed']);

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -529,7 +529,7 @@ function CreateMessageIndex()
 
 	if (isset($_REQUEST['resume']) && !empty($modSettings['search_custom_index_resume']))
 	{
-		$context['index_settings'] = unserialize($modSettings['search_custom_index_resume']);
+		$context['index_settings'] = safe_unserialize($modSettings['search_custom_index_resume']);
 		$context['start'] = (int) $context['index_settings']['resume_at'];
 		unset($context['index_settings']['resume_at']);
 		$context['step'] = 1;

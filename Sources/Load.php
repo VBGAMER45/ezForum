@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2015 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -286,7 +286,7 @@ function reloadSettings()
 	// Integration is cool.
 	if (defined('SMF_INTEGRATION_SETTINGS'))
 	{
-		$integration_settings = unserialize(SMF_INTEGRATION_SETTINGS);
+		$integration_settings = safe_unserialize(SMF_INTEGRATION_SETTINGS);
 		foreach ($integration_settings as $hook => $function)
 			add_integration_function($hook, $function, false);
 	}
@@ -1325,7 +1325,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 	{
 		$memberContext[$user]['custom_fields'] = array();
 		if (!isset($context['display_fields']))
-			$context['display_fields'] = unserialize($modSettings['displayFields']);
+			$context['display_fields'] = safe_unserialize($modSettings['displayFields']);
 
 		foreach ($context['display_fields'] as $custom)
 		{
@@ -2883,7 +2883,7 @@ function cache_get_data($key, $ttl = 120)
 		return null;
 	// If it's broke, it's broke... so give up on it.
 	else
-		return @unserialize($value);
+		return safe_unserialize($value);
 }
 
 function get_memcached_server($level = 3)

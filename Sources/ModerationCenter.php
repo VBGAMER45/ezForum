@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -47,7 +47,7 @@ function ModerationMain($dont_call = false)
 	loadLanguage('ModerationCenter');
 	loadTemplate(false, 'admin');
 
-	$context['admin_preferences'] = !empty($options['admin_preferences']) ? unserialize($options['admin_preferences']) : array();
+	$context['admin_preferences'] = !empty($options['admin_preferences']) ? safe_unserialize($options['admin_preferences']) : array();
 	$context['robot_no_index'] = true;
 
 	// This is the menu structure - refer to Subs-Menu.php for the details.

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -169,7 +169,10 @@ function SetCensor()
 	{
 		if (empty($censor_vulgar[$i]))
 			continue;
-
+			
+		if (empty($censor_proper[$i]))
+			continue;
+			
 		// Skip it, it's either spaces or stars only.
 		if (trim(strtr($censor_vulgar[$i], '*', ' ')) == '')
 			continue;

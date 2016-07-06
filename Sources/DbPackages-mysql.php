@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -140,7 +140,7 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 		list ($type, $size) = $smcFunc['db_calculate_type']($column['type'], $column['size']);
 
 		// Allow unsigned integers (mysql only)
-		$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column['unsigned']) ? 'unsigned ' : '';
+		$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
 
 		if ($size !== null)
 			$type = $type . '(' . $size . ')';
@@ -254,7 +254,7 @@ function smf_db_add_column($table_name, $column_info, $parameters = array(), $if
 	list ($type, $size) = $smcFunc['db_calculate_type']($column_info['type'], $column_info['size']);
 
 	// Allow unsigned integers (mysql only)
-	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
+	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
 
 	if ($size !== null)
 		$type = $type . '(' . $size . ')';
@@ -351,7 +351,7 @@ function smf_db_change_column($table_name, $old_column, $column_info, $parameter
 	list ($type, $size) = $smcFunc['db_calculate_type']($column_info['type'], $column_info['size']);
 
 	// Allow for unsigned integers (mysql only)
-	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
+	$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
 
 	if ($size !== null)
 		$type = $type . '(' . $size . ')';

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -1671,7 +1671,7 @@ function list_getProfileEdits($start, $items_per_page, $sort, $memID)
 	$members = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
-		$extra = @unserialize($row['extra']);
+		$extra = safe_unserialize($row['extra']);
 		if (!empty($extra['applicator']))
 			$members[] = $extra['applicator'];
 

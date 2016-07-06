@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -581,7 +581,7 @@ function MaintainFiles()
 	$context['sub_template'] = 'maintenance';
 
 	if (!empty($modSettings['currentAttachmentUploadDir']))
-		$attach_dirs = unserialize($modSettings['attachmentUploadDir']);
+		$attach_dirs = safe_unserialize($modSettings['attachmentUploadDir']);
 	else
 		$attach_dirs = array($modSettings['attachmentUploadDir']);
 
@@ -1154,7 +1154,7 @@ function RepairAttachments()
 						$attachment_name = !empty($row['file_hash']) ? $row['id_attach'] . '_' . $row['file_hash'] : getLegacyAttachmentFilename($row['filename'], $row['id_attach'], null, true);
 
 						if (!is_array($modSettings['attachmentUploadDir']))
-							$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+							$modSettings['attachmentUploadDir'] = safe_unserialize($modSettings['attachmentUploadDir']);
 
 						// Loop through the other folders.
 						foreach ($modSettings['attachmentUploadDir'] as $id => $dir)
@@ -1663,7 +1663,7 @@ function ManageAttachmentPaths()
 	}
 	// Otherwise just load up their attachment paths.
 	else
-		$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+		$modSettings['attachmentUploadDir'] = safe_unserialize($modSettings['attachmentUploadDir']);
 
 	$listOptions = array(
 		'id' => 'attach_paths',
@@ -1751,7 +1751,7 @@ function list_getAttachDirs()
 
 	// The dirs should already have been unserialized but just in case...
 	if (!is_array($modSettings['attachmentUploadDir']))
-		$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+		$modSettings['attachmentUploadDir'] = safe_unserialize($modSettings['attachmentUploadDir']);
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_folder, COUNT(id_attach) AS num_attach

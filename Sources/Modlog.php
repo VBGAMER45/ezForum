@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2015 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -381,7 +381,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	$entries = array();
 	while ($row = $smcFunc['db_fetch_assoc']($result))
 	{
-		$row['extra'] = @unserialize($row['extra']);
+		$row['extra'] = safe_unserialize($row['extra']);
 
 		// Corrupt?
 		$row['extra'] = is_array($row['extra']) ? $row['extra'] : array();

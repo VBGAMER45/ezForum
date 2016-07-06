@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -3613,8 +3613,8 @@ function LoadRules($reload = false)
 		$context['rules'][$row['id_rule']] = array(
 			'id' => $row['id_rule'],
 			'name' => $row['rule_name'],
-			'criteria' => unserialize($row['criteria']),
-			'actions' => unserialize($row['actions']),
+			'criteria' => safe_unserialize($row['criteria']),
+			'actions' => safe_unserialize($row['actions']),
 			'delete' => $row['delete_pm'],
 			'logic' => $row['is_or'] ? 'or' : 'and',
 		);

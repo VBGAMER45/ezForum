@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -468,7 +468,7 @@ function Register2($verifiedOpenID = false)
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
 			{
 				//!!! We never error on this - just ignore it at the moment...
-				if ($row['mask'] == 'email' && (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $value) === 0 || strlen($value) > 255))
+				if ($row['mask'] == 'email' && !empty($value) && (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $value) === 0 || strlen($value) > 255))
 					$custom_field_errors[] = array('custom_field_invalid_email', array($row['field_name']));
 				elseif ($row['mask'] == 'number' && preg_match('~[^\d]~', $value))
 					$custom_field_errors[] = array('custom_field_not_number', array($row['field_name']));

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -2678,7 +2678,7 @@ function profileSaveAvatarData(&$value)
 	elseif (!empty($modSettings['currentAttachmentUploadDir']))
 	{
 		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+			$modSettings['attachmentUploadDir'] = safe_unserialize($modSettings['attachmentUploadDir']);
 
 		// Just use the current path for temp files.
 		$uploadDir = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];

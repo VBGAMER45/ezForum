@@ -14,7 +14,7 @@ function smc_Editor(oOptions)
 	this.showDebug = false;
 	this.bRichTextEnabled = 'bWysiwyg' in this.opt && this.opt.bWysiwyg;
 	// This doesn't work on Opera as they cannot restore focus after clicking a BBC button.
-	this.bRichTextPossible = !this.opt.bRichEditOff && ((is_ie5up && !is_ie50) || is_ff || is_opera95up || is_safari || is_chrome) && !(is_iphone || is_android);
+	this.bRichTextPossible = !this.opt.bRichEditOff && ((is_ie5up && !is_ie50) || is_ff || is_opera95up || is_safari || is_chrome);
 
 	this.oFrameHandle = null;
 	this.oFrameDocument = null;
@@ -241,7 +241,11 @@ smc_Editor.prototype.init = function()
 		{
 			var oMyStyle = this.oFrameDocument.createElement('style');
 			this.oFrameDocument.documentElement.firstChild.appendChild(oMyStyle);
-			oMyStyle.styleSheet.cssText = document.styleSheets['editor_ie_css'] ? document.styleSheets['editor_ie_css'].cssText : document.styleSheets['editor_css'].cssText;
+			if (oMyStyle.styleSheet)
+				oMyStyle.styleSheet.cssText = document.styleSheets['editor_ie_css'] ? document.styleSheets['editor_ie_css'].cssText : document.styleSheets['editor_css'].cssText;
+			else
+				oMyStyle.sheet.cssText = document.styleSheets['editor_ie_css'] ? document.styleSheets['editor_ie_css'].cssText : document.styleSheets['editor_css'].cssText;
+
 		}
 		// Otherwise we seem to have to try to rip out each of the styles one by one!
 		else if (document.styleSheets.length)
@@ -1484,7 +1488,7 @@ smc_SmileyBox.prototype.handleShowMoreSmileys = function ()
 	this.getSmileyRowsContent('popup');
 
 	// Open the popup.
-	this.oSmileyPopupWindow = window.open('about:blank', this.opt.sUniqueId + '_addMoreSmileysPopup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,width=480,height=220,resizable=yes');
+	this.oSmileyPopupWindow = window.open('', this.opt.sUniqueId + '_addMoreSmileysPopup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,width=480,height=220,resizable=yes');
 
 	// Paste the template in the popup.
 	this.oSmileyPopupWindow.document.open('text/html', 'replace');

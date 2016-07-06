@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -165,7 +165,7 @@ function downloadAvatar($url, $memID, $max_width, $max_height)
 		if (!empty($modSettings['currentAttachmentUploadDir']))
 		{
 			if (!is_array($modSettings['attachmentUploadDir']))
-				$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+				$modSettings['attachmentUploadDir'] = safe_unserialize($modSettings['attachmentUploadDir']);
 			$path = $modSettings['attachmentUploadDir'][$modSettings['currentAttachmentUploadDir']];
 		}
 		else

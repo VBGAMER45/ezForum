@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -178,7 +178,7 @@ function MLAll()
 	{
 		// Maybe there's something cached already.
 		if (!empty($modSettings['memberlist_cache']))
-			$memberlist_cache = @unserialize($modSettings['memberlist_cache']);
+			$memberlist_cache = safe_unserialize($modSettings['memberlist_cache']);
 
 		// The chunk size for the cached index.
 		$cache_step_size = 500;

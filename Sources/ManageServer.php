@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -1879,7 +1879,7 @@ function prepareDBSettingContext(&$config_vars)
 				if ($config_var[0] == 'select' && !empty($config_var['multiple']))
 				{
 					$context['config_vars'][$config_var[1]]['name'] .= '[]';
-					$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? unserialize($context['config_vars'][$config_var[1]]['value']) : array();
+					$context['config_vars'][$config_var[1]]['value'] = !empty($context['config_vars'][$config_var[1]]['value']) ? safe_unserialize($context['config_vars'][$config_var[1]]['value']) : array();
 				}
 
 				// If it's associative

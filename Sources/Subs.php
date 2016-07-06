@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2015 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -3709,7 +3709,7 @@ function getAttachmentFilename($filename, $attachment_id, $dir = null, $new = fa
 	if (!empty($modSettings['currentAttachmentUploadDir']))
 	{
 		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+			$modSettings['attachmentUploadDir'] = safe_unserialize($modSettings['attachmentUploadDir']);
 		$path = $modSettings['attachmentUploadDir'][$dir];
 	}
 	else
@@ -3750,7 +3750,7 @@ function getLegacyAttachmentFilename($filename, $attachment_id, $dir = null, $ne
 	if (!empty($modSettings['currentAttachmentUploadDir']))
 	{
 		if (!is_array($modSettings['attachmentUploadDir']))
-			$modSettings['attachmentUploadDir'] = unserialize($modSettings['attachmentUploadDir']);
+			$modSettings['attachmentUploadDir'] = safe_unserialize($modSettings['attachmentUploadDir']);
 		$path = $modSettings['attachmentUploadDir'][$dir];
 	}
 	else
@@ -4601,12 +4601,266 @@ function return_chr__preg_callback($matches)
 	return chr($matches[1]);
 }
 
-function safe_unserialize($data)
+/**
+ * Safe serialize() and unserialize() replacements
+ *
+ * @license Public Domain
+ *
+ * @author anthon (dot) pang (at) gmail (dot) com
+ */
+
+/**
+ * Safe serialize() replacement. Recursive
+ * - output a strict subset of PHP's native serialized representation
+ * - does not serialize objects
+ *
+ * @param mixed $value
+ * @return string
+ */
+function _safe_serialize($value)
 {
-	// There's no reason input should contain an object,
-	// user is up to no good...
-	if (preg_match('/(^|;|{|})O:([0-9]|\+|\-)+/', $data) === 0)
-		return @unserialize($data);
+	if(is_null($value))
+		return 'N;';
+
+	if(is_bool($value))
+		return 'b:'. (int) $value .';';
+
+	if(is_int($value))
+		return 'i:'. $value .';';
+
+	if(is_float($value))
+		return 'd:'. str_replace(',', '.', $value) .';';
+
+	if(is_string($value))
+		return 's:'. strlen($value) .':"'. $value .'";';
+
+	if(is_array($value))
+	{
+		$out = '';
+		foreach($value as $k => $v)
+			$out .= _safe_serialize($k) . _safe_serialize($v);
+
+		return 'a:'. count($value) .':{'. $out .'}';
+	}
+
+	// safe_serialize cannot serialize resources or objects.
+	return false;
+}
+/**
+ * Wrapper for _safe_serialize() that handles exceptions and multibyte encoding issues.
+ *
+ * @param mixed $value
+ * @return string
+ */
+function safe_serialize($value)
+{
+	// Make sure we use the byte count for strings even when strlen() is overloaded by mb_strlen()
+	if (function_exists('mb_internal_encoding') &&
+		(((int) ini_get('mbstring.func_overload')) & 2))
+	{
+		$mbIntEnc = mb_internal_encoding();
+		mb_internal_encoding('ASCII');
+	}
+
+	$out = _safe_serialize($value);
+
+	if (isset($mbIntEnc))
+		mb_internal_encoding($mbIntEnc);
+
+	return $out;
+}
+
+/**
+ * Safe unserialize() replacement
+ * - accepts a strict subset of PHP's native serialized representation
+ * - does not unserialize objects
+ *
+ * @param string $str
+ * @return mixed
+ * @throw Exception if $str is malformed or contains unsupported types (e.g., resources, objects)
+ */
+function _safe_unserialize($str)
+{
+	// Input exceeds 4096.
+	if(strlen($str) > 4096)
+		return false;
+
+	// Input  is not a string.
+	if(empty($str) || !is_string($str))
+		return false;
+
+	$stack = array();
+	$expected = array();
+
+	/*
+	 * states:
+	 *   0 - initial state, expecting a single value or array
+	 *   1 - terminal state
+	 *   2 - in array, expecting end of array or a key
+	 *   3 - in array, expecting value or another array
+	 */
+	$state = 0;
+	while($state != 1)
+	{
+		$type = isset($str[0]) ? $str[0] : '';
+		if($type == '}')
+			$str = substr($str, 1);
+
+		else if($type == 'N' && $str[1] == ';')
+		{
+			$value = null;
+			$str = substr($str, 2);
+		}
+		else if($type == 'b' && preg_match('/^b:([01]);/', $str, $matches))
+		{
+			$value = $matches[1] == '1' ? true : false;
+			$str = substr($str, 4);
+		}
+		else if($type == 'i' && preg_match('/^i:(-?[0-9]+);(.*)/s', $str, $matches))
+		{
+			$value = (int)$matches[1];
+			$str = $matches[2];
+		}
+		else if($type == 'd' && preg_match('/^d:(-?[0-9]+\.?[0-9]*(E[+-][0-9]+)?);(.*)/s', $str, $matches))
+		{
+			$value = (float)$matches[1];
+			$str = $matches[3];
+		}
+		else if($type == 's' && preg_match('/^s:([0-9]+):"(.*)/s', $str, $matches) && substr($matches[2], (int)$matches[1], 2) == '";')
+		{
+			$value = substr($matches[2], 0, (int)$matches[1]);
+			$str = substr($matches[2], (int)$matches[1] + 2);
+		}
+		else if($type == 'a' && preg_match('/^a:([0-9]+):{(.*)/s', $str, $matches) && $matches[1] < 256)
+		{
+			$expectedLength = (int)$matches[1];
+			$str = $matches[2];
+		}
+
+		// Object or unknown/malformed type.
+		else
+			return false;
+
+		switch($state)
+		{
+			case 3: // In array, expecting value or another array.
+				if($type == 'a')
+				{
+					// Array nesting exceeds 3.
+					if(count($stack) >= 3)
+						return false;
+
+					$stack[] = &$list;
+					$list[$key] = array();
+					$list = &$list[$key];
+					$expected[] = $expectedLength;
+					$state = 2;
+					break;
+				}
+				if($type != '}')
+				{
+					$list[$key] = $value;
+					$state = 2;
+					break;
+				}
+
+				// Missing array value.
+				return false;
+
+			case 2: // in array, expecting end of array or a key
+				if($type == '}')
+				{
+					// Array size is less than expected.
+					if(count($list) < end($expected))
+						return false;
+
+					unset($list);
+					$list = &$stack[count($stack)-1];
+					array_pop($stack);
+
+					// Go to terminal state if we're at the end of the root array.
+					array_pop($expected);
+
+					if(count($expected) == 0)
+						$state = 1;
+
+					break;
+				}
+
+				if($type == 'i' || $type == 's')
+				{
+					// Array size exceeds 256.
+					if(count($list) >= 256)
+						return false;
+
+					// Array size exceeds expected length.
+					if(count($list) >= end($expected))
+						return false;
+
+					$key = $value;
+					$state = 3;
+					break;
+				}
+
+				// Illegal array index type.
+				return false;
+
+			// Expecting array or value.
+			case 0:
+				if($type == 'a')
+				{
+					// Array nesting exceeds 3.
+					if(count($stack) >= 3)
+						return false;
+
+					$data = array();
+					$list = &$data;
+					$expected[] = $expectedLength;
+					$state = 2;
+					break;
+				}
+
+				if($type != '}')
+				{
+					$data = $value;
+					$state = 1;
+					break;
+				}
+
+				// Not in array.
+				return false;
+		}
+	}
+
+	// Trailing data in input.
+	if(!empty($str))
+		return false;
+
+	return $data;
+}
+
+/**
+ * Wrapper for _safe_unserialize() that handles exceptions and multibyte encoding issue
+ *
+ * @param string $str
+ * @return mixed
+ */
+function safe_unserialize($str)
+{
+	// Make sure we use the byte count for strings even when strlen() is overloaded by mb_strlen()
+	if (function_exists('mb_internal_encoding') &&
+		(((int) ini_get('mbstring.func_overload')) & 0x02))
+	{
+		$mbIntEnc = mb_internal_encoding();
+		mb_internal_encoding('ASCII');
+	}
+
+	$out = _safe_unserialize($str);
+
+	if (isset($mbIntEnc))
+		mb_internal_encoding($mbIntEnc);
+
+	return $out;
 }
 
 ?>

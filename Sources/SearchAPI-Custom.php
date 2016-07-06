@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2016 ezForum
  * License: BSD
  *
  * Based on:
@@ -57,7 +57,7 @@ class custom_search
 		if (empty($modSettings['search_custom_index_config']))
 			return;
 
-		$this->indexSettings = unserialize($modSettings['search_custom_index_config']);
+		$this->indexSettings = safe_unserialize($modSettings['search_custom_index_config']);
 
 		$this->bannedWords = empty($modSettings['search_stopwords']) ? array() : explode(',', $modSettings['search_stopwords']);
 		$this->min_word_length = $this->indexSettings['bytes_per_word'];
