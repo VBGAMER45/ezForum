@@ -224,7 +224,7 @@ if (!defined('SMF'))
 	void remove_integration_function(string hook, string function)
 		- removes the given function from the given hook.
 		- does nothing if the functions is not available.
-		
+
 	array safe_unserialize(string data)
 		- sanitizes input before unserializing string.
 */
@@ -4681,10 +4681,6 @@ function safe_serialize($value)
  */
 function _safe_unserialize($str)
 {
-	// Input exceeds 4096.
-	if(strlen($str) > 4096)
-		return false;
-
 	// Input  is not a string.
 	if(empty($str) || !is_string($str))
 		return false;
