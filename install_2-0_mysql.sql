@@ -1,5 +1,5 @@
 #### ATTENTION: You do not need to run or use this file!  The install.php script does everything for you!
-#### Install script for MySQL 4.0.18+
+#### Install script for MySQL 5.0+
 
 #
 # Table structure for table `admin_info_files`
@@ -1913,7 +1913,7 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('onlineEnable', '0'),
 	('cal_enabled', '1'),
 	('cal_maxyear', '2030'),
-	('cal_minyear', '2013'),
+	('cal_minyear', '2016'),
 	('cal_daysaslink', '0'),
 	('cal_defaultboard', ''),
 	('cal_showholidays', '1'),
