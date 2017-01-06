@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2014 ezForum
+ * Copyright 2011-2017 ezForum
  * License: BSD
  *
  * Based on:
@@ -454,7 +454,7 @@ function PackageGBrowse()
 						$package['author']['website']['name'] = $default_website;
 
 					if ($thisPackage->exists('website') && $thisPackage->fetch('website') != '')
-						$authorhompage = $thisPackage->fetch('website');
+						$authorhompage = $smcFunc['htmlspecialchars']($thisPackage->fetch('website'));
 					else
 						$authorhompage = $default_website;
 
@@ -637,6 +637,8 @@ function PackageDownload()
 function PackageUpload()
 {
 	global $txt, $scripturl, $boarddir, $context, $sourcedir;
+
+	checkSession();
 
 	// Setup the correct template, even though I'll admit we ain't downloading ;)
 	$context['sub_template'] = 'downloaded';

@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2016 ezForum
+ * Copyright 2011-2017 ezForum
  * License: BSD
  *
  * Based on:
@@ -62,7 +62,7 @@ if (!defined('SMF'))
 // Ask them for their login information.
 function Login()
 {
-	global $txt, $context, $scripturl;
+	global $txt, $context, $scripturl, $smcFunc;
 
 	// In wireless?  If so, use the correct sub template.
 	if (WIRELESS)
@@ -77,7 +77,7 @@ function Login()
 
 	// Get the template ready.... not really much else to do.
 	$context['page_title'] = $txt['login'];
-	$context['default_username'] = &$_REQUEST['u'];
+	$context['default_username'] = isset($_REQUEST['u']) ? preg_replace('~&amp;#(\\d{1,7}|x[0-9a-fA-F]{1,6});~', '&#\\1;', $smcFunc['htmlspecialchars']($_REQUEST['u'])) : '';
 	$context['default_password'] = '';
 	$context['never_expire'] = false;
 

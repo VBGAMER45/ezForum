@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2016 ezForum
+ * Copyright 2011-2017 ezForum
  * License: BSD
  *
  * Based on:
@@ -2095,6 +2095,8 @@ function CopyTemplate()
 
 	isAllowedTo('admin_forum');
 	loadTemplate('Themes');
+
+	checkSession();
 
 	$context[$context['admin_menu_name']]['current_subsection'] = 'edit';
 

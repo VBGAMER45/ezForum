@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2017 ezForum
  * License: BSD
  *
  * Based on:
@@ -118,6 +118,9 @@ function RemindPick()
 					fatal_error($txt['error_' . $error], false);
 			}
 		}
+
+    $_POST['user'] = isset($_POST['user']) ? $smcFunc['htmlspecialchars']($_POST['user']) : '';
+	$_REQUEST['uid'] = (int) isset($_REQUEST['uid']) ? $_REQUEST['uid'] : 0;
 
 	// Coming with a known ID?
 	if (!empty($_REQUEST['uid']))

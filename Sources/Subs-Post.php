@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2016 ezForum
+ * Copyright 2011-2017 ezForum
  * License: BSD
  *
  * Based on:
@@ -165,7 +165,10 @@ function preparsecode(&$message, $previewing = false)
 	global $user_info, $modSettings, $smcFunc, $context, $sourcedir;
 
 	// Remove empty bbc.
-	$message = preg_replace('~\[([^\]]+)\](?>(?R)|.)*?\[\/\1\]~i', '', $message);
+	while (preg_match('~\[([^\]=\s]+)[^\]]*\]\s*\[/\1\]\s?~i', $message))
+	{
+		$message = preg_replace('~\[([^\]=\s]+)[^\]]*\]\s*\[/\1\]\s?~i', '', $message);
+	}
 
 	// This line makes all languages *theoretically* work even with the wrong charset ;).
 	$message = preg_replace('~&amp;#(\d{4,5}|[2-9]\d{2,4}|1[2-9]\d);~', '&#$1;', $message);
