@@ -152,7 +152,7 @@ function template_kick_guest()
 					<dd><input type="checkbox" name="cookieneverexp" class="input_check" onclick="this.form.cookielength.disabled = this.checked;" /></dd>
 				</dl>
 				<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
-				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p>
+				<p class="centertext smalltext"><a href="', $scripturl, '?action=reminder">', $txt['forgot_your_password'], '</a></p><input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
                 ';
 							
 	// OneAll Social Login (https://docs.oneall.com/plugins/)
@@ -211,7 +211,7 @@ echo '
 			<p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /></p>
 		</div>
 		<span class="lowerframe"><span></span></span>
-		<input type="hidden" name="hash_passwrd" value="" />
+		<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" /><p class="centertext"><input type="submit" value="', $txt['login'], '" class="button_submit" /><input type="hidden" name="hash_passwrd" value="" />
 	</div>
 </form>';
 }

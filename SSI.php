@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2017 ezForum
  * License: BSD
  *
  * Based on:
@@ -30,6 +30,7 @@ global $boardurl, $boarddir, $sourcedir, $webmaster_email, $cookiename;
 global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, $db_last_error;
 global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
 global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
+global $image_proxy_enabled, $image_proxy_secret, $image_proxy_maxsize;
 
 // Remember the current configuration so it can be set back.
 $ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
@@ -1231,12 +1232,20 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 	$smcFunc['db_free_result']($request);
 
 	// Check if they can vote.
+	$already_voted = false;
 	if (!empty($row['expire_time']) && $row['expire_time'] < time())
 		$allow_vote = false;
-	elseif ($user_info['is_guest'] && $row['guest_vote'] && (!isset($_COOKIE['guest_poll_vote']) || !in_array($row['id_poll'], explode(',', $_COOKIE['guest_poll_vote']))))
-		$allow_vote = true;
 	elseif ($user_info['is_guest'])
-		$allow_vote = false;
+	{
+		// There's a difference between "allowed to vote" and "already voted"...
+		$allow_vote = $row['guest_vote'];
+
+		// Did you already vote?
+		if (isset($_COOKIE['guest_poll_vote']) && in_array($row['id_poll'], explode(',', $_COOKIE['guest_poll_vote'])))
+		{
+			$already_voted = true;
+		}
+	}
 	elseif (!empty($row['voting_locked']) || !allowedTo('poll_vote', $row['id_board']))
 		$allow_vote = false;
 	else
@@ -1253,12 +1262,13 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 			)
 		);
 		$allow_vote = $smcFunc['db_num_rows']($request) == 0;
+		$already_voted = $allow_vote;
 		$smcFunc['db_free_result']($request);
 	}
 
 	// Can they view?
 	$is_expired = !empty($row['expire_time']) && $row['expire_time'] < time();
-	$allow_view_results = allowedTo('moderate_board') || $row['hide_results'] == 0 || ($row['hide_results'] == 1 && !$allow_vote) || $is_expired;
+	$allow_view_results = allowedTo('moderate_board') || $row['hide_results'] == 0 || ($row['hide_results'] == 1 && $already_voted) || $is_expired;
 
 	$request = $smcFunc['db_query']('', '
 		SELECT COUNT(DISTINCT id_member)
@@ -1292,10 +1302,10 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 
 	$return = array(
 		'id' => $row['id_poll'],
-		'image' => empty($row['voting_locked']) ? 'poll' : 'locked_poll',
+		'image' => empty($pollinfo['voting_locked']) ? 'poll' : 'locked_poll',
 		'question' => $row['question'],
 		'total_votes' => $total,
-		'is_locked' => !empty($row['voting_locked']),
+		'is_locked' => !empty($pollinfo['voting_locked']),
 		'allow_vote' => $allow_vote,
 		'allow_view_results' => $allow_view_results,
 		'topic' => $topic
@@ -1339,7 +1349,7 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</form>';
 	}
-	elseif ($return['allow_view_results'])
+	else
 	{
 		echo '
 			<div class="ssi_poll">
@@ -1347,23 +1357,30 @@ function ssi_showPoll($topic = null, $output_method = 'echo')
 				<dl>';
 
 		foreach ($return['options'] as $option)
+		{
 			echo '
 					<dt>', $option['option'], '</dt>
-					<dd>
+					<dd>';
+
+			if ($return['allow_view_results'])
+			{
+				echo '
 						<div class="ssi_poll_bar" style="border: 1px solid #666; height: 1em">
 							<div class="ssi_poll_bar_fill" style="background: #ccf; height: 1em; width: ', $option['percent'], '%;">
 							</div>
 						</div>
-						', $option['votes'], ' (', $option['percent'], '%)
+						', $option['votes'], ' (', $option['percent'], '%)';
+			}
+
+			echo '
 					</dd>';
+		}
+
 		echo '
-				</dl>
-				<strong>', $txt['poll_total_voters'], ': ', $return['total_votes'], '</strong>
+				</dl>', ($return['allow_view_results'] ? '
+				<strong>'. $txt['poll_total_voters'] .': '. $return['total_votes'] .'</strong>' : ''), '
 			</div>';
 	}
-	// Cannot see it I'm afraid!
-	else
-		echo $txt['poll_cannot_see'];
 }
 
 // Takes care of voting - don't worry, this is done automatically.

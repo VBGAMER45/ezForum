@@ -610,6 +610,10 @@ function ModifyProfile($post_errors = array())
 		}
 		elseif (!empty($profile_vars))
 		{
+			// Changing the password? Allow only on the approved channel.
+			if ($current_area != 'account')
+				unset($profile_vars['passwd']);
+
 			// If we've changed the password, notify any integration that may be listening in.
 			if (isset($profile_vars['passwd']))
 				call_integration_hook('integrate_reset_pass', array($cur_profile['member_name'], $cur_profile['member_name'], $_POST['passwrd2']));

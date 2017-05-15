@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2013 ezForum
+ * Copyright 2011-2017 ezForum
  * License: BSD
  *
  * Based on:
@@ -171,7 +171,7 @@ function SendTopic()
 		fatal_lang_error('no_name', false);
 	if (!isset($_POST['y_email']) || $_POST['y_email'] == '')
 		fatal_lang_error('no_email', false);
-	if (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['y_email']) == 0)
+	if (filter_var($_POST['ryemail'], FILTER_VALIDATE_EMAIL) === false)
 		fatal_lang_error('email_invalid_character', false);
 
 	// The receiver should be valid to.
@@ -179,7 +179,7 @@ function SendTopic()
 		fatal_lang_error('no_name', false);
 	if (!isset($_POST['r_email']) || $_POST['r_email'] == '')
 		fatal_lang_error('no_email', false);
-	if (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['r_email']) == 0)
+	if (filter_var($_POST['r_email'], FILTER_VALIDATE_EMAIL) === false)
 		fatal_lang_error('email_invalid_character', false);
 
 	// Emails don't like entities...
@@ -288,7 +288,7 @@ function CustomEmail()
 				fatal_lang_error('no_name', false);
 			if (empty($_POST['y_email']))
 				fatal_lang_error('no_email', false);
-			if (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['y_email']) == 0)
+			if (filter_var($_POST['y_email'], FILTER_VALIDATE_EMAIL) === false)
 				fatal_lang_error('email_invalid_character', false);
 
 			$from_name = trim($_POST['y_name']);
@@ -429,7 +429,7 @@ function ReportToModerator2()
 		$_POST['email'] = !isset($_POST['email']) ? '' : trim($_POST['email']);
 		if ($_POST['email'] === '')
 			$post_errors[] = 'no_email';
-		elseif (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['email']) == 0)
+		elseif (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) === false)
 			$post_errors[] = 'bad_email';
 
 		isBannedEmail($_POST['email'], 'cannot_post', sprintf($txt['you_are_post_banned'], $txt['guest_title']));

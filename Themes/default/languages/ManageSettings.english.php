@@ -77,6 +77,13 @@ $txt['disableHostnameLookup'] = 'Disable hostname lookups';
 $txt['who_enabled'] = 'Enable who\'s online list';
 $txt['make_email_viewable'] = 'Allow viewable email addresses';
 $txt['meta_keywords'] = 'Meta keywords associated with forum<div class="smalltext">For search engines. Leave blank for default.</div>';
+$txt['image_proxy_enabled'] = 'Enable Image Proxy';
+$txt['image_proxy_enabled_desc'] = 'This will proxy images posted within <b>[img]</b> tags.</b>';
+$txt['image_proxy_secret'] = 'Image Proxy Secret';
+$txt['image_proxy_secret_desc'] = 'This should be unique to your site. Be sure to keep it a secret.';
+$txt['image_proxy_maxsize'] = 'Maximum file size of images to cache';
+$txt['image_proxy_maxsize_postinput'] = 'KB';
+$txt['image_proxy_maxsize_desc'] = 'Images above this threshold are still shown.';
 
 $txt['karmaMode'] = 'Karma mode';
 $txt['karma_options'] = 'Disable karma|Enable karma total|Enable karma positive/negative';

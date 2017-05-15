@@ -131,6 +131,15 @@ if (!headers_sent())
 // Register an error handler.
 set_error_handler('error_handler');
 
+// Quickly catch random exceptions.
+set_exception_handler(function ($e) use ($db_show_debug)
+{
+	if (isset($db_show_debug) && $db_show_debug === true && allowedTo('admin_forum'))
+		fatal_error(nl2br($e), false);
+	else
+		fatal_error($e->getMessage(), false);
+});
+
 // Start the session. (assuming it hasn't already been.)
 loadSession();
 
@@ -304,7 +313,7 @@ function smf_main()
 		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
-        'imageUpload' => array('Admin.php', 'themeImageUpload'),
+        	'imageUpload' => array('Admin.php', 'themeImageUpload'),
 		'jseditor' => array('Subs-Editor.php', 'EditorMain'),
 		'jsmodify' => array('Post.php', 'JavaScriptModify'),
 		'jsoption' => array('Themes.php', 'SetJavaScript'),
@@ -323,13 +332,13 @@ function smf_main()
 		'notify' => array('Notify.php', 'Notify'),
 		'notifyboard' => array('Notify.php', 'BoardNotify'),
 		'openidreturn' => array('Subs-OpenID.php', 'smf_openID_return'),
-        'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
-       	'oasl_registration' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_registration'),
-        'oasl_callback' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_callback'),
+        	'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
+       		'oasl_registration' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_registration'),
+        	'oasl_callback' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_callback'),
 		'pm' => array('PersonalMessage.php', 'MessageMain'),
 		'post' => array('Post.php', 'Post'),
 		'post2' => array('Post.php', 'Post2'),
-        'posthistory' => array('PostHistory.php', 'PostHistory'),
+       	 	'posthistory' => array('PostHistory.php', 'PostHistory'),
 		'printpage' => array('Printpage.php', 'PrintTopic'),
 		'profile' => array('Profile.php', 'ModifyProfile'),
 		'quotefast' => array('Post.php', 'QuoteFast'),
@@ -338,7 +347,7 @@ function smf_main()
 		'recent' => array('Recent.php', 'RecentPosts'),
 		'register' => array('Register.php', 'Register'),
 		'register2' => array('Register.php', 'Register2'),
-        'related' => array('Subs-Related.php', 'Related'),
+        	'related' => array('Subs-Related.php', 'Related'),
 		'reminder' => array('Reminder.php', 'RemindMe'),
 		'removepoll' => array('Poll.php', 'RemovePoll'),
 		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
@@ -354,7 +363,7 @@ function smf_main()
 		'splittopics' => array('SplitTopics.php', 'SplitTopics'),
 		'stats' => array('Stats.php', 'DisplayStats'),
 		'sticky' => array('LockTopic.php', 'Sticky'),
-        'tags' => array('TaggingSystem.php', 'TaggingSystemMain'),
+        	'tags' => array('TaggingSystem.php', 'TaggingSystemMain'),
 		'theme' => array('Themes.php', 'ThemesMain'),
 		'trackip' => array('Profile-View.php', 'trackIP'),
 		'unread' => array('Recent.php', 'UnreadTopics'),

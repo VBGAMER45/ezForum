@@ -151,6 +151,7 @@ function Login2()
 		redirectexit();
 
 	// Are you guessing with a script?
+	checkSession('post');
 	spamProtection('login');
 
 	// Set the login_url if it's not already set (but careful not to send us to an attachment).
@@ -385,7 +386,7 @@ function Login2()
 			$other_passwords[] = sha1($user_settings['password_salt'] . sha1($user_settings['password_salt'] . sha1($_POST['passwrd'])));
 
 			// Perhaps we converted to UTF-8 and have a valid password being hashed differently.
-			if ($context['character_set'] == 'utf8' && !empty($modSettings['previousCharacterSet']) && $modSettings['previousCharacterSet'] != 'utf8')
+			if ($context['character_set'] == 'UTF-8' && !empty($modSettings['previousCharacterSet']) && $modSettings['previousCharacterSet'] != 'utf8')
 			{
 				// Try iconv first, for no particular reason.
 				if (function_exists('iconv'))
@@ -761,12 +762,22 @@ function validatePasswordFlood($id_member, $password_flood_value = false, $was_c
 	if ($password_flood_value !== false)
 		@list ($time_stamp, $number_tries) = explode('|', $password_flood_value);
 
-	// Timestamp invalid or non-existent?
-	if (empty($number_tries) || $time_stamp < (time() - 10))
+	// Timestamp or number of tries invalid?
+	if (empty($number_tries) || empty($time_stamp))
 	{
-		// If it wasn't *that* long ago, don't give them another five goes.
-		$number_tries = !empty($number_tries) && $time_stamp < (time() - 20) ? 2 : 0;
+		$number_tries = 0;
 		$time_stamp = time();
+	}
+
+	// They've failed logging in already
+	if (!empty($number_tries))
+	{
+		// Give them less chances if they failed before
+		$number_tries = $time_stamp < time() - 20 ? 2 : $number_tries;
+
+		// They are trying too fast, make them wait longer
+		if ($time_stamp < time() - 10)
+			$time_stamp = time();
 	}
 
 	$number_tries++;

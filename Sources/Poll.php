@@ -382,7 +382,7 @@ function EditPoll()
 		$context['poll'] = array(
 			'id' => $pollinfo['id_poll'],
 			'question' => $question,
-			'hide_results' => empty($_POST['poll_hide']) ? 0 : $_POST['poll_hide'],
+			'hide_results' => empty($_POST['poll_hide']) ? 0 : (int) $_POST['poll_hide'],
 			'change_vote' => isset($_POST['poll_change_vote']),
 			'guest_vote' => isset($_POST['poll_guest_vote']),
 			'guest_vote_allowed' => in_array(-1, $groupsAllowedVote['allowed']),
@@ -479,7 +479,7 @@ function EditPoll()
 		);
 
 		if ($context['can_moderate_poll'])
-			$context['poll']['expiration'] = $_POST['poll_expire'];
+			$context['poll']['expiration'] = (int) $_POST['poll_expire'];
 
 		// Check the question/option count for errors.
 		if (trim($_POST['question']) == '' && empty($context['poll_error']))

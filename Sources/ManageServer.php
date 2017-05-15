@@ -230,6 +230,10 @@ function ModifyGeneralSettings($return_config = false)
 		array('enableCompressedOutput', $txt['enableCompressedOutput'], 'db', 'check', null, 'enableCompressedOutput'),
 		array('disableTemplateEval', $txt['disableTemplateEval'], 'db', 'check', null, 'disableTemplateEval'),
 		array('disableHostnameLookup', $txt['disableHostnameLookup'], 'db', 'check', null, 'disableHostnameLookup'),
+		'',
+		array('image_proxy_enabled', $txt['image_proxy_enabled'], 'file', 'check', null, 'image_proxy_enabled', 'subtext' => $txt['image_proxy_enabled_desc']),
+		array('image_proxy_secret', $txt['image_proxy_secret'], 'file', 'text', 30, 'image_proxy_secret', 'subtext' => $txt['image_proxy_secret_desc']),
+		array('image_proxy_maxsize', $txt['image_proxy_maxsize'], 'file', 'int', null, 'image_proxy_maxsize', 'postinput' => $txt['image_proxy_maxsize_postinput'], 'subtext' => $txt['image_proxy_maxsize_desc']),
 	);
 
 	if ($return_config)
@@ -1819,7 +1823,8 @@ function prepareServerSettingsContext(&$config_vars)
 				'invalid' => false,
 				'javascript' => '',
 				'preinput' => '',
-				'postinput' => '',
+				'postinput' => isset($config_var['postinput']) ? $config_var['postinput'] : '',
+				'subtext' => isset($config_var['subtext']) ? $config_var['subtext'] : '',
 			);
 		}
 	}
@@ -2011,14 +2016,17 @@ function saveSettings(&$config_vars)
 		'webmaster_email',
 		'db_name', 'db_user', 'db_server', 'db_prefix', 'ssi_db_user',
 		'boarddir', 'sourcedir', 'cachedir',
+		'image_proxy_secret',
 	);
 	// All the numeric variables.
 	$config_ints = array(
+		'cache_enable',
+		'image_proxy_maxsize',
 	);
 	// All the checkboxes.
 	$config_bools = array(
 		'db_persist', 'db_error_send',
-		'maintenance'
+		'maintenance', 'image_proxy_enabled',
 	);
 
 	// Now sort everything into a big array, and figure out arrays and etc.

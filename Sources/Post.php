@@ -279,8 +279,8 @@ function Post()
 		// Set up the poll options.
 		$context['poll_options'] = array(
 			'max_votes' => empty($_POST['poll_max_votes']) ? '1' : max(1, $_POST['poll_max_votes']),
-			'hide' => empty($_POST['poll_hide']) ? 0 : $_POST['poll_hide'],
-			'expire' => !isset($_POST['poll_expire']) ? '' : $_POST['poll_expire'],
+			'hide' => empty($_POST['poll_hide']) ? 0 : (int) $_POST['poll_hide'],
+			'expire' => !isset($_POST['poll_expire']) ? '' : (int) $_POST['poll_expire'],
 			'change_vote' => isset($_POST['poll_change_vote']),
 			'guest_vote' => isset($_POST['poll_guest_vote']),
 			'guest_vote_enabled' => in_array(-1, $allowedVoteGroups['allowed']),
@@ -504,7 +504,7 @@ function Post()
 				{
 					if (!isset($_REQUEST['email']) || $_REQUEST['email'] == '')
 						$context['post_error']['no_email'] = true;
-					elseif (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_REQUEST['email']) == 0)
+					elseif (filter_var($_REQUEST['email'], FILTER_VALIDATE_EMAIL) === false)
 						$context['post_error']['bad_email'] = true;
 				}
 			}
@@ -672,7 +672,7 @@ function Post()
 			preparsecode($context['preview_message']);
 
 			// Do all bulletin board code tags, with or without smileys.
-			$context['preview_message'] = parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1, NULL, NULL, $poster_id, $posts);
+			$context['preview_message'] = parse_bbc($context['preview_message'], isset($_REQUEST['ns']) ? 0 : 1);
 
 			if ($form_subject != '')
 			{
@@ -1395,7 +1395,12 @@ function Post2()
 	// Previewing? Go back to start.
 	if (isset($_REQUEST['preview']))
 	{
-		checkSession();
+		if (checkSession('post', '', false) != '')
+		{
+			loadLanguage('Errors');
+			$context['post_errors']['message'][] = $txt['error_session_timeout'];
+			unset ($_POST['preview'], $_REQUEST['xml']); // just in case
+		}
 		return Post();
 	}
 
@@ -1648,7 +1653,7 @@ function Post2()
 			{
 				if (!allowedTo('moderate_forum') && (!isset($_POST['email']) || $_POST['email'] == ''))
 					$post_errors[] = 'no_email';
-				if (!allowedTo('moderate_forum') && preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $_POST['email']) == 0)
+				if (!allowedTo('moderate_forum') && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) === false)
 					$post_errors[] = 'bad_email';
 			}
 
