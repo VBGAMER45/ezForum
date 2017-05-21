@@ -346,7 +346,7 @@ function ModifyProfile($post_errors = array())
 
     global $sourcedir ;
     require_once($sourcedir . '/Mentions.php');
-    mentions_profile_areas(&$profile_areas);
+    mentions_profile_areas($profile_areas);
 
 	// Do some cleaning ready for the menu function.
 	$context['password_areas'] = array();
