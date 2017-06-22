@@ -173,7 +173,7 @@ class ProxyServer
 		$responseCode = $request->result('code');
 		$response = $request->result();
 		
-		if (empty(response)) {
+		if (empty($response)) {
 			return false;
 		}
 		
