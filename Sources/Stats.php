@@ -729,9 +729,9 @@ function SMStats()
 			$out = 'POST /ezc/stats/collect_stats.php HTTP/1.1' . "\r\n";
 			$out .= 'Host: www.ezforum.com' . "\r\n";
 			$out .= 'Content-Type: application/x-www-form-urlencoded' . "\r\n";
+			$out .= 'Connection: Close' . "\r\n";
 			$out .= 'Content-Length: ' . $length . "\r\n\r\n";
 			$out .= $stats_to_send . "\r\n";
-			$out .= 'Connection: Close' . "\r\n\r\n";
 			fwrite($fp, $out);
 			fclose($fp);
 		}

@@ -1045,7 +1045,7 @@ function ssi_login($redirect_to = '', $output_method = 'echo')
 
 	echo '<tr>
 					<td><input type="hidden" name="cookielength" value="-1" /></td>
-					<td><input type="submit" value="', $txt['login'], '" class="button_submit" /></td>
+					<td><input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" /><input type="submit" value="', $txt['login'], '" class="button_submit" /></td>
 				</tr>
 			</table>
 		</form>';

@@ -140,7 +140,7 @@ function smf_db_create_table($table_name, $columns, $indexes = array(), $paramet
 		list ($type, $size) = $smcFunc['db_calculate_type']($column['type'], $column['size']);
 
 		// Allow unsigned integers (mysql only)
-		$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float')) && !empty($column_info['unsigned']) ? 'unsigned ' : '';
+		$unsigned = in_array($type, array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float')) && !empty($column['unsigned']) ? 'unsigned ' : '';
 
 		if ($size !== null)
 			$type = $type . '(' . $size . ')';

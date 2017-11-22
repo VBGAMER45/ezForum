@@ -114,7 +114,7 @@ class custom_search
 
 		// Excluded phrases don't benefit from being split into subwords.
 		if (count($subwords) > 1 && $isExcluded)
-			continue;
+			return;
 		else
 		{
 			foreach ($subwords as $subword)

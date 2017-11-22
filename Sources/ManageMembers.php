@@ -377,8 +377,18 @@ function ViewMemberlist()
 		}
 	}
 
-	if ($context['sub_action'] == 'query' && !empty($_REQUEST['params']) && empty($_POST))
-		$_POST += safe_unserialize(base64_decode($_REQUEST['params']));
+	if ($context['sub_action'] == 'query' && empty($_POST))
+	{
+		if (!empty($_REQUEST['params']))
+		{
+			$_POST += safe_unserialize(base64_decode($_REQUEST['params']));
+		}
+		elseif ($context['browser']['is_ie'] && !empty($_SESSION['params']))
+		{
+			$_POST += $_SESSION['params'];
+			unset($_SESSION['params']);
+		}
+	}
 
 	// Check input after a member search has been submitted.
 	if ($context['sub_action'] == 'query')
@@ -603,7 +613,14 @@ function ViewMemberlist()
 		$where = empty($query_parts) ? '1' : implode('
 			AND ', $query_parts);
 
-		$search_params = base64_encode(serialize($_POST));
+		if ($context['browser']['is_ie'])
+		{
+			// Cache the results in the session and avoid IE's 2083 character limit.
+			$_SESSION['params'] = $_POST;
+			$search_params = null;
+		}
+		else
+			$search_params = base64_encode(serialize($_POST));
 	}
 	else
 		$search_params = null;

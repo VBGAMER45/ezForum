@@ -105,7 +105,7 @@ class ProxyServer
 
 		// Did we get an error when trying to fetch the image
 		$response = $this->checkRequest();
-		if (is_int($response)) {
+		if (!$response) {
 			// Throw a 404
 			header('HTTP/1.0 404 Not Found');
 			exit;
@@ -178,7 +178,7 @@ class ProxyServer
 		}
 		
 		if ($responseCode != 200) {
-			return $request->result('code');
+			return false;
 		}
 
 		$headers = $response['headers'];
@@ -197,7 +197,7 @@ class ProxyServer
 			'size' => $response['size'],
 			'time' => time(),
 			'body' => base64_encode($response['body']),
-		)));
+		))) === false ? 1 : null;
 	}
 }
 

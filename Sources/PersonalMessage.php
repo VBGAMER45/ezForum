@@ -720,7 +720,7 @@ function MessageFolder()
 					AND pmr.deleted = {int:is_deleted}
 					' . $labelQuery . ')') . ($context['sort_by'] == 'name' ? ( '
 				LEFT JOIN {db_prefix}members AS mem ON (mem.id_member = {raw:pm_member})') : '') . '
-			WHERE ' . ($context['folder'] == 'sent' ? 'pm.id_member_from = {raw:current_member}
+			WHERE ' . ($context['folder'] == 'sent' ? 'pm.id_member_from = {int:current_member}
 				AND pm.deleted_by_sender = {int:is_deleted}' : '1=1') . (empty($pmsg) ? '' : '
 				AND pm.id_pm = {int:pmsg}') . '
 			ORDER BY ' . ($_GET['sort'] == 'pm.id_pm' && $context['folder'] != 'sent' ? 'pmr.id_pm' : '{raw:sort}') . ($descending ? ' DESC' : ' ASC') . (empty($pmsg) ? '
@@ -1194,34 +1194,52 @@ function MessageSearch2()
 				unset($possible_users[$k]);
 		}
 
-		// Who matches those criteria?
-		// !!! This doesn't support sent item searching.
-		$request = $smcFunc['db_query']('', '
-			SELECT id_member
-			FROM {db_prefix}members
-			WHERE real_name LIKE {raw:real_name_implode}',
-			array(
-				'real_name_implode' => '\'' . implode('\' OR real_name LIKE \'', $possible_users) . '\'',
-			)
-		);
-		// Simply do nothing if there're too many members matching the criteria.
-		if ($smcFunc['db_num_rows']($request) > $maxMembersToSearch)
-			$userQuery = '';
-		elseif ($smcFunc['db_num_rows']($request) == 0)
+		if (!empty($possible_users))
 		{
-			$userQuery = 'AND pm.id_member_from = 0 AND (pm.from_name LIKE {raw:guest_user_name_implode})';
-			$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR pm.from_name LIKE \'', $possible_users) . '\'';
+			// We need to bring this into the query and do it nice and cleanly.
+			$where_params = array();
+			$where_clause = array();
+			foreach ($possible_users as $k => $v)
+			{
+				$where_params['name_' . $k] = $v;
+				$where_clause[] = '{raw:real_name} LIKE {string:name_' . $k . '}';
+				if (!isset($where_params['real_name']))
+					$where_params['real_name'] = $smcFunc['db_case_sensitive'] ? 'LOWER(real_name)' : 'real_name';
+			}
+
+			// Who matches those criteria?
+			// !!! This doesn't support sent item searching.
+			$request = $smcFunc['db_query']('', '
+				SELECT id_member
+				FROM {db_prefix}members
+				WHERE ' . implode(' OR ', $where_clause),
+				$where_params
+			);
+
+			// Simply do nothing if there're too many members matching the criteria.
+			if ($smcFunc['db_num_rows']($request) > $maxMembersToSearch)
+				$userQuery = '';
+			elseif ($smcFunc['db_num_rows']($request) == 0)
+			{
+				$where_params['real_name'] = 'pm.from_name';
+				$searchq_parameters = array_merge($searchq_parameters, $where_params);
+				$userQuery = 'AND pm.id_member_from = 0 AND (' . implode(' OR ', $where_clause) . ')';
+			}
+			else
+			{
+				$memberlist = array();
+				while ($row = $smcFunc['db_fetch_assoc']($request))
+					$memberlist[] = $row['id_member'];
+
+				$where_params['real_name'] = 'pm.from_name';
+				$searchq_parameters = array_merge($searchq_parameters, $where_params);
+				$searchq_parameters['member_list'] = $memberlist;
+				$userQuery = 'AND (pm.id_member_from IN ({array_int:member_list}) OR (pm.id_member_from = 0 AND (' . implode(' OR ', $where_clause) . ')))';
+			}
+			$smcFunc['db_free_result']($request);
 		}
 		else
-		{
-			$memberlist = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$memberlist[] = $row['id_member'];
-			$userQuery = 'AND (pm.id_member_from IN ({array_int:member_list}) OR (pm.id_member_from = 0 AND (pm.from_name LIKE {raw:guest_user_name_implode})))';
-			$searchq_parameters['guest_user_name_implode'] = '\'' . implode('\' OR pm.from_name LIKE \'', $possible_users) . '\'';
-			$searchq_parameters['member_list'] = $memberlist;
-		}
-		$smcFunc['db_free_result']($request);
+			$userQuery = '';
 	}
 
 	// Setup the sorting variables...
