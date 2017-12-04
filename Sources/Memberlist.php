@@ -102,16 +102,8 @@ function Memberlist()
 			'label' => $txt['icq'],
 			'width' => '30'
 		),
-		'aim' => array(
-			'label' => $txt['aim'],
-			'width' => '30'
-		),
 		'yim' => array(
 			'label' => $txt['yim'],
-			'width' => '30'
-		),
-		'msn' => array(
-			'label' => $txt['msn'],
 			'width' => '30'
 		),
 		'id_group' => array(
@@ -314,17 +306,9 @@ function MLAll()
 			'down' => 'LENGTH(mem.icq) > 0 ASC, mem.icq = 0 DESC, mem.icq DESC',
 			'up' => 'LENGTH(mem.icq) > 0 DESC, mem.icq = 0 ASC, mem.icq ASC'
 		),
-		'aim' => array(
-			'down' => 'LENGTH(mem.aim) > 0 ASC, IFNULL(mem.aim, 1=1) DESC, mem.aim DESC',
-			'up' => 'LENGTH(mem.aim) > 0 DESC, IFNULL(mem.aim, 1=1) ASC, mem.aim ASC'
-		),
 		'yim' => array(
 			'down' => 'LENGTH(mem.yim) > 0 ASC, IFNULL(mem.yim, 1=1) DESC, mem.yim DESC',
 			'up' => 'LENGTH(mem.yim) > 0 DESC, IFNULL(mem.yim, 1=1) ASC, mem.yim ASC'
-		),
-		'msn' => array(
-			'down' => 'LENGTH(mem.msn) > 0 ASC, IFNULL(mem.msn, 1=1) DESC, mem.msn DESC',
-			'up' => 'LENGTH(mem.msn) > 0 DESC, IFNULL(mem.msn, 1=1) ASC, mem.msn ASC'
 		),
 		'registered' => array(
 			'down' => 'mem.date_registered DESC',
@@ -442,7 +426,7 @@ function MLSearch()
 	if (isset($_REQUEST['search']) && isset($_REQUEST['fields']))
 	{
 		$_POST['search'] = trim(isset($_GET['search']) ? $_GET['search'] : $_POST['search']);
-		
+
 		if (!get_magic_quotes_gpc())
 		{
 			// Escape things just in case...
@@ -473,7 +457,7 @@ function MLSearch()
 			'search' => '%' . strtr($smcFunc['htmlspecialchars']($_POST['search'], ENT_QUOTES), array('_' => '\\_', '%' => '\\%', '*' => '%')) . '%',
 		);
 
-           
+
         $search_fields = array();
 
 		// Search for a name?
@@ -531,8 +515,8 @@ function MLSearch()
 
         // No search fields? That means you're trying to hack things
 		if (empty($search_fields))
-			fatal_lang_error('invalid_search_string', false); 
-            
+			fatal_lang_error('invalid_search_string', false);
+
 		$query = $_POST['search'] == '' ? '= {string:blank_string}' : 'LIKE {string:search}';
 
 		$request = $smcFunc['db_query']('', '

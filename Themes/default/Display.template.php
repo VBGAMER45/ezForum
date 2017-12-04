@@ -348,13 +348,11 @@ function template_main()
 								<li class="im_icons">
 									<ul>
 										', !empty($message['member']['icq']['link']) ? '<li>' . $message['member']['icq']['link'] . '</li>' : '', '
-										', !empty($message['member']['msn']['link']) ? '<li>' . $message['member']['msn']['link'] . '</li>' : '', '
-										', !empty($message['member']['aim']['link']) ? '<li>' . $message['member']['aim']['link'] . '</li>' : '', '
 										', !empty($message['member']['yim']['link']) ? '<li>' . $message['member']['yim']['link'] . '</li>' : '', '
 										', !empty($message['member']['skype']['link']) ? '<li>' . $message['member']['skype']['link'] . '</li>' : '', '
 									</ul>
 								</li>';
-				
+
 			// This shows the social media icons. by hcfwesker
 			if ($message['member']['has_messenger'] && $message['member']['can_view_profile'])
 				echo '
@@ -369,8 +367,8 @@ function template_main()
 										', !isset($context['disabled_fields']['deviantart']) && !empty($message['member']['deviantart']['link']) ? '<li>' . $message['member']['deviantart']['link'] . '</li>' : '', '
 										', !isset($context['disabled_fields']['pinterest']) && !empty($message['member']['pinterest']['link']) ? '<li>' . $message['member']['pinterest']['link'] . '</li>' : '', '
 									</ul>
-								</li>';	
-				
+								</li>';
+
 
 			// Show the profile, website, email address, and personal message buttons.
 			if ($settings['show_profile_buttons'])
@@ -661,7 +659,7 @@ function template_main()
 					<span class="botslice"><span></span></span>
 				</div>
 				<hr class="post_separator" />';
-		
+
        //Tagging System
 		if (($message['id'] == $context['first_message']) && !empty($context['tagsinfo']))
 		{
@@ -681,11 +679,11 @@ function template_main()
 				</div>';
 		}
 		//Tagging System END
-		
+
 	}
-    
- 
-    
+
+
+
 
 	echo '
 				</form>
@@ -725,7 +723,7 @@ function template_main()
 	// Show the jumpto box, or actually...let Javascript do it.
 	echo '
 			<div class="plainbox" id="display_jump_to">&nbsp;</div>';
-            
+
 //Tagging System
 	if (!empty($context['tagsrelated']) && !empty($modSettings['tag_enabled_related_topics']) && !empty($modSettings['tag_enabled']))
 	{
@@ -762,8 +760,8 @@ function template_main()
 				</table>
 			</div>';
 	}
-	//Tagging System END      
-            
+	//Tagging System END
+
 
 	if ($context['can_reply'] && !empty($options['display_quick_reply']))
 	{
@@ -833,8 +831,8 @@ function template_main()
 	else
 		echo '
 		<br class="clear" />';
-        
-        
+
+
 // Added by Related Topics
 	if (!empty($context['related_topics'])) // TODO: Have ability to display no related topics?
 	{
@@ -931,9 +929,9 @@ function template_main()
 			</div><br />';
 	}
 
-        
-        
-        
+
+
+
 
 	if ($context['show_spellchecking'])
 		echo '

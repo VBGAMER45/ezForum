@@ -254,12 +254,12 @@ function ShowXmlFeed()
 		@ob_start('ob_gzhandler');
 	else
 		ob_start();
-		
+
 	//	Pretty URLs need to be rewritten
 	ob_start('ob_sessrewrite');
 	$context['pretty']['search_patterns'][] = '~(<link>|<id>|<comments>|<guid>)([^#<]+)~';
 	$context['pretty']['replace_patterns'][] = '~(<link>|<id>|<comments>|<guid>)([^<]+)~';
-		
+
 	if ($xml_format == 'smf' || isset($_REQUEST['debug']))
 		header('Content-Type: text/xml; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
 	elseif ($xml_format == 'rss' || $xml_format == 'rss2' || $xml_format == 'webslice')
@@ -323,7 +323,7 @@ function ShowXmlFeed()
 
 	<modified>', gmstrftime('%Y-%m-%dT%H:%M:%SZ'), '</modified>
 	<tagline><![CDATA[', strip_tags($txt['xml_rss_desc']), ']]></tagline>
-	<generator uri="http://www.ezforum.com" version="', strtr($forum_version, array('EZF' => '')), '">EZF</generator>
+	<generator uri="https://www.ezforum.com" version="', strtr($forum_version, array('EZF' => '')), '">EZF</generator>
 	<author>
 		<name>', strip_tags($context['forum_name']), '</name>
 	</author>';
@@ -385,13 +385,13 @@ function fix_possible_url($val)
 	call_integration_hook('integrate_fix_url', array(&$val));
 
 	/*
-	
+
 	if (empty($modSettings['queryless_urls']) || ($context['server']['is_cgi'] && @ini_get('cgi.fix_pathinfo') == 0 && @get_cfg_var('cgi.fix_pathinfo') == 0) || (!$context['server']['is_apache'] && !$context['server']['is_lighttpd']))
 		return $val;
 
     $val = preg_replace_callback('~^' . preg_quote($scripturl, '/') . '\?((?:board|topic)=[^#"]+)(#[^"]*)?$~', 'feed_fix__preg_callback', $val);
 	return $val;
-	
+
 	*/
 }
 
@@ -944,10 +944,6 @@ function getXmlProfile($xml_format)
 
 		if (!empty($profile['icq']['name']) && !(!empty($modSettings['guest_hideContacts']) && $user_info['is_guest']))
 			$data['icq'] = $profile['icq']['name'];
-		if ($profile['aim']['name'] != '' && !(!empty($modSettings['guest_hideContacts']) && $user_info['is_guest']))
-			$data['aim'] = $profile['aim']['name'];
-		if ($profile['msn']['name'] != '' && !(!empty($modSettings['guest_hideContacts']) && $user_info['is_guest']))
-			$data['msn'] = $profile['msn']['name'];
 		if ($profile['yim']['name'] != '' && !(!empty($modSettings['guest_hideContacts']) && $user_info['is_guest']))
 			$data['yim'] = $profile['yim']['name'];
 

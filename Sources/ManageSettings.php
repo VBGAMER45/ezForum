@@ -1373,7 +1373,7 @@ function ShowCustomProfiles()
 	$context['sub_template'] = 'show_custom_profile';
 
 	// What about standard fields they can tweak?
-	$standard_fields = array('icq', 'msn', 'aim', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
+	$standard_fields = array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
 	// What fields can't you put on the registration page?
 	$context['fields_no_registration'] = array('posts', 'warning_status');
 
@@ -1598,7 +1598,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 
 	if ($standardFields)
 	{
-		$standard_fields = array('icq', 'msn', 'aim', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
+		$standard_fields = array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
 		$fields_no_registration = array('posts', 'warning_status');
 		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
 		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();
@@ -2716,7 +2716,7 @@ function recacheCustomActions()
 }
 
 /*
-Spuds 
+Spuds
 Mozilla Public License version 2.0 (the "License"). You can obtain a copy of the License at http://mozilla.org/MPL/2.0/.
 */
 
@@ -2732,7 +2732,7 @@ function ModifydlinksSettings($return_config = false)
 		array('check', 'descriptivelinks_title_bbcurl'),
 		array('int', 'descriptivelinks_title_url_count', 'subtext' => $txt['descriptivelinks_title_url_count_sub'], 'postinput' => $txt['descriptivelinks_title_url_count_urls']),
 		array('int', 'descriptivelinks_title_url_length'),
-		array('text','descriptivelinks_title_url_generic', 60, 'subtext' => $txt['descriptivelinks_title_url_generic_sub']),		
+		array('text','descriptivelinks_title_url_generic', 60, 'subtext' => $txt['descriptivelinks_title_url_generic_sub']),
 	);
 
 	if ($return_config)

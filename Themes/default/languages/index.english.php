@@ -287,14 +287,8 @@ $txt['newest_member'] = ', our newest member.';
 
 $txt['search_for'] = 'Search for';
 
-$txt['aim'] = 'AIM';
-// In this string, please use +'s for spaces.
-$txt['aim_default_message'] = 'Hi.+Are+you+there?';
-$txt['aim_title'] = 'AOL Instant Messenger';
 $txt['icq'] = 'ICQ';
 $txt['icq_title'] = 'ICQ Messenger';
-$txt['msn'] = 'MSN';
-$txt['msn_title'] = 'MSN Messenger';
 $txt['yim'] = 'YIM';
 $txt['yim_title'] = 'Yahoo Instant Messenger';
 
@@ -435,7 +429,7 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go Up';
 $txt['go_down'] = 'Go Down';
 
-$forum_copyright = '<a href="http://www.ezforum.com" title="free forum software" target="_blank" class="new_win">ezForum &copy; 2015</a>';
+$forum_copyright = '<a href="https://www.ezforum.com" title="free forum software" target="_blank" class="new_win">ezForum &copy; 2017</a>';
 
 $txt['birthdays'] = 'Birthdays:';
 $txt['events'] = 'Events:';

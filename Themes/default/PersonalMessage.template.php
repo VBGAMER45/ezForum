@@ -177,7 +177,7 @@ function template_folder()
                 * @version 0.1.0
                 */
                 'mark_unread' => array('text' => 'mark_unread_all', 'image' => 'mark_unread.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=pmactions;pm_actions[' . $context['current_pm'] . ']=markunread;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_lable_id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id']),
-                
+
 				'delete' => array('text' => 'delete_conversation', 'image' => 'delete.gif', 'lang' => true, 'url' => $scripturl . '?action=pm;sa=pmactions;pm_actions[' . $context['current_pm'] . ']=delete;conversation;f=' . $context['folder'] . ';start=' . $context['start'] . ($context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '') . ';' . $context['session_var'] . '=' . $context['session_id'], 'custom' => 'onclick="return confirm(\'' . addslashes($txt['remove_message']) . '?\');"'),
 			);
 
@@ -301,32 +301,30 @@ function template_folder()
 				<li class="im_icons">
 					<ul>', !isset($context['disabled_fields']['icq']) && !empty($message['member']['icq']['link']) ? '
 						<li>' . $message['member']['icq']['link'] . '</li>' : '', !isset($context['disabled_fields']['msn']) && !empty($message['member']['msn']['link']) ? '
-						<li>' . $message['member']['msn']['link'] . '</li>' : '', !isset($context['disabled_fields']['aim']) && !empty($message['member']['aim']['link']) ? '
-						<li>' . $message['member']['aim']['link'] . '</li>' : '', !isset($context['disabled_fields']['yim']) && !empty($message['member']['yim']['link']) ? '
 						<li>' . $message['member']['yim']['link'] . '</li>' : '', !isset($context['disabled_fields']['skype']) && !empty($message['member']['skype']['link']) ? '
 						<li>' . $message['member']['skype']['link'] . '</li>' : '', '
 					</ul>
 				</li>';
 
-					
+
 // This shows the Social Media icons.
 				if ($message['member']['has_messenger'] && $message['member']['can_view_profile'])
 					echo '
 				<li class="im_icons">
 					<ul>
 						', !isset($context['disabled_fields']['facebook']) 	&& !empty($message['member']['facebook']['link']) ? '<li>' . $message['member']['facebook']['link'] . '</li>' : '', '
-						', !isset($context['disabled_fields']['myspace']) && !empty($message['member']['myspace']['link']) ? '<li>' . $message['member']['myspace']['link'] . '</li>' : '', '			
+						', !isset($context['disabled_fields']['myspace']) && !empty($message['member']['myspace']['link']) ? '<li>' . $message['member']['myspace']['link'] . '</li>' : '', '
 						', !isset($context['disabled_fields']['twitter']) && !empty($message['member']['twitter']['link']) ? '<li>' . $message['member']['twitter']['link'] . '</li>' : '', '
-						', !isset($context['disabled_fields']['googleplus']) && !empty($message['member']['googleplus']['link']) ? '<li>' . $message['member']['googleplus']['link'] . '</li>' : '', '			
+						', !isset($context['disabled_fields']['googleplus']) && !empty($message['member']['googleplus']['link']) ? '<li>' . $message['member']['googleplus']['link'] . '</li>' : '', '
 						', !isset($context['disabled_fields']['linkedin']) && !empty($message['member']['linkedin']['link']) ? '<li>' . $message['member']['linkedin']['link'] . '</li>' : '', '
-						', !isset($context['disabled_fields']['youtube']) && !empty($message['member']['youtube']['link']) ? '<li>' . $message['member']['youtube']['link'] . '</li>' : '', '			
+						', !isset($context['disabled_fields']['youtube']) && !empty($message['member']['youtube']['link']) ? '<li>' . $message['member']['youtube']['link'] . '</li>' : '', '
 						', !isset($context['disabled_fields']['deviantart']) && !empty($message['member']['deviantart']['link']) ? '<li>' . $message['member']['deviantart']['link'] . '</li>' : '', '
 						', !isset($context['disabled_fields']['pinterest']) && !empty($message['member']['pinterest']['link']) ? '<li>' . $message['member']['pinterest']['link'] . '</li>' : '', '
 
 					</ul>
 				</li>';
-					
-					
+
+
 				// Show the profile, website, email address, and personal message buttons.
 				if ($settings['show_profile_buttons'])
 				{
@@ -432,8 +430,8 @@ function template_folder()
 					echo '
 					<li class="forward_button"><a href="', $scripturl, '?action=pm;sa=send;f=', $context['folder'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';pmsg=', $message['id'], ';quote">', $txt['reply_quote'], '</a></li>';
 			}
-            
-            
+
+
             /**
             * Mark PM Unread (MPMU)
             *
@@ -447,7 +445,7 @@ function template_folder()
             if ($message['member']['name'] != $context['user']['name'])
 				echo '
 					<li class="notify_button"><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions[', $message['id'], ']=markunread;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '">', $txt['mark_unread'], '</a></li>';
-            
+
 			echo '
 					<li class="remove_button"><a href="', $scripturl, '?action=pm;sa=pmactions;pm_actions[', $message['id'], ']=delete;f=', $context['folder'], ';start=', $context['start'], $context['current_label_id'] != -1 ? ';l=' . $context['current_label_id'] : '', ';', $context['session_var'], '=', $context['session_id'], '" onclick="return confirm(\'', addslashes($txt['remove_message']), '?\');">', $txt['delete'], '</a></li>';
 

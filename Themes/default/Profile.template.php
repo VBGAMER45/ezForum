@@ -71,22 +71,22 @@ function template_summary()
 			<div class="content flow_auto">';
             /*
             Copyright (c) 2011, Masterd
-            
+
             Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-            
+
             Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
             Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
             The names of the contributors may be not used to endorse or promote products derived from this software without specific prior written permission.
-            
+
             THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             */
-            
+
             echo '
 				<div class="username"><h4>', $context['member']['name'], ' <span class="position">', (!empty($context['member']['group']) ? $context['member']['group'] : $context['member']['post_group']), '<br />', (!empty($context['member']['group_stars']) ? $context['member']['group_stars'] : ''), '</span></h4></div>
 				', $context['member']['avatar']['image'], '
 				<ul class="reset">';
-            // End Masterd    
-                
+            // End Masterd
+
 
 	// What about if we allow email only via the forum??
 	if ($context['member']['show_email'] === 'yes' || $context['member']['show_email'] === 'no_through_forum' || $context['member']['show_email'] === 'yes_permission_override')
@@ -361,7 +361,7 @@ function template_summary()
 	if (function_exists('template_profile_comments'))
 		template_profile_comments();
 	// </ChineseModifications>
-	
+
 	echo '
 </div>';
 }
@@ -563,10 +563,7 @@ function template_editBuddies()
 				<td align="center"><a href="', $buddy['online']['href'], '"><img src="', $buddy['online']['image_href'], '" alt="', $buddy['online']['label'], '" title="', $buddy['online']['label'], '" /></a></td>
 				<td align="center">', ($buddy['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $buddy['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $buddy['name'] . '" /></a>'), '</td>
 				<td align="center">', $buddy['icq']['link'], '</td>
-				<td align="center">', $buddy['aim']['link'], '</td>
 				<td align="center">', $buddy['yim']['link'], '</td>
-				<td align="center">', $buddy['msn']['link'], '</td>
-				<td align="center">', $buddy['msn']['link'], '</td>
 				<td align="center">', $buddy['skype']['link'], '</td>
 				<td align="center">', $buddy['facebook']['link'], ' ', $buddy['myspace']['link'], ' ', $buddy['twitter']['link'], ' ', $buddy['googleplus']['link'], ' ', $buddy['linkedin']['link'], ' ', $buddy['youtube']['link'], ' ', $buddy['deviantart']['link'], ' ', $buddy['pinterest']['link'], '</td>
 				<td align="center"><a href="', $scripturl, '?action=profile;area=lists;sa=buddies;u=', $context['id_member'], ';remove=', $buddy['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['buddy_remove'], '" title="', $txt['buddy_remove'], '" /></a></td>
@@ -629,9 +626,7 @@ function template_editIgnoreList()
 				<th scope="col">', $txt['status'], '</th>
 				<th scope="col">', $txt['email'], '</th>
 				<th scope="col">', $txt['icq'], '</th>
-				<th scope="col">', $txt['aim'], '</th>
 				<th scope="col">', $txt['yim'], '</th>
-				<th scope="col">', $txt['msn'], '</th>
 				<th class="last_th" scope="col"></th>
 			</tr>';
 
@@ -652,9 +647,7 @@ function template_editIgnoreList()
 				<td align="center"><a href="', $member['online']['href'], '"><img src="', $member['online']['image_href'], '" alt="', $member['online']['label'], '" title="', $member['online']['label'], '" /></a></td>
 				<td align="center">', ($member['show_email'] == 'no' ? '' : '<a href="' . $scripturl . '?action=emailuser;sa=email;uid=' . $member['id'] . '" rel="nofollow"><img src="' . $settings['images_url'] . '/email_sm.gif" alt="' . $txt['email'] . '" title="' . $txt['email'] . ' ' . $member['name'] . '" /></a>'), '</td>
 				<td align="center">', $member['icq']['link'], '</td>
-				<td align="center">', $member['aim']['link'], '</td>
 				<td align="center">', $member['yim']['link'], '</td>
-				<td align="center">', $member['msn']['link'], '</td>
 				<td align="center"><a href="', $scripturl, '?action=profile;u=', $context['id_member'], ';area=lists;sa=ignore;remove=', $member['id'], ';', $context['session_var'], '=', $context['session_id'], '"><img src="', $settings['images_url'], '/icons/delete.gif" alt="', $txt['ignore_remove'], '" title="', $txt['ignore_remove'], '" /></a></td>
 			</tr>';
 
@@ -702,7 +695,7 @@ function template_editIgnoreList()
 function template_trackActivity()
 {
 	global $context, $settings, $options, $scripturl, $txt;
-    
+
     // Supds
     if (isset($modSettings['geoIP_db']))
     {
@@ -715,15 +708,15 @@ function template_trackActivity()
     		<div class="windowbg2">
     			<span class="topslice"><span></span></span>
     			<div class="padding">',
-    				$context['geoIP'][0]['city'], (!empty($context['geoIP'][0]['city']) ? '<br />' : ''), 
+    				$context['geoIP'][0]['city'], (!empty($context['geoIP'][0]['city']) ? '<br />' : ''),
     				$context['geoIP'][0]['region'], (!empty($context['geoIP'][0]['region']) ? '<br />' : ''),
-    				$context['geoIP'][0]['country'], (!empty($context['geoIP'][0]['country']) ? '<br />' : ''), 
+    				$context['geoIP'][0]['country'], (!empty($context['geoIP'][0]['country']) ? '<br />' : ''),
     				'<img src="' , $settings['default_images_url'] , '/flags/' , $context['geoIP'][0]['cc'] . '.png"  height="16" width="11" border="0" alt="[ * ]" title="' . $context['geoIP'][0]['country'] . '"/>&nbsp;', $context['geoIP'][0]['cc'], '
     			</div>
     			<span class="botslice"><span></span></span>
     		</div>
     		<br />';
-     }   
+     }
 
 	// The first table shows IP information about the user.
 	echo '
@@ -1376,8 +1369,8 @@ function template_edit_options()
 					</dl>';
 
 	}
-    
-    
+
+
     // OneAll Social Login (https://docs.oneall.com/plugins/)
     /**
      * Copyright 2012 OneAll, LLC.
@@ -1395,24 +1388,24 @@ function template_edit_options()
      * under the License.
      *
      */
-    
+
 	if (!empty ($modSettings['oasl_api_key']) && !empty ($modSettings['oasl_enabled_providers']))
 	{
 		if ( ! empty ($context['user']['is_owner']) && ! empty ($context['user']['id']))
-		{		
-	
+		{
+
 			// Include the OneAll Toolbox.
 			require_once($sourcedir . '/OneallSocialLogin.sdk.php');
-				
+
 			//Extract providers
 			$oasl_enabled_providers = explode (',', trim ($modSettings['oasl_enabled_providers']));
-			
+
 			//User Token
 			$oasl_user_token = oneall_social_login_get_user_token_for_id_member($context['user']['id']);
-			
+
 			//Random integer
 			$rand = mt_rand (99999, 9999999);
-			
+
 			echo '
 				<hr width="100%" size="1" class="hrcolor clear" />
 				<dl id="oasl_social_link">
@@ -1424,21 +1417,21 @@ function template_edit_options()
 						<div class="oneall_social_login_providers" id="oneall_social_login_providers_'.$rand.'"></div>
 							<script type="text/javascript">
 								oneall.api.plugins.social_link.build("oneall_social_login_providers_'.$rand.'", {
-									"providers": [\''.implode ("', '", $oasl_enabled_providers).'\'], 
+									"providers": [\''.implode ("', '", $oasl_enabled_providers).'\'],
 									"user_token": \''.$oasl_user_token.'\',
 									"callback_uri": \''.$boardurl.'/index.php?action=oasl_callback;oasl_source=profile;oasl_uid='.$context['user']['id'].'\'
 								});
 							</script>
 							<!-- OneAll.com / Social Login for SMF -->
 					</dd>
-				</dl>';			
+				</dl>';
 		}
 	 }
-     
+
      // End OneAll Social Login
-	 
-	
-    
+
+
+
 
 	// Any closing HTML?
 	if (!empty($context['profile_posthtml']))

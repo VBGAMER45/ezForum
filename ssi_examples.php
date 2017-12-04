@@ -550,7 +550,7 @@ function template_ssi_below()
 				</div>
 			</div></div>
 			<div id="footer_section"><div class="frame">
-				<div class="smalltext"><a href="http://www.ezforum.com" title="Forum Software">ezForum</a></div>
+				<div class="smalltext"><a href="https://www.ezforum.com" title="Forum Software">ezForum</a></div>
 			</div></div>
 		</div>
 	</body>

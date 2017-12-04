@@ -113,7 +113,7 @@ function _adcopy_http_post($host, $path, $data, $port = 80) {
 
  * @return string - The HTML to be embedded in the user's form.
  */
-function solvemedia_get_html ($pubkey, $error = null, $use_ssl = false)
+function solvemedia_get_html ($pubkey, $error = null, $use_ssl = true)
 {
 	if ($pubkey == null || $pubkey == '') {
 		die ("To use solvemedia you must get an API key from <a href='" . ADCOPY_SIGNUP . "'>" . ADCOPY_SIGNUP . "</a>");

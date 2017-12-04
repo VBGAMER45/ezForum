@@ -52,7 +52,7 @@ $timeLimitThreshold = 3;
 $upgrade_path = dirname(__FILE__);
 $upgradeurl = $_SERVER['PHP_SELF'];
 // Where the images etc are kept.
-$smfsite = 'http://www.ezforum.com/forums';
+$smfsite = 'https://www.ezforum.com/forums';
 // Disable the need for admins to login?
 $disable_security = 0;
 // How long, in seconds, must admin be inactive to allow someone else to run?
@@ -3269,7 +3269,7 @@ function template_upgrade_below()
 		</div>
 	</div></div>
 	<div id="footer_section"><div class="frame" style="height: 40px;">
-		<div class="smalltext"><a href="http://www.ezforum.com" title="Free Forum Software" target="_blank" class="new_win">ezForum &copy;2014</a></div>
+		<div class="smalltext"><a href="https://www.ezforum.com" title="Free Forum Software" target="_blank" class="new_win">ezForum &copy;2017</a></div>
 	</div></div>
 	</body>
 </html>';
@@ -3339,7 +3339,7 @@ function template_welcome_message()
 	global $upcontext, $modSettings, $upgradeurl, $disable_security, $settings, $txt;
 
 	echo '
-		<script type="text/javascript" src="http://www.ezforum.com/ezc/current-version.js?version=' . EZFORUM_VERSION . '"></script>
+		<script type="text/javascript" src="https://www.ezforum.com/ezc/current-version.js?version=' . EZFORUM_VERSION . '"></script>
 		<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 			<h3>', sprintf($txt['upgrade_ready_proceed'], EZFORUM_VERSION), '</h3>
 	<form action="', $upcontext['form_url'], '" method="post" name="upform" id="upform" ', empty($upcontext['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $upcontext['rid'] . '\');"' : '', '>
@@ -4213,7 +4213,7 @@ function template_upgrade_complete()
 			<img src="', $boardurl, '/Themes/default/images/blank.gif" alt="" id="delete_upgrader" /><br />';
 
 	echo '<br />
-			If you had any problems with this upgrade, or have any problems using ezForum, please don\'t hesitate to <a href="http://www.ezforum.com/forums/index.php">look to us for assistance</a>.<br />
+			If you had any problems with this upgrade, or have any problems using ezForum, please don\'t hesitate to <a href="https://www.ezforum.com/forums/index.php">look to us for assistance</a>.<br />
 			<br />
 			Best of luck,<br />
 			ezForum';

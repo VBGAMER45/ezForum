@@ -487,7 +487,7 @@ function ViewMemberlist()
 				'type' => 'string'
 			),
 			'messenger' => array(
-				'db_fields' => array('icq', 'aim', 'yim', 'msn'),
+				'db_fields' => array('icq','yim'),
 				'type' => 'string'
 			)
 		);
@@ -824,7 +824,7 @@ function ViewMemberlist()
 					<option value="ban_names_mails">' . $txt['admin_ban_usernames_and_emails'] . '</option>
 					<option value="ban_ips">' . $txt['admin_ban_userips'] . '</option>
 				</select>
-				<select onchange="if(this.value==-1){if(!confirm(\'' . $txt['confirm_remove_membergroup'] . '\')){this.value=0;}}" name="new_membergroup" id="new_membergroup" disabled="disabled">' . 
+				<select onchange="if(this.value==-1){if(!confirm(\'' . $txt['confirm_remove_membergroup'] . '\')){this.value=0;}}" name="new_membergroup" id="new_membergroup" disabled="disabled">' .
 				createGroupsList() . '</select>
 				<select name="maction_remove_type" id="maction_remove_type" disabled="disabled">
 					<option value="none">' . $txt['deleteAccount_none'] . '</option>

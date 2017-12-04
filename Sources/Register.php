@@ -78,7 +78,7 @@ function Register($reg_errors = array())
 				fatal_lang_error('registration_disabled', false);
 		}
 	}
-        
+
 
 	loadLanguage('Login');
 	loadTemplate('Register');
@@ -296,7 +296,7 @@ function Register2($verifiedOpenID = false)
 	// Collect all extra registration fields someone might have filled in.
 	$possible_strings = array(
 		'website_url', 'website_title',
-		'aim', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest',
+		'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest',
 		'location', 'birthdate',
 		'time_format',
 		'buddy_list',
@@ -368,7 +368,7 @@ function Register2($verifiedOpenID = false)
 	if (!empty($modSettings['registration_fields']))
 	{
 		// But we might want some of them if the admin asks for them.
-		$standard_fields = array('icq', 'msn', 'aim', 'yim', 'location', 'gender');
+		$standard_fields = array('icq', 'yim', 'location', 'gender');
 		$reg_fields = explode(',', $modSettings['registration_fields']);
 
 		$exclude_fields = array_diff($standard_fields, $reg_fields);
@@ -381,14 +381,14 @@ function Register2($verifiedOpenID = false)
 		$exclude_fields[] = 'signature';
 	}
 	else
-		$exclude_fields = array('signature', 'icq', 'msn', 'aim', 'yim', 'location', 'gender', 'website_url', 'website_title');
+		$exclude_fields = array('signature', 'icq', 'yim', 'location', 'gender', 'website_url', 'website_title');
 
 	$possible_strings = array_diff($possible_strings, $exclude_fields);
 	$possible_ints = array_diff($possible_ints, $exclude_fields);
 	$possible_floats = array_diff($possible_floats, $exclude_fields);
 	$possible_bools = array_diff($possible_bools, $exclude_fields);
-		
-		
+
+
 
 	// Set the options needed for registration.
 	$regOptions = array(
@@ -490,7 +490,7 @@ function Register2($verifiedOpenID = false)
 		foreach ($custom_field_errors as $error)
 			$reg_errors[] = vsprintf($txt['error_' . $error[0]], $error[1]);
 	}
-	
+
 	// Check if they are a spammer.
 	if (empty($reg_errors))
 	{
@@ -500,25 +500,25 @@ function Register2($verifiedOpenID = false)
 			$spamCheckEmail = $_POST['email'];
 			$spamCheckIP = $_SERVER['REMOTE_ADDR'];
 			$spamCheckUser = $_POST['user'];
-			
+
 			if ($modSettings['stopforumspam_checkip'] == false)
 				$spamCheckIP = '';
-				
+
 			if ($modSettings['stopforumspam_checkemail'] == false)
 				$spamCheckEmail = '';
-				
+
 			if ($modSettings['stopforumspam_checkusername'] == false)
 				$spamCheckUser = '';
-				
+
 			if (CheckSpam_StopForumSpam($spamCheckIP,$spamCheckEmail,$spamCheckUser))
 			{
 				// Spammer!!! noooo!!
-				
+
 				$reg_errors[] = $txt['stopforumspam_err_youareaspammer'];
 			}
-			
-			
-			
+
+
+
 		}
 	}
 
@@ -549,8 +549,8 @@ function Register2($verifiedOpenID = false)
 		$regOptions['openid'] = !empty($_POST['openid_identifier']) ? $_POST['openid_identifier'] : $_SESSION['openid']['openid_uri'];
 	}
 
-	
-	
+
+
 	$memberID = registerMember($regOptions, true);
 
 	// What there actually an error of some kind dear boy?

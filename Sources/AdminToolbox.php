@@ -190,7 +190,7 @@ function RecountAllMemberPosts()
 		)
 	);
 	$total_rows = $smcFunc['db_num_rows']($request);
-	
+
 	// Update the count for this group
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 	{
@@ -1188,16 +1188,16 @@ function MergeMembers()
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$current_pms[$row['id_member']][] = $row['id_pm'];
 		$smcFunc['db_free_result']($request);
-		
+
 		// If they don't already have them, they get them, otherwise they loose them
 		$current_dst_pms = isset($current_pms[$dstid]) ? $current_pms[$dstid] : array();
 		$current_src_pms = isset($current_pms[$srcid]) ? $current_pms[$srcid] : array();
-		
+
 		// all of the src pms that the dst does not have or one they do already have
-		$move_pms = array_diff($current_src_pms, $current_dst_pms); 
+		$move_pms = array_diff($current_src_pms, $current_dst_pms);
 		$remove_pms = array_intersect($current_src_pms, $current_dst_pms);
-		
-		// And now you get the ones you do not already have 
+
+		// And now you get the ones you do not already have
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}pm_recipients
 			SET id_member = {int:dstid}
@@ -1209,7 +1209,7 @@ function MergeMembers()
 				'move_pms' => implode(',', $move_pms),
 			)
 		);
-		
+
 		// if we are not removing this user, then we need to adjust the pm totals
 		if (empty($_SESSION['deluser']))
 		{
@@ -1223,7 +1223,7 @@ function MergeMembers()
 					'remove_pms' => implode(',', $remove_pms),
 				)
 			);
-			
+
 			updateMemberData($srcid, array('instant_messages' => 0, 'unread_messages' => 0));
 		}
 	}
@@ -1347,9 +1347,7 @@ function MergeMembers()
 		$new_data['website_url'] = empty($user_profile[$dstid]['website_url']) ? $user_profile[$srcid]['website_url'] : $user_profile[$dstid]['website_url'];
 		$new_data['location'] = empty($user_profile[$dstid]['location']) ? $user_profile[$srcid]['location'] : $user_profile[$dstid]['location'];
 		$new_data['icq'] = empty($user_profile[$dstid]['icq']) ? $user_profile[$srcid]['icq'] : $user_profile[$dstid]['icq'];
-		$new_data['aim'] = empty($user_profile[$dstid]['aim']) ? $user_profile[$srcid]['aim'] : $user_profile[$dstid]['aim'];
 		$new_data['yim'] = empty($user_profile[$dstid]['yim']) ? $user_profile[$srcid]['yim'] : $user_profile[$dstid]['yim'];
-		$new_data['msn'] = empty($user_profile[$dstid]['msn']) ? $user_profile[$srcid]['msn'] : $user_profile[$dstid]['msn'];
 		$new_data['hide_email'] = empty($user_profile[$dstid]['hide_email']) ? $user_profile[$srcid]['hide_email'] : $user_profile[$dstid]['hide_email'];
 		$new_data['show_online'] = empty($user_profile[$dstid]['show_online']) ? $user_profile[$srcid]['show_online'] : $user_profile[$dstid]['show_online'];
 		$new_data['avatar'] = empty($user_profile[$dstid]['avatar']) ? $user_profile[$srcid]['avatar'] : $user_profile[$dstid]['avatar'];

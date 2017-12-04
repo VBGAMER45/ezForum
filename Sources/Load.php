@@ -156,10 +156,10 @@ function reloadSettings()
 		while ($row = $smcFunc['db_fetch_row']($request))
 			$modSettings[$row[0]] = $row[1];
 		$smcFunc['db_free_result']($request);
-        
+
         if (empty($modSettings['pretty_action_array']))
             $modSettings['pretty_action_array'] = serialize(array());
-            
+
           if (empty($modSettings['pretty_board_urls']))
             $modSettings['pretty_board_urls'] = serialize(array());
 
@@ -181,7 +181,7 @@ function reloadSettings()
 	// Set a list of common functions.
 	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
 	$ent_check = empty($modSettings['disableEntityCheck']) ? array('preg_replace_callback(\'~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~\', \'entity_fix__callback\', ', ')') : array('', '');
-    
+
 	// Preg_replace can handle complex characters only for higher PHP versions.
 	$space_chars = $utf8 ? (@version_compare(PHP_VERSION, '4.3.3') != -1 ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0';
 
@@ -324,7 +324,7 @@ function reloadSettings()
 		foreach ($integration_settings as $hook => $function)
 			add_integration_function($hook, $function, false);
 	}
-	
+
 	// Tagging System
 	require_once($sourcedir . "/TaggingSystem.php");
 
@@ -1240,23 +1240,11 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'link' => '<a class="icq new_win" href="https://www.icq.com/whitepages/about_me.php?uin=' . $profile['icq'] . '" target="_blank" title="' . $txt['icq_title'] . ' - ' . $profile['icq'] . '"><img src="https://status.icq.com/online.gif?img=5&amp;icq=' . $profile['icq'] . '" alt="' . $txt['icq_title'] . ' - ' . $profile['icq'] . '" width="18" height="18" /></a>',
 			'link_text' => '<a class="icq extern" href="https://www.icq.com/whitepages/about_me.php?uin=' . $profile['icq'] . '" title="' . $txt['icq_title'] . ' - ' . $profile['icq'] . '">' . $profile['icq'] . '</a>',
 		) : array('name' => '', 'add' => '', 'href' => '', 'link' => '', 'link_text' => ''),
-		'aim' => $profile['aim'] != '' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
-			'name' => $profile['aim'],
-			'href' => 'aim:goim?screenname=' . urlencode(strtr($profile['aim'], array(' ' => '%20'))) . '&amp;message=' . $txt['aim_default_message'],
-			'link' => '<a class="aim" href="aim:goim?screenname=' . urlencode(strtr($profile['aim'], array(' ' => '%20'))) . '&amp;message=' . $txt['aim_default_message'] . '" title="' . $txt['aim_title'] . ' - ' . $profile['aim'] . '"><img src="' . $settings['images_url'] . '/aim.gif" alt="' . $txt['aim_title'] . ' - ' . $profile['aim'] . '" /></a>',
-			'link_text' => '<a class="aim" href="aim:goim?screenname=' . urlencode(strtr($profile['aim'], array(' ' => '%20'))) . '&amp;message=' . $txt['aim_default_message'] . '" title="' . $txt['aim_title'] . ' - ' . $profile['aim'] . '">' . $profile['aim'] . '</a>'
-		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'yim' => $profile['yim'] != '' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['yim'],
 			'href' => 'https://edit.yahoo.com/config/send_webmesg?.target=' . urlencode($profile['yim']),
 			'link' => '<a class="yim" href="https://edit.yahoo.com/config/send_webmesg?.target=' . urlencode($profile['yim']) . '" title="' . $txt['yim_title'] . ' - ' . $profile['yim'] . '"><img src="https://opi.yahoo.com/online?u=' . urlencode($profile['yim']) . '&amp;m=g&amp;t=0" alt="' . $txt['yim_title'] . ' - ' . $profile['yim'] . '" /></a>',
 			'link_text' => '<a class="yim" href="https://edit.yahoo.com/config/send_webmesg?.target=' . urlencode($profile['yim']) . '" title="' . $txt['yim_title'] . ' - ' . $profile['yim'] . '">' . $profile['yim'] . '</a>'
-		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
-		'msn' => $profile['msn'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
-			'name' => $profile['msn'],
-			'href' => 'https://members.msn.com/' . $profile['msn'],
-			'link' => '<a class="msn new_win" href="https://members.msn.com/' . $profile['msn'] . '" title="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '"><img src="' . $settings['images_url'] . '/msntalk.gif" alt="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '" /></a>',
-			'link_text' => '<a class="msn new_win" href="https://members.msn.com/' . $profile['msn'] . '" title="' . $txt['msn_title'] . ' - ' . $profile['msn'] . '">' . $profile['msn'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'skype' => $profile['skype'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['skype'],
@@ -1266,9 +1254,9 @@ function loadMemberContext($user, $display_custom_fields = false)
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'facebook' => $profile['facebook'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['facebook'],
-			'href' => 'http://www.facebook.com/'.$profile['facebook'],
-			'link' => '<a href="http://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '"><img src="' . $settings['images_url'] . '/facebook.png" alt="Facebook" border="0" /></a>',
-			'link_text' => '<a href="http://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '">' . $profile['facebook'] . '</a>'
+			'href' => 'https://www.facebook.com/'.$profile['facebook'],
+			'link' => '<a href="https://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '"><img src="' . $settings['images_url'] . '/facebook.png" alt="Facebook" border="0" /></a>',
+			'link_text' => '<a href="https://www.facebook.com/' . $profile['facebook'] . '" target="_blank" title="' . $txt['smi_facebook_title'] . ' - ' . $profile['facebook'] . '">' . $profile['facebook'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'myspace' => $profile['myspace'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['myspace'],
@@ -1278,27 +1266,27 @@ function loadMemberContext($user, $display_custom_fields = false)
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'twitter' => $profile['twitter'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['twitter'],
-			'href' => 'http://www.twitter.com/'.$profile['twitter'],
-			'link' => '<a href="http://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '"><img src="' . $settings['images_url'] . '/twitter.png" alt="Twitter" border="0" /></a>',
-			'link_text' => '<a href="http://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '">' . $profile['twitter'] . '</a>'
+			'href' => 'https://www.twitter.com/'.$profile['twitter'],
+			'link' => '<a href="https://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '"><img src="' . $settings['images_url'] . '/twitter.png" alt="Twitter" border="0" /></a>',
+			'link_text' => '<a href="https://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '">' . $profile['twitter'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'googleplus' => $profile['googleplus'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['googleplus'],
-			'href' => 'http://www.googleplus.com/'.$profile['googleplus'],
+			'href' => 'https://www.googleplus.com/'.$profile['googleplus'],
 			'link' => '<a href="https://plus.google.com/' . $profile['googleplus'] . '" target="_blank" title="' . $txt['smi_googleplus_title'] . ' - ' . $profile['googleplus'] . '"><img src="' . $settings['images_url'] . '/googleplus.png" alt="Google+" border="0" /></a>',
 			'link_text' => '<a href="https://plus.google.com/' . $profile['googleplus'] . '" target="_blank" title="' . $txt['smi_googleplus_title'] . ' - ' . $profile['googleplus'] . '">' . $profile['googleplus'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'linkedin' => $profile['linkedin'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['linkedin'],
-			'href' => 'http://www.linkedin.com/'.$profile['linkedin'],
+			'href' => 'https://www.linkedin.com/'.$profile['linkedin'],
 			'link' => '<a href="' . $profile['linkedin'] . '" target="_blank" title="' . $txt['smi_linkedin_title'] . '"><img src="' . $settings['images_url'] . '/linkedin.png" alt="LinkedIn" border="0" /></a>',
 			'link_text' => '<a href="http://www.linkedin.com/' . $profile['linkedin'] . '" target="_blank" title="' . $txt['smi_linkedin_title'] . '">' . $profile['linkedin'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'youtube' => $profile['youtube'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['youtube'],
-			'href' => 'http://www.youtube.com/'.$profile['youtube'],
-			'link' => '<a href="http://www.youtube.com/' . $profile['youtube'] . '" target="_blank" title="' . $txt['smi_youtube_title'] . ' - ' . $profile['youtube'] . '"><img src="' . $settings['images_url'] . '/youtube.png" alt="Youtube" border="0" /></a>',
-			'link_text' => '<a href="http://www.youtube.com/' . $profile['youtube'] . '" target="_blank" title="' . $txt['smi_youtube_title'] . ' - ' . $profile['youtube'] . '">' . $profile['youtube'] . '</a>'
+			'href' => 'https://www.youtube.com/'.$profile['youtube'],
+			'link' => '<a href="https://www.youtube.com/' . $profile['youtube'] . '" target="_blank" title="' . $txt['smi_youtube_title'] . ' - ' . $profile['youtube'] . '"><img src="' . $settings['images_url'] . '/youtube.png" alt="Youtube" border="0" /></a>',
+			'link_text' => '<a href="https://www.youtube.com/' . $profile['youtube'] . '" target="_blank" title="' . $txt['smi_youtube_title'] . ' - ' . $profile['youtube'] . '">' . $profile['youtube'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'deviantart' => $profile['deviantart'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['deviantart'],
@@ -1356,7 +1344,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// First do a quick run through to make sure there is something to be shown.
 	$memberContext[$user]['has_messenger'] = false;
-	foreach (array('icq', 'msn', 'aim', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest') as $messenger)
+	foreach (array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest') as $messenger)
 	{
 		if (!isset($context['disabled_fields'][$messenger]) && !empty($memberContext[$user][$messenger]['link']))
 		{
@@ -1469,7 +1457,7 @@ function detectBrowser()
 	// Add phone and tablet $context, just in case people want it.
 	$context['browser']['is_mobile'] = $context['browser']['is_iphone'] || $context['browser']['is_ie_mobile'] || $context['browser']['is_android_phone'] || $context['browser']['is_blackberry'] || $context['browser']['is_symbian'] || $context['browser']['is_netfront'] || $context['browser']['is_palm'] || $context['browser']['is_web_os'] || $context['browser']['is_opera_mobi'] || $context['browser']['is_opera_mini'] || $context['browser']['is_fennec'];
 	$context['browser']['is_tablet'] = $context['browser']['is_ipad'] || $context['browser']['is_android_tablet'] || $context['browser']['is_ie_tablet'];
-    
+
 	// This isn't meant to be reliable, it's just meant to catch most bots to prevent PHPSESSID from showing up.
 	$context['browser']['possibly_robot'] = !empty($user_info['possibly_robot']);
 
@@ -2875,8 +2863,8 @@ function cache_put_data($key, $value, $ttl = 120)
 
 	if (function_exists('apc_delete_file'))
    		@apc_delete_file($cachedir . '/data_' . $key . '.php');
-        
- 
+
+
 }
 
 function cache_get_data($key, $ttl = 120)

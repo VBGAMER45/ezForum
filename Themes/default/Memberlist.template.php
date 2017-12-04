@@ -94,20 +94,14 @@ function template_main()
 			echo '
 					<td class="windowbg2">', $member['icq']['link'], '</td>';
 
-		// AIM?
-		if (!isset($context['disabled_fields']['aim']))
-			echo '
-					<td class="windowbg2">', $member['aim']['link'], '</td>';
+
 
 		// YIM?
 		if (!isset($context['disabled_fields']['yim']))
 			echo '
 					<td class="windowbg2">', $member['yim']['link'], '</td>';
 
-		// MSN?
-		if (!isset($context['disabled_fields']['msn']))
-			echo '
-					<td class="windowbg2">', $member['msn']['link'], '</td>';
+
 
 		// Group and date.
 		echo '

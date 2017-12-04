@@ -178,18 +178,6 @@ function loadProfileFields($force_reload = false)
 	*/
 
 	$profile_fields = array(
-		'aim' => array(
-			'type' => 'text',
-			'label' => $txt['aim'],
-			'subtext' => $txt['your_aim'],
-			'size' => 24,
-			'value' => strtr(empty($cur_profile['aim']) ? '' : $cur_profile['aim'], '+', ' '),
-			'permission' => 'profile_extra',
-			'input_validate' => create_function('&$value', '
-				$value = strtr($value, \' \', \'+\');
-				return true;
-			'),
-		),
 		'avatar_choice' => array(
 			'type' => 'callback',
 			'callback_func' => 'avatar_select',
@@ -469,23 +457,6 @@ function loadProfileFields($force_reload = false)
 					}
 				}
 				return false;
-			'),
-		),
-		'msn' => array(
-			'type' => 'text',
-			'label' => $txt['msn'],
-			'subtext' => $txt['msn_email_address'],
-			'size' => 24,
-			'permission' => 'profile_extra',
-			'input_validate' => create_function('&$value', '
-				global $cur_profile;
-				// Make sure the msn one is an email address, not something like \'none\' :P.
-				if ($value != \'\' && preg_match(\'~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\\\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~\', $value) == 0)
-				{
-					$value = $cur_profile[\'msn\'];
-					return false;
-				}
-				return true;
 			'),
 		),
 		'passwrd1' => array(
@@ -835,8 +806,8 @@ function loadProfileFields($force_reload = false)
 			'input_attr' => array('maxlength="32"'),
 			'permission' => 'profile_extra',
 		),
-		
-		
+
+
 	);
 
 	$disabled_fields = !empty($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
@@ -938,22 +909,22 @@ function setupProfileContext($fields)
 
 	// Free up some memory.
 	unset($profile_fields);
-	
+
 	// Login Security
 	$allowedips = '';
-		
+
 	if ($modSettings['ls_allow_ip_security'])
 	{
 		require_once($sourcedir . '/Subs-LoginSecurity.php');
-			
+
 		if (isset($_REQUEST['allowedips']))
 			$allowedips = $_REQUEST['allowedips'];
-			
-			
+
+
 		UpdateAllowedIPs($context['id_member'], $allowedips);
 	}
-		
-	
+
+
 }
 
 // Save the profile changes.
@@ -1688,34 +1659,34 @@ function account($memID)
 	loadThemeOptions($memID);
 	if (allowedTo(array('profile_identity_own', 'profile_identity_any')))
 		loadCustomFields($memID, 'account');
-		
+
 
 	// Login Security
 	$allowedips = '';
 
 	if ($modSettings['ls_allow_ip_security'])
 	{
-			
+
 		$dbresult = $smcFunc['db_query']('',"
-			SELECT 
-				allowedips 
+			SELECT
+				allowedips
 			FROM {db_prefix}login_security
 			WHERE ID_MEMBER = " . $memID);
 		$numRows = $smcFunc['db_num_rows']($dbresult);
 		// We are not going to do anything since they don't have any settings defined
 		if ($numRows != 0)
 		{
-				
+
 			$ipRow = $smcFunc['db_fetch_assoc']($dbresult);
 			$allowedips = $ipRow['allowedips'];
 		}
-		
+
 		$smcFunc['db_free_result']($dbresult);
-			
+
 		$context['allowedips'] = $allowedips;
-			
+
 	}
-		
+
 
 	$context['sub_template'] = 'edit_options';
 	$context['page_desc'] = $txt['account_info'];
@@ -1746,7 +1717,7 @@ function forumProfile($memID)
 		array(
 			'avatar_choice', 'hr', 'personal_text', 'hr',
 			'bday1', 'location', 'gender', 'hr',
-			'icq', 'aim', 'msn', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'hr',
+			'icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'hr',
 			'usertitle', 'signature', 'hr',
 			'karma_good', 'hr',
 			'website_title', 'website_url',
