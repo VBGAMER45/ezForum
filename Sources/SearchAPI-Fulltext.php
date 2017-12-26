@@ -42,7 +42,7 @@ class fulltext_search
 	// What is the minimum word length?
 	protected $min_word_length = 4;
 	// What databases support the fulltext index?
-	protected $supported_databases = array('mysql','mysqli');
+	protected $supported_databases = array('mysql');
 
 	public function __construct()
 	{

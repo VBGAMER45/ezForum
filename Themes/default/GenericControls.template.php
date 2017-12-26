@@ -327,13 +327,9 @@ function template_control_verification($verify_id, $display_type = 'all', $reset
 			{
 				require_once("$librarydir/recaptchalib.php");
 				
-				require("$librarydir/ralib/ReCaptchaToken.php");
 
-				$reconfig = array('site_key' => $modSettings['recaptcha_public_key'], 'site_secret' => $modSettings['recaptcha_private_key']);
-				$recaptchaToken = new \ReCaptchaSecureToken\ReCaptchaToken($reconfig);
-				$secureToken = $recaptchaToken->secureToken($context['session_id']);
 
-				echo '<div class="g-recaptcha" data-sitekey="', $modSettings['recaptcha_public_key'], '" data-stoken="' .  $secureToken  . '"></div>
+				echo '<div class="g-recaptcha" data-sitekey="', $modSettings['recaptcha_public_key'], '"></div>
 				            <script type="text/javascript"
 				                    src="https://www.google.com/recaptcha/api.js?hl=en">
 				            </script>
