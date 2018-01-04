@@ -324,17 +324,18 @@ function resizeImageFile($source, $destination, $max_width, $max_height, $prefer
 		'2' => 'jpeg',
 		'3' => 'png',
 		'6' => 'bmp',
-		'15' => 'wbmp'
+		'15' => 'wbmp',
+		'18' => 'webp',
 	);
 
 	require_once($sourcedir . '/Subs-Package.php');
-	@ini_set('memory_limit', '90M');
+	@ini_set('memory_limit', '256M');
 
 	$success = false;
 
 	// Get the image file, we have to work with something after all
 	$fp_destination = fopen($destination, 'wb');
-	if ($fp_destination && substr($source, 0, 7) == 'http://')
+	if ($fp_destination && (substr($source, 0, 7) == 'http://' || substr($source, 0, 8) == 'https://'))
 	{
 		$fileContents = fetch_web_data($source);
 
