@@ -211,7 +211,7 @@ function template_geoIP()
 
 		// Load the scripts so google starts to render this page
 		echo '
-							<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false" ></script>
+							<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false" ></script>
 							<script type="text/javascript" src="', $scripturl, '?action=geoIP;sa=.js"></script>';
 
 		// Close it up jim
