@@ -438,7 +438,11 @@ function postTags()
 	if (!empty($modSettings['tag_enabled']))
 	{
 		// Step 1: Select tags that are duplicateds..
-        $reviewed_tags = careTagString($_POST['tags_news']);
+        if (isset($_POST['tags_news']))
+         $reviewed_tags = careTagString($_POST['tags_news']);
+        else
+            $reviewed_tags = '';
+
 		if (!empty($reviewed_tags))
 		{
         
@@ -588,10 +592,11 @@ function taggingRelated()
 function careTagString($tag_array)
 {
     $review = array();
-    foreach ($tag_array as $tag)
-    {
-        $tag = strtolower($tag);
-        $review[] = preg_replace('/[^a-z0-9\-]/', '', $tag);
-    }
+    if (!empty($tag_array))
+        foreach ($tag_array as $tag)
+        {
+            $tag = strtolower($tag);
+            $review[] = preg_replace('/[^a-z0-9\-]/', '', $tag);
+        }
     return $review;
 }

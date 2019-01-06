@@ -233,5 +233,6 @@ $txt['php_upload_error_7'] = 'Failed to write file to disk.';
 $txt['php_upload_error_8'] = 'A PHP extension stopped the file upload.';
 // End Kays
 
+$txt['disable_title_convert_url'] = 'Do not auto title the links in this post';
 
 ?>
