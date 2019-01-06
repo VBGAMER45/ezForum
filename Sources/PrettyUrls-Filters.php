@@ -78,6 +78,16 @@ function pretty_rewrite_buffer($buffer)
 			if (substr($url_id,0,10) == 'javascript')
 				continue;
 
+			if (substr($url_id,0,11) == 'android-app')
+				continue;
+					
+			if (substr($url_id,0,7) == 'http://')
+				continue;
+				
+			if (substr($url_id,0,8) == 'https://')
+				continue;	
+				
+				
 			$urls_query[] = $url_id;
 			$uncached_urls[$url_id] = array(
 				'url' => $match,
@@ -188,6 +198,16 @@ function pretty_rewrite_buffer_fromcache($buffer)
 				continue;
 			if (substr($url_id,0,10) == 'javascript')
 				continue;
+
+			if (substr($url_id,0,11) == 'android-app')
+				continue;
+				
+			if (substr($url_id,0,7) == 'http://')
+				continue;
+				
+			if (substr($url_id,0,8) == 'https://')
+				continue;		
+				
 
 			$urls_query[] = $url_id;
 			$uncached_urls[$url_id] = array(
@@ -318,6 +338,10 @@ function pretty_urls_actions_filter($urls)
 	$skip_actions = array();
 	if (isset($modSettings['pretty_skipactions']))
 		$skip_actions = explode(",",$modSettings['pretty_skipactions']);
+		
+	// Skip the verificatoin code action	
+	$skip_actions[] = 'verificationcode';
+		
 
 	$pattern = '`' . $scripturl . '(.*)action=([^;]+)`S';
 	$replacement = $boardurl . '/$2/$1';
@@ -362,6 +386,15 @@ function pretty_urls_topic_filter($urls)
 				$query_data[] = $urls[$url_id]['topic_id'];
 			}
 	}
+
+
+    // Fix for issue with non latin characters in topics if mysql default-character-set is not utf8
+    global $db_character_set;
+    if (!empty($db_character_set))
+        $smcFunc['db_query']('set_character_set', '
+            SET NAMES ' . $db_character_set,
+            array()
+        );
 
 	//	Query the database with these topic IDs
 	if (count($query_data) != 0)
@@ -432,14 +465,17 @@ function pretty_urls_topic_filter($urls)
 			}
 
 			//	Find any duplicates of existing URLs
-			$query = $smcFunc['db_query']('', '
-				SELECT pretty_url
-				FROM {db_prefix}pretty_topic_urls
-				WHERE pretty_url IN ({array_string:new_urls})',
-				array('new_urls' => $query_check));
-			while ($row = $smcFunc['db_fetch_assoc']($query))
-				$existing_urls[] = $row['pretty_url'];
-			$smcFunc['db_free_result']($query);
+            if (!empty($query_check))
+            {
+    			$query = $smcFunc['db_query']('', '
+    				SELECT pretty_url
+    				FROM {db_prefix}pretty_topic_urls
+    				WHERE pretty_url IN ({array_string:new_urls})',
+    				array('new_urls' => $query_check));
+    			while ($row = $smcFunc['db_fetch_assoc']($query))
+    				$existing_urls[] = $row['pretty_url'];
+    			$smcFunc['db_free_result']($query);
+            }
 
 			//	Finalise the new URLs ...
 			foreach ($new_topics as $row)
