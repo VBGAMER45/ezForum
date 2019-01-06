@@ -1,7 +1,3 @@
-<Files ~ "\.php~$">
-Order allow,deny
-Deny from all
-</Files>
 
 <IfModule mod_security.c>
 	# Turn off mod_security filtering.  ezForum is a big boy, it doesn\'t need its hands held.
