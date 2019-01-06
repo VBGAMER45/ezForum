@@ -110,7 +110,9 @@ function ModifyFeatureSettings()
 		'actionedit' => 'CustomActionEdit',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
+        'dlinks' => 'ModifydlinksSettings',
 	);
+
 
 	loadGeneralSettingParameters($subActions, 'basic');
 
@@ -196,7 +198,6 @@ function ModifyModSettings()
 	require_once($sourcedir . '/Subs-IntegrationHooks.php');
 
 	$subActions['hooks'] = 'list_integration_hooks';
-    $sub_actions['dlinks'] = 'ModifydlinksSettings';
 	$context[$context['admin_menu_name']]['tab_data']['tabs']['hooks'] = array();
 
 	// Make it easier for mods to add new areas.

@@ -139,6 +139,7 @@ function AdminMain()
 						'sig' => array($txt['signature_settings_short']),
                         'action' => array($txt['custom_action_shorttitle'], 'admin_forum'),
 						'profile' => array($txt['custom_profile_shorttitle'], 'enabled' => in_array('cp', $context['admin_features'])),
+                        'dlinks' => array($txt['mods_cat_modifications_dlinks']),
 					),
 				),
 				'securitysettings' => array(
@@ -233,7 +234,6 @@ function AdminMain()
 					'subsections' => array(
 						'general' => array($txt['mods_cat_modifications_misc']),
 						'hooks' => array($txt['hooks_title_list']),
-                        'dlinks' => array($txt['mods_cat_modifications_dlinks']),
 						// Mod Authors for a "ADD AFTER" on this line. Ensure you end your change with a comma. For example:
 						// 'shout' => array($txt['shout']),
 						// Note the comma!! The setting with automatically appear with the first mod to be added.
