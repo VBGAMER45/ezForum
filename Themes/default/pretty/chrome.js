@@ -30,7 +30,7 @@ chrome.checkVersion = function()
 	if (chrome.latestVersion)
 	{
 		var chromeLatest = document.getElementById('chrome_latest');
-		var partial = chrome.latestVersion
+		var partial = chrome.latestVersion;
 
 		//	Check if we're up to date
 		if (chrome.currentVersion != chrome.latestVersion)

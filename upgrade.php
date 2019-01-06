@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2012-2013 ezForum
+ * Copyright 2012-2019 ezForum
  * License: BSD
  *
  * Based on:
@@ -22,8 +22,8 @@ define('SMF_LANG_VERSION', '2.0');
 define('SMF', 1);
 define('EZF', 1);
 
-$GLOBALS['required_php_version'] = '5.0';
-$GLOBALS['required_mysql_version'] = '4.0.18';
+$GLOBALS['required_php_version'] = '5.4';
+$GLOBALS['required_mysql_version'] = '5.0';
 
 $databases = array(
 	'mysql' => array(
@@ -51,8 +51,7 @@ $databases = array(
 $timeLimitThreshold = 3;
 $upgrade_path = dirname(__FILE__);
 $upgradeurl = $_SERVER['PHP_SELF'];
-// Where the images etc are kept.
-$smfsite = 'https://www.ezforum.com/forums';
+
 // Disable the need for admins to login?
 $disable_security = 0;
 // How long, in seconds, must admin be inactive to allow someone else to run?
@@ -3130,7 +3129,7 @@ function template_chmod()
 
 function template_upgrade_above()
 {
-	global $modSettings, $txt, $smfsite, $settings, $upcontext, $upgradeurl;
+	global $modSettings, $txt, $settings, $upcontext, $upgradeurl;
 
 	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"', $upcontext['right_to_left'] ? ' dir="rtl"' : '', '>

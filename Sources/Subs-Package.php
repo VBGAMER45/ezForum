@@ -2428,7 +2428,6 @@ function parseBoardMod($file, $testing = true, $undo = false, $theme_paths = arr
 					'search_original' => $working_search,
 					'replace_original' => $replace_with,
 					'position' => $code_match[1] == 'replace' ? 'replace' : ($code_match[1] == 'add' || $code_match[1] == 'add after' ? 'before' : 'after'),
-					'is_custom' => $is_custom,
 					'failed' => true,
 				);
 

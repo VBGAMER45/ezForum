@@ -460,13 +460,25 @@ function removeTopics($topics, $decreasePostCount = true, $ignoreRecycling = fal
     
     
     // Delete edit history of message
-		$smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}messages_history
-			WHERE id_msg = {int:id_msg}',
+
+		$request = $smcFunc['db_query']('', '
+			SELECT id_msg 
+			FROM {db_prefix}messages
+			WHERE id_topic IN ({array_int:topics})',
 			array(
-				'id_msg' => $message,
+				'topics' => $topics,
 			)
 		);
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+        {
+            $smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}messages_history
+			WHERE id_msg = {int:id_msg}',
+                array(
+                    'id_msg' => $row['id_msg'],
+                )
+            );
+        }
 
 	// Delete possible search index entries.
 	if (!empty($modSettings['search_custom_index_config']))

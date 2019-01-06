@@ -1594,7 +1594,7 @@ function loadAllPermissions($loadType = 'classic')
 
     global $sourcedir ;
     require_once($sourcedir . '/Mentions.php');
-    mentions_permissions(&$permissionGroups, &$permissionList,  &$leftPermissionGroups,  &$hiddenPermissions,  &$relabelPermissions);
+    mentions_permissions($permissionGroups, $permissionList,  $leftPermissionGroups,  $hiddenPermissions,  $relabelPermissions);
 
 
 	$context['permissions'] = array();

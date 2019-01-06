@@ -2461,7 +2461,7 @@ function createAttachment(&$attachmentOptions)
 // !!!
 function modifyPost(&$msgOptions, &$topicOptions, &$posterOptions)
 {
-	global $user_info, $modSettings, $smcFunc, $context;
+	global $user_info, $modSettings, $smcFunc, $context, $sourcedir;
 
 	$topicOptions['poll'] = isset($topicOptions['poll']) ? (int) $topicOptions['poll'] : null;
 	$topicOptions['lock_mode'] = isset($topicOptions['lock_mode']) ? $topicOptions['lock_mode'] : null;

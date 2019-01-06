@@ -34,7 +34,7 @@ function smf_NewsFader(oOptions)
 	this.iFadeIndex = -1;
 
 	// Percent of fade (-64 to 510).
-	this.iFadePercent = 510
+	this.iFadePercent = 510;
 
 	// Direction (in or out).
 	this.bFadeSwitch = false;

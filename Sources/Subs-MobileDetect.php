@@ -930,7 +930,7 @@ class uagent_info
 	 */
 	function DetectKindle()
 	{
-		if (stripos($this->useragent, $this->mobileStrings['deviceKindle']) > -1 && DetectAndroid() == false)
+		if (stripos($this->useragent, $this->mobileStrings['deviceKindle']) > -1 && $this->DetectAndroid() == false)
 			return true;
 		else
 			return false;

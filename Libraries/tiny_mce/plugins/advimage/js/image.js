@@ -201,7 +201,7 @@ var ImageDialog = {
 					break;
 
 				case 'hspace':
-					v = dom.getStyle(e, 'margin-left')
+					v = dom.getStyle(e, 'margin-left');
 					v2 = dom.getStyle(e, 'margin-right');
 
 					if (v && v == v2)
