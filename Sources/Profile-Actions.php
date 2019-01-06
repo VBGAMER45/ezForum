@@ -550,9 +550,9 @@ function deleteAccount2($profile_vars, $post_errors, $memID)
                                         FROM {db_prefix}members
                                         WHERE ID_MEMBER = $memID
                         LIMIT 1");
-                $userRow = mysql_fetch_assoc($request);
+                $userRow = $smcFunc['db_fetch_assoc']($request);
                
-                mysql_free_result($request);
+                $smcFunc['db_free_result']($request);
                 $_POST['user'] = $userRow['member_name'];
                 $_POST['ban_name'] = $_POST['user'] . date("d-m-Y");
                 $addBan = true;
