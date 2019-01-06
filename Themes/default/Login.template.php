@@ -83,7 +83,7 @@ function template_login()
 	template_oneall_social_login();
 			
 	echo '
-				<input type="hidden" name="hash_passwrd" value="" />
+				<input type="hidden" name="hash_passwrd" value="" /><input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</div>
 			<span class="lowerframe"><span></span></span>
 		</div></form>';
