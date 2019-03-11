@@ -4578,7 +4578,7 @@ function CheckSpam_StopForumSpam($ip = '', $email = '', $username = '')
 
 	if (!empty($spamOptions))
 	{
-		$data = fetch_web_data('http://www.stopforumspam.com/api?' . $spamOptions);
+		$data = fetch_web_data('http://api.stopforumspam.org/api?' . $spamOptions);
 
 		if (strpos($data, '<appears>yes</appears>') > 0)
 			return true;
