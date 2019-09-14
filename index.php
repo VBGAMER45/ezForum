@@ -37,7 +37,7 @@ define('EZF', 1);
 define('EZF_MULTISITESECURITY', 0);
 if (function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
-error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 $time_start = microtime();
 
 // This makes it so headers can be sent!
@@ -69,6 +69,10 @@ require_once($sourcedir . '/Security.php');
 // If $maintenance is set specifically to 2, then we're upgrading or something.
 if (!empty($maintenance) && $maintenance == 2)
 	db_fatal_error();
+
+// Register an error handler.
+set_error_handler('error_handler',E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+
 
 // Create a variable to store some ezForum specific functions in.
 $smcFunc = array();
@@ -126,10 +130,6 @@ if (!headers_sent())
 	header('X-XSS-Protection: 1');
 	header('X-Content-Type-Options: nosniff');
 }
-
-
-// Register an error handler.
-set_error_handler('error_handler');
 
 // Quickly catch random exceptions.
 set_exception_handler(function ($e) use ($db_show_debug)
@@ -313,7 +313,7 @@ function smf_main()
 		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
-        	'imageUpload' => array('Admin.php', 'themeImageUpload'),
+        'imageUpload' => array('Admin.php', 'themeImageUpload'),
 		'jseditor' => array('Subs-Editor.php', 'EditorMain'),
 		'jsmodify' => array('Post.php', 'JavaScriptModify'),
 		'jsoption' => array('Themes.php', 'SetJavaScript'),
@@ -332,13 +332,13 @@ function smf_main()
 		'notify' => array('Notify.php', 'Notify'),
 		'notifyboard' => array('Notify.php', 'BoardNotify'),
 		'openidreturn' => array('Subs-OpenID.php', 'smf_openID_return'),
-        	'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
-       		'oasl_registration' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_registration'),
-        	'oasl_callback' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_callback'),
+        'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
+       	'oasl_registration' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_registration'),
+        'oasl_callback' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_callback'),
 		'pm' => array('PersonalMessage.php', 'MessageMain'),
 		'post' => array('Post.php', 'Post'),
 		'post2' => array('Post.php', 'Post2'),
-       	 	'posthistory' => array('PostHistory.php', 'PostHistory'),
+       	'posthistory' => array('PostHistory.php', 'PostHistory'),
 		'printpage' => array('Printpage.php', 'PrintTopic'),
 		'profile' => array('Profile.php', 'ModifyProfile'),
 		'quotefast' => array('Post.php', 'QuoteFast'),
@@ -347,7 +347,7 @@ function smf_main()
 		'recent' => array('Recent.php', 'RecentPosts'),
 		'register' => array('Register.php', 'Register'),
 		'register2' => array('Register.php', 'Register2'),
-        	'related' => array('Subs-Related.php', 'Related'),
+        'related' => array('Subs-Related.php', 'Related'),
 		'reminder' => array('Reminder.php', 'RemindMe'),
 		'removepoll' => array('Poll.php', 'RemovePoll'),
 		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
@@ -363,7 +363,7 @@ function smf_main()
 		'splittopics' => array('SplitTopics.php', 'SplitTopics'),
 		'stats' => array('Stats.php', 'DisplayStats'),
 		'sticky' => array('LockTopic.php', 'Sticky'),
-        	'tags' => array('TaggingSystem.php', 'TaggingSystemMain'),
+        'tags' => array('TaggingSystem.php', 'TaggingSystemMain'),
 		'theme' => array('Themes.php', 'ThemesMain'),
 		'trackip' => array('Profile-View.php', 'trackIP'),
 		'unread' => array('Recent.php', 'UnreadTopics'),
