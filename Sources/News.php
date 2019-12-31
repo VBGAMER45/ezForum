@@ -403,13 +403,17 @@ function cdata_parse($data, $ns = '')
 	if (!empty($cdata_override))
 		return $data;
 
+	// Do we even need to do this?
+	if (strpbrk($data, '<>&') == false)
+		return $data;
+
 	$cdata = '<![CDATA[';
 
 	for ($pos = 0, $n = $smcFunc['strlen']($data); $pos < $n; null)
 	{
 		$positions = array(
 			$smcFunc['strpos']($data, '&', $pos),
-			$smcFunc['strpos']($data, ']', $pos),
+			$smcFunc['strpos']($data, ']]>', $pos),
 		);
 		if ($ns != '')
 			$positions[] = $smcFunc['strpos']($data, '<', $pos);
@@ -438,10 +442,10 @@ function cdata_parse($data, $ns = '')
 				$cdata .= ']]><' . $ns . ':' . $smcFunc['substr']($data, $pos + 1, $pos2 - $pos) . '<![CDATA[';
 			$pos = $pos2 + 1;
 		}
-		elseif ($smcFunc['substr']($data, $pos, 1) == ']')
+		elseif ($smcFunc['substr']($data, $pos, 3) == ']]>')
 		{
-			$cdata .= ']]>&#093;<![CDATA[';
-			$pos++;
+			$cdata .= ']]]]><![CDATA[>';
+			$pos = $pos + 3;
 		}
 		elseif ($smcFunc['substr']($data, $pos, 1) == '&')
 		{
@@ -864,7 +868,7 @@ function getXmlRecent($xml_format)
 
 function getXmlProfile($xml_format)
 {
-	global $scripturl, $memberContext, $user_profile, $modSettings, $user_info;
+	global $scripturl, $memberContext, $user_profile, $modSettings, $user_info, $smcFunc, $language;
 
 	// You must input a valid user....
 	if (empty($_GET['u']) || loadMemberData((int) $_GET['u']) === false)
@@ -917,7 +921,7 @@ function getXmlProfile($xml_format)
 			'link' => $scripturl . '?action=profile;u=' . $profile['id'],
 			'posts' => $profile['posts'],
 			'post-group' => cdata_parse($profile['post_group']),
-			'language' => cdata_parse($profile['language']),
+			'language' => cdata_parse(!empty($profile['language']) ? $profile['language'] : $smcFunc['ucwords'](strtr($language, array('_' => ' ', '-utf8' => '')))),
 			'last-login' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['last_login']),
 			'registered' => gmdate('D, d M Y H:i:s \G\M\T', $user_profile[$profile['id']]['date_registered'])
 		);

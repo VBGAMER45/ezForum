@@ -134,10 +134,21 @@ if (!headers_sent())
 // Quickly catch random exceptions.
 set_exception_handler(function ($e) use ($db_show_debug)
 {
+	$error_type = 'general';
+
+	// PHP 7 converts fatal errors to special Throwable types. Log them as such.
+	if (is_a($e, 'Error'))
+		$error_type = 'critical';
+
 	if (isset($db_show_debug) && $db_show_debug === true && allowedTo('admin_forum'))
+	{
+		// Only log the message; the rest (such as the stack trace) is just fluff in the log.
+		log_error($e->getMessage(), $error_type);
+
 		fatal_error(nl2br($e), false);
+	}
 	else
-		fatal_error($e->getMessage(), false);
+		fatal_error($e->getMessage(), $error_type);
 });
 
 // Start the session. (assuming it hasn't already been.)

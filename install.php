@@ -912,7 +912,23 @@ function ForumSettings()
 			'cachedir' => addslashes(dirname(__FILE__)) . '/cache',
 			'mbname' => strtr($_POST['mbname'], array('\"' => '"')),
 			'language' => substr($_SESSION['installer_temp_lang'], 8, -4),
+			'image_proxy_secret' => substr(sha1(mt_rand()), 0, 20),
+			'image_proxy_maxsize' => 5190,
+			'image_proxy_enabled' => 0,
 		);
+
+		// Generate a strong authentication secret.
+		if (function_exists('random_bytes'))
+			$vars['auth_secret'] = bin2hex(random_bytes(32));
+		elseif (function_exists('mcrypt_create_iv'))
+			$vars['auth_secret'] = bin2hex(mcrypt_create_iv(32));
+		elseif (function_exists('openssl_random_pseudo_bytes'))
+			$vars['auth_secret'] = bin2hex(openssl_random_pseudo_bytes(32));
+		// Less than ideal, but we're running out of options.
+		elseif (function_exists('hash'))
+			$vars['auth_secret'] = hash('sha256', mt_rand());
+		else
+			$vars['auth_secret'] = substr(sha1(mt_rand()) . sha1(mt_rand()), 0, 64);
 
 		// Must save!
 		if (!updateSettingsFile($vars) && substr(__FILE__, 1, 2) == ':\\')
@@ -1394,6 +1410,7 @@ function DeleteInstall()
 	global $txt, $db_prefix, $db_connection, $HTTP_SESSION_VARS, $cookiename, $incontext;
 	global $smcFunc, $db_character_set, $mbname, $context, $scripturl, $boardurl;
 	global $current_smf_version, $databases, $sourcedir, $forum_version, $modSettings, $user_info, $language, $db_type;
+	global $auth_secret;
 
 	$incontext['page_title'] = $txt['congratulations'];
 	$incontext['sub_template'] = 'delete_install';
@@ -1943,6 +1960,11 @@ function updateSettingsFile($vars)
 	}
 	fwrite($fp, $settingsArray[$i] . '?' . '>');
 	fclose($fp);
+
+	// Even though on normal installations the filemtime should prevent this being used by the installer incorrectly
+	// it seems that there are times it might not. So let's MAKE it dump the cache.
+	if (function_exists('opcache_invalidate'))
+		opcache_invalidate(dirname(__FILE__) . '/Settings.php', true);
 
 	return true;
 }

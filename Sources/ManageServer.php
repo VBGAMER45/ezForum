@@ -318,6 +318,7 @@ function ModifyCookieSettings($return_config = false)
 		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'),
 		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'),
 		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies',  'disabled' => !isset($_SERVER['HTTPS']) || !(strtolower($_SERVER['HTTPS']) == 'on' || strtolower($_SERVER['HTTPS']) == '1')),
+		array('cookie_no_auth_secret', $txt['cookie_no_auth_secret'], 'db', 'check', false, 'cookie_no_auth_secret',  'disabled' => empty($modSettings['integrate_verify_user'])),
 		'',
 		// Sessions
 		array('databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'),
@@ -334,6 +335,10 @@ function ModifyCookieSettings($return_config = false)
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
+		// If this setting will be ignored anyway, disable it.
+		if (empty($modSettings['integrate_verify_user']) && !empty($cookie_no_auth_secret))
+			$_POST['cookie_no_auth_secret'] = 0;
+
 		saveSettings($config_vars);
 
 		// If the cookie name was changed, reset the cookie.
@@ -2027,6 +2032,7 @@ function saveSettings(&$config_vars)
 	$config_bools = array(
 		'db_persist', 'db_error_send',
 		'maintenance', 'image_proxy_enabled',
+		'cookie_no_auth_secret',
 	);
 
 	// Now sort everything into a big array, and figure out arrays and etc.
@@ -2059,7 +2065,7 @@ function saveSettings(&$config_vars)
 	{
 		if (!empty($_POST[$key]))
 			$new_settings[$key] = '1';
-		else
+		elseif (isset($_POST[$key]))
 			$new_settings[$key] = '0';
 	}
 

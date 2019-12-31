@@ -80,14 +80,17 @@ function pretty_rewrite_buffer($buffer)
 
 			if (substr($url_id,0,11) == 'android-app')
 				continue;
-					
+
+			if (substr($url_id,0,7) == 'ios-app')
+				continue;
+
 			if (substr($url_id,0,7) == 'http://')
 				continue;
 				
 			if (substr($url_id,0,8) == 'https://')
-				continue;	
-				
-				
+				continue;
+
+			// Skip any other ursl
 			$urls_query[] = $url_id;
 			$uncached_urls[$url_id] = array(
 				'url' => $match,
@@ -201,7 +204,12 @@ function pretty_rewrite_buffer_fromcache($buffer)
 
 			if (substr($url_id,0,11) == 'android-app')
 				continue;
-				
+
+			if (substr($url_id,0,7) == 'ios-app')
+				continue;
+
+
+
 			if (substr($url_id,0,7) == 'http://')
 				continue;
 				
@@ -492,7 +500,7 @@ function pretty_urls_topic_filter($urls)
 				);
 			}
 			//	... and add them to the database!
-			$smcFunc['db_insert']('',
+			$smcFunc['db_insert']('ignore',
 				'{db_prefix}pretty_topic_urls',
 				array('id_topic' => 'int', 'pretty_url' => 'string'),
 				$add_new,

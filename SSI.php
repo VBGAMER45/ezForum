@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2017 ezForum
+ * Copyright 2011-2019 ezForum
  * License: BSD
  *
  * Based on:
@@ -31,6 +31,7 @@ global $db_server, $db_name, $db_user, $db_prefix, $db_persist, $db_error_send, 
 global $db_connection, $modSettings, $context, $sc, $user_info, $topic, $board, $txt;
 global $smcFunc, $ssi_db_user, $scripturl, $ssi_db_passwd, $db_passwd, $cachedir;
 global $image_proxy_enabled, $image_proxy_secret, $image_proxy_maxsize;
+global $auth_secret, $cookie_no_auth_secret;
 
 // Remember the current configuration so it can be set back.
 $ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
@@ -53,7 +54,7 @@ if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/c
 if (empty($librarydir))
 	$librarydir = dirname(__FILE__) . '/Libraries';
 
-$ssi_error_reporting = error_reporting(defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL);
+$ssi_error_reporting = error_reporting((defined('E_STRICT') ? E_ALL | E_STRICT : E_ALL) & ~E_DEPRECATED);
 /* Set this to one of three values depending on what you want to happen in the case of a fatal error.
 	false:	Default, will just load the error sub template and die - not putting any theme layers around it.
 	true:	Will load the error sub template AND put the ezForum layers around it (Not useful if on total custom pages).
@@ -329,7 +330,7 @@ function ssi_fetchPosts($post_ids = array(), $override_permissions = false, $out
 	);
 
 	// Then make the query and dump the data.
-	return ssi_queryPosts($query_where, $query_where_params, '', 'm.id_msg DESC', $output_method, false, $override_permissions);
+	return ssi_queryPosts($query_where, $query_where_params, '', 'm.id_msg DESC', $output_method);
 }
 
 // This removes code duplication in other queries - don't call it direct unless you really know what you're up to.

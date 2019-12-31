@@ -1218,14 +1218,14 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'tag' => 'flash',
 				'type' => 'unparsed_commas_content',
 				'test' => '\d+,\d+\]',
-				'content' => ($context['browser']['is_ie'] && !$context['browser']['is_mac_ie'] ? '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="$2" height="$3"><param name="movie" value="$1" /><param name="play" value="true" /><param name="loop" value="true" /><param name="quality" value="high" /><param name="AllowScriptAccess" value="never" /><embed src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed></object>' : '<embed type="application/x-shockwave-flash" src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" class="new_win">$1</a></noembed>'),
+				'content' => ($context['browser']['is_ie'] && !$context['browser']['is_mac_ie'] ? '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="$2" height="$3"><param name="movie" value="$1" /><param name="play" value="true" /><param name="loop" value="true" /><param name="quality" value="high" /><param name="AllowScriptAccess" value="never" /><embed src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" rel="noopener noreferrer" class="bbc_link bbc_flash_disabled new_win">$1</a></noembed></object>' : '<embed type="application/x-shockwave-flash" src="$1" width="$2" height="$3" play="true" loop="true" quality="high" AllowScriptAccess="never" /><noembed><a href="$1" target="_blank" rel="noopener noreferrer" class="bbc_link bbc_flash_disabled new_win">$1</a></noembed>'),
 				'validate' => create_function('&$tag, &$data, $disabled', '
 					if (isset($disabled[\'url\']))
 						$tag[\'content\'] = \'$1\';
 					elseif (strpos($data[0], \'http://\') !== 0 && strpos($data[0], \'https://\') !== 0)
 						$data[0] = \'http://\' . $data[0];
 				'),
-				'disabled_content' => '<a href="$1" target="_blank" class="new_win">$1</a>',
+				'disabled_content' => '<a href="$1" target="_blank" rel="noopener noreferrer" class="bbc_link bbc_flash_disabled new_win">$1</a>',
 			),
 			array(
 				'tag' => 'font',
@@ -1237,7 +1237,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'ftp',
 				'type' => 'unparsed_content',
-				'content' => '<a href="$1" class="bbc_ftp new_win" target="_blank">$1</a>',
+				'content' => '<a href="$1" class="bbc_ftp new_win" target="_blank" rel="noopener noreferrer">$1</a>',
 				'validate' => create_function('&$tag, &$data, $disabled', '
 					$data = strtr($data, array(\'<br />\' => \'\'));
 					if (strpos($data, \'ftp://\') !== 0 && strpos($data, \'ftps://\') !== 0)
@@ -1247,7 +1247,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'ftp',
 				'type' => 'unparsed_equals',
-				'before' => '<a href="$1" class="bbc_ftp new_win" target="_blank">',
+				'before' => '<a href="$1" class="bbc_ftp new_win" target="_blank" rel="noopener noreferrer">',
 				'after' => '</a>',
 				'validate' => create_function('&$tag, &$data, $disabled', '
 					if (strpos($data, \'ftp://\') !== 0 && strpos($data, \'ftps://\') !== 0)
@@ -1297,14 +1297,11 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'content' => '<img src="$1" alt="{alt}"{width}{height} class="bbc_img resized" />',
 				'validate' => function (&$tag, &$data, $disabled)
 				{
-					global $image_proxy_enabled, $image_proxy_secret, $boardurl;
-
 					$data = strtr($data, array('<br>' => ''));
 					if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 						$data = 'http://' . $data;
 
-					if (substr($data, 0, 8) != 'https://' && $image_proxy_enabled)
-						$data = $boardurl . '/proxy.php?request=' . urlencode($data) . '&hash=' . md5($data . $image_proxy_secret);
+					$data = get_proxied_url($data);
 				},
 				'disabled_content' => '($1)',
 			),
@@ -1314,14 +1311,11 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 				'content' => '<img src="$1" alt="" class="bbc_img" />',
 				'validate' => function (&$tag, &$data, $disabled)
 				{
-					global $image_proxy_enabled, $image_proxy_secret, $boardurl;
-
 					$data = strtr($data, array('<br>' => ''));
 					if (strpos($data, 'http://') !== 0 && strpos($data, 'https://') !== 0)
 						$data = 'http://' . $data;
 
-					if (substr($data, 0, 8) != 'https://' && $image_proxy_enabled)
-						$data = $boardurl . '/proxy.php?request=' . urlencode($data) . '&hash=' . md5($data . $image_proxy_secret);
+					$data = get_proxied_url($data);
 				},
 				'disabled_content' => '($1)',
 			),
@@ -1607,7 +1601,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'url',
 				'type' => 'unparsed_content',
-				'content' => '<a href="$1" class="bbc_link" target="_blank">$1</a>',
+				'content' => '<a href="$1" class="bbc_link" target="_blank" rel="noopener noreferrer">$1</a>',
 				'validate' => create_function('&$tag, &$data, $disabled', '
 					$data = strtr($data, array(\'<br />\' => \'\'));
 					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
@@ -1617,7 +1611,7 @@ function parse_bbc($message, $smileys = true, $cache_id = '', $parse_tags = arra
 			array(
 				'tag' => 'url',
 				'type' => 'unparsed_equals',
-				'before' => '<a href="$1" class="bbc_link" target="_blank">',
+				'before' => '<a href="$1" class="bbc_link" target="_blank" rel="noopener noreferrer">',
 				'after' => '</a>',
 				'validate' => create_function('&$tag, &$data, $disabled', '
 					if (strpos($data, \'http://\') !== 0 && strpos($data, \'https://\') !== 0)
@@ -2619,7 +2613,9 @@ function highlight_php_code($code)
 // Put this user in the online log.
 function writeLog($force = false)
 {
-	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc, $sourcedir;
+	global $user_info, $user_settings, $context, $modSettings, $settings, $topic, $board, $smcFunc, $sourcedir, $remember_old_url;
+
+	$remember_old_url = true;
 
 	// If we are showing who is viewing a topic, let's see if we are, and force an update if so - to make it accurate.
 	if (!empty($settings['display_who_viewing']) && ($topic || $board))
@@ -2845,7 +2841,7 @@ function redirectexit($setLocation = '', $refresh = false)
 // Ends execution.  Takes care of template loading and remembering the previous URL.
 function obExit($header = null, $do_footer = null, $from_index = false, $from_fatal_error = false)
 {
-	global $context, $settings, $modSettings, $txt, $smcFunc;
+	global $context, $settings, $modSettings, $txt, $smcFunc, $remember_old_url;
 	static $header_done = false, $footer_done = false, $level = 0, $has_fatal_error = false;
 
 	// Attempt to prevent a recursive loop.
@@ -3323,10 +3319,7 @@ function setupThemeContext($forceload = false)
 		// Full URL?
 		elseif (substr($user_info['avatar']['url'], 0, 7) == 'http://' || substr($user_info['avatar']['url'], 0, 8) == 'https://')
 		{
-			if (substr($user_info['avatar']['url'], 0, 8) != 'https://' && $image_proxy_enabled)
-				$context['user']['avatar']['href'] = $boardurl . '/proxy.php?request=' . urlencode($user_info['avatar']['url']) . '&hash=' . md5($user_info['avatar']['url'] . $image_proxy_secret);
-			else
-				$context['user']['avatar']['href'] = $user_info['avatar']['url'];
+			$context['user']['avatar']['href'] = get_proxied_url($user_info['avatar']['url']);
 
 			if ($modSettings['avatar_action_too_large'] == 'option_html_resize' || $modSettings['avatar_action_too_large'] == 'option_js_resize')
 			{
@@ -4860,6 +4853,42 @@ function safe_unserialize($str)
 		mb_internal_encoding($mbIntEnc);
 
 	return $out;
+}
+
+/**
+ * Gets the appropriate URL to use for images (or whatever) when using SSL
+ *
+ * The returned URL may or may not be a proxied URL, depending on the situation.
+ * Mods can implement alternative proxies using the 'integrate_proxy' hook.
+ *
+ * @param string $url The original URL of the requested resource
+ * @return string The URL to use
+ */
+function get_proxied_url($url)
+{
+	global $boardurl, $image_proxy_enabled, $image_proxy_secret, $user_info;
+
+	// Only use the proxy if enabled, and never for robots
+	if (empty($image_proxy_enabled) || !empty($user_info['possibly_robot']))
+		return $url;
+
+	$parsedurl = parse_url($url);
+
+	// Don't bother with HTTPS URLs, schemeless URLs, or obviously invalid URLs
+	if (empty($parsedurl['scheme']) || empty($parsedurl['host']) || empty($parsedurl['path']) || $parsedurl['scheme'] === 'https')
+		return $url;
+
+	// We don't need to proxy our own resources
+	if ($parsedurl['host'] === parse_url($boardurl, PHP_URL_HOST))
+		return strtr($url, array('http://' => 'https://'));
+
+	// By default, use SMF's own image proxy script
+	$proxied_url = strtr($boardurl, array('http://' => 'https://')) . '/proxy.php?request=' . urlencode($url) . '&hash=' . hash_hmac('sha1', $url, $image_proxy_secret);
+
+	// Allow mods to easily implement an alternative proxy
+	call_integration_hook('integrate_proxy', array($url, &$proxied_url));
+
+	return $proxied_url;
 }
 
 ?>

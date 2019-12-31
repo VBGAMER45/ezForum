@@ -107,7 +107,7 @@ if (!defined('SMF'))
 // Actually set the login cookie...
 function setLoginCookie($cookie_length, $id, $password = '')
 {
-	global $cookiename, $boardurl, $modSettings;
+	global $cookiename, $cookie_no_auth_secret, $boardurl, $modSettings;
 
 	// If changing state force them to re-address some permission caching.
 	$_SESSION['mc']['time'] = 0;
@@ -125,6 +125,13 @@ function setLoginCookie($cookie_length, $id, $password = '')
 			setcookie($cookiename, serialize(array(0, '', 0)), time() - 3600, $cookie_url[1], $cookie_url[0], !empty($modSettings['secureCookies']));
 		}
 	}
+
+	// Fallback option to support outdated mods. This will be removed in future versions!
+	$no_auth_secret = !empty($cookie_no_auth_secret) && !empty($modSettings['integrate_verify_user']);
+
+	// Ensure the cookie can't be forged.
+	if ($password !== '' && !$no_auth_secret)
+		$password = hash_hmac('sha1', $password, get_auth_secret());
 
 	// Get the data and path to set it on.
 	$data = serialize(empty($id) ? array(0, '', 0) : array($id, $password, time() + $cookie_length, $cookie_state));

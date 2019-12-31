@@ -429,7 +429,7 @@ $txt['status'] = 'Status';
 $txt['go_up'] = 'Go Up';
 $txt['go_down'] = 'Go Down';
 
-$forum_copyright = '<a href="https://www.ezforum.com" title="free forum software" target="_blank" class="new_win">ezForum &copy; 2019</a>';
+$forum_copyright = '<a href="https://www.ezforum.com" title="free forum software" target="_blank" class="new_win">ezForum &copy; 2020</a>';
 
 $txt['birthdays'] = 'Birthdays:';
 $txt['events'] = 'Events:';
@@ -612,6 +612,19 @@ $txt['approve_members_waiting'] = 'awaiting approval.';
 
 $txt['notifyboard_turnon'] = 'Do you want a notification email when someone posts a new topic in this board?';
 $txt['notifyboard_turnoff'] = 'Are you sure you do not want to receive new topic notifications for this board?';
+$txt['notifyboard_subscribed'] = '%1$s has been subscribed to new topic notifications for this board.';
+$txt['notifyboard_unsubscribed'] = '%1$s has been unsubscribed from new topic notifications for this board.';
+
+$txt['notifytopic_subscribed'] = '%1$s has been subscribed to new reply notifications for this topic.';
+$txt['notifytopic_unsubscribed'] = '%1$s has been unsubscribed from new reply notifications for this topic.';
+
+$txt['notify_announcements'] = 'Allow the administrators to send me important news by email';
+$txt['notifyannouncements_prompt'] = 'Do you want to receive forum newsletters, announcements and important notifications by email?';
+$txt['notifyannouncements_subscribed'] = '%1$s has been subscribed to forum newsletters, announcements and important notifications.';
+$txt['notifyannouncements_unsubscribed'] = '%1$s has been unsubscribed from forum newsletters, announcements and important notifications.';
+
+$txt['unsubscribe_announcements_plain'] = 'To unsubscribe from forum newsletters, announcements and important notifications, follow this link:<br />%1$s';
+$txt['unsubscribe_announcements_html'] = '<span style="font-size:small"><a href="%1$s">Unsubscribe</a> from forum newsletters, announcements and important notifications.</span>';
 
 $txt['activate_code'] = 'Your activation code is';
 

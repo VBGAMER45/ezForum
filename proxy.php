@@ -70,26 +70,27 @@ class ProxyServer
 
 		// Try to create the image cache directory if it doesn't exist
 		if (!file_exists($this->cache))
+		{
 			if (!mkdir($this->cache) || !copy(dirname($this->cache) . '/index.php', $this->cache . '/index.php'))
 				return false;
+		}
 
-		if (empty($_GET['hash']) || empty($_GET['request']))
+		if (empty($_GET['hash']) || empty($_GET['request']) || ($_GET['request'] === 'http:') || ($_GET['request'] === 'https:'))
 			return false;
 
 		$hash = $_GET['hash'];
 		$request = $_GET['request'];
 
-		if (md5($request . $this->secret) != $hash)
+		if (hash_hmac('sha1', $request, $this->secret) != $hash)
 			return false;
 
 		// Attempt to cache the request if it doesn't exist
-		if (!$this->isCached($request)) {
+		if (!$this->isCached($request))
 			return $this->cacheImage($request);
-		}
 
 		return true;
 	}
-	
+
 
 	/**
 	 * Serves the request
@@ -105,17 +106,17 @@ class ProxyServer
 
 		// Did we get an error when trying to fetch the image
 		$response = $this->checkRequest();
-		if (!$response) {
+		if ($response === null)
+		{
 			// Throw a 404
-			header('HTTP/1.0 404 Not Found');
+			header('HTTP/1.1 404 Not Found');
 			exit;
 		}
 		// Right, image not cached? Simply redirect, then.
-		if (!$response) {
+		if ($response === false)
 			header('Location: ' . $request, false, 301);
-		}
 
-		// Is the cache expired?
+		// Is the cache expired? Try to refresh it.
 		if (!$cached || time() - $cached['time'] > (5 * 86400))
 		{
 			@unlink($cached_file);
@@ -129,15 +130,30 @@ class ProxyServer
 		if ($contentParts[0] != 'image')
 			exit;
 
+		// Check whether the ETag was sent back, and cache based on that...
+		$eTag = '"' . substr(sha1($request) . $cached['time'], 0, 64) . '"';
+		if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) && strpos($_SERVER['HTTP_IF_NONE_MATCH'], $eTag) !== false)
+		{
+			header('HTTP/1.1 304 Not Modified');
+			exit;
+		}
+
 		header('Content-type: ' . $cached['content_type']);
 		header('Content-length: ' . $cached['size']);
+
+		// Add some caching
+		header('Cache-control: public');
+		header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 525600 * 60) . ' GMT');
+		header('Last-Modified: ' . gmdate('D, d M Y H:i:s', filemtime($cached_file)) . ' GMT');
+		header('ETag: ' . $eTag);
+
 		echo base64_decode($cached['body']);
 	}
 
 	/**
 	 * Returns the request's hashed filepath
 	 *
-	 * @access public
+	 * @access protected
 	 * @param string $request The request to get the path for
 	 * @return string The hashed filepath for the specified request
 	 */
@@ -163,7 +179,7 @@ class ProxyServer
 	 *
 	 * @access protected
 	 * @param string $request The image to cache/validate
-	 * @return bool|int Whether the specified image was cached or error code when accessing
+	 * @return bool|null Whether the specified image was cached; null if not found or not an image.
 	 */
 	protected function cacheImage($request)
 	{
@@ -172,21 +188,16 @@ class ProxyServer
 		$request = $curl->get_url_data($request);
 		$responseCode = $request->result('code');
 		$response = $request->result();
-		
-		if (empty($response)) {
-			return false;
-		}
-		
-		if ($responseCode != 200) {
-			return false;
-		}
+
+		if (empty($response) || $responseCode != 200)
+			return null;
 
 		$headers = $response['headers'];
 
 		// Make sure the url is returning an image
 		$contentParts = explode('/', !empty($headers['content-type']) ? $headers['content-type'] : '');
 		if ($contentParts[0] != 'image')
-			return false;
+			return null;
 
 		// Validate the filesize
 		if ($response['size'] > ($this->maxSize * 1024))
@@ -197,9 +208,11 @@ class ProxyServer
 			'size' => $response['size'],
 			'time' => time(),
 			'body' => base64_encode($response['body']),
-		))) === false ? 1 : null;
+		))) !== false;
 	}
 }
 
 $proxy = new ProxyServer();
 $proxy->serve();
+
+?>

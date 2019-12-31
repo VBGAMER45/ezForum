@@ -61,6 +61,8 @@ $txt['paid_note'] = '<strong class="alert">Note:</strong><br />For subscriptions
 	&nbsp;&nbsp;&bull;&nbsp;&nbsp;<strong>' . $boardurl . '/subscriptions.php</strong><br /><br />
 	You can edit the link for paypal directly, by clicking <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=_profile-ipn-notify" target="_blank">here</a>.<br />
 	For the other gateways (If installed) you can normally find it in your customer panels, usually under the term &quot;Return URL&quot; or &quot;Callback URL&quot;.';
+$txt['paypal_additional_emails'] = 'Primary PayPal email address';
+$txt['paypal_additional_emails_desc'] = 'If different (for business account)';
 
 // View subscription strings.
 $txt['paid_name'] = 'Name';

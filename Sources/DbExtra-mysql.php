@@ -474,4 +474,35 @@ function smf_db_get_version()
 	return $ver;
 }
 
+/**
+ * Figures out if we are using MySQL, Percona or MariaDB
+ *
+ * @return string The database engine we are using
+*/
+function smf_db_get_engine()
+{
+	global $smcFunc;
+	static $db_type;
+
+	if (!empty($db_type))
+		return $db_type;
+
+	$request = $smcFunc['db_query']('', 'SELECT @@version_comment');
+	list ($comment) = $smcFunc['db_fetch_row']($request);
+	$smcFunc['db_free_result']($request);
+
+	// Skip these if we don't have a comment.
+	if (!empty($comment))
+	{
+		if (stripos($comment, 'percona') !== false)
+			return 'Percona';
+		if (stripos($comment, 'mariadb') !== false)
+			return 'MariaDB';
+	}
+	else
+		return 'fail';
+
+	return 'MySQL';
+}
+
 ?>

@@ -120,9 +120,7 @@ function BoardIndex()
 	$context['page_title'] = sprintf($txt['forum_index'], $context['forum_name']);
 }
 
-/**
- * Collapse or expand a category
- */
+// Collapse or expand a category
 function CollapseCategory()
 {
 	global $user_info, $sourcedir, $context;

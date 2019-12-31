@@ -408,4 +408,10 @@ $txt['error_sqlite_optimizing'] = 'Sqlite is optimizing the database, the forum 
 // Minimum Characters for Search
 $txt['error_search_string_small_words'] = 'Minimum characters required in each word for search are ';
 
+// Registration Agreement
+$txt['error_no_agreement'] = 'There is no registration agreement to display!';
+$txt['error_no_privacy_policy'] = 'A privacy policy has not been created for this forum.';
+
+// Unsubscribe
+$txt['unsubscribe_invalid'] = 'The unsubscribe link that brought you here does not appear to be valid.';
 ?>

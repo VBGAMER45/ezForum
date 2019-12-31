@@ -267,9 +267,6 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 			continue;
 		}
 
-		if ($current['type'] == 5 && substr($current['filename'], -1) != '/')
-			$current['filename'] .= '/';
-
 		foreach ($current as $k => $v)
 		{
 			if (in_array($k, $octdec))
@@ -277,6 +274,9 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 			else
 				$current[$k] = trim($v);
 		}
+
+		if ($current['type'] == 5 && substr($current['filename'], -1) != '/')
+			$current['filename'] .= '/';
 
 		$checksum = 256;
 		for ($i = 0; $i < 148; $i++)
@@ -2487,7 +2487,7 @@ function package_get_contents($filename)
 	if (!isset($package_cache))
 	{
 		// Windows doesn't seem to care about the memory_limit.
-		if (!empty($modSettings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
+		if (!empty($modSettings['package_disable_cache']) || @ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
 			$package_cache = array();
 		else
 			$package_cache = false;
@@ -2507,7 +2507,7 @@ function package_put_contents($filename, $data, $testing = false)
 	if (!isset($package_cache))
 	{
 		// Try to increase the memory limit - we don't want to run out of ram!
-		if (!empty($modSettings['package_disable_cache']) || ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
+		if (!empty($modSettings['package_disable_cache']) || @ini_set('memory_limit', '128M') !== false || strpos(strtolower(PHP_OS), 'win') !== false)
 			$package_cache = array();
 		else
 			$package_cache = false;
@@ -2773,11 +2773,8 @@ function package_create_backup($id = 'backup')
 		$dirs[$row['value']] = empty($_REQUEST['use_full_paths']) ? 'Themes/' . basename($row['value']) . '/' : strtr($row['value'] . '/', '\\', '/');
 	$smcFunc['db_free_result']($request);
 
-	while (!empty($dirs))
+	foreach ($dirs as $dir => $dest)
 	{
-		list ($dir, $dest) = each($dirs);
-		unset($dirs[$dir]);
-
 		$listing = @dir($dir);
 		if (!$listing)
 			continue;
@@ -2909,7 +2906,22 @@ function fetch_web_data($url, $post_data = '', $keep_alive = false, $redirection
 		$ftp->check_response(226);
 		$ftp->close();
 	}
-	// This is more likely; a standard HTTP URL.
+	// More likely a standard HTTP/s URL, first try to use cURL if available
+	elseif (isset($match[1]) && substr($match[1], 0, 4) === 'http' && function_exists('curl_init'))
+	{
+		// Include the file containing the curl_fetch_web_data class.
+		loadClassFile('Class-CurlFetchWeb.php');
+
+		$fetch_data = new curl_fetch_web_data();
+		$fetch_data->get_url_data($url, $post_data);
+
+		// no errors and a 200 result, then we have a good dataset, well we at least have data ;)
+		if ($fetch_data->result('code') == 200 && !$fetch_data->result('error'))
+			$data = $fetch_data->result('body');
+		else
+			return false;
+	}
+	// Fallback to sockets.
 	elseif (isset($match[1]) && $match[1] == 'http')
 	{
 		if ($keep_alive && $match[3] == $keep_alive_dom)
@@ -3034,6 +3046,48 @@ if (!function_exists('smf_crc32'))
 
 		return $crc;
 	}
+}
+
+// Checks whether a file or data retrieved by fetch_web_data has the expected MIME type.
+// Returns 1 if the detected MIME type matches the pattern, 0 if it doesn't, or 2 if we can't check.
+function check_mime_type($data, $type_pattern, $is_path = false)
+{
+	// On Windows, the Fileinfo extension may not be enabled by default.
+	if (!extension_loaded('fileinfo'))
+	{
+		// Maybe we can load it dynamically?
+		$loaded = false;
+		$safe = ini_get('safe_mode');
+		$dl_ok = ini_get('enable_dl');
+		if (empty($safe) && !empty($dl_ok))
+			$loaded = @dl(((PHP_SHLIB_SUFFIX === 'dll') ? 'php_' : '') . 'fileinfo.' . PHP_SHLIB_SUFFIX);
+
+		// Oh well. We tried.
+		if (!$loaded)
+			return 2;
+	}
+
+	// Just some nice, simple data to analyze.
+	if (empty($is_path))
+		$mime_type = finfo_buffer(finfo_open(FILEINFO_MIME), $data);
+
+	// A file, or maybe a URL?
+	else
+	{
+		// Local file.
+		if (file_exists($data))
+			$mime_type = mime_content_type($data);
+
+		// URL.
+		elseif (url_exists($data))
+			$mime_type = finfo_buffer(finfo_open(FILEINFO_MIME), fetch_web_data($data));
+
+		// Non-existent files obviously don't have the right MIME type.
+		else
+			return 0;
+	}
+
+	return (int) @preg_match('~' . $type_pattern . '~', $mime_type);
 }
 
 ?>
