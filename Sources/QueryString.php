@@ -19,18 +19,63 @@
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/**
- * Clean the request variables - add html entities to GET and slashes if magic_quotes_gpc is Off.
- *
- * What it does:
- * - cleans the request variables (ENV, GET, POST, COOKIE, SERVER) and
- *	 makes sure the query string was parsed correctly.
- * - handles the URLs passed by the queryless URLs option.
- * - makes sure, regardless of php.ini, everything has slashes.
- * - sets up $board, $topic, and $scripturl and $_REQUEST['start'].
- * - determines, or rather tries to determine, the client's IP.
- */
+/*	This file does a lot of important stuff.  Mainly, this means it handles
+	the query string, request variables, and session management.  It contains
+	the following functions:
 
+	void cleanRequest()
+		- cleans the request variables (ENV, GET, POST, COOKIE, SERVER) and
+		  makes sure the query string was parsed correctly.
+		- handles the URLs passed by the queryless URLs option.
+		- makes sure, regardless of php.ini, everything has slashes.
+		- sets up $board, $topic, and $scripturl and $_REQUEST['start'].
+		- determines, or rather tries to determine, the client's IP.
+
+	array escapestring__recursive(array var)
+		- returns the var, as an array or string, with escapes as required.
+		- importantly escapes all keys and values!
+		- calls itself recursively if necessary.
+
+	array htmlspecialchars__recursive(array var)
+		- adds entities (&quot;, &lt;, &gt;) to the array or string var.
+		- importantly, does not effect keys, only values.
+		- calls itself recursively if necessary.
+
+	array urldecode__recursive(array var)
+		- takes off url encoding (%20, etc.) from the array or string var.
+		- importantly, does it to keys too!
+		- calls itself recursively if there are any sub arrays.
+
+	array unescapestring__recursive(array var)
+		- unescapes, recursively, from the array or string var.
+		- effects both keys and values of arrays.
+		- calls itself recursively to handle arrays of arrays.
+
+	array stripslashes__recursive(array var)
+		- removes slashes, recursively, from the array or string var.
+		- effects both keys and values of arrays.
+		- calls itself recursively to handle arrays of arrays.
+
+	array htmltrim__recursive(array var)
+		- trims a string or an the var array using html characters as well.
+		- does not effect keys, only values.
+		- may call itself recursively if needed.
+
+	string cleanXml(string var)
+		- removes invalid XML characters to assure the input string being
+		  parsed properly.
+
+	string ob_sessrewrite(string buffer)
+		- rewrites the URLs outputted to have the session ID, if the user
+		  is not accepting cookies and is using a standard web browser.
+		- handles rewriting URLs for the queryless URLs option.
+		- can be turned off entirely by setting $scripturl to an empty
+		  string, ''. (it wouldn't work well like that anyway.)
+		- because of bugs in certain builds of PHP, does not function in
+		  versions lower than 4.3.0 - please upgrade if this hurts you.
+*/
+
+// Clean the request variables - add html entities to GET and slashes if magic_quotes_gpc is Off.
 function cleanRequest()
 {
 	global $board, $topic, $boardurl, $scripturl, $modSettings, $smcFunc, $context;
@@ -85,12 +130,12 @@ function cleanRequest()
 		parse_str(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr($_SERVER['QUERY_STRING'], array(';?' => '&', ';' => '&', '%00' => '', "\0" => ''))), $_GET);
 
 		// Magic quotes still applies with parse_str - so clean it up.
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+		if (version_compare(PHP_VERSION, '7.4.0') == -1 && function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
 	}
 	elseif (strpos(@ini_get('arg_separator.input'), ';') !== false)
 	{
-		if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+		if (version_compare(PHP_VERSION, '7.4.0') == -1 && function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
 			$_GET = $removeMagicQuoteFunction($_GET);
 
 		// Search engines will send action=profile%3Bu=1, which confuses PHP.
@@ -130,18 +175,15 @@ function cleanRequest()
 		// Replace 'index.php/a,b,c/d/e,f' with 'a=b,c&d=&e=f' and parse it into $_GET.
 		if (strpos($request, basename($scripturl) . '/') !== false)
 		{
-			if (strpos($request, basename($scripturl)) !== false)
-			{
-				parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($request, strpos($request, basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
-				if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
-					$temp = $removeMagicQuoteFunction($temp);
-				$_GET += $temp;
-			}
+			parse_str(substr(preg_replace('/&(\w+)(?=&|$)/', '&$1=', strtr(preg_replace('~/([^,/]+),~', '/$1=', substr($request, strpos($request, basename($scripturl)) + strlen(basename($scripturl)))), '/', '&')), 1), $temp);
+			if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0 && empty($modSettings['integrate_magic_quotes']))
+				$temp = $removeMagicQuoteFunction($temp);
+			$_GET += $temp;
 		}
 	}
 
 	// If magic quotes is on we have some work...
-	if (function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0)
+	if (version_compare(PHP_VERSION, '7.4.0') == -1 && function_exists('get_magic_quotes_gpc') && @get_magic_quotes_gpc() != 0)
 	{
 		$_ENV = $removeMagicQuoteFunction($_ENV);
 		$_POST = $removeMagicQuoteFunction($_POST);
@@ -171,16 +213,15 @@ function cleanRequest()
 			list ($_REQUEST['board'], $_REQUEST['start']) = explode('.', $_REQUEST['board']);
 		// Now make absolutely sure it's a number.
 		// Check for pretty board URLs too, and possibly redirect if oldschool queries were used.
-		$_REQUEST['board'] = str_replace(array('&#039;', '\\'), array("\x12", ''), $_REQUEST['board']);
+		$_REQUEST['board'] = str_replace(array('&#039;',"&#39;", '\\'), array("\x12","\x12", ''), $_REQUEST['board']);
 		$context['pretty']['query_string']['board'] = $_REQUEST['board'];
 		if (is_numeric($_REQUEST['board']))
 		{
 			$board = (int) $_REQUEST['board'];
 			if (!isset($_REQUEST['pretty']))
 				$context['pretty']['oldschoolquery'] = true;
-		} 
-		else 
-		{
+		} else {
+			$_REQUEST['board'] = str_replace(array('&#039;',"&#39;", '\\'), array("\x12","\x12", ''), $_REQUEST['board']);
 			$pretty_board_lookup = unserialize($modSettings['pretty_board_lookup']);
 			$board = (int) isset($pretty_board_lookup[$_REQUEST['board']]) ? $pretty_board_lookup[$_REQUEST['board']] : 0;
 
@@ -220,10 +261,8 @@ function cleanRequest()
 			$topic = (int) $_REQUEST['topic'];
 			if (!isset($_REQUEST['pretty']))
 				$context['pretty']['oldschoolquery'] = true;
-		} 
-		else 
-		{
-			$_REQUEST['topic'] = str_replace(array('&#039;', '\\'), array("\x12", ''), $_REQUEST['topic']);
+		} else {
+			$_REQUEST['topic'] = str_replace(array("'",'&#039;','&#39;', '\\'), array("\x12", "\x12", "\x12", ''), $_REQUEST['topic']);
 			//	Are we feeling lucky?
 			$query = $smcFunc['db_query']('', "
 				SELECT id_topic
@@ -471,17 +510,7 @@ function escapestring__recursive($var)
 	return $new_var;
 }
 
-/**
- * Adds html entities to the array/variable.  Uses two underscores to guard against overloading.
- * What it does:
- * - adds entities (&quot;, &lt;, &gt;) to the array or string var.
- * - importantly, does not effect keys, only values.
- * - calls itself recursively if necessary.
- *
- * @param array|string $var
- * @param int $level = 0
- * @return array|string
- */
+// Adds html entities to the array/variable.  Uses two underscores to guard against overloading.
 function htmlspecialchars__recursive($var, $level = 0)
 {
 	global $smcFunc;
@@ -496,17 +525,7 @@ function htmlspecialchars__recursive($var, $level = 0)
 	return $var;
 }
 
-/**
- * Removes url stuff from the array/variable.  Uses two underscores to guard against overloading.
- * What it does:
- * - takes off url encoding (%20, etc.) from the array or string var.
- * - importantly, does it to keys too!
- * - calls itself recursively if there are any sub arrays.
- *
- * @param array|string $var
- * @param int $level = 0
- * @return array|string
- */
+// Removes url stuff from the array/variable.  Uses two underscores to guard against overloading.
 function urldecode__recursive($var, $level = 0)
 {
 	if (!is_array($var))
@@ -521,16 +540,7 @@ function urldecode__recursive($var, $level = 0)
 
 	return $new_var;
 }
-/**
- * Unescapes any array or variable.  Uses two underscores to guard against overloading.
- * What it does:
- * - unescapes, recursively, from the array or string var.
- * - effects both keys and values of arrays.
- * - calls itself recursively to handle arrays of arrays.
- *
- * @param array|string $var
- * @return array|string
- */
+// Unescapes any array or variable.  Two underscores for the normal reason.
 function unescapestring__recursive($var)
 {
 	global $smcFunc;
@@ -548,17 +558,7 @@ function unescapestring__recursive($var)
 	return $new_var;
 }
 
-/**
- * Remove slashes recursively.  Uses two underscores to guard against overloading.
- * What it does:
- * - removes slashes, recursively, from the array or string var.
- * - effects both keys and values of arrays.
- * - calls itself recursively to handle arrays of arrays.
- *
- * @param array|string $var
- * @param int $level = 0
- * @return array|string
- */
+// Remove slashes recursively...
 function stripslashes__recursive($var, $level = 0)
 {
 	if (!is_array($var))
@@ -574,17 +574,7 @@ function stripslashes__recursive($var, $level = 0)
 	return $new_var;
 }
 
-/**
- * Trim a string including the HTML space, character 160.  Uses two underscores to guard against overloading.
- * What it does:
- * - trims a string or an the var array using html characters as well.
- * - does not effect keys, only values.
- * - may call itself recursively if needed.
- *
- * @param array|string $var
- * @param int $level = 0
- * @return array|string
- */
+// Trim a string including the HTML space, character 160.
 function htmltrim__recursive($var, $level = 0)
 {
 	global $smcFunc;
@@ -600,15 +590,7 @@ function htmltrim__recursive($var, $level = 0)
 	return $var;
 }
 
-/**
- * Clean up the XML to make sure it doesn't contain invalid characters.
- * What it does:
- * - removes invalid XML characters to assure the input string being
- * - parsed properly.
- *
- * @param string $string
- * @return string
- */
+// Clean up the XML to make sure it doesn't contain invalid characters.
 function cleanXml($string)
 {
 	global $context;
@@ -617,12 +599,6 @@ function cleanXml($string)
 	return preg_replace('~[\x00-\x08\x0B\x0C\x0E-\x19' . ($context['utf8'] ? (@version_compare(PHP_VERSION, '4.3.3') != -1 ? '\x{FFFE}\x{FFFF}' : "\xED\xA0\x80-\xED\xBF\xBF\xEF\xBF\xBE\xEF\xBF\xBF") : '') . ']~' . ($context['utf8'] ? 'u' : ''), '', $string);
 }
 
-/**
- * @todo needs a description
- *
- * @param string $string
- * @return string
- */
 function JavaScriptEscape($string)
 {
 	global $scripturl;
@@ -635,26 +611,12 @@ function JavaScriptEscape($string)
 		'\'' => '\\\'',
 		'</' => '<\' + \'/',
 		'script' => 'scri\'+\'pt',
-		'<body>' => '<bo\'+\'dy>',
 		'<a href' => '<a hr\'+\'ef',
-		$scripturl => '\' + smf_scripturl + \'',
+		$scripturl => $scripturl . '\'+\'',
 	)) . '\'';
 }
 
-/**
- * Rewrite URLs to include the session ID.
- * What it does:
- * - rewrites the URLs outputted to have the session ID, if the user
- *   is not accepting cookies and is using a standard web browser.
- * - handles rewriting URLs for the queryless URLs option.
- * - can be turned off entirely by setting $scripturl to an empty
- *   string, ''. (it wouldn't work well like that anyway.)
- * - because of bugs in certain builds of PHP, does not function in
- *   versions lower than 4.3.0 - please upgrade if this hurts you.
- *
- * @param string $buffer
- * @return string
- */
+// Rewrite URLs to include the session ID.
 function ob_sessrewrite($buffer)
 {
 	global $scripturl, $modSettings, $user_info, $context, $boardurl, $db_count, $sourcedir, $time_start, $txt;

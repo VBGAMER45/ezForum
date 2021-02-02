@@ -1030,7 +1030,7 @@ function trackActivity($memID)
 	createList($listOptions);
 
 	// If this is a big forum, or a large posting user, let's limit the search.
-	if ($modSettings['totalMessages'] > 50000 && $user_profile[$memID]['posts'] > 500)
+	if ($modSettings['totalMessages'] > 50000 || $user_profile[$memID]['posts'] > 500)
 	{
 		$request = $smcFunc['db_query']('', '
 			SELECT MAX(id_msg)
@@ -1044,7 +1044,7 @@ function trackActivity($memID)
 		$smcFunc['db_free_result']($request);
 
 		// There's no point worrying ourselves with messages made yonks ago, just get recent ones!
-		$min_msg_member = max(0, $max_msg_member - $user_profile[$memID]['posts'] * 3);
+		$min_msg_member = max(0, $max_msg_member - 50000);
 	}
 
 	// Default to at least the ones we know about.
@@ -1060,8 +1060,10 @@ function trackActivity($memID)
 		WHERE id_member = {int:current_member}
 		' . (isset($min_msg_member) ? '
 			AND id_msg >= {int:min_msg_member} AND id_msg <= {int:max_msg_member}' : '') . '
-		GROUP BY poster_ip',
+		GROUP BY poster_ip
+		LIMIT {int:limit}',
 		array(
+			'limit' => min($user_profile[$memID]['posts'], 500),
 			'current_member' => $memID,
 			'min_msg_member' => !empty($min_msg_member) ? $min_msg_member : 0,
 			'max_msg_member' => !empty($max_msg_member) ? $max_msg_member : 0,
@@ -1491,20 +1493,15 @@ function TrackIP($memID = 0)
 	if ($context['single_ip'])
 	{
 		$context['whois_servers'] = array(
-			'afrinic' => array(
-				'name' => $txt['whois_afrinic'],
-				'url' => 'http://www.afrinic.net/cgi-bin/whois?searchtext=' . $context['ip'],
-				'range' => array(41, 154, 196),
-			),
 			'apnic' => array(
 				'name' => $txt['whois_apnic'],
-				'url' => 'http://wq.apnic.net/apnic-bin/whois.pl?searchtext=' . $context['ip'],
+				'url' => 'https://wq.apnic.net/apnic-bin/whois.pl?searchtext=' . $context['ip'],
 				'range' => array(58, 59, 60, 61, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
 					125, 126, 133, 150, 153, 163, 171, 202, 203, 210, 211, 218, 219, 220, 221, 222),
 			),
 			'arin' => array(
 				'name' => $txt['whois_arin'],
-				'url' => 'http://whois.arin.net/rest/ip/' . $context['ip'],
+				'url' => 'https://whois.arin.net/rest/ip/' . $context['ip'],
 				'range' => array(7, 24, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 96, 97, 98, 99,
 					128, 129, 130, 131, 132, 134, 135, 136, 137, 138, 139, 140, 142, 143, 144, 146, 147, 148, 149,
 					152, 155, 156, 157, 158, 159, 160, 161, 162, 164, 165, 166, 167, 168, 169, 170, 172, 173, 174,
@@ -1512,12 +1509,12 @@ function TrackIP($memID = 0)
 			),
 			'lacnic' => array(
 				'name' => $txt['whois_lacnic'],
-				'url' => 'http://lacnic.net/cgi-bin/lacnic/whois?query=' . $context['ip'],
+				'url' => 'https://lacnic.net/cgi-bin/lacnic/whois?query=' . $context['ip'],
 				'range' => array(186, 187, 189, 190, 191, 200, 201),
 			),
 			'ripe' => array(
 				'name' => $txt['whois_ripe'],
-				'url' => 'http://www.db.ripe.net/whois?searchtext=' . $context['ip'],
+				'url' => 'https://apps.db.ripe.net/search/query.html?searchtext=' . $context['ip'],
 				'range' => array(62, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
 					141, 145, 151, 188, 193, 194, 195, 212, 213, 217),
 			),

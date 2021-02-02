@@ -61,9 +61,10 @@ if (!defined('SMF'))
 		- redirects to ?action=admin;area=viewmembers;sa=browse with the same parameters
 		  as the calling page.
 
-	int ezcdatediff(int old)
+	int jeffsdatediff(int old)
 		- nifty function to calculate the number of days ago a given date was.
 		- requires a unix timestamp as input, returns an integer.
+		- in honour of Jeff Lewis, the original creator of...this function.
 		- the returned number of days is based on the forum time.
 */
 
@@ -743,35 +744,34 @@ function ViewMemberlist()
 					'value' => $txt['viewmembers_online'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
+					'function' => function($rowData) use ($txt)
+					{
 						// Calculate number of days since last online.
-						if (empty($rowData[\'last_login\']))
-							$difference = $txt[\'never\'];
+						if (empty($rowData['last_login']))
+							$difference = $txt['never'];
 						else
 						{
-							$num_days_difference = ezcdatediff($rowData[\'last_login\']);
+							$num_days_difference = jeffsdatediff($rowData['last_login']);
 
 							// Today.
 							if (empty($num_days_difference))
-								$difference = $txt[\'viewmembers_today\'];
+								$difference = $txt['viewmembers_today'];
 
 							// Yesterday.
 							elseif ($num_days_difference == 1)
-								$difference = sprintf(\'1 %1$s\', $txt[\'viewmembers_day_ago\']);
+								$difference = sprintf('1 %1$s', $txt['viewmembers_day_ago']);
 
 							// X days ago.
 							else
-								$difference = sprintf(\'%1$d %2$s\', $num_days_difference, $txt[\'viewmembers_days_ago\']);
+								$difference = sprintf('%1$d %2$s', $num_days_difference, $txt['viewmembers_days_ago']);
 						}
 
-						// Show it in italics if they\'re not activated...
-						if ($rowData[\'is_activated\'] % 10 != 1)
-							$difference = sprintf(\'<em title="%1$s">%2$s</em>\', $txt[\'not_activated\'], $difference);
+						// Show it in italics if they're not activated...
+						if ($rowData['is_activated'] % 10 != 1)
+							$difference = sprintf('<em title="%1$s">%2$s</em>', $txt['not_activated'], $difference);
 
 						return $difference;
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'last_login DESC',
@@ -795,11 +795,10 @@ function ViewMemberlist()
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $user_info;
-
-						return \'<input type="checkbox" name="delete[]" value="\' . $rowData[\'id_member\'] . \'" class="input_check" \' . ($rowData[\'id_member\'] == $user_info[\'id\'] || $rowData[\'id_group\'] == 1 || in_array(1, explode(\',\', $rowData[\'additional_groups\'])) ? \'disabled="disabled"\' : \'\') . \' />\';
-					'),
+					'function' => function($rowData) use ($user_info)
+					{
+						return '<input type="checkbox" name="delete[]" value="' . $rowData['id_member'] . '" class="input_check" ' . ($rowData['id_member'] == $user_info['id'] || $rowData['id_group'] == 1 || in_array(1, explode(',', $rowData['additional_groups'])) ? 'disabled="disabled"' : '') . ' />';
+					},
 					'class' => 'windowbg',
 					'style' => 'text-align: center',
 				),
@@ -1107,11 +1106,10 @@ function MembersAwaitingActivation()
 					'value' => $txt['hostname'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $modSettings;
-
-						return host_from_ip($rowData[\'member_ip\']);
-					'),
+					'function' => function($rowData)
+					{
+						return host_from_ip($rowData['member_ip']);
+					},
 					'class' => 'smalltext',
 				),
 			),
@@ -1120,9 +1118,10 @@ function MembersAwaitingActivation()
 					'value' => $txt['date_registered'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return timeformat($rowData[\'date_registered\']);
-					'),
+					'function' => function($rowData)
+					{
+						return timeformat($rowData['date_registered']);
+					},
 				),
 				'sort' => array(
 					'default' => 'date_registered DESC',
@@ -1136,19 +1135,18 @@ function MembersAwaitingActivation()
 					'style' => 'width: 20%',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $scripturl, $txt;
-
+					'function' => function($rowData) use ($scripturl, $txt)
+					{
 						$member_links = array();
-						foreach ($rowData[\'duplicate_members\'] as $member)
+						foreach ($rowData['duplicate_members'] as $member)
 						{
-							if ($member[\'id\'])
-								$member_links[] = \'<a href="\' . $scripturl . \'?action=profile;u=\' . $member[\'id\'] . \'" \' . (!empty($member[\'is_banned\']) ? \'style="color: red;"\' : \'\') . \'>\' . $member[\'name\'] . \'</a>\';
+							if ($member['id'])
+								$member_links[] = '<a href="' . $scripturl . '?action=profile;u=' . $member['id'] . '" ' . (!empty($member['is_banned']) ? 'style="color: red;"' : '') . '>' . $member['name'] . '</a>';
 							else
-								$member_links[] = $member[\'name\'] . \' (\' . $txt[\'guest\'] . \')\';
+								$member_links[] = $member['name'] . ' (' . $txt['guest'] . ')';
 						}
-						return implode (\', \', $member_links);
-					'),
+						return implode (', ', $member_links);
+					},
 					'class' => 'smalltext',
 				),
 			),
@@ -1497,7 +1495,7 @@ function AdminApprove()
 	redirectexit('action=admin;area=viewmembers;sa=browse;type=' . $_REQUEST['type'] . ';sort=' . $_REQUEST['sort'] . ';filter=' . $current_filter . ';start=' . $_REQUEST['start']);
 }
 
-function ezcdatediff($old)
+function jeffsdatediff($old)
 {
 	// Get the current time as the user would see it...
 	$forumTime = forum_time();

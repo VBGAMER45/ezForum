@@ -1109,13 +1109,14 @@ function PickTheme()
 		// Change a specific member's theme.
 		else
 		{
-			if (isset($_GET['th']) && $_GET['th'] == 0)
-				$_GET['th'] = $modSettings['theme_guests'];
-
+			// An identifier of zero means that the user wants the forum default theme.
 			updateMemberData((int) $_REQUEST['u'], array('id_theme' => (int) $_GET['th']));
 
 			if (!empty($_GET['vrt']))
 			{
+				// Set the identifier to the forum default.
+				if (isset($_GET['th']) && $_GET['th'] == 0)
+					$_GET['th'] = $modSettings['theme_guests'];
 				$smcFunc['db_insert']('replace',
 					'{db_prefix}themes',
 					array('id_theme' => 'int', 'id_member' => 'int', 'variable' => 'string-255', 'value' => 'string-65534'),
@@ -1476,7 +1477,7 @@ function ThemeInstall()
 	<!-- Author: your email address or contact information. The name attribute is optional. -->
 	<author name="Simple Machines">info@simplemachines.org</author>
 	<!-- Website... where to get updates and more information. -->
-	<website>http://www.simplemachines.org/</website>
+	<website>https://www.simplemachines.org/</website>
 	<!-- Template layers to use, defaults to "html,body". -->
 	<layers>' . (empty($theme_layers) ? 'html,body' : $theme_layers) . '</layers>
 	<!-- Templates to load on startup. Default is "index". -->

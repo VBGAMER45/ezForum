@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 ini_set("max_execution_time",5000);
 
@@ -30,20 +30,20 @@ $databases = array(
 	'mysql' => array(
 		'name' => 'MySQL',
 		'version' => '4.0.18',
-		'version_check' => 'return min(mysql_get_server_info(), mysql_get_client_info());',
-		'supported' => function_exists('mysql_connect'),
-		'default_user' => 'mysql.default_user',
-		'default_password' => 'mysql.default_password',
-		'default_host' => 'mysql.default_host',
-		'default_port' => 'mysql.default_port',
+		'version_check' => 'return min(mysqli_get_server_info($db_connection), mysqli_get_client_info());',
+		'supported' => function_exists('mysqli_connect'),
+		'default_user' => 'mysqli.default_user',
+		'default_password' => 'mysqli.default_password',
+		'default_host' => 'mysqli.default_host',
+		'default_port' => 'mysqli.default_port',
 		'utf8_support' => true,
 		'utf8_version' => '4.1.0',
-		'utf8_version_check' => 'return mysql_get_server_info();',
+		'utf8_version_check' => 'return mysqli_get_server_info($db_connection);',
 		'utf8_default' => true,
 		'utf8_required' => false,
 		'alter_support' => true,
-		'validate_prefix' => create_function('&$value', '
-			$value = preg_replace(\'~[^A-Za-z0-9_\$]~\', \'\', $value);
+		'validate_prefix' => function(&$value) {
+			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
 			return true;
 		'),
 	),
@@ -61,11 +61,21 @@ $databases = array(
         'utf8_version_check' => 'return mysqli_get_server_info($db_connection);',
         'utf8_default' => true,
         'utf8_required' => false,
-        'alter_support' => true,
-        'validate_prefix' => create_function('&$value', '
-            $value = preg_replace(\'~[^A-Za-z0-9_\$]~\', \'\', $value);
-            return true;
-        '),
+	'validate_prefix' => function(&$value) {
+			global $incontext, $txt;
+
+			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
+
+			// Is it reserved?
+			if ($value == 'sqlite_')
+				return $txt['error_db_prefix_reserved'];
+
+			// Is the prefix numeric?
+			if (preg_match('~^\d~', $value))
+				return $txt['error_db_prefix_numeric'];
+
+			return true;
+		},
     ),
 
 );
@@ -134,7 +144,9 @@ function initialize_inputs()
 	// Turn off magic quotes runtime and enable error reporting.
 	if (function_exists('set_magic_quotes_runtime'))
 		@set_magic_quotes_runtime(0);
-	error_reporting(E_ALL);
+
+	// Report all errors except for depreciation notices.
+	error_reporting(E_ALL & ~E_DEPRECATED);
 
 	// Fun.  Low PHP version...
 	if (!isset($_GET))
@@ -240,6 +252,9 @@ function initialize_inputs()
 		$server_offset = @mktime(0, 0, 0, 1, 1, 1970);
 		date_default_timezone_set('Etc/GMT' . ($server_offset > 0 ? '+' : '') . ($server_offset / 3600));
 	}
+	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1');
+	header('X-Content-Type-Options: nosniff');
 
 	// Force an integer step, defaulting to 0.
 	$_GET['step'] = (int) @$_GET['step'];
@@ -1508,8 +1523,7 @@ function DeleteInstall()
 	updateStats('topic');
 
 	// This function is needed to do the updateStats('subject') call.
-	$smcFunc['strtolower'] = $db_character_set === 'utf8' || $txt['lang_character_set'] === 'UTF-8' ? create_function('$string', '
-		return $string;') : 'strtolower';
+	$smcFunc['strtolower'] = $db_character_set === 'utf8' || $txt['lang_character_set'] === 'UTF-8' ? function($string){return $string;} : 'strtolower';
 
 	$request = $smcFunc['db_query']('', '
 		SELECT id_msg
@@ -1557,7 +1571,7 @@ class ftp_connection
 	var $connection = 'no_connection', $error = false, $last_message, $pasv = array();
 
 	// Create a new FTP connection...
-	function ftp_connection($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@test.com')
+	function __construct($ftp_server, $ftp_port = 21, $ftp_user = 'anonymous', $ftp_pass = 'ftpclient@test.com')
 	{
 		if ($ftp_server !== null)
 			$this->connect($ftp_server, $ftp_port, $ftp_user, $ftp_pass);

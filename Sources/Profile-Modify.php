@@ -190,56 +190,54 @@ function loadProfileFields($force_reload = false)
 			'type' => 'callback',
 			'callback_func' => 'birthdate',
 			'permission' => 'profile_extra',
-			'preload' => create_function('', '
-				global $cur_profile, $context;
-
+			'preload' => function() use ($cur_profile, &$context)
+			{
 				// Split up the birthdate....
-				list ($uyear, $umonth, $uday) = explode(\'-\', empty($cur_profile[\'birthdate\']) || $cur_profile[\'birthdate\'] == \'0001-01-01\' ? \'0000-00-00\' : $cur_profile[\'birthdate\']);
-				$context[\'member\'][\'birth_date\'] = array(
-					\'year\' => $uyear == \'0004\' ? \'0000\' : $uyear,
-					\'month\' => $umonth,
-					\'day\' => $uday,
+				list ($uyear, $umonth, $uday) = explode('-', empty($cur_profile['birthdate']) || $cur_profile['birthdate'] === '1004-01-01' ? '--' : $cur_profile['birthdate']);
+				$context['member']['birth_date'] = array(
+					'year' => $uyear,
+					'month' => $umonth,
+					'day' => $uday,
 				);
 
 				return true;
-			'),
-			'input_validate' => create_function('&$value', '
-				global $profile_vars, $cur_profile;
-
-				if (isset($_POST[\'bday2\'], $_POST[\'bday3\']) && $value > 0 && $_POST[\'bday2\'] > 0)
+			},
+			'input_validate' => function(&$value) use (&$cur_profile, &$profile_vars)
+			{
+				if (isset($_POST['bday2'], $_POST['bday3']) && $value > 0 && $_POST['bday2'] > 0)
 				{
 					// Set to blank?
-					if ((int) $_POST[\'bday3\'] == 1 && (int) $_POST[\'bday2\'] == 1 && (int) $value == 1)
-						$value = \'0001-01-01\';
+					if ((int) $_POST['bday3'] == 1 && (int) $_POST['bday2'] == 1 && (int) $value == 1)
+						$value = '1004-01-01';
 					else
-						$value = checkdate($value, $_POST[\'bday2\'], $_POST[\'bday3\'] < 4 ? 4 : $_POST[\'bday3\']) ? sprintf(\'%04d-%02d-%02d\', $_POST[\'bday3\'] < 4 ? 4 : $_POST[\'bday3\'], $_POST[\'bday1\'], $_POST[\'bday2\']) : \'0001-01-01\';
+						$value = checkdate($value, $_POST['bday2'], $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3']) ? sprintf('%04d-%02d-%02d', $_POST['bday3'] < 1004 ? 1004 : $_POST['bday3'], $_POST['bday1'], $_POST['bday2']) : '1004-01-01';
 				}
 				else
-					$value = \'0001-01-01\';
+					$value = '1004-01-01';
 
-				$profile_vars[\'birthdate\'] = $value;
-				$cur_profile[\'birthdate\'] = $value;
+				$profile_vars['birthdate'] = $value;
+				$cur_profile['birthdate'] = $value;
 				return false;
-			'),
+			},
 		),
 		// Setting the birthdate the old style way?
 		'birthdate' => array(
 			'type' => 'hidden',
 			'permission' => 'profile_extra',
-			'input_validate' => create_function('&$value', '
-				global $cur_profile;
-				// !!! Should we check for this year and tell them they made a mistake :P? (based on coppa at least?)
-				if (preg_match(\'/(\d{4})[\-\., ](\d{2})[\-\., ](\d{2})/\', $value, $dates) === 1)
+			'input_validate' => function(&$value) use ($cur_profile)
+			{
+				// @todo Should we check for this year and tell them they made a mistake :P? (based on coppa at least?)
+				if (preg_match('/(\d{4})[\-\., ](\d{2})[\-\., ](\d{2})/', $value, $dates) === 1)
 				{
-					$value = checkdate($dates[2], $dates[3], $dates[1] < 4 ? 4 : $dates[1]) ? sprintf(\'%04d-%02d-%02d\', $dates[1] < 4 ? 4 : $dates[1], $dates[2], $dates[3]) : \'0001-01-01\';
+					$value = checkdate($dates[2], $dates[3], $dates[1] < 4 ? 4 : $dates[1]) ? sprintf('%04d-%02d-%02d', $dates[1] < 4 ? 4 : $dates[1], $dates[2], $dates[3]) : '1004-01-01';
 					return true;
 				}
 				else
 				{
-					$value = empty($cur_profile[\'birthdate\']) ? \'0001-01-01\' : $cur_profile[\'birthdate\'];
+					$value = empty($cur_profile['birthdate']) ? '1004-01-01' : $cur_profile['birthdate'];
 					return false;
 				}
-			'),
+			},
 		),
 		'date_registered' => array(
 			'type' => 'text',
@@ -247,23 +245,24 @@ function loadProfileFields($force_reload = false)
 			'label' => $txt['date_registered'],
 			'log_change' => true,
 			'permission' => 'moderate_forum',
-			'input_validate' => create_function('&$value', '
-				global $txt, $user_info, $modSettings, $cur_profile, $context;
-
+			'input_validate' => function(&$value) use ($txt, $user_info, $modSettings, $cur_profile, $context)
+			{
 				// Bad date!  Go try again - please?
-				if (($value = strtotime($value)) === -1)
+				if (($value = strtotime($value)) === false)
 				{
-					$value = $cur_profile[\'date_registered\'];
-					return $txt[\'invalid_registration\'] . \' \' . strftime(\'%d %b %Y \' . (strpos($user_info[\'time_format\'], \'%H\') !== false ? \'%I:%M:%S %p\' : \'%H:%M:%S\'), forum_time(false));
+					$value = $cur_profile['date_registered'];
+					return $txt['invalid_registration'] . ' ' . strftime('%d %b %Y ' . (strpos($user_info['time_format'], '%H') !== false ? '%I:%M:%S %p' : '%H:%M:%S'), forum_time(false));
 				}
-				// As long as it doesn\'t equal "N/A"...
-				elseif ($value != $txt[\'not_applicable\'] && $value != strtotime(strftime(\'%Y-%m-%d\', $cur_profile[\'date_registered\'] + ($user_info[\'time_offset\'] + $modSettings[\'time_offset\']) * 3600)))
-					$value = $value - ($user_info[\'time_offset\'] + $modSettings[\'time_offset\']) * 3600;
+
+				// As long as it doesn't equal "N/A"...
+				elseif ($value != $txt['not_applicable'] && $value != strtotime(strftime('%Y-%m-%d', $cur_profile['date_registered'] + ($user_info['time_offset'] + $modSettings['time_offset']) * 3600)))
+					$value = $value - ($user_info['time_offset'] + $modSettings['time_offset']) * 3600;
+
 				else
-					$value = $cur_profile[\'date_registered\'];
+					$value = $cur_profile['date_registered'];
 
 				return true;
-			'),
+			},
 		),
 		'email_address' => array(
 			'type' => 'text',
@@ -271,26 +270,27 @@ function loadProfileFields($force_reload = false)
 			'subtext' => $txt['valid_email'],
 			'log_change' => true,
 			'permission' => 'profile_identity',
-			'input_validate' => create_function('&$value', '
-				global $context, $old_profile, $context, $profile_vars, $sourcedir, $modSettings;
+			'input_validate' => function(&$value)
+			{
+				global $context, $old_profile, $profile_vars, $sourcedir, $modSettings;
 
-				if (strtolower($value) == strtolower($old_profile[\'email_address\']))
+				if (strtolower($value) == strtolower($old_profile['email_address']))
 					return false;
 
-				$isValid = profileValidateEmail($value, $context[\'id_member\']);
+				$isValid = profileValidateEmail($value, $context['id_member']);
 
 				// Do they need to revalidate? If so schedule the function!
-				if ($isValid === true && !empty($modSettings[\'send_validation_onChange\']) && !allowedTo(\'moderate_forum\'))
+				if ($isValid === true && !empty($modSettings['send_validation_onChange']) && !allowedTo('moderate_forum'))
 				{
-					require_once($sourcedir . \'/Subs-Members.php\');
-					$profile_vars[\'validation_code\'] = generateValidationCode();
-					$profile_vars[\'is_activated\'] = 2;
-					$context[\'profile_execute_on_save\'][] = \'profileSendActivation\';
-					unset($context[\'profile_execute_on_save\'][\'reload_user\']);
+					require_once($sourcedir . '/Subs-Members.php');
+					$profile_vars['validation_code'] = generateValidationCode();
+					$profile_vars['is_activated'] = 2;
+					$context['profile_execute_on_save'][] = 'profileSendActivation';
+					unset($context['profile_execute_on_save']['reload_user']);
 				}
 
 				return $isValid;
-			'),
+			},
 		),
 		'gender' => array(
 			'type' => 'select',
@@ -304,11 +304,12 @@ function loadProfileFields($force_reload = false)
 			'value' => empty($cur_profile['hide_email']) ? true : false,
 			'label' => $txt['allow_user_email'],
 			'permission' => 'profile_identity',
-			'input_validate' => create_function('&$value', '
+			'input_validate' => function(&$value)
+			{
 				$value = $value == 0 ? 1 : 0;
 
 				return true;
-			'),
+			},
 		),
 		'icq' => array(
 			'type' => 'text',
@@ -317,13 +318,14 @@ function loadProfileFields($force_reload = false)
 			'size' => 24,
 			'permission' => 'profile_extra',
 			// Need to make sure ICQ doesn't equal 0.
-			'input_validate' => create_function('&$value', '
+			'input_validate' => function(&$value)
+			{
 				if (empty($value))
-					$value = \'\';
+					$value = '';
 				else
 					$value = (int) $value;
 				return true;
-			'),
+			},
 		),
 		// Selecting group membership is a complicated one so we treat it separate!
 		'id_group' => array(
@@ -339,57 +341,59 @@ function loadProfileFields($force_reload = false)
 			'callback_func' => 'theme_pick',
 			'permission' => 'profile_extra',
 			'enabled' => $modSettings['theme_allow'] || allowedTo('admin_forum'),
-			'preload' => create_function('', '
-				global $smcFunc, $context, $cur_profile, $txt;
-
-				$request = $smcFunc[\'db_query\'](\'\', \'
+			'preload' => function() use ($smcFunc, &$context, $cur_profile, $txt)
+			{
+				$request = $smcFunc['db_query']('', '
 					SELECT value
 					FROM {db_prefix}themes
 					WHERE id_theme = {int:id_theme}
 						AND variable = {string:variable}
-					LIMIT 1\', array(
-						\'id_theme\' => $cur_profile[\'id_theme\'],
-						\'variable\' => \'name\',
+					LIMIT 1', array(
+						'id_theme' => $cur_profile['id_theme'],
+						'variable' => 'name',
 					)
 				);
-				list ($name) = $smcFunc[\'db_fetch_row\']($request);
-				$smcFunc[\'db_free_result\']($request);
+				list ($name) = $smcFunc['db_fetch_row']($request);
+				$smcFunc['db_free_result']($request);
 
-				$context[\'member\'][\'theme\'] = array(
-					\'id\' => $cur_profile[\'id_theme\'],
-					\'name\' => empty($cur_profile[\'id_theme\']) ? $txt[\'theme_forum_default\'] : $name
+				$context['member']['theme'] = array(
+					'id' => $cur_profile['id_theme'],
+					'name' => empty($cur_profile['id_theme']) ? $txt['theme_forum_default'] : $name
 				);
 				return true;
-			'),
-			'input_validate' => create_function('&$value', '
+			},
+			'input_validate' => function(&$value)
+			{
 				$value = (int) $value;
 				return true;
-			'),
+			},
 		),
 		'karma_good' => array(
 			'type' => 'callback',
 			'callback_func' => 'karma_modify',
 			'permission' => 'admin_forum',
 			// Set karma_bad too!
-			'input_validate' => create_function('&$value', '
+			'input_validate' => function(&$value)
+			{
 				global $profile_vars, $cur_profile;
 
 				$value = (int) $value;
-				if (isset($_POST[\'karma_bad\']))
+				if (isset($_POST['karma_bad']))
 				{
-					$profile_vars[\'karma_bad\'] = $_POST[\'karma_bad\'] != \'\' ? (int) $_POST[\'karma_bad\'] : 0;
-					$cur_profile[\'karma_bad\'] = $_POST[\'karma_bad\'] != \'\' ? (int) $_POST[\'karma_bad\'] : 0;
+					$profile_vars['karma_bad'] = $_POST['karma_bad'] != '' ? (int) $_POST['karma_bad'] : 0;
+					$cur_profile['karma_bad'] = $_POST['karma_bad'] != '' ? (int) $_POST['karma_bad'] : 0;
 				}
 				return true;
-			'),
-			'preload' => create_function('', '
+			},
+			'preload' => function()
+			{
 				global $context, $cur_profile;
 
-				$context[\'member\'][\'karma\'][\'good\'] = $cur_profile[\'karma_good\'];
-				$context[\'member\'][\'karma\'][\'bad\'] = $cur_profile[\'karma_bad\'];
+				$context['member']['karma']['good'] = $cur_profile['karma_good'];
+				$context['member']['karma']['bad'] = $cur_profile['karma_bad'];
 
 				return true;
-			'),
+			},
 			'enabled' => !empty($modSettings['karmaMode']),
 		),
 		'lngfile' => array(
@@ -400,24 +404,23 @@ function loadProfileFields($force_reload = false)
 			'preload' => 'profileLoadLanguages',
 			'enabled' => !empty($modSettings['userLanguage']),
 			'value' => empty($cur_profile['lngfile']) ? $language : $cur_profile['lngfile'],
-			'input_validate' => create_function('&$value', '
-				global $context, $cur_profile;
-
+			'input_validate' => function(&$value) use (&$context, $cur_profile)
+			{
 				// Load the languages.
 				profileLoadLanguages();
 
-				if (isset($context[\'profile_languages\'][$value]))
+				if (isset($context['profile_languages'][$value]))
 				{
-					if ($context[\'user\'][\'is_owner\'] && empty($context[\'password_auth_failed\']))
-						$_SESSION[\'language\'] = $value;
+					if ($context['user']['is_owner'] && empty($context['password_auth_failed']))
+						$_SESSION['language'] = $value;
 					return true;
 				}
 				else
 				{
-					$value = $cur_profile[\'lngfile\'];
+					$value = $cur_profile['lngfile'];
 					return false;
 				}
-			'),
+			},
 		),
 		'location' => array(
 			'type' => 'text',
@@ -434,30 +437,32 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'permission' => 'profile_identity',
 			'prehtml' => allowedTo('admin_forum') && isset($_GET['changeusername']) ? '<div class="alert">' . $txt['username_warning'] . '</div>' : '',
-			'input_validate' => create_function('&$value', '
+			'input_validate' => function(&$value)
+			{
 				global $sourcedir, $context, $user_info, $cur_profile;
 
-				if (allowedTo(\'admin_forum\'))
+				if (allowedTo('admin_forum'))
 				{
 					// We\'ll need this...
-					require_once($sourcedir . \'/Subs-Auth.php\');
+					require_once($sourcedir . '/Subs-Auth.php');
 
 					// Maybe they are trying to change their password as well?
 					$resetPassword = true;
-					if (isset($_POST[\'passwrd1\']) && $_POST[\'passwrd1\'] != \'\' && isset($_POST[\'passwrd2\']) && $_POST[\'passwrd1\'] == $_POST[\'passwrd2\'] && validatePassword($_POST[\'passwrd1\'], $value, array($cur_profile[\'real_name\'], $user_info[\'username\'], $user_info[\'name\'], $user_info[\'email\'])) == null)
+					if (isset($_POST['passwrd1']) && $_POST['passwrd1'] != '' && isset($_POST['passwrd2']) && $_POST['passwrd1'] == $_POST['passwrd2'] && validatePassword($_POST['passwrd1'], $value, array($cur_profile['real_name'], $user_info['username'], $user_info['name'], $user_info['email'])) == null)
 						$resetPassword = false;
 
 					// Do the reset... this will send them an email too.
 					if ($resetPassword)
-						resetPassword($context[\'id_member\'], $value);
+						resetPassword($context['id_member'], $value);
 					elseif ($value !== null)
 					{
-						validateUsername($context[\'id_member\'], trim(preg_replace(\'~[\t\n\r \x0B\0\' . ($context[\'utf8\'] ? ($context[\'server\'][\'complex_preg_chars\'] ? \'\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}\' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : \'\x00-\x08\x0B\x0C\x0E-\x19\xA0\') . \']+~\' . ($context[\'utf8\'] ? \'u\' : \'\'), \' \', $value)));
-						updateMemberData($context[\'id_member\'], array(\'member_name\' => $value));
+						validateUsername($context['id_member'], trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? ($context['server']['complex_preg_chars'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $value)));
+						updateMemberData($context['id_member'], array('member_name' => $value));
 					}
 				}
 				return false;
-			'),
+			},
+		),
 		),
 		'passwrd1' => array(
 			'type' => 'password',
@@ -469,29 +474,30 @@ function loadProfileFields($force_reload = false)
 			'permission' => 'profile_identity',
 			'save_key' => 'passwd',
 			// Note this will only work if passwrd2 also exists!
-			'input_validate' => create_function('&$value', '
+			'input_validate' => function(&$value)
+			{
 				global $sourcedir, $user_info, $smcFunc, $cur_profile;
 
 				// If we didn\'t try it then ignore it!
-				if ($value == \'\')
+				if ($value == '')
 					return false;
 
 				// Do the two entries for the password even match?
-				if (!isset($_POST[\'passwrd2\']) || $value != $_POST[\'passwrd2\'])
-					return \'bad_new_password\';
+				if (!isset($_POST['passwrd2']) || $value != $_POST['passwrd2'])
+					return 'bad_new_password';
 
 				// Let\'s get the validation function into play...
-				require_once($sourcedir . \'/Subs-Auth.php\');
-				$passwordErrors = validatePassword($value, $cur_profile[\'member_name\'], array($cur_profile[\'real_name\'], $user_info[\'username\'], $user_info[\'name\'], $user_info[\'email\']));
+				require_once($sourcedir . '/Subs-Auth.php');
+				$passwordErrors = validatePassword($value, $cur_profile['member_name'], array($cur_profile['real_name'], $user_info['username'], $user_info['name'], $user_info['email']));
 
 				// Were there errors?
 				if ($passwordErrors != null)
-					return \'password_\' . $passwordErrors;
+					return 'password_' . $passwordErrors;
 
 				// Set up the new password variable... ready for storage.
-				$value = sha1(strtolower($cur_profile[\'member_name\']) . un_htmlspecialchars($value));
+				$value = sha1(strtolower($cur_profile['member_name']) . un_htmlspecialchars($value));
 				return true;
-			'),
+			},
 		),
 		'passwrd2' => array(
 			'type' => 'password',
@@ -515,26 +521,28 @@ function loadProfileFields($force_reload = false)
 			'type' => 'callback',
 			'callback_func' => 'pm_settings',
 			'permission' => 'pm_read',
-			'preload' => create_function('', '
+			'preload' => function()
+			{
 				global $context, $cur_profile;
 
-				$context[\'display_mode\'] = $cur_profile[\'pm_prefs\'] & 3;
-				$context[\'send_email\'] = $cur_profile[\'pm_email_notify\'];
-				$context[\'receive_from\'] = !empty($cur_profile[\'pm_receive_from\']) ? $cur_profile[\'pm_receive_from\'] : 0;
+				$context['display_mode'] = $cur_profile['pm_prefs'] & 3;
+				$context['send_email'] = $cur_profile['pm_email_notify'];
+				$context['receive_from'] = !empty($cur_profile['pm_receive_from']) ? $cur_profile['pm_receive_from'] : 0;
 
 				return true;
-			'),
-			'input_validate' => create_function('&$value', '
+			},
+			'input_validate' => function(&$value)
+			{
 				global $cur_profile, $profile_vars;
 
 				// Simple validate and apply the two "sub settings"
 				$value = max(min($value, 2), 0);
 
-				$cur_profile[\'pm_email_notify\'] = $profile_vars[\'pm_email_notify\'] = max(min((int) $_POST[\'pm_email_notify\'], 2), 0);
-				$cur_profile[\'pm_receive_from\'] = $profile_vars[\'pm_receive_from\'] = max(min((int) $_POST[\'pm_receive_from\'], 4), 0);
+				$cur_profile['pm_email_notify'] = $profile_vars['pm_email_notify'] = max(min((int) $_POST['pm_email_notify'], 2), 0);
+				$cur_profile['pm_receive_from'] = $profile_vars['pm_receive_from'] = max(min((int) $_POST['pm_receive_from'], 4), 0);
 
 				return true;
-			'),
+			},
 		),
 		'posts' => array(
 			'type' => 'int',
@@ -542,10 +550,11 @@ function loadProfileFields($force_reload = false)
 			'log_change' => true,
 			'size' => 7,
 			'permission' => 'moderate_forum',
-			'input_validate' => create_function('&$value', '
-				$value = $value != \'\' ? strtr($value, array(\',\' => \'\', \'.\' => \'\', \' \' => \'\')) : 0;
+			'input_validate' => function(&$value)
+			{
+				$value = $value != '' ? strtr($value, array(',' => '', '.' => '', ' ' => '')) : 0;
 				return true;
-			'),
+			},
 		),
 		'real_name' => array(
 			'type' => !empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum') ? 'text' : 'label',
@@ -555,23 +564,24 @@ function loadProfileFields($force_reload = false)
 			'input_attr' => array('maxlength="60"'),
 			'permission' => 'profile_identity',
 			'enabled' => !empty($modSettings['allow_editDisplayName']) || allowedTo('moderate_forum'),
-			'input_validate' => create_function('&$value', '
+			'input_validate' => function(&$value)
+			{
 				global $context, $smcFunc, $sourcedir, $cur_profile;
 
-				$value = trim(preg_replace(\'~[\t\n\r \x0B\0\' . ($context[\'utf8\'] ? ($context[\'server\'][\'complex_preg_chars\'] ? \'\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}\' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : \'\x00-\x08\x0B\x0C\x0E-\x19\xA0\') . \']+~\' . ($context[\'utf8\'] ? \'u\' : \'\'), \' \', $value));
+				$value = trim(preg_replace('~[\t\n\r \x0B\0' . ($context['utf8'] ? ($context['server']['complex_preg_chars'] ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0') . ']+~' . ($context['utf8'] ? 'u' : ''), ' ', $value));
 
-				if (trim($value) == \'\')
-					return \'no_name\';
-				elseif ($smcFunc[\'strlen\']($value) > 60)
-					return \'name_too_long\';
-				elseif ($cur_profile[\'real_name\'] != $value)
+				if (trim($value) == '')
+					return 'no_name';
+				elseif ($smcFunc['strlen']($value) > 60)
+					return 'name_too_long';
+				elseif ($cur_profile['real_name'] != $value)
 				{
-					require_once($sourcedir . \'/Subs-Members.php\');
-					if (isReservedName($value, $context[\'id_member\']))
-						return \'name_taken\';
+					require_once($sourcedir . '/Subs-Members.php');
+					if (isReservedName($value, $context['id_member']))
+						return 'name_taken';
 				}
 				return true;
-			'),
+			},
 		),
 		'secret_question' => array(
 			'type' => 'text',
@@ -588,10 +598,11 @@ function loadProfileFields($force_reload = false)
 			'postinput' => '<span class="smalltext" style="margin-left: 4ex;"><a href="' . $scripturl . '?action=helpadmin;help=secret_why_blank" onclick="return reqWin(this.href);">' . $txt['secret_why_blank'] . '</a></span>',
 			'value' => '',
 			'permission' => 'profile_identity',
-			'input_validate' => create_function('&$value', '
-				$value = $value != \'\' ? md5($value) : \'\';
+			'input_validate' => function(&$value)
+			{
+				$value = $value != '' ? md5($value) : '';
 				return true;
-			'),
+			},
 		),
 		'signature' => array(
 			'type' => 'callback',
@@ -612,33 +623,35 @@ function loadProfileFields($force_reload = false)
 			'callback_func' => 'smiley_pick',
 			'enabled' => !empty($modSettings['smiley_sets_enable']),
 			'permission' => 'profile_extra',
-			'preload' => create_function('', '
+			'preload' => function()
+			{
 				global $modSettings, $context, $txt, $cur_profile;
 
-				$context[\'member\'][\'smiley_set\'][\'id\'] = empty($cur_profile[\'smiley_set\']) ? \'\' : $cur_profile[\'smiley_set\'];
-				$context[\'smiley_sets\'] = explode(\',\', \'none,,\' . $modSettings[\'smiley_sets_known\']);
-				$set_names = explode("\n", $txt[\'smileys_none\'] . "\n" . $txt[\'smileys_forum_board_default\'] . "\n" . $modSettings[\'smiley_sets_names\']);
-				foreach ($context[\'smiley_sets\'] as $i => $set)
+				$context['member']['smiley_set']['id'] = empty($cur_profile['smiley_set']) ? '' : $cur_profile['smiley_set'];
+				$context['smiley_sets'] = explode(',', 'none,,' . $modSettings['smiley_sets_known']);
+				$set_names = explode("\n", $txt['smileys_none'] . "\n" . $txt['smileys_forum_board_default'] . "\n" . $modSettings['smiley_sets_names']);
+				foreach ($context['smiley_sets'] as $i => $set)
 				{
-					$context[\'smiley_sets\'][$i] = array(
-						\'id\' => htmlspecialchars($set),
-						\'name\' => htmlspecialchars($set_names[$i]),
-						\'selected\' => $set == $context[\'member\'][\'smiley_set\'][\'id\']
+					$context['smiley_sets'][$i] = array(
+						'id' => htmlspecialchars($set),
+						'name' => htmlspecialchars($set_names[$i]),
+						'selected' => $set == $context['member']['smiley_set']['id']
 					);
 
-					if ($context[\'smiley_sets\'][$i][\'selected\'])
-						$context[\'member\'][\'smiley_set\'][\'name\'] = $set_names[$i];
+					if ($context['smiley_sets'][$i]['selected'])
+						$context['member']['smiley_set']['name'] = $set_names[$i];
 				}
 				return true;
-			'),
-			'input_validate' => create_function('&$value', '
+			},
+			'input_validate' => function(&$value)
+			{
 				global $modSettings;
 
-				$smiley_sets = explode(\',\', $modSettings[\'smiley_sets_known\']);
-				if (!in_array($value, $smiley_sets) && $value != \'none\')
-					$value = \'\';
+				$smiley_sets = explode(',', $modSettings['smiley_sets_known']);
+				if (!in_array($value, $smiley_sets) && $value != 'none')
+					$value = '';
 				return true;
-			'),
+			},
 		),
 		// Pretty much a dummy entry - it populates all the theme settings.
 		'theme_settings' => array(
@@ -646,52 +659,54 @@ function loadProfileFields($force_reload = false)
 			'callback_func' => 'theme_settings',
 			'permission' => 'profile_extra',
 			'is_dummy' => true,
-			'preload' => create_function('', '
-				loadLanguage(\'Settings\');
+			'preload' => function()
+			{
+				loadLanguage('Settings');
 				return true;
-			'),
+			},
 		),
 		'time_format' => array(
 			'type' => 'callback',
 			'callback_func' => 'timeformat_modify',
 			'permission' => 'profile_extra',
-			'preload' => create_function('', '
-				global $context, $user_info, $txt, $cur_profile, $modSettings;
-
-				$context[\'easy_timeformats\'] = array(
-					array(\'format\' => \'\', \'title\' => $txt[\'timeformat_default\']),
-					array(\'format\' => \'%B %d, %Y, %I:%M:%S %p\', \'title\' => $txt[\'timeformat_easy1\']),
-					array(\'format\' => \'%B %d, %Y, %H:%M:%S\', \'title\' => $txt[\'timeformat_easy2\']),
-					array(\'format\' => \'%Y-%m-%d, %H:%M:%S\', \'title\' => $txt[\'timeformat_easy3\']),
-					array(\'format\' => \'%d %B %Y, %H:%M:%S\', \'title\' => $txt[\'timeformat_easy4\']),
-					array(\'format\' => \'%d-%m-%Y, %H:%M:%S\', \'title\' => $txt[\'timeformat_easy5\'])
+			'preload' => function() use (&$context, $user_info, $txt, $cur_profile, $modSettings)
+			{
+				$context['easy_timeformats'] = array(
+					array('format' => '', 'title' => $txt['timeformat_default']),
+					array('format' => '%B %d, %Y, %I:%M:%S %p', 'title' => $txt['timeformat_easy1']),
+					array('format' => '%B %d, %Y, %H:%M:%S', 'title' => $txt['timeformat_easy2']),
+					array('format' => '%Y-%m-%d, %H:%M:%S', 'title' => $txt['timeformat_easy3']),
+					array('format' => '%d %B %Y, %H:%M:%S', 'title' => $txt['timeformat_easy4']),
+					array('format' => '%d-%m-%Y, %H:%M:%S', 'title' => $txt['timeformat_easy5'])
 				);
 
-				$context[\'member\'][\'time_format\'] = $cur_profile[\'time_format\'];
-				$context[\'current_forum_time\'] = timeformat(time() - $user_info[\'time_offset\'] * 3600, false);
-				$context[\'current_forum_time_js\'] = strftime(\'%Y,\' . ((int) strftime(\'%m\', time() + $modSettings[\'time_offset\'] * 3600) - 1) . \',%d,%H,%M,%S\', time() + $modSettings[\'time_offset\'] * 3600);
-				$context[\'current_forum_time_hour\'] = (int) strftime(\'%H\', forum_time(false));
+				$context['member']['time_format'] = $cur_profile['time_format'];
+				$context['current_forum_time'] = timeformat(time() - $user_info['time_offset'] * 3600, false);
+				$context['current_forum_time_js'] = strftime('%Y,' . ((int) strftime('%m', time() + $modSettings['time_offset'] * 3600) - 1) . ',%d,%H,%M,%S', time() + $modSettings['time_offset'] * 3600);
+				$context['current_forum_time_hour'] = (int) strftime('%H', forum_time(false));
 				return true;
-			'),
+			},
 		),
 		'time_offset' => array(
 			'type' => 'callback',
 			'callback_func' => 'timeoffset_modify',
 			'permission' => 'profile_extra',
-			'preload' => create_function('', '
+			'preload' => function()
+			{
 				global $context, $cur_profile;
-				$context[\'member\'][\'time_offset\'] = $cur_profile[\'time_offset\'];
+				$context['member']['time_offset'] = $cur_profile['time_offset'];
 				return true;
-			'),
-			'input_validate' => create_function('&$value', '
+			},
+			'input_validate' => function(&$value)
+			{
 				// Validate the time_offset...
-				$value = (float) strtr($value, \',\', \'.\');
+				$value = (float) strtr($value, ',', '.');
 
 				if ($value < -23.5 || $value > 23.5)
-					return \'bad_offset\';
+					return 'bad_offset';
 
 				return true;
-			'),
+			},
 		),
 		'usertitle' => array(
 			'type' => 'text',
@@ -716,14 +731,14 @@ function loadProfileFields($force_reload = false)
 			'size' => 50,
 			'permission' => 'profile_extra',
 			// Fix the URL...
-			'input_validate' => create_function('&$value', '
-
-				if (strlen(trim($value)) > 0 && strpos($value, \'://\') === false)
-					$value = \'http://\' . $value;
-				if (strlen($value) < 8 || (substr($value, 0, 7) !== \'http://\' && substr($value, 0, 8) !== \'https://\'))
-					$value = \'\';
+			'input_validate' => function(&$value)
+			{
+				if (strlen(trim($value)) > 0 && strpos($value, '://') === false)
+					$value = 'http://' . $value;
+				if (strlen($value) < 8 || (substr($value, 0, 7) !== 'http://' && substr($value, 0, 8) !== 'https://'))
+					$value = '';
 				return true;
-			'),
+			},
 			'link_with' => 'website',
 		),
 		'yim' => array(
@@ -766,14 +781,7 @@ function loadProfileFields($force_reload = false)
 			'input_attr' => array('maxlength="32"'),
 			'permission' => 'profile_extra',
 		),
-		'googleplus' => array(
-			'type' => 'text',
-			'label' => $txt['smi_googleplus_title'],
-			'subtext' => $txt['smi_googleplus_desc'],
-			'size' => 24,
-			'input_attr' => array('maxlength="32"'),
-			'permission' => 'profile_extra',
-		),
+
 		'linkedin' => array(
 			'type' => 'text',
 			'label' => $txt['smi_linkedin_title'],
@@ -1353,7 +1361,7 @@ function makeCustomFieldChanges($memID, $area, $sanitize = true)
 			if ($row['field_type'] == 'text' && !empty($row['mask']) && $row['mask'] != 'none')
 			{
 				//!!! We never error on this - just ignore it at the moment...
-				if ($row['mask'] == 'email' && (preg_match('~^[0-9A-Za-z=_+\-/][0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $value) === 0 || strlen($value) > 255))
+				if ($row['mask'] == 'email' && (filter_var($value, FILTER_VALIDATE_EMAIL) === false || strlen($value) > 255))
 					$value = '';
 				elseif ($row['mask'] == 'number')
 				{
@@ -1717,7 +1725,7 @@ function forumProfile($memID)
 		array(
 			'avatar_choice', 'hr', 'personal_text', 'hr',
 			'bday1', 'location', 'gender', 'hr',
-			'icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'hr',
+			'icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'hr',
 			'usertitle', 'signature', 'hr',
 			'karma_good', 'hr',
 			'website_title', 'website_url',
@@ -1946,16 +1954,15 @@ function notification($memID)
 					'class' => 'lefttext first_th',
 				),
 				'data' => array(
-					'function' => create_function('$board', '
-						global $settings, $txt;
+					'function' => function($board) use ($settings, $txt)
+					{
+						$link = $board['link'];
 
-						$link = $board[\'link\'];
-
-						if ($board[\'new\'])
-							$link .= \' <a href="\' . $board[\'href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'" /></a>\';
+						if ($board['new'])
+							$link .= ' <a href="' . $board['href'] . '"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>';
 
 						return $link;
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'name',
@@ -2028,18 +2035,17 @@ function notification($memID)
 					'class' => 'lefttext first_th',
 				),
 				'data' => array(
-					'function' => create_function('$topic', '
-						global $settings, $txt;
+					'function' => function($topic) use ($settings, $txt)
+					{
+						$link = $topic['link'];
 
-						$link = $topic[\'link\'];
+						if ($topic['new'])
+							$link .= ' <a href="' . $topic['new_href'] . '"><img src="' . $settings['lang_images_url'] . '/new.gif" alt="' . $txt['new'] . '" /></a>';
 
-						if ($topic[\'new\'])
-							$link .= \' <a href="\' . $topic[\'new_href\'] . \'"><img src="\' . $settings[\'lang_images_url\'] . \'/new.gif" alt="\' . $txt[\'new\'] . \'" /></a>\';
-
-						$link .= \'<br /><span class="smalltext"><em>\' . $txt[\'in\'] . \' \' . $topic[\'board_link\'] . \'</em></span>\';
+						$link .= '<br /><span class="smalltext"><em>' . $txt['in'] . ' ' . $topic['board_link'] . '</em></span>';
 
 						return $link;
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'ms.subject',

@@ -426,7 +426,7 @@ function EditBoard()
 		$context['board']['name'] = $smcFunc['htmlspecialchars'](strtr($context['board']['name'], array('&amp;' => '&')));
 		$context['board']['description'] = $smcFunc['htmlspecialchars']($context['board']['description']);
 		$context['board']['no_children'] = empty($boards[$_REQUEST['boardid']]['tree']['children']);
-        $context['board']['apmt_prune_frequency'] = !empty($boards[$_REQUEST['boardid']]['apmt_prune_frequency']) ? $boards[$_REQUEST['boardid']]['apmt_prune_frequency'] : 0;
+        	$context['board']['apmt_prune_frequency'] = !empty($boards[$_REQUEST['boardid']]['apmt_prune_frequency']) ? $boards[$_REQUEST['boardid']]['apmt_prune_frequency'] : 0;
 		$context['board']['is_recycle'] = !empty($modSettings['recycle_enable']) && !empty($modSettings['recycle_board']) && $modSettings['recycle_board'] == $context['board']['id'];
 	}
 
@@ -635,7 +635,7 @@ function EditBoard2()
 
 		// Are they doing redirection?
 		$boardOptions['redirect'] = !empty($_POST['redirect_enable']) && isset($_POST['redirect_address']) && trim($_POST['redirect_address']) != '' ? trim($_POST['redirect_address']) : '';
-        // Auto pruning
+        	// Auto pruning
 		$boardOptions['apmt_prune_frequency'] = (int) $_POST['apmt_prune_frequency'];
         
 		// Profiles...

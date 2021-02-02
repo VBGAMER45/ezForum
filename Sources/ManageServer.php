@@ -318,7 +318,7 @@ function ModifyCookieSettings($return_config = false)
 		array('localCookies', $txt['localCookies'], 'db', 'check', false, 'localCookies'),
 		array('globalCookies', $txt['globalCookies'], 'db', 'check', false, 'globalCookies'),
 		array('secureCookies', $txt['secureCookies'], 'db', 'check', false, 'secureCookies',  'disabled' => !isset($_SERVER['HTTPS']) || !(strtolower($_SERVER['HTTPS']) == 'on' || strtolower($_SERVER['HTTPS']) == '1')),
-		array('cookie_no_auth_secret', $txt['cookie_no_auth_secret'], 'db', 'check', false, 'cookie_no_auth_secret',  'disabled' => empty($modSettings['integrate_verify_user'])),
+		array('cookie_no_auth_secret', $txt['cookie_no_auth_secret'], 'db', 'check', false, 'cookie_no_auth_secret'),
 		'',
 		// Sessions
 		array('databaseSession_enable', $txt['databaseSession_enable'], 'db', 'check', false, 'databaseSession_enable'),
@@ -335,10 +335,6 @@ function ModifyCookieSettings($return_config = false)
 	// Saving settings?
 	if (isset($_REQUEST['save']))
 	{
-		// If this setting will be ignored anyway, disable it.
-		if (empty($modSettings['integrate_verify_user']) && !empty($cookie_no_auth_secret))
-			$_POST['cookie_no_auth_secret'] = 0;
-
 		saveSettings($config_vars);
 
 		// If the cookie name was changed, reset the cookie.
@@ -542,7 +538,7 @@ function AddLanguage()
 		$context['smf_search_term'] = htmlspecialchars(trim($_POST['smf_add']));
 
 		// We're going to use this URL.
-		$url = 'http://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('SMF ' => '')));
+		$url = 'https://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('SMF ' => '')));
 
 		// Load the class file and stick it into an array.
 		loadClassFile('Class-Package.php');
@@ -624,7 +620,7 @@ function DownloadLanguage()
 		// Otherwise, go go go!
 		elseif (!empty($install_files))
 		{
-			$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('SMF ' => ''))) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
+			$archive_content = read_tgz_file('https://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('SMF ' => ''))) . ';fetch=' . urlencode($_GET['did']), $boarddir, false, true, $install_files);
 			// Make sure the files aren't stuck in the cache.
 			package_flush_cache();
 			$context['install_complete'] = sprintf($txt['languages_download_complete_desc'], $scripturl . '?action=admin;area=languages');
@@ -635,7 +631,7 @@ function DownloadLanguage()
 
 	// Open up the old china.
 	if (!isset($archive_content))
-		$archive_content = read_tgz_file('http://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('SMF ' => ''))) . ';fetch=' . urlencode($_GET['did']), null);
+		$archive_content = read_tgz_file('https://download.simplemachines.org/fetch_language.php?version=' . urlencode(strtr($forum_version, array('SMF ' => ''))) . ';fetch=' . urlencode($_GET['did']), null);
 
 	if (empty($archive_content))
 		fatal_error($txt['add_language_error_no_response']);
@@ -858,10 +854,10 @@ function DownloadLanguage()
 		'id' => 'lang_main_files_list',
 		'title' => $txt['languages_download_main_files'],
 		'get_items' => array(
-			'function' => create_function('', '
-				global $context;
-				return $context[\'files\'][\'lang\'];
-			'),
+			'function' => function() use ($context)
+			{
+				return $context['files']['lang'];
+			},
 		),
 		'columns' => array(
 			'name' => array(
@@ -869,11 +865,10 @@ function DownloadLanguage()
 					'value' => $txt['languages_download_filename'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $context, $txt;
-
-						return \'<strong>\' . $rowData[\'name\'] . \'</strong><br /><span class="smalltext">\' . $txt[\'languages_download_dest\'] . \': \' . $rowData[\'destination\'] . \'</span>\' . ($rowData[\'version_compare\'] == \'older\' ? \'<br />\' . $txt[\'languages_download_older\'] : \'\');
-					'),
+					'function' => function($rowData) use ($context, $txt)
+					{
+						return '<strong>' . $rowData['name'] . '</strong><br /><span class="smalltext">' . $txt['languages_download_dest'] . ': ' . $rowData['destination'] . '</span>' . ($rowData['version_compare'] == 'older' ? '<br />' . $txt['languages_download_older'] : '');
+					},
 				),
 			),
 			'writable' => array(
@@ -881,11 +876,10 @@ function DownloadLanguage()
 					'value' => $txt['languages_download_writable'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return \'<span style="color: \' . ($rowData[\'writable\'] ? \'green\' : \'red\') . \';">\' . ($rowData[\'writable\'] ? $txt[\'yes\'] : $txt[\'no\']) . \'</span>\';
-					'),
+					'function' => function($rowData) use ($txt)
+					{
+						return '<span style="color: ' . ($rowData['writable'] ? 'green' : 'red') . ';">' . ($rowData['writable'] ? $txt['yes'] : $txt['no']) . '</span>';
+					},
 					'style' => 'text-align: center',
 				),
 			),
@@ -894,11 +888,10 @@ function DownloadLanguage()
 					'value' => $txt['languages_download_version'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return \'<span style="color: \' . ($rowData[\'version_compare\'] == \'older\' ? \'red\' : ($rowData[\'version_compare\'] == \'same\' ? \'orange\' : \'green\')) . \';">\' . $rowData[\'version\'] . \'</span>\';
-					'),
+					'function' => function($rowData) use ($txt)
+					{
+						return '<span style="color: ' . ($rowData['version_compare'] == 'older' ? 'red' : ($rowData['version_compare'] == 'same' ? 'orange' : 'green')) . ';">' . $rowData['version'] . '</span>';
+					},
 				),
 			),
 			'exists' => array(
@@ -906,11 +899,10 @@ function DownloadLanguage()
 					'value' => $txt['languages_download_exists'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return $rowData[\'exists\'] ? ($rowData[\'exists\'] == \'same\' ? $txt[\'languages_download_exists_same\'] : $txt[\'languages_download_exists_different\']) : $txt[\'no\'];
-					'),
+					'function' => function($rowData) use ($txt)
+					{
+						return $rowData['exists'] ? ($rowData['exists'] == 'same' ? $txt['languages_download_exists_same'] : $txt['languages_download_exists_different']) : $txt['no'];
+					},
 				),
 			),
 			'copy' => array(
@@ -918,9 +910,10 @@ function DownloadLanguage()
 					'value' => $txt['languages_download_copy'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input type="checkbox" name="copy_file[]" value="\' . $rowData[\'generaldest\'] . \'" \' . ($rowData[\'default_copy\'] ? \'checked="checked"\' : \'\') . \' class="input_check" />\';
-					'),
+					'function' => function($rowData) use ($txt)
+					{
+						return '<input type="checkbox" name="copy_file[]" value="' . $rowData['generaldest'] . '" ' . ($rowData['default_copy'] ? 'checked="checked"' : '') . ' class="input_check" />';
+					},
 					'style' => 'text-align: center; width: 4%;',
 				),
 			),
@@ -987,9 +980,10 @@ function ModifyLanguages()
 					'value' => $txt['languages_default'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return \'<input type="radio" name="def_language" value="\' . $rowData[\'id\'] . \'" \' . ($rowData[\'default\'] ? \'checked="checked"\' : \'\') . \' onclick="highlightSelected(\\\'list_language_list_\' . $rowData[\'id\'] . \'\\\');" class="input_radio" />\';
-					'),
+					'function' => function($rowData)
+					{
+						return '<input type="radio" name="def_language" value="' . $rowData['id'] . '" ' . ($rowData['default'] ? 'checked="checked"' : '') . ' onclick="highlightSelected(\'list_language_list_' . $rowData['id'] . '\');" class="input_radio" />';
+					},
 					'style' => 'text-align: center; width: 8%;',
 				),
 			),
@@ -998,11 +992,10 @@ function ModifyLanguages()
 					'value' => $txt['languages_lang_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $scripturl, $context;
-
-						return sprintf(\'<a href="%1$s?action=admin;area=languages;sa=editlang;lid=%2$s">%3$s</a>\', $scripturl, $rowData[\'id\'], $rowData[\'name\']);
-					'),
+					'function' => function($rowData) use ($scripturl, $context)
+					{
+						return sprintf('<a href="%1$s?action=admin;area=languages;sa=editlang;lid=%2$s">%3$s</a>', $scripturl, $rowData['id'], $rowData['name']);
+					},
 				),
 			),
 			'character_set' => array(
@@ -1370,6 +1363,7 @@ function ModifyLanguage()
 			'~\$txt\[\'lang_locale\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_locale\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['locale']) . '\';',
 			'~\$txt\[\'lang_dictionary\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_dictionary\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['dictionary']) . '\';',
 			'~\$txt\[\'lang_spelling\'\]\s=\s(\'|")[^\r\n]+~' => '$txt[\'lang_spelling\'] = \'' . preg_replace('~[^\w-]~i', '', $_POST['spelling']) . '\';',
+			'~\$txt\[\'lang_rtl\'\]\s=\s[A-Za-z0-9]+;~' => '$txt[\'lang_rtl\'] = ' . (!empty($_POST['rtl']) ? 'true' : 'false') . ';',
 		);
 		$current_data = preg_replace(array_keys($replace_array), array_values($replace_array), $current_data);
 		$fp = fopen($settings['default_theme_dir'] . '/languages/index.' . $context['lang_id'] . '.php', 'w+');
@@ -1597,7 +1591,7 @@ function cleanLangString($string, $to_display = true)
 		for ($i = 0; $i < strlen($string); $i++)
 		{
 			// Handle ecapes first.
-			if ($string{$i} == '\\')
+			if ($string[$i] == '\\')
 			{
 				// Toggle the escape.
 				$is_escape = !$is_escape;
@@ -1606,15 +1600,15 @@ function cleanLangString($string, $to_display = true)
 					continue;
 			}
 			// Special case - parsed string with line break etc?
-			elseif (($string{$i} == 'n' || $string{$i} == 't') && $in_string == 2 && $is_escape)
+			elseif (($string[$i] == 'n' || $string[$i] == 't') && $in_string == 2 && $is_escape)
 			{
 				// Put the escape back...
-				$new_string .= $string{$i} == 'n' ? "\n" : "\t";
+				$new_string .= $string[$i] == 'n' ? "\n" : "\t";
 				$is_escape = false;
 				continue;
 			}
 			// Have we got a single quote?
-			elseif ($string{$i} == '\'')
+			elseif ($string[$i] == '\'')
 			{
 				// Already in a parsed string, or escaped in a linear string, means we print it - otherwise something special.
 				if ($in_string != 2 && ($in_string != 1 || !$is_escape))
@@ -1631,7 +1625,7 @@ function cleanLangString($string, $to_display = true)
 				}
 			}
 			// Otherwise a double quote?
-			elseif ($string{$i} == '"')
+			elseif ($string[$i] == '"')
 			{
 				// Already in a single quote string, or escaped in a parsed string, means we print it - otherwise something special.
 				if ($in_string != 1 && ($in_string != 2 || !$is_escape))
@@ -1648,10 +1642,10 @@ function cleanLangString($string, $to_display = true)
 				}
 			}
 			// A join/space outside of a string is simply removed.
-			elseif ($in_string == 0 && (empty($string{$i}) || $string{$i} == '.'))
+			elseif ($in_string == 0 && (empty($string[$i]) || $string[$i] == '.'))
 				continue;
 			// Start of a variable?
-			elseif ($in_string == 0 && $string{$i} == '$')
+			elseif ($in_string == 0 && $string[$i] == '$')
 			{
 				// Find the whole of it!
 				preg_match('~([\$A-Za-z0-9\'\[\]_-]+)~', substr($string, $i), $matches);
@@ -1674,7 +1668,7 @@ function cleanLangString($string, $to_display = true)
 			}
 
 			// Actually add the character to the string!
-			$new_string .= $string{$i};
+			$new_string .= $string[$i];
 			// If anything was escaped it ain't any longer!
 			$is_escape = false;
 		}
@@ -1691,20 +1685,20 @@ function cleanLangString($string, $to_display = true)
 		for ($i = 0; $i < strlen($string); $i++)
 		{
 			// Handle line breaks!
-			if ($string{$i} == "\n" || $string{$i} == "\t")
+			if ($string[$i] == "\n" || $string[$i] == "\t")
 			{
 				// Are we in a string? Is it the right type?
 				if ($in_string == 1)
 				{
 					// Change type!
-					$new_string .= '\' . "\\' . ($string{$i} == "\n" ? 'n' : 't');
+					$new_string .= '\' . "\\' . ($string[$i] == "\n" ? 'n' : 't');
 					$in_string = 2;
 				}
 				elseif ($in_string == 2)
-					$new_string .= '\\' . ($string{$i} == "\n" ? 'n' : 't');
+					$new_string .= '\\' . ($string[$i] == "\n" ? 'n' : 't');
 				// Otherwise start one off - joining if required.
 				else
-					$new_string .= ($new_string ? ' . ' : '') . '"\\' . ($string{$i} == "\n" ? 'n' : 't');
+					$new_string .= ($new_string ? ' . ' : '') . '"\\' . ($string[$i] == "\n" ? 'n' : 't');
 
 				continue;
 			}
@@ -1723,7 +1717,7 @@ function cleanLangString($string, $to_display = true)
 			}
 
 			// Is this a variable?
-			if ($string{$i} == '{' && $string{$i + 1} == '%' && $string{$i + 2} == '$')
+			if ($string[$i] == '{' && $string[$i + 1] == '%' && $string[$i + 2] == '$')
 			{
 				// Grab the variable.
 				preg_match('~\{%([\$A-Za-z0-9\'\[\]_-]+)%\}~', substr($string, $i), $matches);
@@ -1742,10 +1736,10 @@ function cleanLangString($string, $to_display = true)
 				continue;
 			}
 			// Is this a lt sign?
-			elseif ($string{$i} == '<')
+			elseif ($string[$i] == '<')
 			{
 				// Probably HTML?
-				if ($string{$i + 1} != ' ')
+				if ($string[$i + 1] != ' ')
 					$in_html = true;
 				// Assume we need an entity...
 				else
@@ -1755,7 +1749,7 @@ function cleanLangString($string, $to_display = true)
 				}
 			}
 			// What about gt?
-			elseif ($string{$i} == '>')
+			elseif ($string[$i] == '>')
 			{
 				// Will it be HTML?
 				if ($in_html)
@@ -1768,10 +1762,10 @@ function cleanLangString($string, $to_display = true)
 				}
 			}
 			// Is it a slash? If so escape it...
-			if ($string{$i} == '\\')
+			if ($string[$i] == '\\')
 				$new_string .= '\\';
 			// The infamous double quote?
-			elseif ($string{$i} == '"')
+			elseif ($string[$i] == '"')
 			{
 				// If we're in HTML we leave it as a quote - otherwise we entity it.
 				if (!$in_html)
@@ -1781,14 +1775,14 @@ function cleanLangString($string, $to_display = true)
 				}
 			}
 			// A single quote?
-			elseif ($string{$i} == '\'')
+			elseif ($string[$i] == '\'')
 			{
 				// Must be in a string so escape it.
 				$new_string .= '\\';
 			}
 
 			// Finally add the character to the string!
-			$new_string .= $string{$i};
+			$new_string .= $string[$i];
 		}
 
 		// If we ended as a string then close it off.
@@ -1830,6 +1824,7 @@ function prepareServerSettingsContext(&$config_vars)
 				'preinput' => '',
 				'postinput' => isset($config_var['postinput']) ? $config_var['postinput'] : '',
 				'subtext' => isset($config_var['subtext']) ? $config_var['subtext'] : '',
+				'needs_default' => !empty($config_var['needs_default']) || in_array($config_var[0], array('db_persist', 'db_error_send', 'maintenance', 'image_proxy_enabled')) ? true : false,
 			);
 		}
 	}

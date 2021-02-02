@@ -233,7 +233,7 @@ function RemindPick()
 // Set your new password
 function setPassword()
 {
-	global $txt, $context;
+	global $txt, $context, $smcFunc;
 
 	loadLanguage('Login');
 
@@ -245,7 +245,7 @@ function setPassword()
 	$context += array(
 		'page_title' => $txt['reminder_set_password'],
 		'sub_template' => 'set_password',
-		'code' => $_REQUEST['code'],
+		'code' => $smcFunc['htmlspecialchars']($_REQUEST['code']),
 		'memID' => (int) $_REQUEST['u']
 	);
 }
@@ -402,7 +402,7 @@ function SecretAnswer2()
 	$smcFunc['db_free_result']($request);
 
 	// Check if the secret answer is correct.
-	if ($row['secret_question'] == '' || $row['secret_answer'] == '' || md5($_POST['secret_answer']) !== $row['secret_answer'])
+	if ($row['secret_question'] == '' || $row['secret_answer'] == '' || md5($_POST['secret_answer']) != $row['secret_answer'])
 	{
 		log_error(sprintf($txt['reminder_error'], $row['member_name']), 'user');
 		fatal_lang_error('incorrect_answer', false);

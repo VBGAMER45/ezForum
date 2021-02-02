@@ -88,9 +88,11 @@ function loadGeneralSettingParameters($subActions = array(), $defaultAction = ''
 
 	$context['sub_template'] = 'show_settings';
 
-	// By default do the basic settings.
-	$_REQUEST['sa'] = isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : (!empty($defaultAction) ? $defaultAction : array_pop(array_keys($subActions)));
-	$context['sub_action'] = $_REQUEST['sa'];
+	// If no fallback was specified, use the first subaction.
+	$defaultAction = !empty($defaultAction) ? $defaultAction : key($subActions);
+
+	// I want...
+	$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : $defaultAction;
 }
 
 // This function passes control through to the relevant tab.
@@ -106,11 +108,11 @@ function ModifyFeatureSettings()
 		'loginsecurity' => 'ModifyLoginSecuritySettings',
 		'karma' => 'ModifyKarmaSettings',
 		'sig' => 'ModifySignatureSettings',
-        'action' => 'CustomActionList',
+        	'action' => 'CustomActionList',
 		'actionedit' => 'CustomActionEdit',
 		'profile' => 'ShowCustomProfiles',
 		'profileedit' => 'EditCustomProfiles',
-        'dlinks' => 'ModifydlinksSettings',
+        	'dlinks' => 'ModifydlinksSettings',
 	);
 
 
@@ -136,7 +138,7 @@ function ModifyFeatureSettings()
 			'profile' => array(
 				'description' => $txt['custom_profile_desc'],
 			),
-            'action' => array(
+            		'action' => array(
 				'label' => $txt['custom_action_title'],
 				'description' => $txt['custom_action_desc'],
 			),
@@ -244,25 +246,27 @@ function ModifyCoreFeatures($return_config = false)
 		// cp = custom profile fields.
 		'cp' => array(
 			'url' => 'action=admin;area=featuresettings;sa=profile',
-			'save_callback' => create_function('$value', '
+			'save_callback' => function($value)
+			{
 				global $smcFunc;
 				if (!$value)
 				{
-					$smcFunc[\'db_query\'](\'\', \'
+					$smcFunc['db_query']('', '
 						UPDATE {db_prefix}custom_fields
-						SET active = 0\');
+						SET active = 0');
 				}
-			'),
-			'setting_callback' => create_function('$value', '
+			},
+			'setting_callback' => function($value)
+			{
 				if (!$value)
 					return array(
-						\'disabled_profile_fields\' => \'\',
-						\'registration_fields\' => \'\',
-						\'displayFields\' => \'\',
+						'disabled_profile_fields' => '',
+						'registration_fields' => '',
+						'displayFields' => '',
 					);
 				else
 					return array();
-			'),
+			},
 		),
 		// k = karma.
 		'k' => array(
@@ -281,20 +285,21 @@ function ModifyCoreFeatures($return_config = false)
 		// pm = post moderation.
 		'pm' => array(
 			'url' => 'action=admin;area=permissions;sa=postmod',
-			'setting_callback' => create_function('$value', '
+			'setting_callback' => function($value)
+			{
 				global $sourcedir;
 
 				// Cant use warning post moderation if disabled!
 				if (!$value)
 				{
-					require_once($sourcedir . \'/PostModeration.php\');
+					require_once($sourcedir . '/PostModeration.php');
 					approveAllData();
 
-					return array(\'warning_moderate\' => 0);
+					return array('warning_moderate' => 0);
 				}
 				else
 					return array();
-			'),
+			},
 		),
 		// ps = Paid Subscriptions.
 		'ps' => array(
@@ -302,27 +307,28 @@ function ModifyCoreFeatures($return_config = false)
 			'settings' => array(
 				'paid_enabled' => 1,
 			),
-			'setting_callback' => create_function('$value', '
+			'setting_callback' => function($value)
+			{
 				global $smcFunc, $sourcedir;
 
 				// Set the correct disabled value for scheduled task.
-				$smcFunc[\'db_query\'](\'\', \'
+				$smcFunc['db_query']('', '
 					UPDATE {db_prefix}scheduled_tasks
 					SET disabled = {int:disabled}
-					WHERE task = {string:task}\',
+					WHERE task = {string:task}',
 					array(
-						\'disabled\' => $value ? 0 : 1,
-						\'task\' => \'paid_subscriptions\',
+						'disabled' => $value ? 0 : 1,
+						'task' => 'paid_subscriptions',
 					)
 				);
 
 				// Should we calculate next trigger?
 				if ($value)
 				{
-					require_once($sourcedir . \'/ScheduledTasks.php\');
-					CalculateNextTrigger(\'paid_subscriptions\');
+					require_once($sourcedir . '/ScheduledTasks.php');
+					CalculateNextTrigger('paid_subscriptions');
 				}
-			'),
+			},
 		),
 		// rg = report generator.
 		'rg' => array(
@@ -331,32 +337,33 @@ function ModifyCoreFeatures($return_config = false)
 		// w = warning.
 		'w' => array(
 			'url' => 'action=admin;area=securitysettings;sa=moderation',
-			'setting_callback' => create_function('$value', '
+			'setting_callback' => function($value)
+			{
 				global $modSettings;
-				list ($modSettings[\'warning_enable\'], $modSettings[\'user_limit\'], $modSettings[\'warning_decrement\']) = explode(\',\', $modSettings[\'warning_settings\']);
-				$warning_settings = ($value ? 1 : 0) . \',\' . $modSettings[\'user_limit\'] . \',\' . $modSettings[\'warning_decrement\'];
+				list ($modSettings['warning_enable'], $modSettings['user_limit'], $modSettings['warning_decrement']) = explode(',', $modSettings['warning_settings']);
+				$warning_settings = ($value ? 1 : 0) . ',' . $modSettings['user_limit'] . ',' . $modSettings['warning_decrement'];
 				if (!$value)
 				{
 					$returnSettings = array(
-						\'warning_watch\' => 0,
-						\'warning_moderate\' => 0,
-						\'warning_mute\' => 0,
+						'warning_watch' => 0,
+						'warning_moderate' => 0,
+						'warning_mute' => 0,
 					);
 				}
-				elseif (empty($modSettings[\'warning_enable\']) && $value)
+				elseif (empty($modSettings['warning_enable']) && $value)
 				{
 					$returnSettings = array(
-						\'warning_watch\' => 10,
-						\'warning_moderate\' => 35,
-						\'warning_mute\' => 60,
+						'warning_watch' => 10,
+						'warning_moderate' => 35,
+						'warning_mute' => 60,
 					);
 				}
 				else
 					$returnSettings = array();
 
-				$returnSettings[\'warning_settings\'] = $warning_settings;
+				$returnSettings['warning_settings'] = $warning_settings;
 				return $returnSettings;
-			'),
+			},
 		),
 		// Search engines
 		'sp' => array(
@@ -364,17 +371,50 @@ function ModifyCoreFeatures($return_config = false)
 			'settings' => array(
 				'spider_mode' => 1,
 			),
-			'setting_callback' => create_function('$value', '
+			'setting_callback' => function($value)
+			{
 				// Turn off the spider group if disabling.
 				if (!$value)
-					return array(\'spider_group\' => 0, \'show_spider_online\' => 0);
-			'),
-			'on_save' => create_function('', '
+					return array('spider_group' => 0, 'show_spider_online' => 0);
+			},
+			'on_save' => function()
+			{
 				global $sourcedir, $modSettings;
-				require_once($sourcedir . \'/ManageSearchEngines.php\');
+				require_once($sourcedir . '/ManageSearchEngines.php');
 				recacheSpiderNames();
-			'),
+			},
 		),
+		// Quick setting to toggle into GDPR compliance
+		'gdpr' => array(
+			'url' => 'action=admin;area=regcenter;sa=policy',
+			'settings' => array(
+				'force_gdpr' => 1,
+				// DEVELOPERS: Add values to toggle here
+			),
+			'setting_callback' => function($value)
+			{
+				global $modSettings;
+
+				$returnSettings = array();
+
+				if ($value)
+				{
+					$returnSettings['requireAgreement'] = 1;
+					$returnSettings['requirePolicyAgreement'] = 1;
+					$returnSettings['allow_disableAnnounce'] = 1;
+					$returnSettings['announcements_default'] = 0;
+					$returnSettings['notify_tokens'] = 1;
+				}
+
+				return $returnSettings;
+			},
+			'save_callback' => function($value)
+			{
+				global $modSettings, $language, $context;
+
+				if ($value && empty($modSettings['policy_' . $language]))
+					redirectexit('action=admin;area=regcenter;sa=policy;' . $context['session_var'] . '=' . $context['session_id']);
+			},
 		'posthistory' => array(
 				'settings' => array(
 					'posthistoryEnabled' => 1,
@@ -508,7 +548,8 @@ function ModifyBasicSettings($return_config = false)
 			array('check', 'hitStats'),
 		'',
 			// Option-ish things... miscellaneous sorta.
-			array('check', 'allow_disableAnnounce'),
+			array('check', 'allow_disableAnnounce', 'disabled' => !empty($modSettings['force_gdpr'])),
+			array('check', 'notify_tokens', 'disabled' => !empty($modSettings['force_gdpr'])),
 			array('check', 'disallow_sendBody'),
             array('text', 'users_mass_action_ban_name'),
 	);
@@ -535,6 +576,13 @@ function ModifyBasicSettings($return_config = false)
 		// Prevent absurd boundaries here - make it a day tops.
 		if (isset($_POST['lastActive']))
 			$_POST['lastActive'] = min((int) $_POST['lastActive'], 1440);
+
+		// GDPR requires these settings to always be true
+		if (!empty($modSettings['force_gdpr']))
+		{
+			$_POST['allow_disableAnnounce'] = 1;
+			$_POST['notify_tokens'] = 1;
+		}
 
 		saveDBSettings($config_vars);
 
@@ -1374,7 +1422,7 @@ function ShowCustomProfiles()
 	$context['sub_template'] = 'show_custom_profile';
 
 	// What about standard fields they can tweak?
-	$standard_fields = array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
+	$standard_fields = array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter',  'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
 	// What fields can't you put on the registration page?
 	$context['fields_no_registration'] = array('posts', 'warning_status');
 
@@ -1437,11 +1485,12 @@ function ShowCustomProfiles()
 					'value' => $txt['custom_edit_active'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						$isChecked = $rowData[\'disabled\'] ? \'\' : \' checked="checked"\';
-						$onClickHandler = $rowData[\'can_show_register\'] ? sprintf(\'onclick="document.getElementById(\\\'reg_%1$s\\\').disabled = !this.checked;"\', $rowData[\'id\']) : \'\';
-						return sprintf(\'<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s" class="input_check"%2$s%3$s />\', $rowData[\'id\'], $isChecked, $onClickHandler);
-					'),
+					'function' => function($rowData)
+					{
+						$isChecked = $rowData['disabled'] ? '' : ' checked';
+						$onClickHandler = $rowData['can_show_register'] ? sprintf(' onclick="document.getElementById(\'reg_%1$s\').disabled = !this.checked;"', $rowData['id']) : '';
+						return sprintf('<input type="checkbox" name="active[]" id="active_%1$s" value="%1$s" %2$s%3$s>', $rowData['id'], $isChecked, $onClickHandler);
+					},
 					'style' => 'width: 20%; text-align: center;',
 				),
 			),
@@ -1450,11 +1499,12 @@ function ShowCustomProfiles()
 					'value' => $txt['custom_edit_registration'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						$isChecked = $rowData[\'on_register\'] && !$rowData[\'disabled\'] ? \' checked="checked"\' : \'\';
-						$isDisabled = $rowData[\'can_show_register\'] ? \'\' : \' disabled="disabled"\';
-						return sprintf(\'<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s" class="input_check"%2$s%3$s />\', $rowData[\'id\'], $isChecked, $isDisabled);
-					'),
+					'function' => function($rowData)
+					{
+						$isChecked = $rowData['on_register'] && !$rowData['disabled'] ? ' checked' : '';
+						$isDisabled = $rowData['can_show_register'] ? '' : ' disabled';
+						return sprintf('<input type="checkbox" name="reg[]" id="reg_%1$s" value="%1$s" %2$s%3$s>', $rowData['id'], $isChecked, $isDisabled);
+					},
 					'style' => 'width: 20%; text-align: center;',
 				),
 			),
@@ -1496,11 +1546,10 @@ function ShowCustomProfiles()
 					'style' => 'text-align: left;',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $scripturl;
-
-						return sprintf(\'<a href="%1$s?action=admin;area=featuresettings;sa=profileedit;fid=%2$d">%3$s</a><div class="smalltext">%4$s</div>\', $scripturl, $rowData[\'id_field\'], $rowData[\'field_name\'], $rowData[\'field_desc\']);
-					'),
+					'function' => function($rowData) use ($scripturl)
+					{
+						return sprintf('<a href="%1$s?action=admin;area=featuresettings;sa=profileedit;fid=%2$d">%3$s</a><div class="smalltext">%4$s</div>', $scripturl, $rowData['id_field'], $rowData['field_name'], $rowData['field_desc']);
+					},
 					'style' => 'width: 62%;',
 				),
 				'sort' => array(
@@ -1514,12 +1563,11 @@ function ShowCustomProfiles()
 					'style' => 'text-align: left;',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						$textKey = sprintf(\'custom_profile_type_%1$s\', $rowData[\'field_type\']);
+					'function' => function($rowData) use ($txt)
+					{
+						$textKey = sprintf('custom_profile_type_%1$s', $rowData['field_type']);
 						return isset($txt[$textKey]) ? $txt[$textKey] : $textKey;
-					'),
+					},
 					'style' => 'width: 15%;',
 				),
 				'sort' => array(
@@ -1532,11 +1580,10 @@ function ShowCustomProfiles()
 					'value' => $txt['custom_profile_active'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return $rowData[\'active\'] ? $txt[\'yes\'] : $txt[\'no\'];
-					'),
+					'function' => function($rowData) use ($txt)
+					{
+						return $rowData['active'] ? $txt['yes'] : $txt['no'];
+					},
 					'style' => 'width: 8%; text-align: center;',
 				),
 				'sort' => array(
@@ -1549,11 +1596,12 @@ function ShowCustomProfiles()
 					'value' => $txt['custom_profile_placement'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
+					'function' => function($rowData)
+					{
+						global $txt, $context;
 
-						return $txt[\'custom_profile_placement_\' . (empty($rowData[\'placement\']) ? \'standard\' : ($rowData[\'placement\'] == 1 ? \'withicons\' : \'abovesignature\'))];
-					'),
+						return $txt['custom_profile_placement_' . (empty($rowData['placement']) ? 'standard' : $context['cust_profile_fields_placement'][$rowData['placement']])];
+					},
 					'style' => 'width: 8%; text-align: center;',
 				),
 				'sort' => array(
@@ -1599,7 +1647,7 @@ function list_getProfileFields($start, $items_per_page, $sort, $standardFields)
 
 	if ($standardFields)
 	{
-		$standard_fields = array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
+		$standard_fields = array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter',  'linkedin', 'youtube', 'deviantart', 'pinterest', 'location', 'gender', 'website', 'posts', 'warning_status');
 		$fields_no_registration = array('posts', 'warning_status');
 		$disabled_fields = isset($modSettings['disabled_profile_fields']) ? explode(',', $modSettings['disabled_profile_fields']) : array();
 		$registration_fields = isset($modSettings['registration_fields']) ? explode(',', $modSettings['registration_fields']) : array();

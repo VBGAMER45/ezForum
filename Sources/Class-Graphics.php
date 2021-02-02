@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 
 /*	Gif Util copyright 2003 by Yamasoft (S/C). All rights reserved.
@@ -224,7 +224,7 @@ class gif_lzw_compression
 			if ($count)
 			{
 				for ($i = 0; $i < $count; $i++)
-					$this->Buf[2 + $i] = ord($data{$i});
+					$this->Buf[2 + $i] = ord($data[$i]);
 
 				$data = substr($data, $count);
 			}
@@ -648,7 +648,7 @@ class gif_file
 			{
 				// Is this in the proper range?  If so, get the specific pixel data...
 				if ($x >= $header->m_nLeft && $y >= $header->m_nTop && $x < ($header->m_nLeft + $header->m_nWidth) && $y < ($header->m_nTop + $header->m_nHeight))
-					$bmp .= $data{$i};
+					$bmp .= $data[$i];
 				// Otherwise, this is background...
 				else
 					$bmp .= chr($background_color);

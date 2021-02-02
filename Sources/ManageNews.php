@@ -369,7 +369,7 @@ function ComposeMailing()
 		FROM {db_prefix}ban_items AS bi
 			INNER JOIN {db_prefix}ban_groups AS bg ON (bg.id_ban_group = bi.id_ban_group)
 		WHERE (bg.cannot_access = {int:cannot_access} OR bg.cannot_login = {int:cannot_login})
-			AND (COALESCE(bg.expire_time, 1=1) OR bg.expire_time > {int:current_time})
+			AND (bg.expire_time IS NULL OR bg.expire_time > {int:current_time})
 			AND bi.email_address != {string:blank_string}',
 		array(
 			'cannot_access' => 1,
@@ -525,13 +525,13 @@ function SendMailing($clean_only = false)
 		}
 	}
 	// Finally - emails!
-	if (!empty($_POST['emails']))
+	if (!empty($_POST['emails']) && empty($modSettings['force_gdpr']))
 	{
 		$addressed = array_unique(explode(';', strtr($_POST['emails'], array("\n" => ';', "\r" => ';', ',' => ';'))));
 		foreach ($addressed as $curmem)
 		{
 			$curmem = trim($curmem);
-			if ($curmem != '' && preg_match('~^[0-9A-Za-z=_\'+\-/\.]*@[\w\-]+(\.[\w\-]+)*(\.[\w]{2,6})$~', $curmem) !== 0)
+			if ($curmem != '' && filter_var($curmem, FILTER_VALIDATE_EMAIL) !== false)
 				$context['recipients']['emails'][$curmem] = $curmem;
 		}
 	}
@@ -545,6 +545,14 @@ function SendMailing($clean_only = false)
 	// Save the message and its subject in $context
 	$context['subject'] = htmlspecialchars($_POST['subject']);
 	$context['message'] = htmlspecialchars($_POST['message']);
+
+	// Include an unsubscribe link if necessary.
+	if (!$context['send_pm'] && !empty($modSettings['notify_tokens']))
+	{
+		require_once($sourcedir . '/Notify.php');
+		$include_unsubscribe = true;
+		$_POST['message'] .= "\n\n" . '{$member.unsubscribe}';
+	}
 
 	// Prepare the message for sending it as HTML
 	if (!$context['send_pm'] && !empty($_POST['send_html']))
@@ -599,7 +607,8 @@ function SendMailing($clean_only = false)
 		'{$member.email}',
 		'{$member.link}',
 		'{$member.id}',
-		'{$member.name}'
+		'{$member.name}',
+		'{$member.unsubscribe}',
 	);
 
 	// If we still have emails, do them first!
@@ -617,11 +626,15 @@ function SendMailing($clean_only = false)
 		if ($context['send_pm'])
 			continue;
 
+		// Non-members can't subscribe or unsubscribe from anything...
+		$unsubscribe_link = '';
+
 		$to_member = array(
 			$email,
 			!empty($_POST['send_html']) ? '<a href="mailto:' . $email . '">' . $email . '</a>' : $email,
 			'??',
-			$email
+			$email,
+			$unsubscribe_link,
 		);
 
 		sendmail($email, str_replace($from_member, $to_member, $_POST['subject']), str_replace($from_member, $to_member, $_POST['message']), null, null, !empty($_POST['send_html']), 5);
@@ -676,7 +689,7 @@ function SendMailing($clean_only = false)
 		}
 
 		// Force them to have it?
-		if (empty($context['email_force']))
+		if (empty($context['email_force']) || !empty($modSettings['force_gdpr']))
 			$sendQuery .= ' AND mem.notify_announcements = {int:notify_announcements}';
 
 		// Get the smelly people - note we respect the id_member range as it gives us a quicker query.
@@ -719,6 +732,14 @@ function SendMailing($clean_only = false)
 			// We might need this
 			$cleanMemberName = empty($_POST['send_html']) || $context['send_pm'] ? un_htmlspecialchars($row['real_name']) : $row['real_name'];
 
+			if (!empty($include_unsubscribe))
+			{
+				$token = createUnsubscribeToken($row['id_member'], $row['email_address'], 'announcements');
+				$unsubscribe_link = sprintf($txt['unsubscribe_announcements_' . (!empty($_POST['send_html']) ? 'html' : 'plain')], $scripturl . '?action=notifyannouncements;u=' . $row['id_member'] . ';token=' . $token);
+			}
+			else
+				$unsubscribe_link = '';
+
 			// Replace the member-dependant variables
 			$message = str_replace($from_member,
 				array(
@@ -726,6 +747,7 @@ function SendMailing($clean_only = false)
 					!empty($_POST['send_html']) ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $cleanMemberName . '</a>' : ($context['send_pm'] ? '[url=' . $scripturl . '?action=profile;u=' . $row['id_member'] . ']' . $cleanMemberName . '[/url]' : $cleanMemberName),
 					$row['id_member'],
 					$cleanMemberName,
+					$unsubscribe_link,
 				), $_POST['message']);
 
 			$subject = str_replace($from_member,

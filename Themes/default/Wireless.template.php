@@ -31,7 +31,7 @@ function template_wap_above()
 // This is the board index (main page) in WAP 1.1.
 function template_wap_boardindex()
 {
-	global $context, $settings, $options, $scripturl;
+	global $context, $settings, $options, $scripturl, $txt;
 
 	// This is the "main" card...
 	echo '
@@ -65,6 +65,24 @@ function template_wap_boardindex()
 		<p><a href="', $scripturl, '?board=', $board['id'], '.0;wap">', $board['name'], '</a><br /></p>';
 
 		echo '
+	</card>';
+	}
+
+	echo '
+	<card>
+		<p', $txt['wireless_options'], '</p>';
+	if ($context['user']['is_guest'])
+		echo '
+		<p><a href="', $scripturl, '?action=login;wap">', $txt['wireless_options_login'], '</a></p>';
+	else
+	{
+		if ($context['allow_pm'])
+			echo '
+			<p><a href="', $scripturl, '?action=pm;wap">', empty($context['user']['unread_messages']) ? $txt['wireless_pm_inbox'] : sprintf($txt['wireless_pm_inbox_new'], $context['user']['unread_messages']), '</a></p>';
+		echo '
+		<p><a href="', $scripturl, '?action=unread;wap">', $txt['wireless_recent_unread_posts'], '</a></p>
+		<p><a href="', $scripturl, '?action=unreadreplies;wap">', $txt['wireless_recent_unread_replies'], '</a></p>
+		<p><a href="', $scripturl, '?action=logout;', $context['session_var'], '=', $context['session_id'], ';wap">', $txt['wireless_options_logout'], '</a></p>
 	</card>';
 	}
 }
@@ -179,6 +197,7 @@ function template_wap_login()
 				<postfield name="user" value="$user" />
 				<postfield name="passwrd" value="$passwrd" />
 				<postfield name="cookieneverexp" value="1" />
+				<postfield name="', $context['session_var'], '" value="', $context['session_id'], '" />
 			</go>
 		</do></p>
 	</card>';
@@ -481,7 +500,7 @@ function template_imode_login()
 				<tr><td><input type="text" name="openid_identifier" class="input_text openid_login" size="17" /></td></tr>';
 
 	echo '
-				<tr><td><input type="submit" value="', $txt['login'], '" class="button_submit" /><input type="hidden" name="cookieneverexp" value="1" /></td></tr>
+				<tr><td><input type="submit" value="', $txt['login'], '" class="button_submit" /><input type="hidden" name="cookieneverexp" value="1" /><input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" /></td></tr>
 				<tr bgcolor="#b6dbff"><td>', $txt['wireless_navigation'], '</td></tr>
 				<tr><td>[0] <a href="', $scripturl, '?imode" accesskey="0">', $txt['wireless_navigation_up'], '</a></td></tr>
 			</table>
@@ -1079,7 +1098,7 @@ function template_wap2_login()
 			<p class="windowbg"><input type="text" name="openid_identifier" class="input_text openid_login" size="17" /></p>';
 
 	echo '
-			<p class="windowbg"><input type="submit" value="', $txt['login'], '" class="button_submit" /><input type="hidden" name="cookieneverexp" value="1" /></p>
+			<p class="windowbg"><input type="submit" value="', $txt['login'], '" class="button_submit" /><input type="hidden" name="cookieneverexp" value="1" /><input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" /></p>
 			<p class="catbg">', $txt['wireless_navigation'], '</p>
 			<p class="windowbg">[0] <a href="', $scripturl, '?wap2" accesskey="0">', $txt['wireless_navigation_up'], '</a></p>
 		</form>';

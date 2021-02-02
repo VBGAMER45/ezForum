@@ -2,7 +2,7 @@
 
 /**
  * ezForum http://www.ezforum.com
- * Copyright 2011-2019 ezForum
+ * Copyright 2011-2020 ezForum
  * License: BSD
  *
  * Based on:
@@ -34,8 +34,8 @@ global $image_proxy_enabled, $image_proxy_secret, $image_proxy_maxsize;
 global $auth_secret, $cookie_no_auth_secret;
 
 // Remember the current configuration so it can be set back.
-$ssi_magic_quotes_runtime = function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
-if (function_exists('set_magic_quotes_runtime'))
+$ssi_magic_quotes_runtime = version_compare(PHP_VERSION, '7.4.0') == -1 && function_exists('get_magic_quotes_gpc') && get_magic_quotes_runtime();
+if (version_compare(PHP_VERSION, '7.4.0') == -1 && function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 $time_start = microtime();
 
@@ -204,7 +204,7 @@ elseif (basename($_SERVER['PHP_SELF']) == 'SSI.php')
 	die(sprintf($txt['ssi_not_direct'], $user_info['is_admin'] ? '\'' . addslashes(__FILE__) . '\'' : '\'SSI.php\''));
 
 error_reporting($ssi_error_reporting);
-if (function_exists('set_magic_quotes_runtime'))
+if (version_compare(PHP_VERSION, '7.4.0') == -1 && function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime($ssi_magic_quotes_runtime);
 
 return true;

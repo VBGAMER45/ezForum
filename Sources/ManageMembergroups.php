@@ -158,26 +158,25 @@ This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 					'value' => $txt['membergroups_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $scripturl;
-
+					'function' => function($rowData) use ($scripturl)
+					{
 						// Since the moderator group has no explicit members, no link is needed.
-						if ($rowData[\'id_group\'] == 3)
-							$group_name = $rowData[\'group_name\'];
+						if ($rowData['id_group'] == 3)
+							$group_name = $rowData['group_name'];
 						else
 						{
-							$color_style = empty($rowData[\'online_color\']) ? \'\' : sprintf(\' style="color: %1$s;"\', $rowData[\'online_color\']);
-							$group_name = sprintf(\'<a href="%1$s?action=admin;area=membergroups;sa=members;group=%2$d"%3$s>%4$s</a>\', $scripturl, $rowData[\'id_group\'], $color_style, $rowData[\'group_name\']);
+							$color_style = empty($rowData['online_color']) ? '' : sprintf(' style="color: %1$s;"', $rowData['online_color']);
+							$group_name = sprintf('<a href="%1$s?action=admin;area=membergroups;sa=members;group=%2$d"%3$s>%4$s</a>', $scripturl, $rowData['id_group'], $color_style, $rowData['group_name']);
 						}
 
 						// Add a help option for moderator and administrator.
-						if ($rowData[\'id_group\'] == 1)
-							$group_name .= sprintf(\' (<a href="%1$s?action=helpadmin;help=membergroup_administrator" onclick="return reqWin(this.href);">?</a>)\', $scripturl);
-						elseif ($rowData[\'id_group\'] == 3)
-							$group_name .= sprintf(\' (<a href="%1$s?action=helpadmin;help=membergroup_moderator" onclick="return reqWin(this.href);">?</a>)\', $scripturl);
+						if ($rowData['id_group'] == 1)
+							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_administrator" onclick="return reqWin(this.href);">?</a>)', $scripturl);
+						elseif ($rowData['id_group'] == 3)
+							$group_name .= sprintf(' (<a href="%1$s?action=helpadmin;help=membergroup_moderator" onclick="return reqWin(this.href);">?</a>)', $scripturl);
 
 						return $group_name;
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'CASE WHEN id_group < 4 THEN id_group ELSE 4 END, group_name',
@@ -189,23 +188,21 @@ This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 					'value' => $txt['membergroups_stars'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $settings;
-
-						$stars = explode(\'#\', $rowData[\'stars\']);
+					'function' => function($rowData) use ($settings)
+					{
+						$stars = explode('#', $rowData['stars']);
 
 						// In case no stars are setup, return with nothing
 						if (empty($stars[0]) || empty($stars[1]))
-							return \'\';
+							return '';
 
 						// Otherwise repeat the image a given number of times.
 						else
 						{
-							$image = sprintf(\'<img src="%1$s/%2$s" alt="*" />\', $settings[\'images_url\'], $stars[1]);
+							$image = sprintf('<img src="%1$s/%2$s" alt="*" />', $settings['images_url'], $stars[1]);
 							return str_repeat($image, $stars[0]);
 						}
-					'),
-
+					},
 				),
 				'sort' => array(
 					'default' => 'stars',
@@ -217,12 +214,11 @@ This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 					'value' => $txt['membergroups_members_top'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
+					'function' => function($rowData) use ($txt)
+					{
 						// No explicit members for the moderator group.
-						return $rowData[\'id_group\'] == 3 ? $txt[\'membergroups_guests_na\'] : $rowData[\'num_members\'];
-					'),
+						return $rowData['id_group'] == 3 ? $txt['membergroups_guests_na'] : $rowData['num_members'];
+					},
 					'style' => 'text-align: center',
 				),
 				'sort' => array(
@@ -301,12 +297,11 @@ This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 					'value' => $txt['membergroups_name'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $scripturl;
-
-						$colorStyle = empty($rowData[\'online_color\']) ? \'\' : sprintf(\' style="color: %1$s;"\', $rowData[\'online_color\']);
-						return sprintf(\'<a href="%1$s?action=moderate;area=viewgroups;sa=members;group=%2$d"%3$s>%4$s</a>\', $scripturl, $rowData[\'id_group\'], $colorStyle, $rowData[\'group_name\']);
-					'),
+					'function' => function($rowData) use ($scripturl)
+					{
+						$colorStyle = empty($rowData['online_color']) ? '' : sprintf(' style="color: %1$s;"', $rowData['online_color']);
+						return sprintf('<a href="%1$s?action=moderate;area=viewgroups;sa=members;group=%2$d"%3$s>%4$s</a>', $scripturl, $rowData['id_group'], $colorStyle, $rowData['group_name']);
+					},
 				),
 				'sort' => array(
 					'default' => 'group_name',
@@ -318,19 +313,18 @@ This mod is licensed under Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)
 					'value' => $txt['membergroups_stars'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $settings;
-
-						$stars = explode(\'#\', $rowData[\'stars\']);
+					'function' => function($rowData) use ($settings)
+					{
+						$stars = explode('#', $rowData['stars']);
 
 						if (empty($stars[0]) || empty($stars[1]))
-							return \'\';
+							return '';
 						else
 						{
-							$star_image = sprintf(\'<img src="%1$s/%2$s" alt="*" />\', $settings[\'images_url\'], $stars[1]);
+							$star_image = sprintf('<img src="%1$s/%2$s" alt="*" />', $settings['images_url'], $stars[1]);
 							return str_repeat($star_image, $stars[0]);
 						}
-					'),
+					},
 				),
 				'sort' => array(
 					'default' => 'CASE WHEN id_group < 4 THEN id_group ELSE 4 END, stars',

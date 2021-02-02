@@ -101,11 +101,8 @@ function template_kick_guest()
 	global $context, $settings, $options, $scripturl, $modSettings, $txt;
 
 	// This isn't that much... just like normal login but with a message at the top.
-	if (empty($context['disable_login_hashing']))
 	echo '
-	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>';
-	
-	echo '
+	<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 	<form action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '" name="frmLogin" id="frmLogin"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 		<div class="tborder login">
 			<div class="cat_bar">
@@ -162,7 +159,7 @@ function template_kick_guest()
 
 			</div>
 			<span class="lowerframe"><span></span></span>
-			<input type="hidden" name="hash_passwrd" value="" />
+			<input type="hidden" name="hash_passwrd" value="" /><input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 		</div>
 	</form>';
 
@@ -179,11 +176,8 @@ function template_maintenance()
 	global $context, $settings, $options, $scripturl, $txt, $modSettings;
 
 	// Display the administrator's message at the top.
-	if (empty($context['disable_login_hashing']))
 	echo '
-<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>';
-	
-echo '
+<script type="text/javascript" src="', $settings['default_theme_url'], '/scripts/sha1.js"></script>
 <form action="', $scripturl, '?action=login2" method="post" accept-charset="', $context['character_set'], '"', empty($context['disable_login_hashing']) ? ' onsubmit="hashLoginPassword(this, \'' . $context['session_id'] . '\');"' : '', '>
 	<div class="tborder login" id="maintenance_mode">
 		<div class="cat_bar">

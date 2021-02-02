@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 
 if (!defined('SMF'))
@@ -78,6 +78,9 @@ function getServerVersions($checkFor)
 			trigger_error('getServerVersions(): you need to be connected to the database in order to get its server version', E_USER_NOTICE);
 		else
 		{
+			$versions['db_engine'] = array('title' => sprintf($txt['database_server'], $smcFunc['db_title']), 'version' => '');
+			$versions['db_engine']['version'] = $smcFunc['db_get_engine']();
+
 			$versions['db_server'] = array('title' => sprintf($txt['support_versions_db'], $smcFunc['db_title']), 'version' => '');
 			$versions['db_server']['version'] = $smcFunc['db_get_version']();
 		}
@@ -355,20 +358,26 @@ function updateSettingsFile($config_vars)
 	if (filemtime($boarddir . '/Settings.php') === $last_settings_change)
 	{
 		// You asked for it...
-		// Blank out the file - done to fix a oddity with some servers.
-		$fp = @fopen($boarddir . '/Settings.php', 'w');
+		$fp = @fopen($boarddir . '/Settings.php', 'c');
 
 		// Is it even writable, though?
 		if ($fp)
 		{
-			fclose($fp);
-
-			$fp = fopen($boarddir . '/Settings.php', 'r+');
+			flock($fp, LOCK_EX);
+			ftruncate($fp, 0);
+			rewind($fp);
 			foreach ($settingsArray as $line)
 				fwrite($fp, strtr($line, "\r", ''));
+			flock($fp, LOCK_UN);
 			fclose($fp);
 		}
 	}
+
+	// Even though on normal installations the filemtime should prevent this being used by the installer incorrectly
+	// it seems that there are times it might not. So let's MAKE it dump the cache.
+	if (function_exists('opcache_invalidate'))
+		opcache_invalidate(dirname(__FILE__) . '/Settings.php', true);
+
 }
 
 function updateAdminPreferences()
@@ -481,5 +490,74 @@ function emailAdmins($template, $replacements = array(), $additional_recipients 
 		}
 }
 
+function updateLastDatabaseError()
+{
+	global $boarddir;
+
+	// Find out this way if we can even write things on this filesystem.
+	// In addition, store things first in the backup file
+
+	$last_settings_change = @filemtime($boarddir . '/Settings.php');
+
+	// Make sure the backup file is there...
+	$file = $boarddir . '/Settings_bak.php';
+	if ((!file_exists($file) || filesize($file) == 0) && !copy($boarddir . '/Settings.php', $file))
+			return false;
+
+	// ...and writable!
+	if (!is_writable($file))
+	{
+		chmod($file, 0755);
+		if (!is_writable($file))
+		{
+			chmod($file, 0775);
+			if (!is_writable($file))
+			{
+				chmod($file, 0777);
+				if (!is_writable($file))
+						return false;
+			}
+		}
+	}
+
+	// Put the new timestamp.
+	$data = file_get_contents($file);
+	$data = preg_replace('~\$db_last_error = \d+;~', '$db_last_error = ' . time() . ';', $data);
+
+	// Open the backup file for writing
+	if ($fp = @fopen($file, 'c'))
+	{
+		// Reset the file buffer.
+		set_file_buffer($fp, 0);
+
+		// Update the file.
+		$t = flock($fp, LOCK_EX);
+		ftruncate($fp, 0);
+		rewind($fp);
+		$bytes = fwrite($fp, $data);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+
+		// Was it a success?
+		// ...only relevant if we're still dealing with the same good ole' settings file.
+		clearstatcache();
+		if (($bytes == strlen($data)) && (filemtime($boarddir . '/Settings.php') === $last_settings_change))
+		{
+			// This is our new Settings file...
+			// At least this one is an atomic operation
+			@copy($file, $boarddir . '/Settings.php');
+			return true;
+		}
+		else
+		{
+			// Oops. Someone might have been faster
+			// or we have no more disk space left, troubles, troubles...
+			// Copy the file back and run for your life!
+			@copy($boarddir . '/Settings.php', $file);
+		}
+	}
+
+	return false;
+}
 
 ?>

@@ -41,7 +41,14 @@ if (!defined('SMF'))
 function pretty_rewrite_buffer($buffer)
 {
 	global $boardurl, $context, $modSettings, $smcFunc;
-	
+
+	if (isset($_REQUEST['action']))
+	{
+		if ($_REQUEST['action'] == 'post2')
+			return $buffer;
+	}
+
+
 	if (!empty($modSettings['pretty_bufferusecache']))
 	{
 		$buffer = pretty_rewrite_buffer_fromcache($buffer);
@@ -67,7 +74,7 @@ function pretty_rewrite_buffer($buffer)
 			$match = preg_replace(array('~^[\"\']|PHPSESSID=[^;]+|(se)?sc=[^;]+|' . $context['session_var'] . '=[^;]+~', '~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('', '%22', ';', '?', ''), $match);
 
 			// Absolutise relative URLs
-			if (!preg_match('~^[a-zA-Z]+:|^#|@~', $match) && SMF != 'SSI')
+			if (!preg_match('~^[a-zA-Z\-]+:|^#|@~', $match) && SMF != 'SSI')
 				$match = $boardurl . '/' . $match;
 
 			// Replace $boardurl with something a little shorter
@@ -191,7 +198,7 @@ function pretty_rewrite_buffer_fromcache($buffer)
 			$match = preg_replace(array('~^[\"\']|PHPSESSID=[^;]+|(se)?sc=[^;]+|' . $context['session_var'] . '=[^;]+~', '~\"~', '~;+|=;~', '~\?;~', '~\?$|;$|=$~'), array('', '%22', ';', '?', ''), $match);
 
 			// Absolutise relative URLs
-			if (!preg_match('~^[a-zA-Z]+:|^#|@~', $match) && SMF != 'SSI')
+			if (!preg_match('~^[a-zA-Z\-]+:|^#|@~', $match) && SMF != 'SSI')
 				$match = $boardurl . '/' . $match;
 
 			// Replace $boardurl with something a little shorter
@@ -228,7 +235,7 @@ function pretty_rewrite_buffer_fromcache($buffer)
 	//	Procede only if there are actually URLs in the page
 	if (count($urls_query) != 0)
 	{
-		$urls_query = array_keys(array_flip($urls_query));
+		//$urls_query = array_keys(array_flip($urls_query));
 		//	Retrieve cached URLs
 		$context['pretty']['cached_urls'] = array();
 

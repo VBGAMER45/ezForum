@@ -27,7 +27,7 @@ function template_main()
 				', template_show_month_grid('current'), '
 				', template_show_month_grid('next'), '
 			</div>
-			<div id="main_grid">
+			<div id="main_grid" style="', $context['browser']['is_ie'] && !$context['browser']['is_ie8'] ? 'float: ' . ($context['right_to_left'] ? 'right; padding-right' : 'left; padding-left') . ': 20px;' : 'margin-' . ($context['right_to_left'] ? 'right' : 'left') . ': 220px; ', '">
 				', $context['view_week'] ? template_show_week_grid('main') : template_show_month_grid('main');
 
 	// Build the calendar button array.

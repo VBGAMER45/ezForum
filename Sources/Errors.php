@@ -154,12 +154,7 @@ function log_error($error_message, $error_type = 'general', $file = null, $line 
 	return $error_message;
 }
 
-/**
- * An irrecoverable error. This function stops execution and displays an error message.
- * It logs the error message if $log is specified.
- * @param string $error
- * @param string $log = 'general'
- */
+// An irrecoverable error.
 function fatal_error($error, $log = 'general')
 {
 	global $txt, $context, $modSettings;
@@ -171,20 +166,7 @@ function fatal_error($error, $log = 'general')
 	setup_fatal_error_context($log || (!empty($modSettings['enableErrorLogging']) && $modSettings['enableErrorLogging'] == 2) ? log_error($error, $log) : $error);
 }
 
-/**
- * Shows a fatal error with a message stored in the language file.
- *
- * This function stops execution and displays an error message by key.
- *  - uses the string with the error_message_key key.
- *  - logs the error in the forum's default language while displaying the error
- *    message in the user's language.
- *  - uses Errors language file and applies the $sprintf information if specified.
- *  - the information is logged if log is specified.
- *
- * @param $error
- * @param $log
- * @param $sprintf
- */
+// A fatal error with a message stored in the language file.
 function fatal_lang_error($error, $log = 'general', $sprintf = array())
 {
 	global $txt, $language, $modSettings, $user_info, $context;
@@ -221,21 +203,23 @@ function fatal_lang_error($error, $log = 'general', $sprintf = array())
 	setup_fatal_error_context($error_message);
 }
 
-/**
- * Handler for standard error messages, standard PHP error handler replacement.
- * It dies with fatal_error() if the error_level matches with error_reporting.
- * @param int $error_level
- * @param string $error_string
- * @param string $file
- * @param int $line
- */
+// Handler for standard error messages.
 function error_handler($error_level, $error_string, $file, $line)
 {
 	global $settings, $modSettings, $db_show_debug;
 
-	// Ignore errors if we're ignoring them or they are strict notices from PHP 5 (which cannot be solved without breaking PHP 4.)
-	if (error_reporting() == 0 || (defined('E_STRICT') && $error_level == E_STRICT && (empty($modSettings['enableErrorLogging']) || $modSettings['enableErrorLogging'] != 2)))
-		return;
+	// Error was suppressed with the @-operator.
+	if (error_reporting() == 0)
+		return true;
+
+	// Ignore errors that should should not be logged.
+	$error_match = error_reporting() & $error_level;
+	if (empty($error_match) || empty($modSettings['enableErrorLogging']))
+		return false;
+
+	// Send these notices introduced by PHP 7.2 to where the sun don't shine!
+	if (strpos($error_string, 'create_function()') !== false)
+		return true;
 
 	if (strpos($file, 'eval()') !== false && !empty($settings['current_include_filename']))
 	{

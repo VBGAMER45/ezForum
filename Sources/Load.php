@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 
 if (!defined('SMF'))
@@ -176,66 +176,87 @@ function reloadSettings()
 	}
 
 	// UTF-8 in regular expressions is unsupported on PHP(win) versions < 4.2.3.
-	$utf8 = (empty($modSettings['global_character_set']) ? $txt['lang_character_set'] : $modSettings['global_character_set']) === 'UTF-8' && (strpos(strtolower(PHP_OS), 'win') === false || @version_compare(PHP_VERSION, '4.2.3') != -1);
+	$utf8 = (empty($modSettings['global_character_set']) ? (!empty($txt['lang_character_set']) ? $txt['lang_character_set'] : '') : $modSettings['global_character_set']) === 'UTF-8' && (strpos(strtolower(PHP_OS), 'win') === false || @version_compare(PHP_VERSION, '4.2.3') != -1);
 
 	// Set a list of common functions.
 	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
-	$ent_check = empty($modSettings['disableEntityCheck']) ? array('preg_replace_callback(\'~(&#(\d{1,7}|x[0-9a-fA-F]{1,6});)~\', \'entity_fix__callback\', ', ')') : array('', '');
+	$ent_check = empty($modSettings['disableEntityCheck']) ? function($string)
+		{
+			$string = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
+			return $string;
+		} : function($string)
+		{
+			return $string;
+		};
+	$fix_utf8mb4 = function($string) use ($utf8, $smcFunc)
+	{
+		if (!$utf8)
+			return $string;
+
+		$i = 0;
+		$len = strlen($string);
+		$new_string = '';
+		while ($i < $len)
+		{
+			$ord = ord($string[$i]);
+			if ($ord < 128)
+			{
+				$new_string .= $string[$i];
+				$i++;
+			}
+			elseif ($ord < 224)
+			{
+				$new_string .= $string[$i] . $string[$i + 1];
+				$i += 2;
+			}
+			elseif ($ord < 240)
+			{
+				$new_string .= $string[$i] . $string[$i + 1] . $string[$i + 2];
+				$i += 3;
+			}
+			elseif ($ord < 248)
+			{
+				// Magic happens.
+				$val = (ord($string[$i]) & 0x07) << 18;
+				$val += (ord($string[$i + 1]) & 0x3F) << 12;
+				$val += (ord($string[$i + 2]) & 0x3F) << 6;
+				$val += (ord($string[$i + 3]) & 0x3F);
+				$new_string .= '&#' . $val . ';';
+				$i += 4;
+			}
+		}
+		return $new_string;
+	};
 
 	// Preg_replace can handle complex characters only for higher PHP versions.
 	$space_chars = $utf8 ? (@version_compare(PHP_VERSION, '4.3.3') != -1 ? '\x{A0}\x{AD}\x{2000}-\x{200F}\x{201F}\x{202F}\x{3000}\x{FEFF}' : "\xC2\xA0\xC2\xAD\xE2\x80\x80-\xE2\x80\x8F\xE2\x80\x9F\xE2\x80\xAF\xE2\x80\x9F\xE3\x80\x80\xEF\xBB\xBF") : '\x00-\x08\x0B\x0C\x0E-\x19\xA0';
 
 	$smcFunc += array(
-		'entity_fix' => create_function('$string', '
-			$num = substr($string, 0, 1) === \'x\' ? hexdec(substr($string, 1)) : (int) $string;
-			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202E || $num === 0x202D ? \'\' : \'&#\' . $num . \';\';'),
-		'htmlspecialchars' => create_function('$string, $quote_style = ENT_COMPAT, $charset = \'ISO-8859-1\'', '
-			global $smcFunc;
-			return ' . ($utf8 ? '$smcFunc[\'fix_utf8mb4\'](' : '') . strtr($ent_check[0], array('&' => '&amp;')) . 'htmlspecialchars($string, $quote_style, ' . ($utf8 ? '\'UTF-8\'' : '$charset') . ')' . $ent_check[1] . ($utf8 ? ')' : '') . ';'),
-		'fix_utf8mb4' => create_function('$string', '
-			$i = 0;
-			$len = strlen($string);
-			$new_string = \'\';
-			while ($i < $len)
-			{
-				$ord = ord($string[$i]);
-				if ($ord < 128)
-				{
-					$new_string .= $string[$i];
-					$i++;
-				}
-				elseif ($ord < 224)
-				{
-					$new_string .= $string[$i] . $string[$i+1];
-					$i += 2;
-				}
-				elseif ($ord < 240)
-				{
-					$new_string .= $string[$i] . $string[$i+1] . $string[$i+2];
-					$i += 3;
-				}
-				elseif ($ord < 248)
-				{
-					// Magic happens.
-					$val = (ord($string[$i]) & 0x07) << 18;
-					$val += (ord($string[$i+1]) & 0x3F) << 12;
-					$val += (ord($string[$i+2]) & 0x3F) << 6;
-					$val += (ord($string[$i+3]) & 0x3F);
-					$new_string .= \'&#\' . $val . \';\';
-					$i += 4;
-				}
-			}
-			return $new_string;'),
-		'htmltrim' => create_function('$string', '
-			global $smcFunc;
-			return preg_replace(\'~^(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+|(?:[ \t\n\r\x0B\x00' . $space_chars . ']|&nbsp;)+$~' . ($utf8 ? 'u' : '') . '\', \'\', ' . implode('$string', $ent_check) . ');'),
-		'strlen' => create_function('$string', '
-			global $smcFunc;
-			return strlen(preg_replace(\'~' . $ent_list . ($utf8 ? '|.~u' : '~') . '\', \'_\', ' . implode('$string', $ent_check) . '));'),
-		'strpos' => create_function('$haystack, $needle, $offset = 0', '
-			global $smcFunc;
-			$haystack_arr = preg_split(\'~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~' . ($utf8 ? 'u' : '') . '\', ' . implode('$haystack', $ent_check) . ', -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			$haystack_size = count($haystack_arr);
+		'entity_fix' => function($string)
+		{
+			$num = $string[0] === 'x' ? hexdec(substr($string, 1)) : (int) $string;
+			return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) || $num === 0x202E || $num === 0x202D ? '' : '&#' . $num . ';';
+		},
+		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'ISO-8859-1') use ($ent_check, $utf8, $fix_utf8mb4)
+		{
+			return $fix_utf8mb4($ent_check(htmlspecialchars($string, $quote_style, $utf8 ? 'UTF-8' : $charset)));
+		},
+		'fix_utf8mb4' => $fix_utf8mb4,
+		'htmltrim' => function($string) use ($utf8, $ent_check)
+		{
+			// Preg_replace space characters depend on the character set in use
+			$space_chars = $utf8 ? '\p{Z}\p{C}' : '\x00-\x20\x80-\xA0';
+
+			return preg_replace('~^(?:[' . $space_chars . ']|&nbsp;)+|(?:[' . $space_chars . ']|&nbsp;)+$~' . ($utf8 ? 'u' : ''), '', $ent_check($string));
+		},
+		'strlen' => function($string) use ($ent_list, $utf8, $ent_check)
+		{
+			return strlen(preg_replace('~' . $ent_list . ($utf8 ? '|.~u' : '~'), '_', $ent_check($string)));
+		},
+		'strpos' => function($haystack, $needle, $offset = 0) use ($utf8, $ent_check, $ent_list, $modSettings)
+		{
+			$haystack_arr = preg_split('~(' . $ent_list . '|.)~' . ($utf8 ? 'u' : ''), $ent_check($haystack), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
 			if (strlen($needle) === 1)
 			{
 				$result = array_search($needle, array_slice($haystack_arr, $offset));
@@ -243,11 +264,11 @@ function reloadSettings()
 			}
 			else
 			{
-				$needle_arr = preg_split(\'~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~' . ($utf8 ? 'u' : '') . '\',  ' . implode('$needle', $ent_check) . ', -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+				$needle_arr = preg_split('~(' . $ent_list . '|.)~' . ($utf8 ? 'u' : '') . '', $ent_check($needle), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 				$needle_size = count($needle_arr);
 
 				$result = array_search($needle_arr[0], array_slice($haystack_arr, $offset));
-				while (is_int($result))
+				while ((int) $result === $result)
 				{
 					$offset += $result;
 					if (array_slice($haystack_arr, $offset, $needle_size) === $needle_arr)
@@ -255,38 +276,55 @@ function reloadSettings()
 					$result = array_search($needle_arr[0], array_slice($haystack_arr, ++$offset));
 				}
 				return false;
-			}'),
-		'substr' => create_function('$string, $start, $length = null', '
-			global $smcFunc;
-			$ent_arr = preg_split(\'~(&#' . (empty($modSettings['disableEntityCheck']) ? '\d{1,7}' : '021') . ';|&quot;|&amp;|&lt;|&gt;|&nbsp;|.)~' . ($utf8 ? 'u' : '') . '\', ' . implode('$string', $ent_check) . ', -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			return $length === null ? implode(\'\', array_slice($ent_arr, $start)) : implode(\'\', array_slice($ent_arr, $start, $length));'),
-		'strtolower' => $utf8 ? (function_exists('mb_strtolower') ? create_function('$string', '
-			return mb_strtolower($string, \'UTF-8\');') : create_function('$string', '
+			}
+		},
+		'substr' => function($string, $start, $length = null) use ($utf8, $ent_check, $ent_list, $modSettings)
+		{
+			$ent_arr = preg_split('~(' . $ent_list . '|.)~' . ($utf8 ? 'u' : '') . '', $ent_check($string), -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+			return $length === null ? implode('', array_slice($ent_arr, $start)) : implode('', array_slice($ent_arr, $start, $length));
+		},
+		'strtolower' => $utf8 ? function($string) use ($sourcedir)
+		{
+			if (!function_exists('mb_strtolower'))
+			{
+				require_once($sourcedir . '/Subs-Charset.php');
+				return utf8_strtolower($string);
+			}
+
+			return mb_strtolower($string, 'UTF-8');
+		} : 'strtolower',
+		'strtoupper' => $utf8 ? function($string)
+		{
 			global $sourcedir;
-			require_once($sourcedir . \'/Subs-Charset.php\');
-			return utf8_strtolower($string);')) : 'strtolower',
-		'strtoupper' => $utf8 ? (function_exists('mb_strtoupper') ? create_function('$string', '
-			return mb_strtoupper($string, \'UTF-8\');') : create_function('$string', '
-			global $sourcedir;
-			require_once($sourcedir . \'/Subs-Charset.php\');
-			return utf8_strtoupper($string);')) : 'strtoupper',
-		'truncate' => create_function('$string, $length', (empty($modSettings['disableEntityCheck']) ? '
-			global $smcFunc;
-			$string = ' . implode('$string', $ent_check) . ';' : '') . '
-			preg_match(\'~^(' . $ent_list . '|.){\' . $smcFunc[\'strlen\'](substr($string, 0, $length)) . \'}~'.  ($utf8 ? 'u' : '') . '\', $string, $matches);
+
+			if (!function_exists('mb_strtolower'))
+			{
+				require_once($sourcedir . '/Subs-Charset.php');
+				return utf8_strtoupper($string);
+			}
+
+			return mb_strtoupper($string, 'UTF-8');
+		} : 'strtoupper',
+		'truncate' => function($string, $length) use ($utf8, $ent_check, $ent_list, &$smcFunc)
+		{
+			$string = $ent_check($string);
+			preg_match('~^(' . $ent_list . '|.){' . $smcFunc['strlen'](substr($string, 0, $length)) . '}~' . ($utf8 ? 'u' : ''), $string, $matches);
 			$string = $matches[0];
 			while (strlen($string) > $length)
-				$string = preg_replace(\'~(?:' . $ent_list . '|.)$~'.  ($utf8 ? 'u' : '') . '\', \'\', $string);
-			return $string;'),
-		'ucfirst' => $utf8 ? create_function('$string', '
-			global $smcFunc;
-			return $smcFunc[\'strtoupper\']($smcFunc[\'substr\']($string, 0, 1)) . $smcFunc[\'substr\']($string, 1);') : 'ucfirst',
-		'ucwords' => $utf8 ? create_function('$string', '
-			global $smcFunc;
-			$words = preg_split(\'~([\s\r\n\t]+)~\', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+				$string = preg_replace('~(?:' . $ent_list . '|.)$~' . ($utf8 ? 'u' : ''), '', $string);
+			return $string;
+		},
+		'ucfirst' => $utf8 ? function($string) use (&$smcFunc)
+		{
+			return $smcFunc['strtoupper']($smcFunc['substr']($string, 0, 1)) . $smcFunc['substr']($string, 1);
+		} : 'ucfirst',
+		'ucwords' => $utf8 ? function($string) use (&$smcFunc)
+		{
+			$words = preg_split('~([\s\r\n\t]+)~', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 			for ($i = 0, $n = count($words); $i < $n; $i += 2)
-				$words[$i] = $smcFunc[\'ucfirst\']($words[$i]);
-			return implode(\'\', $words);') : 'ucwords',
+				$words[$i] = $smcFunc['ucfirst']($words[$i]);
+			return implode('', $words);
+		} : 'ucwords',
 	);
 
 	// Setting the timezone is a requirement for some functions in PHP >= 5.1.
@@ -350,6 +388,7 @@ function loadUserSettings()
 	global $modSettings, $user_settings, $sourcedir, $smcFunc;
 	global $cookiename, $user_info, $language;
 	global $boardurl, $image_proxy_enabled, $image_proxy_secret;
+	global $cookie_no_auth_secret;
 
 	/* Start Mobile Device Detect */
         /**
@@ -441,7 +480,7 @@ function loadUserSettings()
 				$check = true;
 			// SHA-1 passwords should be 40 characters long.
 			elseif (strlen($password) == 40)
-				$check = hash_hmac('sha1', sha1($user_settings['passwd'] . $user_settings['password_salt']), get_auth_secret()) == $password;
+				$check = empty($cookie_no_auth_secret) ? hash_hmac('sha1', sha1($user_settings['passwd'] . $user_settings['password_salt']), get_auth_secret()) == $password : sha1($user_settings['passwd'] . $user_settings['password_salt']) == $password;
 			else
 				$check = false;
 
@@ -1022,7 +1061,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.birthdate, mem.member_ip, mem.member_ip2, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login,
-			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype,
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.linkedin, mem.pinterest, mem.skype,
 			mem.karma_good, mem.id_post_group, mem.karma_bad, mem.lngfile, mem.id_group, mem.time_offset, mem.show_online,
 			mem.buddy_list, mg.online_color AS member_group_color, IFNULL(mg.group_name, {string:blank_string}) AS member_group,
 			pg.online_color AS post_group_color, IFNULL(pg.group_name, {string:blank_string}) AS post_group, mem.is_activated, mem.warning,
@@ -1041,7 +1080,7 @@ function loadMemberData($users, $is_name = false, $set = 'normal')
 			mem.signature, mem.personal_text, mem.location, mem.gender, mem.avatar, mem.id_member, mem.member_name,
 			mem.real_name, mem.email_address, mem.hide_email, mem.date_registered, mem.website_title, mem.website_url,
 			mem.openid_uri, mem.birthdate, mem.icq, mem.aim, mem.yim, mem.msn, mem.posts, mem.last_login, mem.karma_good,
-			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.googleplus, mem.linkedin, mem.pinterest, mem.skype,
+			mem.myspace AS myspace, mem.facebook, mem.twitter, mem.youtube, mem.deviantart, mem.linkedin, mem.pinterest, mem.skype,
 			mem.karma_bad, mem.member_ip, mem.member_ip2, mem.lngfile, mem.id_group, mem.id_theme, mem.buddy_list,
 			mem.pm_ignore_list, mem.pm_email_notify, mem.pm_receive_from, mem.time_offset' . (!empty($modSettings['titlesEnable']) ? ', mem.usertitle' : '') . ',
 			mem.time_format, mem.secret_question, mem.is_activated, mem.additional_groups, mem.smiley_set, mem.show_online,
@@ -1270,12 +1309,6 @@ function loadMemberContext($user, $display_custom_fields = false)
 			'link' => '<a href="https://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '"><img src="' . $settings['images_url'] . '/twitter.png" alt="Twitter" border="0" /></a>',
 			'link_text' => '<a href="https://www.twitter.com/' . $profile['twitter'] . '" target="_blank" title="' . $txt['smi_twitter_title'] . ' - ' . $profile['twitter'] . '">' . $profile['twitter'] . '</a>'
 		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
-		'googleplus' => $profile['googleplus'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
-			'name' => $profile['googleplus'],
-			'href' => 'https://www.googleplus.com/'.$profile['googleplus'],
-			'link' => '<a href="https://plus.google.com/' . $profile['googleplus'] . '" target="_blank" title="' . $txt['smi_googleplus_title'] . ' - ' . $profile['googleplus'] . '"><img src="' . $settings['images_url'] . '/googleplus.png" alt="Google+" border="0" /></a>',
-			'link_text' => '<a href="https://plus.google.com/' . $profile['googleplus'] . '" target="_blank" title="' . $txt['smi_googleplus_title'] . ' - ' . $profile['googleplus'] . '">' . $profile['googleplus'] . '</a>'
-		) : array('name' => '', 'href' => '', 'link' => '', 'link_text' => ''),
 		'linkedin' => $profile['linkedin'] !='' && (empty($modSettings['guest_hideContacts']) || !$user_info['is_guest']) ? array(
 			'name' => $profile['linkedin'],
 			'href' => 'https://www.linkedin.com/'.$profile['linkedin'],
@@ -1344,7 +1377,7 @@ function loadMemberContext($user, $display_custom_fields = false)
 
 	// First do a quick run through to make sure there is something to be shown.
 	$memberContext[$user]['has_messenger'] = false;
-	foreach (array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'googleplus', 'linkedin', 'youtube', 'deviantart', 'pinterest') as $messenger)
+	foreach (array('icq', 'yim', 'skype', 'facebook', 'myspace', 'twitter', 'linkedin', 'youtube', 'deviantart', 'pinterest') as $messenger)
 	{
 		if (!isset($context['disabled_fields'][$messenger]) && !empty($memberContext[$user][$messenger]['link']))
 		{
@@ -1592,6 +1625,36 @@ function loadTheme($id_theme = 0, $initialize = true)
 
 	if (!$initialize)
 		return;
+
+	// Perhaps we've changed the agreement or privacy policy? Only redirect if:
+	// 1. They're not a guest or admin
+	// 2. This isn't called from SSI
+	// 3. This isn't an XML request
+	// 4. They're not trying to do any of the following actions:
+	// 4a. View or accept the agreement and/or policy
+	// 4b. Login or logout
+	// 4c. Get a feed (RSS, ATOM, etc.)
+	if (!$user_info['is_guest'] && !$user_info['is_admin'] && SMF != 'SSI' && !isset($_REQUEST['xml']) && (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('agreement', 'acceptagreement', 'login2', 'logout', '.xml'))))
+	{
+		$agreement_lang = !empty($modSettings['agreement_updated_' . $user_info['language']]) ? $user_info['language'] : 'default';
+		$policy_lang = !empty($modSettings['policy_' . $user_info['language']]) ? $user_info['language'] : $language;
+
+		// Do they need to accept the latest registration agreement?
+		if (!empty($modSettings['requireAgreement']) && !empty($modSettings['agreement_updated_' . $agreement_lang]) && (empty($options['agreement_accepted']) || $modSettings['agreement_updated_' . $agreement_lang] > $options['agreement_accepted']))
+		{
+			$agreement_subaction = 'agreement';
+		}
+
+		// Do they need to consent to the latest privacy policy?
+		if (!empty($modSettings['requirePolicyAgreement']) && !empty($modSettings['policy_updated_' . $policy_lang]) && (empty($options['policy_accepted']) || $modSettings['policy_updated_' . $policy_lang] > $options['policy_accepted']))
+		{
+			$agreement_subaction = !empty($agreement_subaction) ? 'both' : 'policy';
+		}
+
+		// Send them to the right place
+		if (!empty($agreement_subaction))
+			redirectexit('action=agreement;sa=' . $agreement_subaction);
+	}
 
 	// Check to see if they're accessing it from the wrong place.
 	if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SERVER_NAME']))
@@ -1918,7 +1981,7 @@ function loadTheme($id_theme = 0, $initialize = true)
 		$min = !empty($modSettings['tag_min_length']) ? $modSettings['tag_min_length'] : 2;
 
 		$context['html_headers'] .= '
-		<script type="text/javascript">window.jQuery || document.write(unescape(\'%3Cscript src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"%3E%3C/script%3E\'))</script>
+		<script type="text/javascript">window.jQuery || document.write(unescape(\'%3Cscript src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"%3E%3C/script%3E\'))</script>
 		<script type="text/javascript" src="'. $settings['default_theme_url']. '/scripts/tags.js"></script>
 		<script type="text/javascript"><!-- // --><![CDATA[
 			var tg = jQuery.noConflict();
@@ -2545,6 +2608,11 @@ function loadSession()
 		// Use database sessions? (they don't work in 4.1.x!)
 		if (!empty($modSettings['databaseSession_enable']) && @version_compare(PHP_VERSION, '4.2.0') != -1)
 		{
+			@ini_set('session.serialize_handler', 'php_serialize');
+
+			if (ini_get('session.serialize_handler') != 'php_serialize')
+				@ini_set('session.serialize_handler', 'php');
+
 			session_set_save_handler('sessionOpen', 'sessionClose', 'sessionRead', 'sessionWrite', 'sessionDestroy', 'sessionGC');
 			@ini_set('session.gc_probability', '1');
 		}
@@ -2912,9 +2980,16 @@ function cache_get_data($key, $ttl = 120)
 	elseif (function_exists('xcache_get') && ini_get('xcache.var_size') > 0)
 		$value = xcache_get($key);
 	// Otherwise it's ezForum data!
-	elseif (file_exists($cachedir . '/data_' . $key . '.php') && filesize($cachedir . '/data_' . $key . '.php') > 10)
+	elseif (file_exists($cachedir . '/data_' . $key . '.php'))
 	{
+		// Turns out that include does not honor locking, but we need it to.
+		// This can be accomplished by placing a small wrapper around it:
+		$tmp = fopen($cachedir . '/data_' . $key . '.php', 'rb');
+		@flock($tmp, LOCK_SH);
 		@include($cachedir . '/data_' . $key . '.php');
+		@flock($tmp, LOCK_UN);
+		fclose($tmp);
+
 		if (!empty($expired) && isset($value))
 		{
 			@unlink($cachedir . '/data_' . $key . '.php');

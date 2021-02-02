@@ -126,11 +126,9 @@ function setLoginCookie($cookie_length, $id, $password = '')
 		}
 	}
 
-	// Fallback option to support outdated mods. This will be removed in future versions!
-	$no_auth_secret = !empty($cookie_no_auth_secret) && !empty($modSettings['integrate_verify_user']);
-
 	// Ensure the cookie can't be forged.
-	if ($password !== '' && !$no_auth_secret)
+	// Note: $cookie_no_auth_secret is a fallback that will be removed in future versions!
+	if ($password !== '' && empty($cookie_no_auth_secret))
 		$password = hash_hmac('sha1', $password, get_auth_secret());
 
 	// Get the data and path to set it on.
@@ -548,7 +546,8 @@ function RequestMembers()
 
 		if (preg_match('~&#\d+;~', $row['real_name']) != 0)
 		{
-			$fixchar = create_function('$n', '
+			$fixchar = function($n)
+			{
 				if ($n < 128)
 					return chr($n);
 				elseif ($n < 2048)
@@ -556,7 +555,8 @@ function RequestMembers()
 				elseif ($n < 65536)
 					return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
 				else
-					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);');
+					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
+			};
 
 			$row['real_name'] = preg_replace_callback('~&#(\d+);~', 'fixchar__callback', $row['real_name']);
 		}

@@ -175,7 +175,10 @@ function ManageMaintenance()
 				'pruneold' => 'MaintainRemoveOldPosts',
 			),
 		),
-
+		'destroy' => array(
+			'function' => 'Destroy',
+			'activities' => array(),
+		),
 	);
 
 	// Yep, sub-action time!
@@ -358,6 +361,19 @@ function MaintainEmptyUnimportantLogs()
 	$context['maintenance_finished'] = $txt['maintain_logs'];
 }
 
+// Oh noes!
+function Destroy()
+{
+	global $context;
+
+	echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml"', $context['right_to_left'] ? ' dir="rtl"' : '', '><head><title>', $context['forum_name_html_safe'], ' deleted!</title></head>
+		<body style="background-color: orange; font-family: arial, sans-serif; text-align: center;">
+		<div style="margin-top: 8%; font-size: 400%; color: black;">Oh my, you killed ', $context['forum_name_html_safe'], '!</div>
+		<div style="margin-top: 7%; font-size: 500%; color: red;"><strong>You lazy bum!</strong></div>
+		</body></html>';
+	obExit(false);
+}
 
 // Convert both data and database tables to UTF-8 character set.
 function ConvertUtf8()
@@ -767,11 +783,6 @@ function ConvertEntities()
 	);
 	$context['num_tables'] = count($tables);
 
-	// This function will do the conversion later on.
-	$entity_replace = create_function('$string', '
-		$num = substr($string, 0, 1) === \'x\' ? hexdec(substr($string, 1)) : (int) $string;
-		return $num < 0x20 || $num > 0x10FFFF || ($num >= 0xD800 && $num <= 0xDFFF) ? \'\' : ($num < 0x80 ? \'&#\' . $num . \';\' : ($num < 0x800 ? chr(192 | $num >> 6) . chr(128 | $num & 63) : ($num < 0x10000 ? chr(224 | $num >> 12) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63) : chr(240 | $num >> 18) . chr(128 | $num >> 12 & 63) . chr(128 | $num >> 6 & 63) . chr(128 | $num & 63))));');
-
 	// Loop through all tables that need converting.
 	for (; $context['table'] < $context['num_tables']; $context['table']++)
 	{
@@ -858,7 +869,7 @@ function ConvertEntities()
 					if ($column_name !== $primary_key && strpos($column_value, '&#') !== false)
 					{
 						$changes[] = $column_name . ' = {string:changes_' . $column_name . '}';
-						$insertion_variables['changes_' . $column_name] = preg_replace_callback('~&#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'fixchar__callback', $column_value);
+						$insertion_variables['changes_' . $column_name] = preg_replace_callback('~&#(\d{1,7}|x[0-9a-fA-F]{1,6});~', 'fixchardb__callback', $column_value);
 					}
 
 				$where = array();

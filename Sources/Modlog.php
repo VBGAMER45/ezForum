@@ -64,6 +64,8 @@ function ViewModlog()
 	$context['displaypage'] = 30;
 	// Amount of hours that must pass before allowed to delete file.
 	$context['hoursdisable'] = 24;
+	// Actions whose log entries cannot be deleted.
+	$context['uneditable_actions'] = !empty($modSettings['force_gdpr']) ? array('agreement_updated', 'policy_updated') : array();
 
 	// Handle deletion...
 	if (isset($_POST['removeall']) && $context['can_delete'])
@@ -73,10 +75,12 @@ function ViewModlog()
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}log_actions
 			WHERE id_log = {int:moderate_log}
-				AND log_time < {int:twenty_four_hours_wait}',
+				AND log_time < {int:twenty_four_hours_wait}' . (!empty($context['uneditable_actions']) ? '
+				AND action NOT IN ({array_string:uneditable})' : ''),
 			array(
 				'twenty_four_hours_wait' => time() - $context['hoursdisable'] * 3600,
 				'moderate_log' => $context['log_type'],
+				'uneditable' => $context['uneditable_actions'],
 			)
 		);
 	}
@@ -87,11 +91,13 @@ function ViewModlog()
 			DELETE FROM {db_prefix}log_actions
 			WHERE id_log = {int:moderate_log}
 				AND id_action IN ({array_string:delete_actions})
-				AND log_time < {int:twenty_four_hours_wait}',
+				AND log_time < {int:twenty_four_hours_wait}' . (!empty($context['uneditable_actions']) ? '
+				AND action NOT IN ({array_string:uneditable})' : ''),
 			array(
 				'twenty_four_hours_wait' => time() - $context['hoursdisable'] * 3600,
 				'delete_actions' => array_unique($_POST['delete']),
 				'moderate_log' => $context['log_type'],
+				'uneditable' => $context['uneditable_actions'],
 			)
 		);
 	}
@@ -265,9 +271,10 @@ function ViewModlog()
 					'value' => '<input type="checkbox" name="all" class="input_check" onclick="invertAll(this, this.form);" />',
 				),
 				'data' => array(
-					'function' => create_function('$entry', '
-						return \'<input type="checkbox" class="input_check" name="delete[]" value="\' . $entry[\'id\'] . \'"\' . ($entry[\'editable\'] ? \'\' : \' disabled="disabled"\') . \' />\';
-					'),
+					'function' => function($entry)
+					{
+						return '<input type="checkbox" class="input_check" name="delete[]" value="' . $entry['id'] . '"' . ($entry['editable'] ? '' : ' disabled="disabled"') . ' />';
+					},
 					'style' => 'text-align: center;',
 				),
 			),
@@ -284,7 +291,7 @@ function ViewModlog()
 		'additional_rows' => array(
 			array(
 				'position' => 'after_title',
-				'value' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log_desc'],
+				'value' => $txt['modlog_' . ($context['log_type'] == 3 ? 'admin' : 'moderation') . '_log_desc'] . (!empty($modSettings['force_gdpr']) && $context['log_type'] == 3 ? '<br />' . $txt['modlog_admin_log_gdpr_no_delete'] : ''),
 				'class' => 'smalltext',
 				'style' => 'padding: 2ex;',
 			),
@@ -346,6 +353,8 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 	// Do a little bit of self protection.
 	if (!isset($context['hoursdisable']))
 		$context['hoursdisable'] = 24;
+	if (!isset($context['uneditable_actions']))
+		$context['uneditable_actions'] = array();
 
 	// Can they see the IP address?
 	$seeIP = allowedTo('moderate_forum');
@@ -459,7 +468,7 @@ function list_getModLogEntries($start, $items_per_page, $sort, $query_string = '
 			'moderator_link' => $row['id_member'] ? '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>' : (empty($row['real_name']) ? ($txt['guest'] . (!empty($row['extra']['member_acted']) ? ' (' . $row['extra']['member_acted'] . ')' : '')) : $row['real_name']),
 			'time' => timeformat($row['log_time']),
 			'timestamp' => forum_time(true, $row['log_time']),
-			'editable' => time() > $row['log_time'] + $context['hoursdisable'] * 3600,
+			'editable' => time() > $row['log_time'] + $context['hoursdisable'] * 3600 && !in_array($row['action'], $context['uneditable_actions']),
 			'extra' => $row['extra'],
 			'action' => $row['action'],
 			'action_text' => isset($row['action_text']) ? $row['action_text'] : '',

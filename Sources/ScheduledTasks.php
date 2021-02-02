@@ -396,7 +396,7 @@ function scheduled_approval_notification()
 // Do some daily cleaning up.
 function scheduled_daily_maintenance()
 {
-	global $smcFunc, $modSettings, $sourcedir, $db_type;
+	global $smcFunc, $modSettings, $sourcedir, $db_type, $image_proxy_enabled, $cachedir;
 
 	// First clean out the cache.
 	clean_cache();
@@ -495,6 +495,19 @@ function scheduled_daily_maintenance()
 				'dh_keys' => 'dh_keys',
 			)
 		);
+
+	// Cleanup old proxied images.
+	if (!empty($image_proxy_enabled) && $handle = opendir($cachedir . '/images'))
+	{
+		while (false !== ($file = readdir($handle)))
+		{
+			// Remove images older than 5 days.
+			if (is_file($cachedir . '/images/' . $file) && !in_array($file, array('index.php', '.htaccess')) && time() - filemtime($cachedir . '/images/' . $file) > 5 * 86400)
+				unlink($cachedir . '/images/' . $file);
+		}
+
+		closedir($handle);
+	}
 
 	// Log we've done it...
 	return true;
@@ -944,7 +957,7 @@ function ReduceMailQueue($number = false, $override_limit = false, $force_send =
 			'to' => $row['recipient'],
 			'body' => $row['body'],
 			'subject' => $row['subject'],
-            'headers' => $row['headers'],
+			'headers' => $row['headers'],
 			'send_html' => $row['send_html'],
 			'time_sent' => $row['time_sent'],
 			'private' => $row['private'],
@@ -1279,7 +1292,7 @@ function scheduled_fetchSMfiles()
 	foreach ($js_files as $ID_FILE => $file)
 	{
 		// Create the url
-		$server = empty($file['path']) || substr($file['path'], 0, 7) != 'http://' ? 'http://www.ezforum.com' : '';
+		$server = empty($file['path']) || !in_array(parse_url($file['path'], PHP_URL_SCHEME), array('http', 'https')) ? 'https://www.simplemachines.org' : '';
 		$url = $server . (!empty($file['path']) ? $file['path'] : $file['path']) . $file['filename'] . (!empty($file['parameters']) ? '?' . $file['parameters'] : '');
 
 		// Get the file

@@ -116,7 +116,6 @@ function template_summary()
 				', !isset($context['disabled_fields']['facebook']) && !empty($context['member']['facebook']['link']) ? '<li>' . $context['member']['facebook']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['myspace']) && !empty($context['member']['myspace']['link']) ? '<li>' . $context['member']['myspace']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['twitter']) && !empty($context['member']['twitter']['link']) ? '<li>' . $context['member']['twitter']['link'] . '</li>' : '', '
-				', !isset($context['disabled_fields']['googleplus']) && !empty($context['member']['googleplus']['link']) ? '<li>' . $context['member']['googleplus']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['linkedin']) && !empty($context['member']['linkedin']['link']) ? '<li>' . $context['member']['linkedin']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['youtube']) && !empty($context['member']['youtube']['link']) ? '<li>' . $context['member']['youtube']['link'] . '</li>' : '', '
 				', !isset($context['disabled_fields']['deviantart']) && !empty($context['member']['deviantart']['link']) ? '<li>' . $context['member']['deviantart']['link'] . '</li>' : '', '
@@ -2961,7 +2960,7 @@ function template_profile_avatar_select()
 		echo '
 								<div id="avatar_external">
 									<div class="smalltext">', $txt['avatar_by_url'], '</div>
-									<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['external'], '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof(previewExternalAvatar) != \'undefined\') previewExternalAvatar(this.value);" class="input_text" />
+									<input type="text" name="userpicpersonal" size="45" value="', $context['member']['avatar']['external_original'], '" onfocus="selectRadioByName(document.forms.creator.avatar_choice, \'external\');" onchange="if (typeof(previewExternalAvatar) != \'undefined\') previewExternalAvatar(this.value);" class="input_text" />
 								</div>';
 	}
 

@@ -612,14 +612,14 @@ function template_main()
 					}
 					// !!! Currently not sending poll options and option checkboxes.
 					var x = new Array();
-					var textFields = [\'subject\', ', JavaScriptEscape($context['post_box_name']), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\'];
+					var textFields = [\'subject\', ', JavaScriptEscape($context['post_box_name']), ', \'icon\', \'guestname\', \'email\', \'evtitle\', \'question\', \'topic\', ', JavaScriptEscape($context['session_var']), '];
 					var numericFields = [
 						\'board\', \'topic\', \'last_msg\',
 						\'eventid\', \'calendar\', \'year\', \'month\', \'day\',
 						\'poll_max_votes\', \'poll_expire\', \'poll_change_vote\', \'poll_hide\'
 					];
 					var checkboxFields = [
-						\'ns\',\'nt\'
+						\'ns\'
 					];
 
 					for (var i = 0, n = textFields.length; i < n; i++)

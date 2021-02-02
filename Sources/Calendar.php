@@ -372,7 +372,7 @@ function iCalDownload()
 	header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . 'GMT');
 	header('Accept-Ranges: bytes');
 	header('Connection: close');
-	header('Content-Disposition: attachment; filename="' . $event['title'] . '.ics"');
+	header('Content-Disposition: attachment; filename=' . $event['title'] . '.ics');
 	if (empty($modSettings['enableCompressedOutput']))
 		header('Content-Length: ' . $smcFunc['strlen']($filecontents));
 

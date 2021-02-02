@@ -2070,8 +2070,8 @@ function prepareSearchContext($reset = false)
 		$query = strtr($smcFunc['htmlspecialchars']($query), array('\\\'' => '\''));
 
 		$body_highlighted = preg_replace_callback('/((<[^>]*)|' . preg_quote(strtr($query, array('\'' => '&#039;')), '/') . ')/i' . ($context['utf8'] ? 'u' : ''), 'search_highlight__preg_callback', $body_highlighted);
-
-    }
+		$subject_highlighted = preg_replace('/(' . preg_quote($query, '/') . ')/i' . ($context['utf8'] ? 'u' : ''), '<strong class="highlight">$1</strong>', $subject_highlighted);
+	}
 
 	$output['matches'][] = array(
 		'id' => $message['id_msg'],
@@ -2111,5 +2111,4 @@ function search_highlight__preg_callback($matches)
 {
 	return isset($matches[2]) && $matches[2] == $matches[1] ? stripslashes($matches[1]) : '<strong class="highlight">' . $matches[1] . '</strong>';
 }
-
 ?>

@@ -90,6 +90,8 @@ function RecentPosts()
 	loadTemplate('Recent');
 	$context['page_title'] = $txt['recent_posts'];
 
+	$_REQUEST['start'] = (int) $_REQUEST['start'];
+
 	if (isset($_REQUEST['start']) && $_REQUEST['start'] > 95)
 		$_REQUEST['start'] = 95;
 

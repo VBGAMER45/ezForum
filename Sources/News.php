@@ -269,6 +269,19 @@ function ShowXmlFeed()
 	elseif ($xml_format == 'rdf')
 		header('Content-Type: ' . ($context['browser']['is_ie'] ? 'text/xml' : 'application/rdf+xml') . '; charset=' . (empty($context['character_set']) ? 'ISO-8859-1' : $context['character_set']));
 
+	// Descriptive filenames = good
+	$xml_filename = array(preg_replace('/\s+/', '_', $feed_title), $_GET['sa']);
+	if ($_GET['sa'] === 'profile')
+		$xml_filename[] = 'u=' . (isset($_GET['u']) ? (int) $_GET['u'] : $user_info['id']);
+	if (!empty($boards))
+		$xml_filename[] = 'boards=' . implode(',', $boards);
+	elseif (!empty($board))
+		$xml_filename[] = 'board=' . $board;
+	$xml_filename[] = $xml_format;
+	$xml_filename = strtr(un_htmlspecialchars(implode('-', $xml_filename)), '"', '') ;
+
+	header('Content-Disposition: ' . (isset($_GET['download']) ? 'attachment' : 'inline') . '; filename="' . $xml_filename . '.xml"');
+
 	// First, output the xml header.
 	echo '<?xml version="1.0" encoding="', $context['character_set'], '"?' . '>';
 
@@ -905,7 +918,7 @@ function getXmlProfile($xml_format)
 			'summary' => cdata_parse(isset($profile['group']) ? $profile['group'] : $profile['post_group']),
 			'author' => array(
 				'name' => $profile['real_name'],
-				'email' => in_array(showEmailAddress(!empty($profile['hide_email']), $profile['id']), array('yes', 'yes_permission_override')) ? $profile['email'] : null,
+				'email' => $user_info['id'] == $profile['id'] || in_array($profile['show_email'], array('yes', 'yes_permission_override')) ? $profile['email'] : null,
 				'uri' => !empty($profile['website']) ? $profile['website']['url'] : ''
 			),
 			'published' => gmstrftime('%Y-%m-%dT%H:%M:%SZ', $user_profile[$profile['id']]['date_registered']),
@@ -966,7 +979,7 @@ function getXmlProfile($xml_format)
 				'bad' => $profile['karma']['bad']
 			);
 
-		if (in_array($profile['show_email'], array('yes', 'yes_permission_override')))
+		if ($user_info['id'] == $profile['id'] || in_array($profile['show_email'], array('yes', 'yes_permission_override')))
 			$data['email'] = $profile['email'];
 
 		if (!empty($profile['birth_date']) && substr($profile['birth_date'], 0, 4) != '0000')

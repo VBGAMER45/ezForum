@@ -2405,14 +2405,14 @@ function MessageActionsApply()
 
 	$to_delete = array();
 	$to_label = array();
-    $to_markunread = array();
+    	$to_markunread = array();
 	$label_type = array();
 	foreach ($_REQUEST['pm_actions'] as $pm => $action)
 	{
 		if ($action === 'delete')
 			$to_delete[] = (int) $pm;
-        elseif ($action === 'markunread')
-			$to_markunread[] = (int) $pm;
+	        elseif ($action === 'markunread')
+				$to_markunread[] = (int) $pm;
 		else
 		{
 			if (substr($action, 0, 4) == 'add_')

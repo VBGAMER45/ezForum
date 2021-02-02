@@ -191,7 +191,7 @@ function SplitIndex()
 	// Basic template information....
 	$context['message'] = array(
 		'id' => $_GET['at'],
-		'subject' => $_REQUEST['subname']
+		'subject' => $smcFunc['htmlspecialchars']($_REQUEST['subname']),
 	);
 	$context['sub_template'] = 'ask';
 	$context['page_title'] = $txt['split'];

@@ -237,9 +237,9 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 	// "Read" the filename and comment. // !!! Might be mussed.
 	if ($flags & 12)
 	{
-		while ($flags & 8 && $data{$offset++} != "\0")
+		while ($flags & 8 && $data[$offset++] != "\0")
 			continue;
-		while ($flags & 4 && $data{$offset++} != "\0")
+		while ($flags & 4 && $data[$offset++] != "\0")
 			continue;
 	}
 
@@ -280,9 +280,9 @@ function read_tgz_data($data, $destination, $single_file = false, $overwrite = f
 
 		$checksum = 256;
 		for ($i = 0; $i < 148; $i++)
-			$checksum += ord($header{$i});
+			$checksum += ord($header[$i]);
 		for ($i = 156; $i < 512; $i++)
-			$checksum += ord($header{$i});
+			$checksum += ord($header[$i]);
 
 		if ($current['checksum'] != $checksum)
 			break;
@@ -541,7 +541,7 @@ function getPackageInfo($gzfilename)
 	global $boarddir;
 
 	// Extract package-info.xml from downloaded file. (*/ is used because it could be in any directory.)
-	if (strpos($gzfilename, 'http://') !== false)
+	if (strpos($gzfilename, 'http://') !== false || strpos($gzfilename, 'https://') !== false)
 		$packageInfo = read_tgz_data(fetch_web_data($gzfilename, '', true), '*/package-info.xml', true);
 	else
 	{
@@ -574,6 +574,16 @@ function getPackageInfo($gzfilename)
 	$package = htmlspecialchars__recursive($package);
 	$package['xml'] = $packageInfo;	
 	$package['filename'] = $gzfilename;
+
+	// Don't want to mess with code...
+	$types = array('install', 'uninstall', 'upgrade');
+	foreach($types as $type)
+	{
+		if (isset($package[$type]['code']))
+		{
+			$package[$type]['code'] = un_htmlspecialchars($package[$type]['code']);
+		}
+	}
 
 	if (!isset($package['type']))
 		$package['type'] = 'modification';
@@ -675,12 +685,11 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 						'value' => $txt['package_restore_permissions_cur_status'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', '
-							global $txt;
-
-							$formatTxt = $rowData[\'result\'] == \'\' || $rowData[\'result\'] == \'skipped\' ? $txt[\'package_restore_permissions_pre_change\'] : $txt[\'package_restore_permissions_post_change\'];
-							return sprintf($formatTxt, $rowData[\'cur_perms\'], $rowData[\'new_perms\'], $rowData[\'writable_message\']);
-						'),
+						'function' => function($rowData) use ($txt)
+						{
+							$formatTxt = $rowData['result'] == '' || $rowData['result'] == 'skipped' ? $txt['package_restore_permissions_pre_change'] : $txt['package_restore_permissions_post_change'];
+							return sprintf($formatTxt, $rowData['cur_perms'], $rowData['new_perms'], $rowData['writable_message']);
+						},
 						'class' => 'smalltext',
 					),
 				),
@@ -703,11 +712,10 @@ function create_chmod_control($chmodFiles = array(), $chmodOptions = array(), $r
 						'value' => $txt['package_restore_permissions_result'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', '
-							global $txt;
-
-							return $txt[\'package_restore_permissions_action_\' . $rowData[\'result\']];
-						'),
+						'function' => function($rowData) use ($txt)
+						{
+							return $txt['package_restore_permissions_action_' . $rowData['result']];
+						},
 						'class' => 'smalltext',
 					),
 				),
@@ -1535,7 +1543,7 @@ function compareVersions($version1, $version2)
 			'minor' => !empty($parts[2]) ? (int) $parts[2] : 0,
 			'patch' => !empty($parts[3]) ? (int) $parts[3] : 0,
 			'type' => empty($parts[4]) ? 'stable' : $parts[4],
-			'type_major' => !empty($parts[6]) ? (int) $parts[5] : 0,
+			'type_major' => !empty($parts[5]) ? (int) $parts[5] : 0,
 			'type_minor' => !empty($parts[6]) ? (int) $parts[6] : 0,
 			'dev' => !empty($parts[7]),
 		);
@@ -1613,7 +1621,7 @@ function deltree($dir, $delete_dir = true)
 		if ($delete_dir && isset($package_ftp))
 		{
 			$ftp_file = strtr($dir, array($_SESSION['pack_ftp']['root'] => ''));
-			if (!is_writable($dir . '/' . $entryname))
+			if (!is_writable($dir . '/' . $ftp_file))
 				$package_ftp->chmod($ftp_file, 0777);
 			$package_ftp->unlink($ftp_file);
 		}
@@ -1827,11 +1835,18 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 	// This is needed to hold the long paths, as they can vary...
 	$long_changes = array();
 
+	// Translate everything to unix dir separators for comparisons during parsing
+	foreach ($theme_paths as $id => $theme)
+		$theme_paths[$id]['theme_dir'] = strtr($theme_paths[$id]['theme_dir'], '\\', '/');
+
 	// First, we need to build the list of all the files likely to get changed.
 	foreach ($files as $file)
 	{
 		// What is the filename we're currently on?
 		$filename = parse_path(trim($file->fetch('@name')));
+
+		// Xlate it to unix style for comparisons...
+		$filename = strtr($filename, '\\', '/');
 
 		// Now, we need to work out whether this is even a template file...
 		foreach ($theme_paths as $id => $theme)
@@ -1880,6 +1895,9 @@ function parseModification($file, $testing = true, $undo = false, $theme_paths =
 		$files_to_change = array(
 			1 => parse_path(trim($file->fetch('@name'))),
 		);
+
+		// Translate to unix dir separators for comparisons during parsing
+		$files_to_change[1] = strtr($files_to_change[1], '\\', '/');
 
 		// Sometimes though, we have some additional files for other themes, if we have add them to the mix.
 		if (isset($custom_themes_add[$files_to_change[1]]))
@@ -2734,7 +2752,7 @@ function package_crypt($pass)
 		$salt .= session_id();
 
 	for ($i = 0; $i < $n; $i++)
-		$pass{$i} = chr(ord($pass{$i}) ^ (ord($salt{$i}) - 32));
+		$pass[$i] = chr(ord($pass[$i]) ^ (ord($salt[$i]) - 32));
 
 	return $pass;
 }
@@ -2745,7 +2763,7 @@ function package_create_backup($id = 'backup')
 
 	$files = array();
 
-	$base_files = array('index.php', 'SSI.php', 'agreement.txt', 'ssi_examples.php', 'ssi_examples.shtml');
+	$base_files = array('index.php', 'SSI.php', 'agreement.txt', 'proxy.php', 'ssi_examples.php', 'ssi_examples.shtml', 'subscriptions.php');
 	foreach ($base_files as $file)
 	{
 		if (file_exists($boarddir . '/' . $file))
@@ -2846,7 +2864,7 @@ function package_create_backup($id = 'backup')
 
 		$checksum = 256;
 		for ($i = 0; $i < 512; $i++)
-			$checksum += ord($current{$i});
+			$checksum += ord($current[$i]);
 
 		$fwrite($output, substr($current, 0, 148) . pack('a8', decoct($checksum)) . substr($current, 156, 511));
 
@@ -3059,7 +3077,7 @@ function check_mime_type($data, $type_pattern, $is_path = false)
 		$loaded = false;
 		$safe = ini_get('safe_mode');
 		$dl_ok = ini_get('enable_dl');
-		if (empty($safe) && !empty($dl_ok))
+		if (empty($safe) && !empty($dl_ok) && function_exists('dl'))
 			$loaded = @dl(((PHP_SHLIB_SUFFIX === 'dll') ? 'php_' : '') . 'fileinfo.' . PHP_SHLIB_SUFFIX);
 
 		// Oh well. We tried.

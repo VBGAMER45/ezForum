@@ -106,7 +106,7 @@ if (!defined('SMF'))
 */
 
 // Check if the user is who he/she says he is
-function validateSession()
+function validateSession($force = false)
 {
 	global $modSettings, $sourcedir, $user_info, $sc, $user_settings;
 
@@ -117,7 +117,7 @@ function validateSession()
 	$refreshTime = isset($_GET['xml']) ? 4200 : 3600;
 
 	// Is the security option off?  Or are they already logged in?
-	if (!empty($modSettings['securityDisable']) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time()))
+	if (!$force && (!empty($modSettings['securityDisable']) || (!empty($_SESSION['admin_time']) && $_SESSION['admin_time'] + $refreshTime >= time())))
 		return;
 
 	require_once($sourcedir . '/Subs-Auth.php');
@@ -731,7 +731,7 @@ function checkSession($type = 'post', $from_action = '', $is_fatal = true)
 	}
 
 	// Well, first of all, if a from_action is specified you'd better have an old_url.
-	if (!empty($from_action) && (!isset($_SESSION['old_url']) || preg_match('~[?;&]action=' . $from_action . '([;&]|$)|' . $boardurl . '/' . $from_action . '~', $_SESSION['old_url']) == 0))
+	if (!empty($from_action) && (!isset($_SESSION['old_url']) || preg_match('~[?;&]action=' . $from_action . '([;&]|$)~', $_SESSION['old_url']) == 0))
 	{
 		$error = 'verify_url_fail';
 		$log_error = true;
@@ -826,6 +826,11 @@ function allowedTo($permission, $boards = null)
 
 	// You're never allowed to do something if your data hasn't been loaded yet!
 	if (empty($user_info))
+		return false;
+
+	// Calling this before permissions have not been set up properly?
+	// Assume a denial, since we don't know if you can do anything yet.
+	if (!isset($user_info['permissions']))
 		return false;
 
 	// Administrators are supermen :P.

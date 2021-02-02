@@ -137,9 +137,9 @@ function AdminMain()
 						'loginsecurity' => array($txt['ls_login_security']),
 						'karma' => array($txt['karma'], 'enabled' => in_array('k', $context['admin_features'])),
 						'sig' => array($txt['signature_settings_short']),
-                        'action' => array($txt['custom_action_shorttitle'], 'admin_forum'),
+                        			'action' => array($txt['custom_action_shorttitle'], 'admin_forum'),
 						'profile' => array($txt['custom_profile_shorttitle'], 'enabled' => in_array('cp', $context['admin_features'])),
-                        'dlinks' => array($txt['mods_cat_modifications_dlinks']),
+                        			'dlinks' => array($txt['mods_cat_modifications_dlinks']),
 					),
 				),
 				'securitysettings' => array(
@@ -177,7 +177,7 @@ function AdminMain()
 						'loads' => array($txt['load_balancing_settings']),
 					),
 				),
-                'relatedtopics' => array(
+                		'relatedtopics' => array(
 					'label' => $txt['admin_related_topic'],
 					'file' => 'RelatedTopics.php',
 					'function' => 'RelatedTopicsAdmin',
@@ -185,7 +185,7 @@ function AdminMain()
 						'settings' => array($txt['admin_related_topics_settings']),
 						'methods' => array($txt['admin_related_topics_methods']),
 					),
-                    'icon' => 'server.gif'
+                    			'icon' => 'server.gif'
 				),
 				'current_theme' => array(
 					'label' => $txt['theme_current_settings'],
@@ -212,7 +212,7 @@ function AdminMain()
 					'file' => 'PrettyUrls.php',
 					'function' => 'PrettyInterface',
 					'custom_url' => $scripturl . '?action=admin;area=pretty',
-                    'icon' => 'server.gif'
+                    			'icon' => 'server.gif'
 				),
 				'geoIP' => array(
 						'label' => $txt['geoIP'],
@@ -406,6 +406,7 @@ function AdminMain()
 					'subsections' => array(
 						'register' => array($txt['admin_browse_register_new'], 'moderate_forum'),
 						'agreement' => array($txt['registration_agreement'], 'admin_forum'),
+						'policy' => array($txt['privacy_policy'], 'admin_forum'),
 						'reservednames' => array($txt['admin_reserved_set'], 'admin_forum'),
 						'settings' => array($txt['settings'], 'admin_forum'),
 					),
@@ -689,18 +690,18 @@ function AdminHome()
 
 	// Lastly, fill in the blanks in the support resources paragraphs.
 	$txt['support_resources_p1'] = sprintf($txt['support_resources_p1'],
-		'http://wiki.simplemachines.org/',
-		'http://wiki.simplemachines.org/smf/features2',
-		'http://wiki.simplemachines.org/smf/options2',
-		'http://wiki.simplemachines.org/smf/themes2',
-		'http://wiki.simplemachines.org/smf/packages2'
+		'https://wiki.simplemachines.org/',
+		'https://wiki.simplemachines.org/smf/features2',
+		'https://wiki.simplemachines.org/smf/options2',
+		'https://wiki.simplemachines.org/smf/themes2',
+		'https://wiki.simplemachines.org/smf/packages2'
 	);
 	$txt['support_resources_p2'] = sprintf($txt['support_resources_p2'],
-		'http://www.simplemachines.org/community/',
-		'http://www.simplemachines.org/redirect/english_support',
-		'http://www.simplemachines.org/redirect/international_support_boards',
-		'http://www.simplemachines.org/redirect/smf_support',
-		'http://www.simplemachines.org/redirect/customize_support'
+		'https://www.simplemachines.org/community/',
+		'https://www.simplemachines.org/redirect/english_support',
+		'https://www.simplemachines.org/redirect/international_support_boards',
+		'https://www.simplemachines.org/redirect/smf_support',
+		'https://www.simplemachines.org/redirect/customize_support'
 	);
 }
 

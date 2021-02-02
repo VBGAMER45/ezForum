@@ -537,6 +537,10 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_ps'],
 					'members' => array(
+						'Michele &quot;Illori&quot; Davis',
+						// Former Project Managers
+						'Jessica &quot;Suki&quot; Gonz&aacute;lez',
+						'Will &quot;Kindred&quot; Wagner',
 						'Michael &quot;Oldiesmann&quot; Eshom',
 						'Amacythe',
 						'Jeremy &quot;SleePy&quot; Darwood',
@@ -546,14 +550,25 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_dev'],
 					'members' => array(
+						// Lead Developer
+						'Jon &quot;Sesquipedalian&quot; Stovell',
+						// Developers
+						'John &quot;live627&quot; Rayes',
+						'Jeremy &quot;SleePy&quot; Darwood',
+						'Shawn Bulen',
+
+						// Former Developers
 						'Norv',
 						'Aaron van Geffen',
 						'Antechinus',
 						'Bjoern &quot;Bloc&quot; Kristiansen',
+						'Colin Schoen',
+						'emanuele',
 						'Hendrik Jan &quot;Compuart&quot; Visser',
 						'Juan &quot;JayBachatero&quot; Hernandez',
 						'Karl &quot;RegularExpression&quot; Benson',
 						$user_info['is_admin'] ? 'Matt &quot;Grudge&quot; Wolf': 'Grudge',
+						'Michael &quot;Oldiesmann&quot; Eshom',
 						'Michael &quot;Thantos&quot; Miller',
 						'Selman &quot;[SiNaN]&quot; Eser',
 						'Theodore &quot;Orstio&quot; Hildebrandt',
@@ -564,26 +579,40 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_support'],
 					'members' => array(
+						// Lead Support Specialist
+						'Aleksi "Lex" Kilpinen',
+						// Support Specialists
+						'br360',
+						'GigaWatt',
+						'Will &quot;Kindred&quot; Wagner',
+						'Steve',
+						'ziycon',
+
+						// Former Support Specialists
 						'JimM',
 						'Adish &quot;(F.L.A.M.E.R)&quot; Patel',
 						'Aleksi &quot;Lex&quot; Kilpinen',
 						'Ben Scott',
 						'Bigguy',
 						'CapadY',
+						'Chalky',
 						'Chas Large',
 						'Duncan85',
 						'Eliana Tamerin',
 						'Fiery',
+						'Gary M. Gadsdon',
 						'gbsothere',
 						'Harro',
 						'Huw',
 						'Jan-Olof &quot;Owdy&quot; Eriksson',
 						'Jeremy &quot;jerm&quot; Strike',
-						'Jessica &quot;Miss All Sunday&quot; Gonzales',
+						'Justyne',
 						'K@',
 						'Kevin &quot;greyknight17&quot; Hou',
 						'KGIII',
 						'Kill Em All',
+						'lurkalot',
+						'margarett',
 						'Mattitude',
 						'Mashby',
 						'Mick G.',
@@ -604,26 +633,39 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_customize'],
 					'members' => array(
+						// Lead Customizer
+						'Sami &quot;SychO&quot; Mazouz',
+						// Customizers
+						'Diego Andr&eacute;s',
+						'Gary M. Gadsdon',
+						'Jonathan &quot;vbgamer45&quot; Valentin',
+
+						// Former Customizers
 						'Brad &quot;IchBin&trade;&quot; Grow',
 						'&#12487;&#12451;&#12531;1031',
 						'Brannon &quot;B&quot; Hall',
 						'Bryan &quot;Runic&quot; Deakin',
+						'Bugo',
 						'Bulakbol',
 						'Colin &quot;Shadow82x&quot; Blaber',
 						'Daniel15',
 						'Eren Yasarkurt',
-						'Gary M. Gadsdon',
+						'Gwenwyfar',
 						'Jason &quot;JBlaze&quot; Clemons',
 						'Jerry',
-						'Jonathan &quot;vbgamer45&quot; Valentin',
+						'Joker&trade;',
 						'Kays',
 						'Killer Possum',
 						'Kirby',
 						'Matt &quot;SlammedDime&quot; Zuba',
 						'Matthew &quot;Labradoodle-360&quot; Kerle',
+						'Mick.',
+						'NanoSector',
+						'nend',
 						'Nibogo',
 						'Niko',
 						'Peter &quot;Arantor&quot; Spicer',
+						'Ricky.',
 						'snork13',
 						'Spuds',
 						'Steven &quot;Fustrate&quot; Hoffman',
@@ -633,8 +675,14 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_docs'],
 					'members' => array(
+						// Doc Coordinator
+						'Irisado',
+						// Doc Writers
+
+						// Former Doc Writers
 						'Joshua &quot;groundup&quot; Dickerson',
 						'AngellinaBelle',
+						'Chainy',
 						'Daniel Diehl',
 						'Dannii Willis',
 						'emanuele',
@@ -647,17 +695,29 @@ function Credits($in_admin = false)
 				array(
 					'title' => $txt['credits_groups_marketing'],
 					'members' => array(
-						'Kindred',
+						// Marketing Coordinator
+
+						// Marketing
+
+						// Former Marketing
+						'Will &quot;Kindred&quot; Wagner',
 						'Marcus &quot;c&sigma;&sigma;&#1082;&iota;&#1108; &#1084;&sigma;&eta;&#1109;&#1090;&#1108;&#1103;&quot; Forsberg',
 						'Ralph &quot;[n3rve]&quot; Otowo',
 						'rickC',
 						'Tony Reid',
+						'Mert &quot;Antes&quot; Al&#x0131;nbay',
 					),
 				),
 				array(
 					'title' => $txt['credits_groups_internationalizers'],
 					'members' => array(
+						// Lead Localizer
+						'Francisco &quot;d3vcho&quot; Domínguez',
+						// Localizers
+						'Nikola &quot;Dzonny&quot; Novakovic',
+						// Former Localizers
 						'Relyana',
+						'Robert.',
 						'Akyhne',
 						'GravuTrad',
 					),
@@ -666,7 +726,8 @@ function Credits($in_admin = false)
 					'title' => $txt['credits_groups_servers'],
 					'members' => array(
 						'Derek Schwab',
-						'Liroy &quot;CoreISP&quot; van Hoewijk',
+						'Michael Johnson',
+						'Liroy van Hoewijk',
 					),
 				),
 			),
@@ -723,6 +784,15 @@ function Credits($in_admin = false)
 					'David Recordon',
 				),
 			),
+			array(
+				'title' => $txt['credits_in_memoriam'],
+				'members' => array(
+					'Crip',
+					'K@',
+					'metallica48423',
+					'Paul_Pauline',
+				),
+			),
 		),
 	);
 
@@ -731,7 +801,7 @@ function Credits($in_admin = false)
 
 		/* Modification Authors:  You may add a copyright statement to this array for your mods.
 			Copyright statements should be in the form of a value only without a array key.  I.E.:
-				'Some Mod by Name &copy; 2012',
+				'Some Mod by Thantos &copy; 2010',
 				$txt['some_mod_copyright'],
 		*/
 		'mods' => array(

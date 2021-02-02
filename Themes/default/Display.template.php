@@ -361,7 +361,6 @@ function template_main()
 										', !isset($context['disabled_fields']['facebook']) && !empty($message['member']['facebook']['link']) ? '<li>' . $message['member']['facebook']['link'] . '</li>' : '', '
 										', !isset($context['disabled_fields']['myspace']) && !empty($message['member']['myspace']['link']) ? '<li>' . $message['member']['myspace']['link'] . '</li>' : '', '
 										', !isset($context['disabled_fields']['twitter']) && !empty($message['member']['twitter']['link']) ? '<li>' . $message['member']['twitter']['link'] . '</li>' : '', '
-										', !isset($context['disabled_fields']['googleplus']) && !empty($message['member']['googleplus']['link']) ? '<li>' . $message['member']['googleplus']['link'] . '</li>' : '', '
 										', !isset($context['disabled_fields']['linkedin']) && !empty($message['member']['linkedin']['link']) ? '<li>' . $message['member']['linkedin']['link'] . '</li>' : '', '
 										', !isset($context['disabled_fields']['youtube']) && !empty($message['member']['youtube']['link']) ? '<li>' . $message['member']['youtube']['link'] . '</li>' : '', '
 										', !isset($context['disabled_fields']['deviantart']) && !empty($message['member']['deviantart']['link']) ? '<li>' . $message['member']['deviantart']['link'] . '</li>' : '', '

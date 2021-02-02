@@ -199,16 +199,15 @@ function GroupList()
 					'value' => $txt['name'],
 				),
 				'data' => array(
-					'function' => create_function('$group', '
-						global $scripturl, $context;
+					'function' => function($group) use ($scripturl, $context)
+					{
+						$output = '<a href="' . $scripturl . '?action=' . $context['current_action'] . (isset($context['admin_area']) ? ';area=' . $context['admin_area'] : '') . ';sa=members;group=' . $group['id'] . '" ' . ($group['color'] ? 'style="color: ' . $group['color'] . ';"' : '') . '>' . $group['name'] . '</a>';
 
-						$output = \'<a href="\' . $scripturl . \'?action=\' . $context[\'current_action\'] . (isset($context[\'admin_area\']) ? \';area=\' . $context[\'admin_area\'] : \'\') . \';sa=members;group=\' . $group[\'id\'] . \'" \' . ($group[\'color\'] ? \'style="color: \' . $group[\'color\'] . \';"\' : \'\') . \'>\' . $group[\'name\'] . \'</a>\';
-
-						if ($group[\'desc\'])
-							$output .= \'<div class="smalltext">\' . $group[\'desc\'] . \'</div>\';
+						if ($group['desc'])
+							$output .= '<div class="smalltext">' . $group['desc'] . '</div>';
 
 						return $output;
-					'),
+					},
 					'style' => 'width: 50%;',
 				),
 			),
@@ -225,11 +224,10 @@ function GroupList()
 					'value' => $txt['moderators'],
 				),
 				'data' => array(
-					'function' => create_function('$group', '
-						global $txt;
-
-						return empty($group[\'moderators\']) ? \'<em>\' . $txt[\'membergroups_new_copy_none\'] . \'</em>\' : implode(\', \', $group[\'moderators\']);
-					'),
+					'function' => function($group) use ($txt)
+					{
+						return empty($group['moderators']) ? '<em>' . $txt['membergroups_new_copy_none'] . '</em>' : implode(', ', $group['moderators']);
+					},
 				),
 			),
 			'members' => array(
@@ -461,6 +459,10 @@ function MembergroupMembers()
 	{
 		checkSession();
 
+		// Only proven admins can remove admins.
+		if ($context['group']['id'] == 1)
+			validateSession();
+
 		// Make sure we're dealing with integers only.
 		foreach ($_REQUEST['rem'] as $key => $group)
 			$_REQUEST['rem'][$key] = (int) $group;
@@ -472,6 +474,10 @@ function MembergroupMembers()
 	elseif (isset($_REQUEST['add']) && (!empty($_REQUEST['toAdd']) || !empty($_REQUEST['member_add'])) && $context['group']['assignable'])
 	{
 		checkSession();
+
+		// Demand an admin password before adding new admins -- every time, no matter what.
+		if ($context['group']['id'] == 1)
+			validateSession(true);
 
 		$member_query = array();
 		$member_parameters = array();

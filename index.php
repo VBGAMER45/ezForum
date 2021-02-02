@@ -35,7 +35,7 @@ $forum_version = 'ezForum 3.0';
 define('SMF', 1);
 define('EZF', 1);
 define('EZF_MULTISITESECURITY', 0);
-if (function_exists('set_magic_quotes_runtime'))
+if (version_compare(PHP_VERSION, '7.4.0') == -1 && function_exists('set_magic_quotes_runtime'))
 	@set_magic_quotes_runtime(0);
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 $time_start = microtime();
@@ -324,7 +324,7 @@ function smf_main()
 		'help' => array('Help.php', 'ShowHelp'),
 		'helpadmin' => array('Help.php', 'ShowAdminHelp'),
 		'im' => array('PersonalMessage.php', 'MessageMain'),
-        'imageUpload' => array('Admin.php', 'themeImageUpload'),
+        	'imageUpload' => array('Admin.php', 'themeImageUpload'),
 		'jseditor' => array('Subs-Editor.php', 'EditorMain'),
 		'jsmodify' => array('Post.php', 'JavaScriptModify'),
 		'jsoption' => array('Themes.php', 'SetJavaScript'),
@@ -342,14 +342,15 @@ function smf_main()
 		'movetopic2' => array('MoveTopic.php', 'MoveTopic2'),
 		'notify' => array('Notify.php', 'Notify'),
 		'notifyboard' => array('Notify.php', 'BoardNotify'),
+		'notifyannouncements' => array('Notify.php', 'AnnouncementsNotify'),
 		'openidreturn' => array('Subs-OpenID.php', 'smf_openID_return'),
-        'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
-       	'oasl_registration' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_registration'),
-        'oasl_callback' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_callback'),
+        	'oasl' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_config'),
+       		'oasl_registration' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_registration'),
+        	'oasl_callback' => array('Subs-OneallSocialLogin.php', 'oneall_social_login_callback'),
 		'pm' => array('PersonalMessage.php', 'MessageMain'),
 		'post' => array('Post.php', 'Post'),
 		'post2' => array('Post.php', 'Post2'),
-       	'posthistory' => array('PostHistory.php', 'PostHistory'),
+       		'posthistory' => array('PostHistory.php', 'PostHistory'),
 		'printpage' => array('Printpage.php', 'PrintTopic'),
 		'profile' => array('Profile.php', 'ModifyProfile'),
 		'quotefast' => array('Post.php', 'QuoteFast'),
@@ -358,7 +359,7 @@ function smf_main()
 		'recent' => array('Recent.php', 'RecentPosts'),
 		'register' => array('Register.php', 'Register'),
 		'register2' => array('Register.php', 'Register2'),
-        'related' => array('Subs-Related.php', 'Related'),
+        	'related' => array('Subs-Related.php', 'Related'),
 		'reminder' => array('Reminder.php', 'RemindMe'),
 		'removepoll' => array('Poll.php', 'RemovePoll'),
 		'removetopic2' => array('RemoveTopic.php', 'RemoveTopic2'),
@@ -374,7 +375,7 @@ function smf_main()
 		'splittopics' => array('SplitTopics.php', 'SplitTopics'),
 		'stats' => array('Stats.php', 'DisplayStats'),
 		'sticky' => array('LockTopic.php', 'Sticky'),
-        'tags' => array('TaggingSystem.php', 'TaggingSystemMain'),
+        	'tags' => array('TaggingSystem.php', 'TaggingSystemMain'),
 		'theme' => array('Themes.php', 'ThemesMain'),
 		'trackip' => array('Profile-View.php', 'trackIP'),
 		'unread' => array('Recent.php', 'UnreadTopics'),

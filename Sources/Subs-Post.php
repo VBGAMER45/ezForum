@@ -1267,7 +1267,8 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 					$string = $newstring;
 			}
 
-			$fixchar = create_function('$n', '
+			$fixchar = function($n)
+			{
 				if ($n < 128)
 					return chr($n);
 				elseif ($n < 2048)
@@ -1275,7 +1276,8 @@ function mimespecialchars($string, $with_charset = true, $hotmail_fix = false, $
 				elseif ($n < 65536)
 					return chr(224 | $n >> 12) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
 				else
-					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);');
+					return chr(240 | $n >> 18) . chr(128 | $n >> 12 & 63) . chr(128 | $n >> 6 & 63) . chr(128 | $n & 63);
+			};
 
 			$string = preg_replace_callback('~&#(\d{3,8});~', 'fixchar__callback', $string);
 
@@ -1697,6 +1699,15 @@ function sendNotifications($topics, $type, $exclude = array(), $members_only = a
 			'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;topicseen#new',
 			'UNSUBSCRIBELINK' => $scripturl . '?action=notify;topic=' . $row['id_topic'] . '.0',
 		);
+
+		// Make a token for the unsubscribe link
+		if (!empty($modSettings['notify_tokens']))
+		{
+			require_once($sourcedir . '/Notify.php');
+			$token = createUnsubscribeToken($row['id_member'], $row['email_address'], 'topic', $row['id_topic']);
+
+			$replacements['UNSUBSCRIBELINK'] .= ';u=' . $row['id_member'] . ';token=' . $token;
+		}
 
 		if ($type == 'remove')
 			unset($replacements['TOPICLINK'], $replacements['UNSUBSCRIBELINK']);
@@ -2158,7 +2169,7 @@ function createAttachment(&$attachmentOptions)
 	// Make sure the file actually exists... sometimes it doesn't.
 	if ((!$file_restricted && !file_exists($attachmentOptions['tmp_name'])) || (!$already_uploaded && !is_uploaded_file($attachmentOptions['tmp_name'])))
 	{
-		$attachmentOptions['errors'][] = 'attach_timeout';
+		$attachmentOptions['errors'] = array('could_not_upload');
 		return false;
 	}
 
@@ -2206,7 +2217,7 @@ function createAttachment(&$attachmentOptions)
 
 	// Is the file too big?
 	if (!empty($modSettings['attachmentSizeLimit']) && $attachmentOptions['size'] > $modSettings['attachmentSizeLimit'] * 1024)
-		$attachmentOptions['errors'][] = array('file_too_big', array($modSettings['attachmentSizeLimit']));
+		$attachmentOptions['errors'][] = 'too_large';
 
 	if (!empty($modSettings['attachmentCheckExtensions']))
 	{
@@ -2215,7 +2226,7 @@ function createAttachment(&$attachmentOptions)
 			$allowed[$k] = trim($dummy);
 
 		if (!in_array(strtolower(substr(strrchr($attachmentOptions['name'], '.'), 1)), $allowed))
-			$attachmentOptions['errors'][] = 'cant_upload_type';
+			$attachmentOptions['errors'][] = 'bad_extension';
 	}
 
     //  Copyright (c) 2011, Kays
@@ -2267,7 +2278,8 @@ function createAttachment(&$attachmentOptions)
 	if (!empty($attachmentOptions['errors']))
 		return false;
 
-
+	if (!is_writable($attach_dir))
+		fatal_lang_error('attachments_no_write', 'critical');
 
 	// Assuming no-one set the extension let's take a look at it.
 	if (empty($attachmentOptions['fileext']))
@@ -2314,10 +2326,7 @@ function createAttachment(&$attachmentOptions)
 	if ($already_uploaded)
 		rename($attachmentOptions['tmp_name'], $attachmentOptions['destination']);
 	elseif (!move_uploaded_file($attachmentOptions['tmp_name'], $attachmentOptions['destination']))
-	{
-		$attachmentOptions['errors'][] = 'attach_timeout';
-		return false;
-	}
+		fatal_lang_error('attach_timeout', 'critical');
 
 	// Attempt to chmod it.
 	@chmod($attachmentOptions['destination'], 0644);
@@ -3030,6 +3039,15 @@ function sendApprovalNotifications(&$topicData)
 				'TOPICLINK' => $scripturl . '?topic=' . $row['id_topic'] . '.new;topicseen#new',
 				'UNSUBSCRIBELINK' => $scripturl . '?action=notify;topic=' . $row['id_topic'] . '.0',
 			);
+
+			// Make a token for the unsubscribe link
+			if (!empty($modSettings['notify_tokens']))
+			{
+				require_once($sourcedir . '/Notify.php');
+				$token = createUnsubscribeToken($row['id_member'], $row['email_address'], 'topic', $row['id_topic']);
+
+				$replacements['UNSUBSCRIBELINK'] .= ';u=' . $row['id_member'] . ';token=' . $token;
+			}
 
 			$message_type = 'notification_reply';
 			// Do they want the body of the message sent too?

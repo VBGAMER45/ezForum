@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 
 if (!defined('SMF'))
@@ -66,6 +66,7 @@ function db_extra_init()
 			'db_table_sql' => 'smf_db_table_sql',
 			'db_list_tables' => 'smf_db_list_tables',
 			'db_get_version' => 'smf_db_get_version',
+			'db_get_engine' => 'smf_db_get_engine',
 		);
 }
 
@@ -435,7 +436,7 @@ function smf_db_table_sql($tableName)
 		// Ensure the columns are in proper order.
 		ksort($columns);
 
-		$schema_create .= ',' . $crlf . ' ' . $keyname . ' (' . implode($columns, ', ') . ')';
+		$schema_create .= ',' . $crlf . ' ' . $keyname . ' (' . implode(', ', $columns) . ')';
 	}
 
 	// Now just get the comment and type... (MyISAM, etc.)

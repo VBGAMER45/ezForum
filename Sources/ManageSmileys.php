@@ -376,9 +376,10 @@ function EditSmileySets()
 					'value' => $txt['smiley_sets_default'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return $rowData[\'selected\'] ? \'<strong>*</strong>\' : \'\';
-					'),
+					'function' => function($rowData)
+					{
+						return $rowData['selected'] ? '<strong>*</strong>' : '';
+					},
 					'style' => 'text-align: center;',
 				),
 				'sort' => array(
@@ -435,9 +436,10 @@ function EditSmileySets()
 					'value' => '<input type="checkbox" onclick="invertAll(this, this.form);" class="input_check" />',
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						return $rowData[\'id\'] == 0 ? \'\' : sprintf(\'<input type="checkbox" name="smiley_set[%1$d]" class="input_check" />\', $rowData[\'id\']);
-					'),
+					'function' => function($rowData)
+					{
+						return $rowData['id'] == 0 ? '' : sprintf('<input type="checkbox" name="smiley_set[%1$d]" class="input_check" />', $rowData['id']);
+					},
 					'style' => 'text-align: center',
 				),
 			),
@@ -957,16 +959,15 @@ function EditSmileys()
 						'value' => $txt['smileys_location'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', '
-							global $txt;
-
-							if (empty($rowData[\'hidden\']))
-								return $txt[\'smileys_location_form\'];
-							elseif ($rowData[\'hidden\'] == 1)
-								return $txt[\'smileys_location_hidden\'];
+						'function' => function($rowData) use ($txt)
+						{
+							if (empty($rowData['hidden']))
+								return $txt['smileys_location_form'];
+							elseif ($rowData['hidden'] == 1)
+								return $txt['smileys_location_hidden'];
 							else
-								return $txt[\'smileys_location_popup\'];
-						'),
+								return $txt['smileys_location_popup'];
+						},
 						'class' => 'windowbg',
 					),
 					'sort' => array(
@@ -979,24 +980,24 @@ function EditSmileys()
 						'value' => $txt['smileys_description'],
 					),
 					'data' => array(
-						'function' => create_function('$rowData', empty($modSettings['smileys_dir']) || !is_dir($modSettings['smileys_dir']) ? '
-							return htmlspecialchars($rowData[\'description\']);
-						' : '
-							global $context, $txt, $modSettings;
+						'function' => function($rowData) use ($modSettings, $context, $txt)
+						{
+							if (empty($modSettings['smileys_dir']) || !is_dir($modSettings['smileys_dir']))
+								return htmlspecialchars($rowData['description']);
 
 							// Check if there are smileys missing in some sets.
 							$missing_sets = array();
-							foreach ($context[\'smiley_sets\'] as $smiley_set)
-								if (!file_exists(sprintf(\'%1$s/%2$s/%3$s\', $modSettings[\'smileys_dir\'], $smiley_set[\'path\'], $rowData[\'filename\'])))
-									$missing_sets[] = $smiley_set[\'path\'];
+							foreach ($context['smiley_sets'] as $smiley_set)
+								if (!file_exists(sprintf('%1$s/%2$s/%3$s', $modSettings['smileys_dir'], $smiley_set['path'], $rowData['filename'])))
+									$missing_sets[] = $smiley_set['path'];
 
-							$description = htmlspecialchars($rowData[\'description\']);
+							$description = htmlspecialchars($rowData['description']);
 
 							if (!empty($missing_sets))
-								$description .= sprintf(\'<br /><span class="smalltext"><strong>%1$s:</strong> %2$s</span>\', $txt[\'smileys_not_found_in_set\'], implode(\', \', $missing_sets));
+								$description .= sprintf('<br /><span class="smalltext"><strong>%1$s:</strong> %2$s</span>', $txt['smileys_not_found_in_set'], implode(', ', $missing_sets));
 
 							return $description;
-						'),
+						},
 						'class' => 'windowbg',
 					),
 					'sort' => array(
@@ -1618,12 +1619,11 @@ function EditMessageIcons()
 		'columns' => array(
 			'icon' => array(
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $settings;
-
-						$images_url = $settings[file_exists(sprintf(\'%1$s/images/post/%2$s.gif\', $settings[\'theme_dir\'], $rowData[\'filename\'])) ? \'actual_images_url\' : \'default_images_url\'];
-						return sprintf(\'<img src="%1$s/post/%2$s.gif" alt="%3$s" />\', $images_url, $rowData[\'filename\'], htmlspecialchars($rowData[\'title\']));
-					'),
+					'function' => function($rowData) use ($settings)
+					{
+						$images_url = $settings[file_exists(sprintf('%1$s/images/post/%2$s.gif', $settings['theme_dir'], $rowData['filename'])) ? 'actual_images_url' : 'default_images_url'];
+						return sprintf('<img src="%1$s/post/%2$s.gif" alt="%3$s" />', $images_url, $rowData['filename'], htmlspecialchars($rowData['title']));
+					},
 				),
 				'style' => 'text-align: center;',
 			),
@@ -1654,11 +1654,10 @@ function EditMessageIcons()
 					'value' => $txt['icons_board'],
 				),
 				'data' => array(
-					'function' => create_function('$rowData', '
-						global $txt;
-
-						return empty($rowData[\'board_name\']) ? $txt[\'icons_edit_icons_all_boards\'] : $rowData[\'board_name\'];
-					'),
+					'function' => function($rowData) use ($txt)
+					{
+						return empty($rowData['board_name']) ? $txt['icons_edit_icons_all_boards'] : $rowData['board_name'];
+					},
 				),
 			),
 			'modify' => array(
