@@ -4422,41 +4422,6 @@ function add_integration_function($hook, $function, $permanent = true)
 	$modSettings[$hook] = implode(',', $functions);
 }
 
-// Remove an integration hook function.
-function remove_integration_function($hook, $function)
-{
-	global $smcFunc, $modSettings;
-
-	// Get the permanent functions.
-	$request = $smcFunc['db_query']('', '
-		SELECT value
-		FROM {db_prefix}settings
-		WHERE variable = {string:variable}',
-		array(
-			'variable' => $hook,
-		)
-	);
-	list($current_functions) = $smcFunc['db_fetch_row']($request);
-	$smcFunc['db_free_result']($request);
-
-	if (!empty($current_functions))
-	{
-		$current_functions = explode(',', $current_functions);
-
-		if (in_array($function, $current_functions))
-			updateSettings(array($hook => implode(',', array_diff($current_functions, array($function)))));
-	}
-
-	// Turn the function list into something usable.
-	$functions = empty($modSettings[$hook]) ? array() : explode(',', $modSettings[$hook]);
-
-	// You can only remove it if it's available.
-	if (!in_array($function, $functions))
-		return;
-
-	$functions = array_diff($functions, array($function));
-	$modSettings[$hook] = implode(',', $functions);
-}
 
 // Decode numeric html entities to their ascii or UTF8 equivalent character.
 function replaceEntities__callback($matches)
