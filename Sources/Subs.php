@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 
 if (!defined('SMF'))
@@ -750,19 +750,7 @@ function comma_format($number, $override_decimal_count = false)
 	return number_format($number, is_float($number) ? ($override_decimal_count === false ? $decimal_count : $override_decimal_count) : 0, $decimal_separator, $thousands_separator);
 }
 
-/**
- * Format a time to make it look purdy.
- *
- * - returns a pretty formated version of time based on the user's format in $user_info['time_format'].
- * - applies all necessary time offsets to the timestamp, unless offset_type is set.
- * - if todayMod is set and show_today was not not specified or true, an
- *   alternate format string is used to show the date with something to show it is "today" or "yesterday".
- * - performs localization (more than just strftime would do alone.)
- *
- * @param int $log_time
- * @param bool $show_today = true
- * @param string $offset_type = false
- */
+// Format a time to make it look purdy.
 function timeformat($log_time, $show_today = true, $offset_type = false)
 {
 	global $context, $user_info, $txt, $modSettings, $smcFunc;
@@ -852,17 +840,7 @@ function un_htmlspecialchars($string)
 	return strtr($string, $translation);
 }
 
-/**
- * Shorten a subject + internationalization concerns.
- *
- * - shortens a subject so that it is either shorter than length, or that length plus an ellipsis.
- * - respects internationalization characters and entities as one character.
- * - avoids trailing entities.
- * - returns the shortened string.
- *
- * @param string $subject
- * @param int $len
- */
+// Shorten a subject + internationalization concerns.
 function shorten_subject($subject, $len)
 {
 	global $smcFunc;

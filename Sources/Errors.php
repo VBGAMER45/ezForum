@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.19
  */
 
 if (!defined('SMF'))
@@ -219,6 +219,10 @@ function error_handler($error_level, $error_string, $file, $line)
 
 	// Send these notices introduced by PHP 7.2 to where the sun don't shine!
 	if (strpos($error_string, 'create_function()') !== false)
+		return true;
+
+	// Also ignore these deprecation warnings introduced in PHP 8.1.
+	if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 80100 && strpos($error_string, 'strftime()') !== false)
 		return true;
 
 	if (strpos($file, 'eval()') !== false && !empty($settings['current_include_filename']))

@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 
 if (!defined('SMF'))
@@ -226,6 +226,7 @@ function ModifyModSettings()
 function ModifyCoreFeatures($return_config = false)
 {
 	global $txt, $scripturl, $context, $settings, $sc, $modSettings;
+	global $language;
 
 	/* This is an array of all the features that can be enabled/disabled - each option can have the following:
 		title		- Text title of this item (If standard string does not exist).

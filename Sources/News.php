@@ -70,7 +70,7 @@ function ShowXmlFeed()
 	global $query_this_board, $smcFunc, $forum_version, $cdata_override;
 
 	// If it's not enabled, die.
-	if (empty($modSettings['xmlnews_enable']))
+	if (empty($modSettings['xmlnews_enable']) && (empty($_GET['sa']) || empty($_GET['u']) || $_GET['sa'] !== 'profile' || $_GET['u'] !== $user_info['id']))
 		obExit(false);
 
 	loadLanguage('Stats');

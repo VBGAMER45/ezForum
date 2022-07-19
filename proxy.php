@@ -9,10 +9,10 @@
  *
  * @package SMF
  * @author Simple Machines http://www.simplemachines.org
- * @copyright 2011 Simple Machines
+ * @copyright 2016 Simple Machines and individual contributors
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.19
  */
 
 
@@ -75,7 +75,11 @@ class ProxyServer
 				return false;
 		}
 
-		if (empty($_GET['hash']) || empty($_GET['request']) || ($_GET['request'] === 'http:') || ($_GET['request'] === 'https:'))
+		// Basic sanity check
+		$_GET['request'] = filter_var($_GET['request'], FILTER_VALIDATE_URL);
+
+		// We aren't going anywhere without these
+		if (empty($_GET['hash']) || empty($_GET['request']))
 			return false;
 
 		$hash = $_GET['hash'];
@@ -106,15 +110,12 @@ class ProxyServer
 
 		// Did we get an error when trying to fetch the image
 		$response = $this->checkRequest();
-		if ($response === null)
+		if (!$response)
 		{
 			// Throw a 404
 			header('HTTP/1.1 404 Not Found');
 			exit;
 		}
-		// Right, image not cached? Simply redirect, then.
-		if ($response === false)
-			header('Location: ' . $request, false, 301);
 
 		// Is the cache expired? Try to refresh it.
 		if (!$cached || time() - $cached['time'] > (5 * 86400))
@@ -183,6 +184,8 @@ class ProxyServer
 	 */
 	protected function cacheImage($request)
 	{
+		$request_url = $request;
+
 		$dest = $this->getCachedPath($request);
 		$curl = new curl_fetch_web_data(array(CURLOPT_BINARYTRANSFER => 1));
 		$request = $curl->get_url_data($request);
@@ -190,18 +193,30 @@ class ProxyServer
 		$response = $request->result();
 
 		if (empty($response) || $responseCode != 200)
-			return null;
+			$this->redirectexit($request_url);
 
 		$headers = $response['headers'];
+
+		// What kind of file did they give us?
+		if (function_exists('finfo_open'))
+		{
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			$headers['content-type'] = finfo_buffer($finfo, $response['body']);
+			finfo_close($finfo);
+		}
+
+		// SVG needs a little extra care
+		if (in_array($headers['content-type'], array('text/plain', 'text/xml')) && strtolower(pathinfo(parse_url($request_url, PHP_URL_PATH), PATHINFO_EXTENSION)) == 'svg' && strpos($response['body'], '<svg') !== false && strpos($response['body'], '</svg>') !== false)
+			$headers['content-type'] = 'image/svg+xml';
 
 		// Make sure the url is returning an image
 		$contentParts = explode('/', !empty($headers['content-type']) ? $headers['content-type'] : '');
 		if ($contentParts[0] != 'image')
-			return null;
+			$this->redirectexit($request_url);
 
 		// Validate the filesize
 		if ($response['size'] > ($this->maxSize * 1024))
-			return false;
+			$this->redirectexit($request_url);
 
 		return file_put_contents($dest, json_encode(array(
 			'content_type' => $headers['content-type'],
@@ -209,6 +224,18 @@ class ProxyServer
 			'time' => time(),
 			'body' => base64_encode($response['body']),
 		))) !== false;
+	}
+
+	/**
+	 * A helper function to redirect a request
+	 *
+	 * @access private
+	 * @param string $request
+	 */
+	private function redirectexit($request)
+	{
+		header('Location: ' . un_htmlspecialchars($request), false, 301);
+		exit;
 	}
 }
 

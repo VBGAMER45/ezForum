@@ -8,7 +8,7 @@
  * @copyright 2018 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0.16
+ * @version 2.0.18
  */
 
 if (!defined('SMF'))
@@ -75,7 +75,7 @@ function prepareAgreementContext()
 		elseif ($_REQUEST['sa'] == 'both')
 			$context['show_privacy_policy'] = false;
 		else
-			fatal_lang_error('no_privacy_policy', false);
+			fatal_lang_error('error_no_privacy_policy', false);
 	}
 
 	// Nothing to show? That's no good.

@@ -1255,6 +1255,35 @@ function loadEssentialThemeData()
 	}
 
 	loadLanguage('index+Modifications');
+
+	// Also load up some context that is used by routines throughout ScheduledTasks.
+	// These may not be set when AutoTask is called very early in index.php.
+	// When scheduled tasks throw undefined errors, address them here.
+
+	if (!isset($context['server']))
+	{
+		// Copied over from Load.php...
+		// This determines the server... not used in many places, except for login fixing.
+		$context['server'] = array(
+			'is_iis' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== false,
+			'is_apache' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false,
+			'is_lighttpd' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'lighttpd') !== false,
+			'is_nginx' => isset($_SERVER['SERVER_SOFTWARE']) && strpos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false,
+			'is_cgi' => isset($_SERVER['SERVER_SOFTWARE']) && strpos(php_sapi_name(), 'cgi') !== false,
+			'is_windows' => strpos(PHP_OS, 'WIN') === 0,
+			'iso_case_folding' => ord(strtolower(chr(138))) === 154,
+			'complex_preg_chars' => @version_compare(PHP_VERSION, '4.3.3') != -1,
+		);
+	}
+
+	if (!isset($context['utf8']))
+	{
+		// Copied over from Load.php...
+		// Set the character set from the template.
+		$context['character_set'] = empty($modSettings['global_character_set']) ? (empty($txt['lang_character_set']) ? 'ISO-8859-1' : $txt['lang_character_set']) : $modSettings['global_character_set'];
+		$context['utf8'] = $context['character_set'] === 'UTF-8' && (strpos(strtolower(PHP_OS), 'win') === false || @version_compare(PHP_VERSION, '4.2.3') != -1);
+		$context['right_to_left'] = !empty($txt['lang_rtl']);
+	}
 }
 
 function scheduled_fetchSMfiles()

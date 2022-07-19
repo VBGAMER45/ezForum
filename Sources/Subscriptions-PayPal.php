@@ -30,6 +30,7 @@ class paypal_display
 	{
 		global $txt;
 
+		/// We add email and additional emails (the latter for recurring payments)
 		$setting_data = array(
 			array('text', 'paypal_email', 'subtext' => $txt['paypal_email_desc']),
 			array('text', 'paypal_additional_emails', 'subtext' =>  $txt['paypal_additional_emails_desc']),
@@ -149,7 +150,6 @@ class paypal_payment
 		{
 			// Set the post data.
 			curl_setopt($curl, CURLOPT_POST, true);
-			curl_setopt($curl, CURLOPT_POSTFIELDSIZE, 0);
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $requestString);
 
 			curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);

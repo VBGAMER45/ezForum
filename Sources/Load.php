@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0.18
+ * @version 2.0.19
  */
 
 if (!defined('SMF'))
@@ -171,6 +171,10 @@ function reloadSettings()
 		if (empty($modSettings['defaultMaxMembers']) || $modSettings['defaultMaxMembers'] <= 0 || $modSettings['defaultMaxMembers'] > 999)
 			$modSettings['defaultMaxMembers'] = 30;
 
+		// Covers null and !isset cases
+		if (empty($modSettings['requirePolicyAgreement']))
+			$modSettings['requirePolicyAgreement'] = 0;
+
 		if (!empty($modSettings['cache_enable']))
 			cache_put_data('modSettings', $modSettings, 90);
 	}
@@ -179,10 +183,10 @@ function reloadSettings()
 	$utf8 = (empty($modSettings['global_character_set']) ? (!empty($txt['lang_character_set']) ? $txt['lang_character_set'] : '') : $modSettings['global_character_set']) === 'UTF-8' && (strpos(strtolower(PHP_OS), 'win') === false || @version_compare(PHP_VERSION, '4.2.3') != -1);
 
 	// Set a list of common functions.
-	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(#021|quot|amp|lt|gt|nbsp);';
-	$ent_check = empty($modSettings['disableEntityCheck']) ? function($string)
+	$ent_list = empty($modSettings['disableEntityCheck']) ? '&(?>#\d{1,7}|quot|amp|lt|gt|nbsp);' : '&(?>#021|quot|amp|lt|gt|nbsp);';
+	$ent_check = empty($modSettings['disableEntityCheck']) ? function($string, $double = false)
 		{
-			$string = preg_replace_callback('~(&amp;#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
+			$string = preg_replace_callback('~(&' . (!empty($double) ? '(?:amp;)?' : '') . '#(\d{1,7}|x[0-9a-fA-F]{1,6});)~', 'entity_fix__callback', $string);
 			return $string;
 		} : function($string)
 		{
@@ -239,7 +243,7 @@ function reloadSettings()
 		},
 		'htmlspecialchars' => function($string, $quote_style = ENT_COMPAT, $charset = 'ISO-8859-1') use ($ent_check, $utf8, $fix_utf8mb4)
 		{
-			return $fix_utf8mb4($ent_check(htmlspecialchars($string, $quote_style, $utf8 ? 'UTF-8' : $charset)));
+			return $fix_utf8mb4($ent_check(htmlspecialchars($string, $quote_style, $utf8 ? 'UTF-8' : $charset), true));
 		},
 		'fix_utf8mb4' => $fix_utf8mb4,
 		'htmltrim' => function($string) use ($utf8, $ent_check)

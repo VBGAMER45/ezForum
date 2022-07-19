@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.19
  */
 
 if (!defined('SMF'))
@@ -55,6 +55,8 @@ function smf_db_initiate($db_server, $db_name, $db_user, $db_passwd, $db_prefix,
 			'db_sybase' => false,
 			'db_case_sensitive' => false,
 			'db_escape_wildcard_string' => 'smf_db_escape_wildcard_string',
+			'db_connect_error' => 'mysql_connect_error',
+			'db_connect_errno' => 'mysql_connect_errno',
 		);
 
 	if (!empty($db_options['persist']))
@@ -616,7 +618,7 @@ function smf_db_error($db_string, $connection = null)
 }
 
 // Insert some data...
-function smf_db_insert($method = 'replace', $table, $columns, $data, $keys, $disable_trans = false, $connection = null)
+function smf_db_insert($method, $table, $columns, $data, $keys, $disable_trans = false, $connection = null)
 {
 	global $smcFunc, $db_connection, $db_prefix;
 

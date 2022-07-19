@@ -13,14 +13,14 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0.18
+ * @version 2.0.19
  */
 ini_set("max_execution_time",5000);
 
-$GLOBALS['current_smf_version'] = '2.0';
+$GLOBALS['current_smf_version'] = '2.0.19';
 $GLOBALS['db_script_version'] = '2-0';
 
-$GLOBALS['required_php_version'] = '5.4';
+$GLOBALS['required_php_version'] = '5.6';
 
 // Don't have PHP support, do you?
 // ><html dir="ltr"><head><title>Error!</title></head><body>Sorry, this installer requires PHP!<div style="display: none;">
@@ -541,7 +541,8 @@ function CheckFilesWritable()
 
 			@fclose($fp);
 		}
-
+		foreach ($extra_files as $file)
+			@chmod(dirname(__FILE__) . (empty($file) ? '' : '/' . $file), 0777);
 	}
 
 	$failure = count($failed_files) >= 1;

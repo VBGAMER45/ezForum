@@ -48,7 +48,8 @@ smf_NewsFader.prototype.init = function init()
 	var oForeEl, oForeColor, oBackEl, oBackColor;
 
 	// Try to find the fore- and background colors.
-	if ('currentStyle' in this.oFaderHandle)
+	var modern_browser = 'MozOpacity' in this.oFaderHandle.style || 'Opacity' in this.oFaderHandle.style || 'filter' in this.oFaderHandle.style;
+	if ('currentStyle' in this.oFaderHandle && !modern_browser)
 	{
 		oForeColor = this.oFaderHandle.currentStyle.color.match(/#([\da-f][\da-f])([\da-f][\da-f])([\da-f][\da-f])/);
 		this.oFadeFrom = {
@@ -68,7 +69,7 @@ smf_NewsFader.prototype.init = function init()
 			b: eval('0x' + oBackColor[3])
 		};
 	}
-	else if (!('opera' in window) && 'defaultView' in document)
+	else if (!('opera' in window) && 'defaultView' in document && !modern_browser)
 	{
 		oForeEl = this.oFaderHandle;
 		while (document.defaultView.getComputedStyle(oForeEl, null).getPropertyCSSValue('color') == null && 'parentNode' in oForeEl && 'tagName' in oForeEl.parentNode)

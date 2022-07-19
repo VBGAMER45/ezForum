@@ -327,57 +327,7 @@ function updateSettingsFile($config_vars)
 	if (count($settingsArray) < 12)
 		return;
 
-	// Try to avoid a few pitfalls:
-	// like a possible race condition,
-	// or a failure to write at low diskspace
-
-	// Check before you act: if cache is enabled, we can do a simple test
-	// Can we even write things on this filesystem?
-	if ((empty($cachedir) || !file_exists($cachedir)) && file_exists($boarddir . '/cache'))
-		$cachedir = $boarddir . '/cache';
-	$test_fp = @fopen($cachedir . '/settings_update.tmp', "w+");
-	if ($test_fp)
-	{
-		fclose($test_fp);
-
-		$test_fp = @fopen($cachedir . '/settings_update.tmp', 'r+');
-		$written_bytes = fwrite($test_fp, "test");
-		fclose($test_fp);
-		@unlink($cachedir . '/settings_update.tmp');
-
-		if ($written_bytes !== strlen("test"))
-		{
-			// Oops. Low disk space, perhaps. Don't mess with Settings.php then.
-			// No means no. :P
-			return;
-		}
-	}
-
-	// Protect me from what I want! :P
-	clearstatcache();
-	if (filemtime($boarddir . '/Settings.php') === $last_settings_change)
-	{
-		// You asked for it...
-		$fp = @fopen($boarddir . '/Settings.php', 'c');
-
-		// Is it even writable, though?
-		if ($fp)
-		{
-			flock($fp, LOCK_EX);
-			ftruncate($fp, 0);
-			rewind($fp);
-			foreach ($settingsArray as $line)
-				fwrite($fp, strtr($line, "\r", ''));
-			flock($fp, LOCK_UN);
-			fclose($fp);
-		}
-	}
-
-	// Even though on normal installations the filemtime should prevent this being used by the installer incorrectly
-	// it seems that there are times it might not. So let's MAKE it dump the cache.
-	if (function_exists('opcache_invalidate'))
-		opcache_invalidate(dirname(__FILE__) . '/Settings.php', true);
-
+	safe_file_write($boarddir . '/Settings.php', strtr(implode('', $settingsArray), "\r", ''), $boarddir . '/Settings_bak.php', $last_settings_change);
 }
 
 function updateAdminPreferences()
@@ -558,6 +508,230 @@ function updateLastDatabaseError()
 	}
 
 	return false;
+}
+
+/**
+ * Writes data to a file, optionally making a backup, while avoiding race conditions.
+ *
+ * @param string $file The filepath of the file where the data should be written.
+ * @param string $data The data to be written to $file.
+ * @param string $backup_file The filepath where the backup should be saved. Default null.
+ * @param int $mtime If modification time of $file is more recent than this Unix timestamp, the write operation will abort. Defaults to time that the script started execution.
+ * @param bool $append If true, the data will be appended instead of overwriting the existing content of the file. Default false.
+ * @return bool Whether the write operation succeeded or not.
+ */
+function safe_file_write($file, $data, $backup_file = null, $mtime = null, $append = false)
+{
+	// Sanity checks.
+	if (!file_exists($file) && !is_dir(dirname($file)))
+		return false;
+
+	if (!is_int($mtime))
+		$mtime = $_SERVER['REQUEST_TIME'];
+
+	$temp_dir = sm_temp_dir();
+
+	// Our temp files.
+	$temp_sfile = tempnam($temp_dir, pathinfo($file, PATHINFO_FILENAME) . '.');
+
+	if (!empty($backup_file))
+		$temp_bfile = tempnam($temp_dir, pathinfo($backup_file, PATHINFO_FILENAME) . '.');
+
+	// We need write permissions.
+	$failed = false;
+	foreach (array($file, $backup_file) as $sf)
+	{
+		if (empty($sf))
+			continue;
+
+		if (!file_exists($sf))
+			touch($sf);
+		elseif (!is_file($sf))
+			$failed = true;
+
+		if (!$failed && !is_writable($sf))
+		{
+			foreach (array(0644, 0664, 0666) as $mode)
+			{
+				$failed = !@chmod($sf, $mode);
+				if (!$failed)
+					break;
+			}
+		}
+	}
+
+	// Now let's see if writing to a temp file succeeds.
+	if (!$failed && file_put_contents($temp_sfile, $data, LOCK_EX) !== strlen($data))
+		$failed = true;
+
+	// Tests passed, so it's time to do the job.
+	if (!$failed)
+	{
+		// Back up the backup, just in case.
+		if (file_exists($backup_file))
+			$temp_bfile_saved = @copy($backup_file, $temp_bfile);
+
+		// Make sure no one changed the file while we weren't looking.
+		clearstatcache();
+		if (filemtime($file) <= $mtime)
+		{
+			// Attempt to open the file.
+			$sfhandle = @fopen($file, 'c');
+
+			// Let's do this thing!
+			if ($sfhandle !== false)
+			{
+				// Immediately get a lock.
+				flock($sfhandle, LOCK_EX);
+
+				// Make sure the backup works before we do anything more.
+				$temp_sfile_saved = @copy($file, $temp_sfile);
+
+				// Now write our data to the file.
+				if ($temp_sfile_saved)
+				{
+					if (empty($append))
+					{
+						ftruncate($sfhandle, 0);
+						rewind($sfhandle);
+					}
+
+					$failed = fwrite($sfhandle, $data) !== strlen($data);
+				}
+				else
+					$failed = true;
+
+				// If writing failed, put everything back the way it was.
+				if ($failed)
+				{
+					if (!empty($temp_sfile_saved))
+						@rename($temp_sfile, $file);
+
+					if (!empty($temp_bfile_saved))
+						@rename($temp_bfile, $backup_file);
+				}
+				// It worked, so make our temp backup the new permanent backup.
+				elseif (!empty($backup_file))
+					@rename($temp_sfile, $backup_file);
+
+				// And we're done.
+				flock($sfhandle, LOCK_UN);
+				fclose($sfhandle);
+			}
+		}
+	}
+
+	// We're done with these.
+	@unlink($temp_sfile);
+	@unlink($temp_bfile);
+
+	if ($failed)
+		return false;
+
+	// Even though on normal installations the filemtime should invalidate any cached version
+	// it seems that there are times it might not. So let's MAKE it dump the cache.
+	if (function_exists('opcache_invalidate'))
+		opcache_invalidate($file, true);
+
+	return true;
+}
+
+/**
+ * Locates the most appropriate temp directory.
+ *
+ * Systems using `open_basedir` restrictions may receive errors with
+ * `sys_get_temp_dir()` due to misconfigurations on servers. Other
+ * cases sys_temp_dir may not be set to a safe value. Additionally
+ * `sys_get_temp_dir` may use a readonly directory. This attempts to
+ * find a working temp directory that is accessible under the
+ * restrictions and is writable to the web service account.
+ *
+ * Directories checked against `open_basedir`:
+ *
+ * - `sys_get_temp_dir()`
+ * - `upload_tmp_dir`
+ * - `session.save_path`
+ * - `cachedir`
+ *
+ * @return string
+*/
+function sm_temp_dir()
+{
+	global $cachedir;
+
+	static $temp_dir = null;
+
+	// Already did this.
+	if (!empty($temp_dir))
+		return $temp_dir;
+
+	// Temp Directory options order.
+	$temp_dir_options = array(
+		0 => 'sys_get_temp_dir',
+		1 => 'upload_tmp_dir',
+		2 => 'session.save_path',
+		3 => 'cachedir'
+	);
+
+	// Determine if we should detect a restriction and what restrictions that may be.
+	$open_base_dir = ini_get('open_basedir');
+	$restriction = !empty($open_base_dir) ? explode(':', $open_base_dir) : false;
+
+	// Prevent any errors as we search.
+	$old_error_reporting = error_reporting(0);
+
+	// Search for a working temp directory.
+	foreach ($temp_dir_options as $id_temp => $temp_option)
+	{
+		switch ($temp_option) {
+			case 'cachedir':
+				$possible_temp = rtrim($cachedir, '/');
+				break;
+
+			case 'session.save_path':
+				$possible_temp = rtrim(ini_get('session.save_path'), '/');
+				break;
+
+			case 'upload_tmp_dir':
+				$possible_temp = rtrim(ini_get('upload_tmp_dir'), '/');
+				break;
+
+			default:
+				$possible_temp = sys_get_temp_dir();
+				break;
+		}
+
+		// Check if we have a restriction preventing this from working.
+		if ($restriction)
+		{
+			foreach ($restriction as $dir)
+			{
+				if (strpos($possible_temp, $dir) !== false && is_writable($possible_temp))
+				{
+					$temp_dir = $possible_temp;
+					break;
+				}
+			}
+		}
+		// No restrictions, but need to check for writable status.
+		elseif (is_writable($possible_temp))
+		{
+			$temp_dir = $possible_temp;
+			break;
+		}
+	}
+
+	// Fall back to sys_get_temp_dir even though it won't work, so we have something.
+	if (empty($temp_dir))
+		$temp_dir = sys_get_temp_dir();
+
+	// Fix the path.
+	$temp_dir = substr($temp_dir, -1) === '/' ? $temp_dir : $temp_dir . '/';
+
+	// Put things back.
+	error_reporting($old_error_reporting);
+
+	return $temp_dir;
 }
 
 ?>

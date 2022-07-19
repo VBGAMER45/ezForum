@@ -13,7 +13,7 @@
  * @copyright 2011 Simple Machines
  * @license http://www.simplemachines.org/about/smf/license.php BSD
  *
- * @version 2.0
+ * @version 2.0.18
  */
 
 // Don't do anything if ezForum is already loaded.
@@ -1101,7 +1101,7 @@ function ssi_recentPoll($topPollInstead = false, $output_method = 'echo')
 	$smcFunc['db_free_result']($request);
 
 	// This user has voted on all the polls.
-	if ($row === false)
+	if (empty($row))
 		return array();
 
 	// If this is a guest who's voted we'll through ourselves to show poll to show the results.
