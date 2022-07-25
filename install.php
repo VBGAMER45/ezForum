@@ -45,7 +45,7 @@ $databases = array(
 		'validate_prefix' => function(&$value) {
 			$value = preg_replace('~[^A-Za-z0-9_\$]~', '', $value);
 			return true;
-		'),
+		},
 	),
  	'mysqli' => array(
         'name' => 'MySQLi',

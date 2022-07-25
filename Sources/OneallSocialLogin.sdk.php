@@ -121,15 +121,22 @@ function oneall_social_login_extract_social_network_profile ($social_data)
 
 			// Email Address.
 			$data['user_email'] = '';
-			if (property_exists ($identity, 'emails') && is_array ($identity->emails))
-			{
-				$data['user_email_is_verified'] = false;
-				while ($data['user_email_is_verified'] !== true && (list(, $obj) = each ($identity->emails)))
-				{
-					$data['user_email'] = $obj->value;
-					$data['user_email_is_verified'] = !empty ($obj->is_verified);
-				}
-			}
+            // Do we have any emails in the profile data?
+            if (property_exists($identity, 'emails') && is_array($identity->emails))
+            {
+                // Extract email address.
+                foreach ($identity->emails as $email)
+                {
+                    $data['user_email'] = $email->value;
+                    $data['user_email_is_verified'] = (!empty($email->is_verified) ? true : false);
+
+                    // Stop once we have found a verified email address.
+                    if ($data['user_email_is_verified'])
+                    {
+                        break;
+                    }
+                }
+            }
 
 			// Website/Homepage.
 			$data['user_website'] = '';

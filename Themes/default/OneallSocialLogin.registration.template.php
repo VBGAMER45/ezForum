@@ -32,7 +32,7 @@ function template_oneall_social_login_registration ()
 					<div class="register_error">
 						<span>'. $txt['oasl_register_errors']. '</span>
 						<ul class="reset">
-							<li>'.implode ($context['oasl_registration_errors'],'</li><il>').'</li>
+							<li>'.implode ('</li><il>',$context['oasl_registration_errors']).'</li>
 						</ul>
 					</div>';
 	}

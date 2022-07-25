@@ -421,6 +421,7 @@ function ModifyCoreFeatures($return_config = false)
 					'posthistoryEnabled' => 1,
 			),
 		),
+		),
 	);
 
 	// Anyone who would like to add a core feature?
