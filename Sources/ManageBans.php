@@ -1252,7 +1252,7 @@ function BanBrowseTriggers()
 					$rowData['ip_low1'],
 					$rowData['ip_low2'],
 					$rowData['ip_low3'],
-					$rowData['ip_low4']
+					$rowData['ip_low4'],
 					$rowData['ip_low5'],
 					$rowData['ip_low6'],
 					$rowData['ip_low7'],

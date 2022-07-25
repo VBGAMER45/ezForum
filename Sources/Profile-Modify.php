@@ -463,7 +463,6 @@ function loadProfileFields($force_reload = false)
 				return false;
 			},
 		),
-		),
 		'passwrd1' => array(
 			'type' => 'password',
 			'label' => $txt['choose_pass'],
